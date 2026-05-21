@@ -1,6 +1,6 @@
 /**
- * Vercel serverless function — proxies the Anthropic API for Activity 6 feedback.
- * Requires ANTHROPIC_API_KEY in Vercel environment variables.
+ * Vercel serverless function — proxies the Gemini API for Activity 6 feedback.
+ * Requires GEMINI_API_KEY in Vercel environment variables.
  * Local dev: use `vercel dev` so this route is served alongside Vite.
  */
 export default async function handler(req, res) {
@@ -13,7 +13,7 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Report must be at least 50 words.' })
   }
 
-  const apiKey = process.env.ANTHROPIC_API_KEY
+  const apiKey = process.env.GEMINI_API_KEY
   if (!apiKey) {
     return res.status(500).json({ error: 'Feedback service is not configured on this server.' })
   }
@@ -35,35 +35,33 @@ Provide warm, specific, constructive formative feedback in exactly 3 short parag
 Keep total feedback under 180 words. Write in flowing prose — no headers, no bullet points. Address the student directly as "you". Tone: warm, collegiate, encouraging.`
 
   try {
-    const upstream = await fetch('https://api.anthropic.com/v1/messages', {
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`
+
+    const upstream = await fetch(url, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01',
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1000,
-        system,
-        messages: [
+        system_instruction: { parts: [{ text: system }] },
+        contents: [
           {
             role: 'user',
-            content: `Here is the student's tribunal report:\n\n"${report.trim()}"`,
+            parts: [{ text: `Here is the student's tribunal report:\n\n"${report.trim()}"` }],
           },
         ],
+        generationConfig: { maxOutputTokens: 1000 },
       }),
     })
 
     const data = await upstream.json()
 
     if (!upstream.ok) {
-      console.error('[feedback] Anthropic error:', data)
+      console.error('[feedback] Gemini error:', data)
       return res.status(502).json({ error: 'Feedback service unavailable. Please try again.' })
     }
 
+    const text = data.candidates?.[0]?.content?.parts?.[0]?.text
     return res.status(200).json({
-      feedback: data.content?.[0]?.text ?? 'Unable to retrieve feedback — please try again.',
+      feedback: text ?? 'Unable to retrieve feedback — please try again.',
     })
   } catch (err) {
     console.error('[feedback] Route error:', err)

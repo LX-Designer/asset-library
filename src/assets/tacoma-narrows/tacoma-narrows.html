@@ -1767,19 +1767,14 @@ Provide warm, specific, constructive formative feedback in 3 short paragraphs:
 Keep feedback concise (under 180 words total), accessible for a senior secondary student, and encouraging. Do not use markdown headers or bullet points — write in flowing prose. Address the student directly as "you".`;
 
   try {
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
+    const response = await fetch('/api/feedback', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1000,
-        system: systemPrompt,
-        messages: [{ role: 'user', content: `Here is the student's tribunal report:\n\n"${text}"` }]
-      })
+      body: JSON.stringify({ report: text }),
     });
 
     const data = await response.json();
-    const feedback = data.content?.[0]?.text || 'Unable to retrieve feedback. Please try again.';
+    const feedback = data.feedback || 'Unable to retrieve feedback. Please try again.';
 
     loading.style.display = 'none';
     content.style.display = 'block';
