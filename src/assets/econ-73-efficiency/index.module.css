@@ -1,0 +1,611 @@
+/* =====================================================
+   ECON-73-EFFICIENCY — Efficiency & Market Failure
+   Design: The Economist × modern web. Authoritative.
+===================================================== */
+
+.root {
+  --color-navy:           #1a2744;
+  --color-navy-mid:       #2c3e6b;
+  --color-red:            #c1121f;
+  --color-red-light:      #fce8e9;
+  --color-white:          #ffffff;
+  --color-off-white:      #f7f6f3;
+  --color-border:         #ddd8cc;
+  --color-text-primary:   #1a2744;
+  --color-text-secondary: #4a5568;
+  --color-text-muted:     #8a9ab0;
+  --color-success:        #2d6a4f;
+  --color-success-light:  #e8f5ee;
+  --color-warning:        #7b4f00;
+  --color-warning-light:  #fef3e2;
+
+  width: 100%;
+  background: var(--color-off-white);
+  color: var(--color-text-primary);
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-size: 16px;
+}
+
+/* ─── FULLSCREEN (opening / closing) ─── */
+
+.fullscreen {
+  min-height: calc(100vh - var(--nav-height, 60px));
+  background: var(--color-navy);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px;
+}
+
+.fullscreenInner {
+  max-width: 640px;
+  width: 100%;
+}
+
+.openingQuestion {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 28px;
+  font-weight: 300;
+  line-height: 1.5;
+  color: var(--color-white);
+  margin-bottom: 48px;
+}
+
+.fullscreenLabel {
+  display: block;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.5);
+  margin-bottom: 8px;
+}
+
+.fullscreenHelper {
+  margin-top: 10px;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.4);
+  line-height: 1.5;
+}
+
+/* ─── PROGRESS BAR ─── */
+
+.progressBar {
+  position: fixed;
+  top: var(--nav-height, 60px);
+  left: 0;
+  right: 0;
+  z-index: 50;
+  background: var(--color-navy);
+  padding: 10px 24px 0;
+}
+
+.progressLabel {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.65);
+  padding-bottom: 9px;
+}
+
+.progressTrack {
+  height: 2px;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.progressFill {
+  height: 100%;
+  background: var(--color-red);
+  transition: width 0.5s ease;
+}
+
+/* ─── MAIN CONTENT ─── */
+
+.content {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 78px 24px 96px;
+}
+
+/* ─── SECTION LABELS & HEADINGS ─── */
+
+.sectionLabel {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-red);
+  margin-bottom: 6px;
+}
+
+.sectionTitle {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--color-navy);
+  line-height: 1.3;
+  margin-bottom: 28px;
+}
+
+/* ─── NARRATIVE PROSE ─── */
+
+.narrative {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 16px;
+  line-height: 1.75;
+  color: var(--color-text-primary);
+  margin-bottom: 8px;
+}
+
+.narrative p {
+  margin-bottom: 1.2em;
+}
+
+.narrative p:last-child {
+  margin-bottom: 0;
+}
+
+/* ─── TASK PROMPT ─── */
+
+.taskPrompt {
+  border-left: 3px solid var(--color-red);
+  padding: 18px 22px;
+  margin: 32px 0;
+  background: var(--color-white);
+}
+
+.taskLabel {
+  display: block;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-red);
+  margin-bottom: 10px;
+}
+
+.taskText {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 15px;
+  line-height: 1.65;
+  color: var(--color-text-primary);
+}
+
+.taskText p {
+  margin-bottom: 0.75em;
+}
+
+.taskText p:last-child {
+  margin-bottom: 0;
+}
+
+.taskText strong {
+  font-weight: 600;
+}
+
+/* ─── FORM ELEMENTS ─── */
+
+.textareaLabel {
+  display: block;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  margin-bottom: 6px;
+}
+
+.textarea {
+  width: 100%;
+  min-height: 140px;
+  border: 1.5px solid var(--color-border);
+  border-radius: 0;
+  padding: 12px 14px;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 15px;
+  line-height: 1.65;
+  color: var(--color-text-primary);
+  background: var(--color-white);
+  resize: vertical;
+  box-sizing: border-box;
+  outline: none;
+  transition: border-color 0.15s;
+  display: block;
+}
+
+.textarea:focus {
+  border-color: var(--color-navy);
+}
+
+.textarea::placeholder {
+  color: var(--color-text-muted);
+}
+
+.textareaDark {
+  color: var(--color-navy);
+  border: 1.5px solid rgba(255, 255, 255, 0.25);
+}
+
+.textareaDark:focus {
+  border-color: rgba(255, 255, 255, 0.7);
+}
+
+.btn {
+  display: inline-block;
+  background: var(--color-navy);
+  color: var(--color-white);
+  border: none;
+  border-radius: 0;
+  padding: 10px 22px;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: background 0.15s;
+}
+
+.btn:hover:not(:disabled) {
+  background: var(--color-navy-mid);
+}
+
+.btn:disabled {
+  background: var(--color-text-muted);
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--color-red);
+  outline-offset: 2px;
+}
+
+.btnInverted {
+  background: var(--color-white);
+  color: var(--color-navy);
+}
+
+.btnInverted:hover:not(:disabled) {
+  background: var(--color-off-white);
+}
+
+.btnContinue {
+  margin-top: 24px;
+}
+
+/* ─── SUBMITTED RESPONSE ─── */
+
+.submittedResponse {
+  margin-top: 12px;
+  padding: 14px 16px;
+  background: var(--color-white);
+  border: 1px solid var(--color-border);
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--color-text-secondary);
+  white-space: pre-wrap;
+}
+
+/* ─── AI FEEDBACK PANEL ─── */
+
+@keyframes feedbackFadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.feedback {
+  margin-top: 20px;
+  background: var(--color-off-white);
+  border-left: 3px solid var(--color-navy);
+  padding: 18px 22px;
+  animation: feedbackFadeIn 0.35s ease;
+}
+
+.feedbackLabel {
+  display: block;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-red);
+  margin-bottom: 10px;
+}
+
+.feedbackText {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 15px;
+  line-height: 1.75;
+  color: var(--color-text-primary);
+  white-space: pre-wrap;
+}
+
+.feedbackLoading {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 13px;
+  color: var(--color-navy);
+  padding: 12px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.feedbackError {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  padding: 8px 0;
+}
+
+/* ─── LOADING DOTS ─── */
+
+@keyframes dotPulse {
+  0%, 80%, 100% { opacity: 0.2; }
+  40%           { opacity: 1; }
+}
+
+.loadingDots {
+  display: inline-flex;
+  gap: 3px;
+  align-items: center;
+}
+
+.loadingDots span {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--color-navy);
+  animation: dotPulse 1.4s infinite ease-in-out;
+}
+
+.loadingDots span:nth-child(2) { animation-delay: 0.16s; }
+.loadingDots span:nth-child(3) { animation-delay: 0.32s; }
+
+/* ─── EXPANDABLE DOCUMENTS ─── */
+
+.docList {
+  margin: 24px 0;
+  border: 1px solid var(--color-border);
+}
+
+.docItem {
+  border-bottom: 1px solid var(--color-border);
+}
+
+.docItem:last-child {
+  border-bottom: none;
+}
+
+.docToggle {
+  width: 100%;
+  background: var(--color-white);
+  border: none;
+  padding: 13px 16px;
+  text-align: left;
+  cursor: pointer;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-navy);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background 0.1s;
+}
+
+.docToggle:hover {
+  background: var(--color-off-white);
+}
+
+.docToggle:focus-visible {
+  outline: 2px solid var(--color-navy);
+  outline-offset: -2px;
+}
+
+.docChevron {
+  font-size: 10px;
+  color: var(--color-text-muted);
+  transition: transform 0.2s;
+  flex-shrink: 0;
+  margin-left: 12px;
+}
+
+.docChevronOpen {
+  transform: rotate(180deg);
+}
+
+.docContent {
+  padding: 16px 18px 20px;
+  background: var(--color-off-white);
+  border-top: 1px solid var(--color-border);
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--color-text-secondary);
+}
+
+.docContent p {
+  margin-bottom: 0.9em;
+}
+
+.docContent p:last-child {
+  margin-bottom: 0;
+}
+
+/* ─── DATA TABLE ─── */
+
+.dataTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 13px;
+}
+
+.dataTable th {
+  text-align: left;
+  padding: 8px 12px;
+  background: var(--color-navy);
+  color: var(--color-white);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  font-size: 12px;
+}
+
+.dataTable td {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--color-border);
+  color: var(--color-text-primary);
+}
+
+.dataTable tr:last-child td {
+  border-bottom: none;
+}
+
+.dataTable tr:nth-child(even) td {
+  background: rgba(247, 246, 243, 0.8);
+}
+
+/* ─── SCENARIO CARDS ─── */
+
+.scenarioCard {
+  background: var(--color-white);
+  border: 1px solid var(--color-border);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  padding: 22px 24px;
+  margin: 24px 0;
+}
+
+.scenarioHeader {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-navy);
+  margin-bottom: 14px;
+}
+
+.scenarioText {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 15px;
+  line-height: 1.75;
+  color: var(--color-text-primary);
+}
+
+/* ─── ACKNOWLEDGEMENT ─── */
+
+.ackMessage {
+  padding: 14px 18px;
+  background: var(--color-success-light);
+  border-left: 3px solid var(--color-success);
+  margin: 20px 0;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 14px;
+  color: var(--color-success);
+  line-height: 1.5;
+}
+
+/* ─── CLOSING SCREEN ─── */
+
+.closingOriginalBlock {
+  background: var(--color-white);
+  padding: 24px 28px;
+  margin: 28px 0;
+}
+
+.closingOriginalLabel {
+  display: block;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.45);
+  margin-bottom: 14px;
+}
+
+.closingOriginalText {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 16px;
+  line-height: 1.75;
+  color: var(--color-navy);
+  white-space: pre-wrap;
+}
+
+.closingTaskLabel {
+  display: block;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.5);
+  margin-bottom: 10px;
+  margin-top: 32px;
+}
+
+.closingTaskText {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 15px;
+  line-height: 1.65;
+  color: rgba(255, 255, 255, 0.85);
+  margin-bottom: 20px;
+}
+
+.closingStatement {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 18px;
+  line-height: 1.8;
+  color: rgba(255, 255, 255, 0.88);
+  margin-top: 40px;
+  text-align: center;
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+  padding-top: 40px;
+}
+
+.closingStatement p {
+  margin-bottom: 1.2em;
+}
+
+.closingStatement p:last-child {
+  margin-bottom: 0;
+}
+
+/* ─── DIVIDER ─── */
+
+.divider {
+  border: none;
+  border-top: 1px solid var(--color-border);
+  margin: 40px 0;
+}
+
+/* ─── RESPONSIVE ─── */
+
+@media (max-width: 640px) {
+  .openingQuestion {
+    font-size: 22px;
+    margin-bottom: 32px;
+  }
+
+  .content {
+    padding: 74px 16px 80px;
+  }
+
+  .sectionTitle {
+    font-size: 19px;
+  }
+
+  .fullscreen {
+    padding: 32px 16px;
+    align-items: flex-start;
+    padding-top: 48px;
+  }
+
+  .closingStatement {
+    font-size: 16px;
+  }
+}

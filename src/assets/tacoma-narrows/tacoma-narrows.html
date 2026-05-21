@@ -1,0 +1,1814 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Case File 1940-TN — Tacoma Narrows Inquiry Tribunal</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=IBM+Plex+Mono:wght@400;500&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;1,8..60,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1814;
+    --ink-mid: #4a4640;
+    --ink-light: #8a8480;
+    --paper: #f5f0e8;
+    --paper-dark: #ede8dc;
+    --paper-darker: #e0d9cc;
+    --accent: #8b1a1a;
+    --accent-light: #c4392a;
+    --gold: #b8860b;
+    --stamp-green: #2d5a3d;
+    --border: rgba(26,24,20,0.15);
+    --border-strong: rgba(26,24,20,0.3);
+    --mono: 'IBM Plex Mono', monospace;
+    --serif: 'Source Serif 4', Georgia, serif;
+    --display: 'DM Serif Display', Georgia, serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--serif);
+    font-size: 17px;
+    line-height: 1.75;
+    min-height: 100vh;
+  }
+
+  /* ── LAYOUT ── */
+  .page-shell {
+    min-height: 100vh;
+  }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    background: var(--ink);
+    color: var(--paper);
+    position: fixed;
+    top: 0; left: 0; bottom: 0;
+    width: 260px;
+    display: flex;
+    flex-direction: column;
+    z-index: 100;
+    overflow-y: auto;
+  }
+
+  .sidebar-header {
+    padding: 28px 24px 20px;
+    border-bottom: 1px solid rgba(245,240,232,0.12);
+  }
+
+  .case-stamp {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    color: rgba(245,240,232,0.45);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .sidebar-title {
+    font-family: var(--display);
+    font-size: 18px;
+    line-height: 1.25;
+    color: var(--paper);
+  }
+
+  .sidebar-sub {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: rgba(245,240,232,0.4);
+    margin-top: 6px;
+    letter-spacing: 0.08em;
+  }
+
+  .progress-label {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(245,240,232,0.35);
+    padding: 20px 24px 10px;
+  }
+
+  .activity-list { padding: 0 16px 16px; flex: 1; }
+
+  .act-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.15s;
+    margin-bottom: 4px;
+    border: none;
+    background: none;
+    width: 100%;
+    text-align: left;
+  }
+
+  .act-item:hover { background: rgba(245,240,232,0.07); }
+  .act-item.active { background: rgba(245,240,232,0.12); }
+  .act-item.completed .act-num { background: var(--stamp-green); color: var(--paper); border-color: var(--stamp-green); }
+
+  .act-num {
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 500;
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    border: 1px solid rgba(245,240,232,0.25);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+    color: rgba(245,240,232,0.5);
+    transition: all 0.2s;
+  }
+
+  .act-text { flex: 1; }
+  .act-name {
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 500;
+    color: rgba(245,240,232,0.75);
+    letter-spacing: 0.04em;
+    display: block;
+    line-height: 1.4;
+  }
+  .act-sub {
+    font-size: 10px;
+    color: rgba(245,240,232,0.35);
+    display: block;
+    margin-top: 1px;
+    font-family: var(--mono);
+  }
+
+  .sidebar-footer {
+    padding: 16px 24px;
+    border-top: 1px solid rgba(245,240,232,0.1);
+  }
+
+  .progress-bar-wrap {
+    background: rgba(245,240,232,0.1);
+    border-radius: 2px;
+    height: 3px;
+    margin-bottom: 8px;
+    overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: var(--stamp-green);
+    border-radius: 2px;
+    transition: width 0.4s ease;
+    width: 0%;
+  }
+  .progress-text {
+    font-family: var(--mono);
+    font-size: 9px;
+    color: rgba(245,240,232,0.3);
+    letter-spacing: 0.08em;
+  }
+
+  /* ── MAIN CONTENT ── */
+  .main {
+    margin-left: 260px;
+    padding: 0;
+  }
+
+  /* ── DOCUMENT HEADER ── */
+  .doc-header {
+    background: var(--accent);
+    color: var(--paper);
+    padding: 60px 80px 50px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .doc-header::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-image: repeating-linear-gradient(
+      0deg, transparent, transparent 30px,
+      rgba(0,0,0,0.04) 30px, rgba(0,0,0,0.04) 31px
+    );
+    pointer-events: none;
+  }
+
+  .doc-classification {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    opacity: 0.6;
+    margin-bottom: 24px;
+  }
+
+  .doc-title {
+    font-family: var(--display);
+    font-size: 48px;
+    line-height: 1.1;
+    margin-bottom: 12px;
+    font-style: italic;
+  }
+
+  .doc-subtitle {
+    font-size: 18px;
+    opacity: 0.8;
+    font-weight: 300;
+    margin-bottom: 32px;
+  }
+
+  .doc-meta-row {
+    display: flex;
+    gap: 40px;
+    flex-wrap: wrap;
+  }
+
+  .doc-meta-item { }
+  .doc-meta-label {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    opacity: 0.45;
+    display: block;
+    margin-bottom: 3px;
+  }
+  .doc-meta-value {
+    font-family: var(--mono);
+    font-size: 13px;
+    opacity: 0.85;
+  }
+
+  .role-banner {
+    margin-top: 36px;
+    background: rgba(0,0,0,0.2);
+    border-left: 3px solid rgba(245,240,232,0.5);
+    padding: 16px 20px;
+    font-size: 15px;
+    line-height: 1.6;
+    opacity: 0.9;
+  }
+
+  /* ── CONTENT SECTIONS ── */
+  .content-wrap {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 64px 60px;
+  }
+
+  .section {
+    margin-bottom: 64px;
+    scroll-margin-top: 32px;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 24px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-code {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: var(--accent);
+    text-transform: uppercase;
+    flex-shrink: 0;
+  }
+
+  .section-title {
+    font-family: var(--display);
+    font-size: 26px;
+    line-height: 1.2;
+    color: var(--ink);
+  }
+
+  .section-title.italic { font-style: italic; }
+
+  p { margin-bottom: 1.1em; }
+  p:last-child { margin-bottom: 0; }
+
+  /* ── DATA TABLES ── */
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--mono);
+    font-size: 12px;
+    margin: 24px 0;
+  }
+
+  .data-table th {
+    text-align: left;
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-light);
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border-strong);
+    background: var(--paper-dark);
+  }
+
+  .data-table td {
+    padding: 9px 12px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+
+  .data-table tr:last-child td { border-bottom: none; }
+  .data-table tr:hover td { background: var(--paper-dark); }
+
+  .highlight-row td { background: rgba(139,26,26,0.06); font-weight: 500; }
+
+  /* ── WITNESS BLOCKS ── */
+  .witness-block {
+    background: var(--paper-dark);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 24px 28px;
+    margin: 24px 0;
+    position: relative;
+  }
+
+  .witness-tag {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--ink-light);
+    margin-bottom: 4px;
+  }
+
+  .witness-name {
+    font-family: var(--display);
+    font-size: 18px;
+    margin-bottom: 4px;
+  }
+
+  .witness-role {
+    font-size: 13px;
+    color: var(--ink-mid);
+    margin-bottom: 16px;
+    font-style: italic;
+  }
+
+  .witness-text {
+    font-size: 15px;
+    line-height: 1.75;
+    border-top: 1px solid var(--border);
+    padding-top: 16px;
+  }
+
+  /* ── CALLOUT BOXES ── */
+  .callout {
+    border-left: 3px solid var(--gold);
+    background: rgba(184,134,11,0.06);
+    padding: 16px 20px;
+    margin: 24px 0;
+    font-size: 15px;
+  }
+
+  .callout.danger {
+    border-left-color: var(--accent);
+    background: rgba(139,26,26,0.05);
+  }
+
+  .callout-label {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 6px;
+    display: block;
+  }
+
+  .callout.danger .callout-label { color: var(--accent); }
+
+  /* ── DIVIDER ── */
+  .section-divider {
+    text-align: center;
+    margin: 48px 0;
+    color: var(--ink-light);
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    position: relative;
+  }
+
+  .section-divider::before, .section-divider::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    width: 35%;
+    height: 1px;
+    background: var(--border);
+  }
+  .section-divider::before { left: 0; }
+  .section-divider::after { right: 0; }
+
+  /* ── ACTIVITY TRIGGER BUTTONS ── */
+  .activity-trigger {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: var(--ink);
+    color: var(--paper);
+    border: none;
+    border-radius: 4px;
+    padding: 16px 22px;
+    cursor: pointer;
+    font-family: var(--serif);
+    width: 100%;
+    text-align: left;
+    margin: 32px 0;
+    transition: background 0.15s, transform 0.1s;
+    position: relative;
+  }
+
+  .activity-trigger:hover { background: #2a2620; transform: translateY(-1px); }
+  .activity-trigger.completed { background: var(--stamp-green); }
+  .activity-trigger.completed::after {
+    content: '✓ COMPLETED';
+    position: absolute;
+    right: 22px;
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    opacity: 0.7;
+  }
+
+  .trigger-num {
+    font-family: var(--mono);
+    font-size: 11px;
+    opacity: 0.5;
+    flex-shrink: 0;
+  }
+
+  .trigger-content { flex: 1; }
+  .trigger-title {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    opacity: 0.6;
+    display: block;
+    margin-bottom: 3px;
+  }
+  .trigger-label {
+    font-size: 16px;
+    display: block;
+  }
+
+  .trigger-arrow {
+    font-size: 18px;
+    opacity: 0.4;
+    flex-shrink: 0;
+  }
+
+  /* ── MODAL OVERLAY ── */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15,12,10,0.75);
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+  }
+
+  .modal-overlay.open {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  .modal {
+    background: var(--paper);
+    border-radius: 4px;
+    max-width: 680px;
+    width: 100%;
+    max-height: 85vh;
+    overflow-y: auto;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.4);
+    transform: translateY(12px);
+    transition: transform 0.2s;
+  }
+
+  .modal-overlay.open .modal { transform: translateY(0); }
+
+  .modal-header {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 24px 28px;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+  }
+
+  .modal-act-label {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    opacity: 0.45;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+
+  .modal-title {
+    font-family: var(--display);
+    font-size: 22px;
+    font-style: italic;
+  }
+
+  .modal-close {
+    position: absolute;
+    top: 20px; right: 24px;
+    background: none;
+    border: 1px solid rgba(245,240,232,0.2);
+    color: var(--paper);
+    cursor: pointer;
+    font-family: var(--mono);
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 3px;
+    opacity: 0.7;
+    letter-spacing: 0.06em;
+  }
+  .modal-close:hover { opacity: 1; }
+
+  .modal-body { padding: 28px; }
+
+  .modal-instruction {
+    background: var(--paper-dark);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 16px 20px;
+    font-size: 15px;
+    line-height: 1.65;
+    margin-bottom: 20px;
+  }
+
+  .modal-instruction strong {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    display: block;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+
+  /* ── ACTIVITY SPECIFIC ── */
+  .hypothesis-input {
+    width: 100%;
+    border: 1px solid var(--border-strong);
+    border-radius: 3px;
+    padding: 14px 16px;
+    font-family: var(--serif);
+    font-size: 15px;
+    line-height: 1.6;
+    background: #fff;
+    resize: vertical;
+    min-height: 100px;
+    color: var(--ink);
+    margin-top: 8px;
+  }
+
+  .hypothesis-input:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+  .calc-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin: 16px 0;
+  }
+
+  .calc-box {
+    background: var(--paper-dark);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 14px 16px;
+  }
+
+  .calc-label {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-light);
+    margin-bottom: 6px;
+    display: block;
+  }
+
+  .calc-value {
+    font-family: var(--mono);
+    font-size: 22px;
+    font-weight: 500;
+    color: var(--ink);
+  }
+
+  .calc-unit {
+    font-size: 13px;
+    color: var(--ink-mid);
+    margin-left: 4px;
+  }
+
+  .radio-group { margin: 16px 0; }
+
+  .radio-option {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: background 0.1s, border-color 0.1s;
+    font-size: 15px;
+    line-height: 1.5;
+  }
+  .radio-option:hover { background: var(--paper-dark); }
+  .radio-option input { margin-top: 3px; flex-shrink: 0; accent-color: var(--accent); }
+  .radio-option.selected { border-color: var(--accent); background: rgba(139,26,26,0.04); }
+
+  /* ── TRIBUNAL REPORT (Activity 6) ── */
+  .tribunal-editor {
+    width: 100%;
+    border: 1px solid var(--border-strong);
+    border-radius: 3px;
+    padding: 16px;
+    font-family: var(--serif);
+    font-size: 15px;
+    line-height: 1.75;
+    background: #fff;
+    resize: vertical;
+    min-height: 200px;
+    color: var(--ink);
+  }
+
+  .tribunal-editor:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+  .word-count {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--ink-light);
+    text-align: right;
+    margin-top: 6px;
+    letter-spacing: 0.06em;
+  }
+
+  .feedback-panel {
+    margin-top: 20px;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    overflow: hidden;
+    display: none;
+  }
+
+  .feedback-panel.visible { display: block; }
+
+  .feedback-header {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 10px 16px;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .feedback-body {
+    padding: 20px;
+    font-size: 15px;
+    line-height: 1.7;
+    background: var(--paper-dark);
+    min-height: 80px;
+  }
+
+  .feedback-loading {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--ink-mid);
+    font-size: 14px;
+  }
+
+  .feedback-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    animation: pulse 1.2s ease-in-out infinite;
+  }
+
+  .feedback-dot:nth-child(2) { animation-delay: 0.2s; }
+  .feedback-dot:nth-child(3) { animation-delay: 0.4s; }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 0.3; transform: scale(0.8); }
+    50% { opacity: 1; transform: scale(1); }
+  }
+
+  /* ── MODAL ACTION BUTTONS ── */
+  .modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+  }
+
+  .btn {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 10px 20px;
+    border-radius: 3px;
+    cursor: pointer;
+    border: 1px solid var(--border-strong);
+    background: none;
+    color: var(--ink);
+    transition: background 0.15s;
+  }
+  .btn:hover { background: var(--paper-dark); }
+
+  .btn-primary {
+    background: var(--ink);
+    color: var(--paper);
+    border-color: var(--ink);
+  }
+  .btn-primary:hover { background: #2a2620; }
+
+  .btn-danger {
+    background: var(--accent);
+    color: var(--paper);
+    border-color: var(--accent);
+  }
+  .btn-danger:hover { background: var(--accent-light); }
+
+  /* ── FEEDBACK ITEMS IN MODAL ── */
+  .feedback-score-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  .score-item {
+    background: var(--paper);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 10px 12px;
+    text-align: center;
+  }
+
+  .score-val {
+    font-family: var(--mono);
+    font-size: 20px;
+    font-weight: 500;
+    color: var(--accent);
+    display: block;
+  }
+
+  .score-lbl {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    color: var(--ink-light);
+    text-transform: uppercase;
+    display: block;
+    margin-top: 3px;
+  }
+
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(26,24,20,0.2); border-radius: 3px; }
+
+  /* ── CONFIRM STAMP ── */
+  .confirm-stamp {
+    display: inline-block;
+    border: 2px solid var(--stamp-green);
+    color: var(--stamp-green);
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    padding: 4px 10px;
+    text-transform: uppercase;
+    border-radius: 2px;
+    transform: rotate(-2deg);
+    margin-left: 10px;
+    vertical-align: middle;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    .page-shell { grid-template-columns: 1fr; }
+    .sidebar { display: none; }
+    .main { margin-left: 0; }
+    .content-wrap { padding: 40px 24px; }
+    .doc-header { padding: 40px 24px 32px; }
+    .doc-title { font-size: 34px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page-shell">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" role="complementary" aria-label="Inquiry activities progress">
+    <a href="../index.html" style="display:block;color:rgba(245,240,232,0.55);font-size:11px;font-family:'IBM Plex Mono',monospace;text-decoration:none;padding:14px 20px 6px;letter-spacing:.04em;transition:color .2s;" onmouseover="this.style.color='rgba(245,240,232,0.9)'" onmouseout="this.style.color='rgba(245,240,232,0.55)'">← Library</a>
+    <div class="sidebar-header">
+      <div class="case-stamp">Inquiry Tribunal — Case File</div>
+      <div class="sidebar-title">Tacoma Narrows Bridge</div>
+      <div class="sidebar-sub">November 7, 1940 · Washington State</div>
+    </div>
+
+    <div class="progress-label">Inquiry Activities</div>
+
+    <div class="activity-list">
+      <button class="act-item" id="nav-1" onclick="openModal(1)">
+        <div class="act-num">1</div>
+        <div class="act-text">
+          <span class="act-name">Initial hypothesis</span>
+          <span class="act-sub">What do you already think?</span>
+        </div>
+      </button>
+      <button class="act-item" id="nav-2" onclick="openModal(2)">
+        <div class="act-num">2</div>
+        <div class="act-text">
+          <span class="act-name">Frequency analysis</span>
+          <span class="act-sub">Does the data support resonance?</span>
+        </div>
+      </button>
+      <button class="act-item" id="nav-3" onclick="openModal(3)">
+        <div class="act-num">3</div>
+        <div class="act-text">
+          <span class="act-name">Timeline reconstruction</span>
+          <span class="act-sub">Two phases, two explanations?</span>
+        </div>
+      </button>
+      <button class="act-item" id="nav-4" onclick="openModal(4)">
+        <div class="act-num">4</div>
+        <div class="act-text">
+          <span class="act-name">Design analysis</span>
+          <span class="act-sub">What made this bridge different?</span>
+        </div>
+      </button>
+      <button class="act-item" id="nav-5" onclick="openModal(5)">
+        <div class="act-num">5</div>
+        <div class="act-text">
+          <span class="act-name">Expert evaluation</span>
+          <span class="act-sub">Two witnesses, two theories</span>
+        </div>
+      </button>
+      <button class="act-item" id="nav-6" onclick="openModal(6)">
+        <div class="act-num">6</div>
+        <div class="act-text">
+          <span class="act-name">Tribunal report</span>
+          <span class="act-sub">Write your findings</span>
+        </div>
+      </button>
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="progress-bar-wrap">
+        <div class="progress-bar-fill" id="progress-fill"></div>
+      </div>
+      <div class="progress-text" id="progress-text">0 of 6 activities completed</div>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main">
+
+    <!-- DOCUMENT HEADER -->
+    <header class="doc-header">
+      <div class="doc-classification">Official Record · Inquiry Tribunal · Restricted Distribution</div>
+      <h1 class="doc-title">The Bridge That Shouldn't Have Failed</h1>
+      <p class="doc-subtitle">Engineering Incident Report — Tacoma Narrows Bridge, 1940</p>
+
+      <div class="doc-meta-row">
+        <div class="doc-meta-item">
+          <span class="doc-meta-label">Incident date</span>
+          <span class="doc-meta-value">07 November 1940</span>
+        </div>
+        <div class="doc-meta-item">
+          <span class="doc-meta-label">Location</span>
+          <span class="doc-meta-value">Tacoma Narrows, Washington State</span>
+        </div>
+        <div class="doc-meta-item">
+          <span class="doc-meta-label">Classification</span>
+          <span class="doc-meta-value">Structural Collapse — Total Loss</span>
+        </div>
+        <div class="doc-meta-item">
+          <span class="doc-meta-label">File reference</span>
+          <span class="doc-meta-value">1940-TN-001</span>
+        </div>
+      </div>
+
+      <div class="role-banner">
+        <strong>Your role:</strong> You are a junior analyst assigned to the post-collapse inquiry tribunal. All evidence in this case file has been provided to you. Your task is to work through the inquiry activities, examine the data, evaluate competing expert claims, and ultimately produce a tribunal report explaining the failure mechanism. Use the activities in the sidebar to guide your investigation — but read the full case file carefully. The answer is in here.
+      </div>
+    </header>
+
+    <div class="content-wrap">
+
+      <!-- ACTIVITY 1 TRIGGER -->
+      <button class="activity-trigger" id="trigger-1" onclick="openModal(1)">
+        <span class="trigger-num">ACT 01</span>
+        <span class="trigger-content">
+          <span class="trigger-title">Before you read</span>
+          <span class="trigger-label">Record your initial hypothesis</span>
+        </span>
+        <span class="trigger-arrow">→</span>
+      </button>
+
+      <!-- SECTION 1: INCIDENT OVERVIEW -->
+      <section class="section" id="s-incident">
+        <div class="section-header">
+          <span class="section-code">§ 01</span>
+          <h2 class="section-title italic">Incident Overview</h2>
+        </div>
+
+        <p>At 11:10 a.m. on the morning of 7 November 1940, approximately 600 feet of the central span of the Tacoma Narrows Bridge broke free from its suspender cables and fell 190 feet into the cold waters of Puget Sound below. The bridge had been open to traffic for exactly 128 days.</p>
+
+        <p>The wind speed recorded at midspan was 42 miles per hour — a moderate autumn storm, by the standards of the Pacific Northwest. The bridge had been designed to withstand static wind loads far in excess of this figure. On paper, the structure should have been safe.</p>
+
+        <p>The collapse was filmed by University of Washington engineer F.B. Farquharson, who had been stationed at the bridge as part of an ongoing investigation into its unusual behaviour. His footage — still widely circulated today — shows the bridge twisting violently along its length, one side of the roadway rising while the other falls, before sections of the deck tear themselves apart.</p>
+
+        <div class="callout danger">
+          <span class="callout-label">⚠ Note for tribunal</span>
+          The bridge was closed to vehicle traffic before it collapsed. The only confirmed casualty was a three-legged cocker spaniel named Tubby, left in a vehicle by the last driver to attempt to cross. No human lives were lost.
+        </div>
+
+        <p>The collapse shocked the engineering world. Tacoma Narrows was not an experimental structure — it had been reviewed by eminent engineers and approved by federal funding authorities. It was the third-longest suspension bridge in the world. Its collapse represented not merely a structural failure, but a failure of the profession's models and assumptions.</p>
+      </section>
+
+      <div class="section-divider">· · ·</div>
+
+      <!-- SECTION 2: BRIDGE SPECIFICATIONS -->
+      <section class="section" id="s-specs">
+        <div class="section-header">
+          <span class="section-code">§ 02</span>
+          <h2 class="section-title">Bridge Specifications</h2>
+        </div>
+
+        <p>The following technical specifications are drawn from the original engineering records submitted to the Federal Works Agency prior to construction. These figures were publicly available and were reviewed by the engineering board at approval.</p>
+
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Parameter</th>
+              <th>Value</th>
+              <th>Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Total bridge length</td>
+              <td>1,810 m</td>
+              <td>Including approach spans</td>
+            </tr>
+            <tr class="highlight-row">
+              <td>Main span length</td>
+              <td>853 m</td>
+              <td>Third longest in world at time of construction</td>
+            </tr>
+            <tr class="highlight-row">
+              <td>Deck width</td>
+              <td>12 m</td>
+              <td>Two lanes only — unusually narrow for span length</td>
+            </tr>
+            <tr>
+              <td>Span-to-width ratio</td>
+              <td>72 : 1</td>
+              <td>Compare Golden Gate: ~47:1</td>
+            </tr>
+            <tr class="highlight-row">
+              <td>Stiffening girder depth</td>
+              <td>2.4 m (solid plate)</td>
+              <td>Original design called for 7.6 m open trusses</td>
+            </tr>
+            <tr>
+              <td>Tower height</td>
+              <td>130 m</td>
+              <td>Above water level</td>
+            </tr>
+            <tr>
+              <td>Dead load (self-weight)</td>
+              <td>~7,000 kN/m</td>
+              <td>Significantly lighter than conventional designs</td>
+            </tr>
+            <tr>
+              <td>Design static wind load</td>
+              <td>Rated to 100+ mph</td>
+              <td>Static force calculation; dynamic behaviour not modelled</td>
+            </tr>
+            <tr>
+              <td>Construction cost</td>
+              <td>$6.4 million USD</td>
+              <td>Approximately 40% less than original conservative estimate</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="callout">
+          <span class="callout-label">Design note</span>
+          The original Washington State design, prepared by engineer Clark Eldridge, specified 7.6-metre open-lattice trusses beneath the roadway. This design was overruled by federal funding authorities, who engaged New York engineer Leon Moisseiff to produce a less expensive alternative. Moisseiff's design used 2.4-metre solid plate girders — elegant, slender, and, as Moisseiff described it, "the most beautiful bridge in the world."
+        </div>
+      </section>
+
+      <div class="section-divider">· · ·</div>
+
+      <!-- SECTION 3: WIND & OSCILLATION DATA -->
+      <section class="section" id="s-data">
+        <div class="section-header">
+          <span class="section-code">§ 03</span>
+          <h2 class="section-title">Wind and Oscillation Data</h2>
+        </div>
+
+        <p>The following data was recorded by instruments and observers on the day of the collapse, and reconstructed from film footage and engineering records in the weeks following. All times are Pacific Standard Time.</p>
+
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Time</th>
+              <th>Wind speed</th>
+              <th>Oscillation type</th>
+              <th>Frequency</th>
+              <th>Amplitude</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>~07:00</td>
+              <td>35 mph (56 km/h)</td>
+              <td>Vertical (transverse)</td>
+              <td>~0.6 Hz</td>
+              <td>~0.5 m</td>
+            </tr>
+            <tr>
+              <td>~08:30</td>
+              <td>38 mph (61 km/h)</td>
+              <td>Vertical (transverse)</td>
+              <td>~0.6 Hz</td>
+              <td>~1.2 m</td>
+            </tr>
+            <tr>
+              <td>~10:00</td>
+              <td>42 mph (68 km/h)</td>
+              <td>Mixed — transition</td>
+              <td>Irregular</td>
+              <td>Increasing</td>
+            </tr>
+            <tr class="highlight-row">
+              <td>~10:15</td>
+              <td>42 mph (68 km/h)</td>
+              <td>Torsional (twisting)</td>
+              <td>0.2 Hz</td>
+              <td>~4 m, growing</td>
+            </tr>
+            <tr class="highlight-row">
+              <td>~10:45</td>
+              <td>42 mph (68 km/h)</td>
+              <td>Torsional (twisting)</td>
+              <td>0.2 Hz</td>
+              <td>~8.5 m — deck at 45°</td>
+            </tr>
+            <tr>
+              <td>11:02</td>
+              <td>42 mph (68 km/h)</td>
+              <td>Collapse initiating</td>
+              <td>—</td>
+              <td>Cable failure begins</td>
+            </tr>
+            <tr>
+              <td>11:10</td>
+              <td>42 mph (68 km/h)</td>
+              <td>—</td>
+              <td>—</td>
+              <td>Central span collapses</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <p>Additional instrument data recovered from the site after the collapse:</p>
+
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Measurement</th>
+              <th>Value</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Estimated natural vertical frequency of bridge</td>
+              <td>~0.6 Hz (matches early oscillation data)</td>
+            </tr>
+            <tr class="highlight-row">
+              <td>Calculated vortex shedding frequency at 42 mph wind</td>
+              <td>~1.0 Hz</td>
+            </tr>
+            <tr class="highlight-row">
+              <td>Observed torsional oscillation frequency at collapse</td>
+              <td>0.2 Hz</td>
+            </tr>
+            <tr>
+              <td>Trigger event at ~10:00</td>
+              <td>A midspan stay cable slipped, creating asymmetric loading</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="callout danger">
+          <span class="callout-label">Data anomaly — flag for tribunal</span>
+          Note the discrepancy between the vortex shedding frequency (1.0 Hz) and the torsional oscillation frequency (0.2 Hz) recorded at the time of collapse. These values are not equal. Any complete explanation of the failure mechanism must account for this discrepancy.
+        </div>
+      </section>
+
+      <!-- ACTIVITY 2 TRIGGER -->
+      <button class="activity-trigger" id="trigger-2" onclick="openModal(2)">
+        <span class="trigger-num">ACT 02</span>
+        <span class="trigger-content">
+          <span class="trigger-title">Data analysis</span>
+          <span class="trigger-label">Does the frequency evidence support resonance?</span>
+        </span>
+        <span class="trigger-arrow">→</span>
+      </button>
+
+      <!-- ACTIVITY 3 TRIGGER -->
+      <button class="activity-trigger" id="trigger-3" onclick="openModal(3)">
+        <span class="trigger-num">ACT 03</span>
+        <span class="trigger-content">
+          <span class="trigger-title">Timeline reconstruction</span>
+          <span class="trigger-label">Two phases — do they need two explanations?</span>
+        </span>
+        <span class="trigger-arrow">→</span>
+      </button>
+
+      <div class="section-divider">· · ·</div>
+
+      <!-- SECTION 4: ENGINEERING REPORT -->
+      <section class="section" id="s-engineering">
+        <div class="section-header">
+          <span class="section-code">§ 04</span>
+          <h2 class="section-title">Original Engineering Sign-Off</h2>
+        </div>
+
+        <p>The following is an excerpt from the structural engineering assessment prepared by Moisseiff's team, submitted to the Federal Works Agency on 12 April 1938 in support of the design proposal. This document was approved by the reviewing board.</p>
+
+        <div class="witness-block">
+          <div class="witness-tag">Exhibit A — Engineering Assessment (excerpt)</div>
+          <div class="witness-name">Moisseiff & Lienhard, Consulting Engineers</div>
+          <div class="witness-role">Structural assessment, April 1938</div>
+          <div class="witness-text">
+            <p>"The proposed structure has been analysed using the deflection theory, which accounts for the contribution of the main cables in resisting lateral wind loads. Under this method, the stiffness provided by the cable system — acting through the suspenders — absorbs approximately one-half of any applied static wind pressure, transmitting the remainder to the anchorages and towers.</p>
+            <p>The proposed plate girder section, at 8 feet in depth, provides adequate stiffness for all anticipated design loads. The structure has been found to be safe under wind forces equivalent to a uniform static pressure of 30 lb/ft² applied to the exposed surface area — corresponding to wind velocities well in excess of any recorded at the Narrows.</p>
+            <p>We are satisfied that the proposed design meets or exceeds all applicable safety standards and that no further analysis is required prior to construction approval."</p>
+          </div>
+        </div>
+
+        <div class="callout">
+          <span class="callout-label">Tribunal context</span>
+          The assessment above is technically accurate within its stated assumptions — it correctly applies the deflection theory for static wind loads. The question for this tribunal is not whether the calculation was wrong, but whether the model used was complete.
+        </div>
+      </section>
+
+      <!-- ACTIVITY 4 TRIGGER -->
+      <button class="activity-trigger" id="trigger-4" onclick="openModal(4)">
+        <span class="trigger-num">ACT 04</span>
+        <span class="trigger-content">
+          <span class="trigger-title">Design analysis</span>
+          <span class="trigger-label">What did the solid girder design change?</span>
+        </span>
+        <span class="trigger-arrow">→</span>
+      </button>
+
+      <div class="section-divider">· · ·</div>
+
+      <!-- SECTION 5: WITNESS STATEMENTS -->
+      <section class="section" id="s-witnesses">
+        <div class="section-header">
+          <span class="section-code">§ 05</span>
+          <h2 class="section-title">Expert Witness Statements</h2>
+        </div>
+
+        <p>Two expert witnesses submitted statements to the tribunal. They were given the same incident data. Their conclusions differ substantially.</p>
+
+        <div class="witness-block">
+          <div class="witness-tag">Expert Witness A</div>
+          <div class="witness-name">Dr. Heinrich Brandt</div>
+          <div class="witness-role">Professor of Structural Mechanics, Institute of Technology</div>
+          <div class="witness-text">
+            <p>"The collapse of the Tacoma Narrows Bridge is, at its core, a classic case of mechanical resonance. Wind flowing past any blunt structure generates alternating pressure vortices — a well-understood phenomenon. These vortices create a periodic oscillating force. When the frequency of this forcing approaches the natural frequency of the structure, energy accumulates in the system and amplitude grows without bound.</p>
+            <p>The bridge had a natural frequency of approximately 0.6 Hz. In the conditions recorded on 7 November 1940, the vortex shedding would have produced a forcing function in a similar range. The vertical oscillations seen in the early morning hours are precisely what resonance predicts: steady accumulation of energy, growing amplitude.</p>
+            <p>The subsequent torsional motion was a consequence of this resonant buildup reaching the torsional mode of the structure. The fundamental cause remains resonance. This bridge failed for the same reason a wine glass shatters when a singer hits the right note. The engineers simply did not account for the dynamic loading imposed by wind-induced resonance."</p>
+          </div>
+        </div>
+
+        <div class="witness-block">
+          <div class="witness-tag">Expert Witness B</div>
+          <div class="witness-name">Dr. Amara Osei-Mensah</div>
+          <div class="witness-role">Specialist in Aeroelastic Systems, National Research Laboratory</div>
+          <div class="witness-text">
+            <p>"With respect to my colleague, the resonance explanation is demonstrably incomplete — and the data in this case file is sufficient to show why. For resonance to occur, the external forcing frequency must match or closely approach the natural frequency of the system being excited. The torsional mode of the Tacoma Narrows Bridge oscillated at 0.2 Hz at the time of collapse. The calculated vortex shedding frequency at 42 mph wind speed is approximately 1.0 Hz. These frequencies do not match. The resonance model cannot explain the torsional collapse.</p>
+            <p>What actually occurred is a phenomenon called aeroelastic flutter. When the bridge began to twist — triggered by the asymmetric loading from the slipped stay cable — the angle of the solid plate girder relative to the wind changed. This changed the aerodynamic forces acting on the girder. Critically, the changed aerodynamic forces acted in the same direction as the twist, amplifying it further. More twist produced more aerodynamic force. More force produced more twist. The system entered a self-reinforcing feedback loop — what engineers now call negative damping.</p>
+            <p>This is qualitatively different from resonance. In resonance, an external force drives a system at its natural frequency. In flutter, the structure itself generates the forces that destroy it. The wind supplies energy; the motion of the structure decides how that energy is applied. No external periodic forcing is required — or present."</p>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ACTIVITY 5 TRIGGER -->
+      <button class="activity-trigger" id="trigger-5" onclick="openModal(5)">
+        <span class="trigger-num">ACT 05</span>
+        <span class="trigger-content">
+          <span class="trigger-title">Expert evaluation</span>
+          <span class="trigger-label">Which account does the evidence support?</span>
+        </span>
+        <span class="trigger-arrow">→</span>
+      </button>
+
+      <div class="section-divider">· · ·</div>
+
+      <!-- SECTION 6: POST-COLLAPSE -->
+      <section class="section" id="s-aftermath">
+        <div class="section-header">
+          <span class="section-code">§ 06</span>
+          <h2 class="section-title">Post-Collapse Investigation</h2>
+        </div>
+
+        <p>In March 1941, the Carmody Board — a panel of senior engineers convened by the Federal Works Agency — published its findings. Three conclusions stood out:</p>
+
+        <p><strong>1.</strong> The principal cause of failure was the bridge's extreme flexibility, resulting from its shallow and narrow design.</p>
+        <p><strong>2.</strong> The solid plate girder and deck section acted aerodynamically — generating lift and drag forces that the original model had not accounted for.</p>
+        <p><strong>3.</strong> Aerodynamic forces on large flexible structures were poorly understood. Wind tunnel testing of dynamic models should be required for all future long-span bridge designs.</p>
+
+        <div class="callout">
+          <span class="callout-label">Historical note</span>
+          The Carmody Board declined to assign individual blame. Leon Moisseiff — whose career was effectively ended by the collapse — was exonerated. The board concluded that the entire engineering profession had operated at the limits of available knowledge. The science of aeroelasticity, as applied to large structures, was born in the aftermath of this failure. The replacement bridge, opened in 1950, was built with open-lattice trusses and has stood without incident ever since.
+        </div>
+
+        <p>It later emerged that the PWA field engineer, David L. Glenn, had formally objected to the design and refused to sign off on the bridge before opening. He was overruled by federal officials. He was dismissed from his post approximately two weeks later.</p>
+      </section>
+
+      <!-- ACTIVITY 6 TRIGGER -->
+      <button class="activity-trigger" id="trigger-6" onclick="openModal(6)">
+        <span class="trigger-num">ACT 06</span>
+        <span class="trigger-content">
+          <span class="trigger-title">Final task — Tribunal report</span>
+          <span class="trigger-label">Write your findings for the inquiry tribunal</span>
+        </span>
+        <span class="trigger-arrow">→</span>
+      </button>
+
+    </div><!-- /content-wrap -->
+  </main>
+</div><!-- /page-shell -->
+
+<!-- ═══════════════════════════════════════════
+     MODAL SYSTEM
+════════════════════════════════════════════ -->
+<div class="modal-overlay" id="modal-overlay" onclick="handleOverlayClick(event)">
+  <div class="modal" id="modal-container" role="dialog" aria-modal="true" aria-labelledby="modal-heading">
+    <!-- Populated by JS -->
+  </div>
+</div>
+
+<script>
+// ── STATE ──
+const completed = new Set();
+let currentModal = null;
+let savedAnswers = {};
+
+// ── MODAL CONTENT DEFINITIONS ──
+const modals = {
+  1: {
+    title: 'Record your initial hypothesis',
+    actLabel: 'Activity 01 — Before you read',
+    render: () => `
+      <div class="modal-instruction">
+        <strong>Your task</strong>
+        Before examining any data, write a single sentence explaining why you think the Tacoma Narrows Bridge collapsed on 7 November 1940. What is your initial hypothesis? There are no wrong answers here — this is a record of your starting point.
+      </div>
+      <label style="font-size:13px;font-family:var(--mono);letter-spacing:0.06em;color:var(--ink-mid);">YOUR HYPOTHESIS</label>
+      <textarea class="hypothesis-input" id="act1-input" placeholder="In my view, the bridge collapsed because..." rows="4">${savedAnswers[1] || ''}</textarea>
+      <div class="modal-actions">
+        <button class="btn" onclick="closeModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="completeActivity(1, () => document.getElementById('act1-input').value.trim().length > 10, 'Please write at least a sentence before continuing.')">Record hypothesis →</button>
+      </div>
+    `
+  },
+
+  2: {
+    title: 'Does the frequency data support resonance?',
+    actLabel: 'Activity 02 — Data analysis',
+    render: () => `
+      <div class="modal-instruction">
+        <strong>Your task</strong>
+        The resonance explanation requires that the wind's forcing frequency matches the bridge's natural frequency. Use the data in §03 of the case file to evaluate whether this condition was met. Answer the questions below.
+      </div>
+
+      <div class="calc-grid">
+        <div class="calc-box">
+          <span class="calc-label">Vortex shedding frequency (42 mph wind)</span>
+          <div><span class="calc-value">~1.0</span><span class="calc-unit">Hz</span></div>
+        </div>
+        <div class="calc-box">
+          <span class="calc-label">Torsional oscillation frequency at collapse</span>
+          <div><span class="calc-value">0.2</span><span class="calc-unit">Hz</span></div>
+        </div>
+        <div class="calc-box">
+          <span class="calc-label">Natural vertical frequency of bridge</span>
+          <div><span class="calc-value">~0.6</span><span class="calc-unit">Hz</span></div>
+        </div>
+        <div class="calc-box">
+          <span class="calc-label">Ratio: vortex ÷ torsional</span>
+          <div><span class="calc-value">5×</span><span class="calc-unit">difference</span></div>
+        </div>
+      </div>
+
+      <p style="font-size:14px;color:var(--ink-mid);margin:16px 0 10px;font-family:var(--mono);letter-spacing:0.06em;font-size:11px;text-transform:uppercase;">Q1. For resonance to explain the torsional collapse, what would need to be true about the two frequencies?</p>
+      <div class="radio-group" id="q2-1">
+        <label class="radio-option" onclick="selectRadio(this,'q2-1')">
+          <input type="radio" name="q2-1" value="a"> They would need to be equal or very close to each other.
+        </label>
+        <label class="radio-option" onclick="selectRadio(this,'q2-1')">
+          <input type="radio" name="q2-1" value="b"> The vortex frequency would need to be higher than the torsional frequency.
+        </label>
+        <label class="radio-option" onclick="selectRadio(this,'q2-1')">
+          <input type="radio" name="q2-1" value="c"> The frequencies don't need to match for resonance to occur.
+        </label>
+      </div>
+
+      <p style="font-size:11px;font-family:var(--mono);letter-spacing:0.06em;text-transform:uppercase;color:var(--ink-mid);margin:14px 0 10px;">Q2. Based on the data, does resonance explain the torsional collapse?</p>
+      <div class="radio-group" id="q2-2">
+        <label class="radio-option" onclick="selectRadio(this,'q2-2')">
+          <input type="radio" name="q2-2" value="yes"> Yes — the data is consistent with resonance.
+        </label>
+        <label class="radio-option" onclick="selectRadio(this,'q2-2')">
+          <input type="radio" name="q2-2" value="no"> No — the frequencies don't match, so resonance cannot explain the torsional collapse.
+        </label>
+        <label class="radio-option" onclick="selectRadio(this,'q2-2')">
+          <input type="radio" name="q2-2" value="partial"> Partially — resonance may explain the early vertical oscillation but not the torsional collapse.
+        </label>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn" onclick="closeModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="completeAct2()">Submit answers →</button>
+      </div>
+    `
+  },
+
+  3: {
+    title: 'Two phases — two explanations?',
+    actLabel: 'Activity 03 — Timeline reconstruction',
+    render: () => `
+      <div class="modal-instruction">
+        <strong>Your task</strong>
+        The incident data in §03 reveals two distinct phases of bridge behaviour on the day of collapse. Read the timeline carefully and answer the questions below. You may need to scroll back to §03 before completing this activity.
+      </div>
+
+      <p style="font-size:11px;font-family:var(--mono);letter-spacing:0.06em;text-transform:uppercase;color:var(--ink-mid);margin:14px 0 10px;">Q1. Which of the following best describes Phase 1 (approximately 07:00–10:00)?</p>
+      <div class="radio-group" id="q3-1">
+        <label class="radio-option" onclick="selectRadio(this,'q3-1')">
+          <input type="radio" name="q3-1"> Torsional (twisting) oscillation, growing in amplitude, at 0.2 Hz.
+        </label>
+        <label class="radio-option" onclick="selectRadio(this,'q3-1')">
+          <input type="radio" name="q3-1"> Vertical (up-and-down) oscillation, relatively stable, at ~0.6 Hz.
+        </label>
+        <label class="radio-option" onclick="selectRadio(this,'q3-1')">
+          <input type="radio" name="q3-1"> No oscillation — the bridge was stable until collapse.
+        </label>
+      </div>
+
+      <p style="font-size:11px;font-family:var(--mono);letter-spacing:0.06em;text-transform:uppercase;color:var(--ink-mid);margin:14px 0 10px;">Q2. What event appears to have triggered the transition from Phase 1 to Phase 2?</p>
+      <div class="radio-group" id="q3-2">
+        <label class="radio-option" onclick="selectRadio(this,'q3-2')">
+          <input type="radio" name="q3-2"> The wind speed increased suddenly above 42 mph.
+        </label>
+        <label class="radio-option" onclick="selectRadio(this,'q3-2')">
+          <input type="radio" name="q3-2"> A midspan stay cable slipped, introducing an asymmetric loading condition.
+        </label>
+        <label class="radio-option" onclick="selectRadio(this,'q3-2')">
+          <input type="radio" name="q3-2"> The vortex shedding frequency matched the torsional natural frequency.
+        </label>
+      </div>
+
+      <p style="font-size:11px;font-family:var(--mono);letter-spacing:0.06em;text-transform:uppercase;color:var(--ink-mid);margin:14px 0 10px;">Q3. In your own words: why might Phase 1 and Phase 2 require different physical explanations?</p>
+      <textarea class="hypothesis-input" id="act3-input" placeholder="Phase 1 might be explained by... whereas Phase 2..." rows="4">${savedAnswers[3] || ''}</textarea>
+
+      <div class="modal-actions">
+        <button class="btn" onclick="closeModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="completeAct3()">Submit →</button>
+      </div>
+    `
+  },
+
+  4: {
+    title: 'What did the solid girder design change?',
+    actLabel: 'Activity 04 — Design analysis',
+    render: () => `
+      <div class="modal-instruction">
+        <strong>Your task</strong>
+        The original design called for open-lattice trusses 7.6 m deep. What was built used solid plate girders 2.4 m deep. This was not a construction error — it was a deliberate design choice. Your task is to explain the physical consequences of that choice.
+      </div>
+
+      <p style="font-size:11px;font-family:var(--mono);letter-spacing:0.06em;text-transform:uppercase;color:var(--ink-mid);margin:14px 0 10px;">Q1. Wind hitting an open-lattice truss passes through the gaps. Wind hitting a solid plate girder must go around it. What consequence does this have for the force exerted on the bridge deck?</p>
+      <div class="radio-group" id="q4-1">
+        <label class="radio-option" onclick="selectRadio(this,'q4-1')">
+          <input type="radio" name="q4-1"> The solid girder experiences less total force because it has a smaller cross-section.
+        </label>
+        <label class="radio-option" onclick="selectRadio(this,'q4-1')">
+          <input type="radio" name="q4-1"> The solid girder acts as a sail — presenting a larger effective surface to the wind and creating pressure differences above and below the deck.
+        </label>
+        <label class="radio-option" onclick="selectRadio(this,'q4-1')">
+          <input type="radio" name="q4-1"> There is no significant difference in force — the bridge's overall mass determines the wind response.
+        </label>
+      </div>
+
+      <p style="font-size:11px;font-family:var(--mono);letter-spacing:0.06em;text-transform:uppercase;color:var(--ink-mid);margin:14px 0 10px;">Q2. When the solid-girder deck begins to twist slightly, the angle it presents to the wind changes. This is similar to what happens with an aerofoil (aircraft wing). What effect would this have on the aerodynamic forces acting on the deck?</p>
+      <div class="radio-group" id="q4-2">
+        <label class="radio-option" onclick="selectRadio(this,'q4-2')">
+          <input type="radio" name="q4-2"> The aerodynamic forces would remain constant — angle of attack does not affect lift on a flat structure.
+        </label>
+        <label class="radio-option" onclick="selectRadio(this,'q4-2')">
+          <input type="radio" name="q4-2"> The changed angle would generate a lift force that opposes the twist, acting as a natural correction.
+        </label>
+        <label class="radio-option" onclick="selectRadio(this,'q4-2')">
+          <input type="radio" name="q4-2"> The changed angle would generate a lift force in the same direction as the twist — amplifying it rather than correcting it.
+        </label>
+      </div>
+
+      <p style="font-size:11px;font-family:var(--mono);letter-spacing:0.06em;text-transform:uppercase;color:var(--ink-mid);margin:14px 0 10px;">Q3. In your own words: why would an open-lattice truss have been less vulnerable to this effect?</p>
+      <textarea class="hypothesis-input" id="act4-input" placeholder="An open truss would have been less vulnerable because..." rows="3">${savedAnswers[4] || ''}</textarea>
+
+      <div class="modal-actions">
+        <button class="btn" onclick="closeModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="completeAct4()">Submit →</button>
+      </div>
+    `
+  },
+
+  5: {
+    title: 'Evaluate the expert witnesses',
+    actLabel: 'Activity 05 — Expert evaluation',
+    render: () => `
+      <div class="modal-instruction">
+        <strong>Your task</strong>
+        You have read the statements of Dr. Brandt (resonance) and Dr. Osei-Mensah (aeroelastic flutter) in §05. Both experts had access to the same case file data. Using the evidence, evaluate each argument. Which account is better supported — and where does the weaker argument fail?
+      </div>
+
+      <p style="font-size:11px;font-family:var(--mono);letter-spacing:0.06em;text-transform:uppercase;color:var(--ink-mid);margin:14px 0 10px;">Q1. Dr. Brandt states the vortex shedding frequency "would have been in a similar range" to the natural frequency. Is this supported by the data in §03?</p>
+      <div class="radio-group" id="q5-1">
+        <label class="radio-option" onclick="selectRadio(this,'q5-1')">
+          <input type="radio" name="q5-1"> Yes — the frequencies were close enough to produce resonance.
+        </label>
+        <label class="radio-option" onclick="selectRadio(this,'q5-1')">
+          <input type="radio" name="q5-1"> No — the vortex frequency (1.0 Hz) and torsional frequency (0.2 Hz) differ by a factor of 5.
+        </label>
+        <label class="radio-option" onclick="selectRadio(this,'q5-1')">
+          <input type="radio" name="q5-1"> Partially — the early vertical oscillation (~0.6 Hz) is closer to vortex frequency, but the collapse-phase data contradicts resonance.
+        </label>
+      </div>
+
+      <p style="font-size:11px;font-family:var(--mono);letter-spacing:0.06em;text-transform:uppercase;color:var(--ink-mid);margin:14px 0 10px;">Q2. Dr. Osei-Mensah claims the motion at collapse was "self-reinforcing" — the bridge's own movement generated the forces that amplified the motion. Which piece of evidence best supports this claim?</p>
+      <div class="radio-group" id="q5-2">
+        <label class="radio-option" onclick="selectRadio(this,'q5-2')">
+          <input type="radio" name="q5-2"> The wind speed was steady at 42 mph — it did not increase as the oscillation grew.
+        </label>
+        <label class="radio-option" onclick="selectRadio(this,'q5-2')">
+          <input type="radio" name="q5-2"> The bridge had been oscillating since it was built — so any wind would cause collapse eventually.
+        </label>
+        <label class="radio-option" onclick="selectRadio(this,'q5-2')">
+          <input type="radio" name="q5-2"> The resonance model predicts the bridge should have been stable below its rated wind load.
+        </label>
+      </div>
+
+      <p style="font-size:11px;font-family:var(--mono);letter-spacing:0.06em;text-transform:uppercase;color:var(--ink-mid);margin:14px 0 10px;">Q3. In your own words: identify the strongest piece of data in this case file that the resonance explanation cannot account for.</p>
+      <textarea class="hypothesis-input" id="act5-input" placeholder="The resonance explanation cannot account for..." rows="3">${savedAnswers[5] || ''}</textarea>
+
+      <div class="modal-actions">
+        <button class="btn" onclick="closeModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="completeAct5()">Submit →</button>
+      </div>
+    `
+  },
+
+  6: {
+    title: 'Write your tribunal report',
+    actLabel: 'Activity 06 — Final assessment',
+    render: () => `
+      <div class="modal-instruction">
+        <strong>Your task — Final report</strong>
+        You have examined all the evidence in this case file. Now write your report for the inquiry tribunal. Your report should be approximately 200 words and must address three things:
+        <ol style="margin-top:10px;padding-left:20px;line-height:1.8;">
+          <li>What was the actual mechanism of failure? (Not what was assumed — what the evidence shows.)</li>
+          <li>Where was the engineers' model incomplete? What did it fail to account for?</li>
+          <li>What single design change would you recommend to prevent a recurrence?</li>
+        </ol>
+      </div>
+
+      <label style="font-size:11px;font-family:var(--mono);letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-mid);">Tribunal Report — Case 1940-TN-001</label>
+      <textarea class="tribunal-editor" id="tribunal-text" placeholder="To the inquiry tribunal,&#10;&#10;Having reviewed the evidence in this case file, I find that..." rows="10" oninput="updateWordCount()">${savedAnswers[6] || ''}</textarea>
+      <div class="word-count" id="word-count">0 words</div>
+
+      <div class="modal-actions" style="margin-top:10px;">
+        <button class="btn" onclick="closeModal()">Save & close</button>
+        <button class="btn btn-danger" id="submit-btn" onclick="submitTribunal()">Submit for feedback →</button>
+      </div>
+
+      <div class="feedback-panel" id="feedback-panel">
+        <div class="feedback-header">
+          <span>Tribunal Feedback</span>
+          <span style="opacity:0.4;font-size:9px;margin-left:auto;">AI-generated formative feedback</span>
+        </div>
+        <div class="feedback-body" id="feedback-body">
+          <div class="feedback-loading" id="feedback-loading">
+            <div class="feedback-dot"></div>
+            <div class="feedback-dot"></div>
+            <div class="feedback-dot"></div>
+            <span style="margin-left:6px;font-size:13px;font-family:var(--mono);">Analysing your report...</span>
+          </div>
+          <div id="feedback-content" style="display:none;"></div>
+        </div>
+      </div>
+    `
+  }
+};
+
+// ── MODAL CONTROL ──
+function openModal(num) {
+  currentModal = num;
+  const m = modals[num];
+  const container = document.getElementById('modal-container');
+  container.innerHTML = `
+    <div class="modal-header">
+      <div class="modal-act-label">${m.actLabel}</div>
+      <h2 class="modal-title" id="modal-heading">${m.title}</h2>
+      <button class="modal-close" onclick="closeModal()">✕ Close</button>
+    </div>
+    <div class="modal-body">${m.render()}</div>
+  `;
+  document.getElementById('modal-overlay').classList.add('open');
+
+  // Restore saved text if any
+  if (num === 1 && savedAnswers[1]) {
+    const el = document.getElementById('act1-input');
+    if (el) el.value = savedAnswers[1];
+  }
+  if (num === 6) {
+    updateWordCount();
+    if (savedAnswers['feedback']) {
+      showFeedback(savedAnswers['feedback']);
+    }
+  }
+
+  // Restore radio selections
+  if (savedAnswers['radios'] && savedAnswers['radios'][num]) {
+    const saved = savedAnswers['radios'][num];
+    Object.entries(saved).forEach(([name, val]) => {
+      const inputs = document.querySelectorAll(`input[name="${name}"]`);
+      inputs.forEach(inp => {
+        if (inp.value === val) {
+          inp.checked = true;
+          inp.closest('.radio-option').classList.add('selected');
+        }
+      });
+    });
+  }
+
+  document.getElementById('modal-overlay').addEventListener('keydown', handleEsc);
+}
+
+function closeModal() {
+  // Save any text inputs before closing
+  if (currentModal === 1) {
+    const el = document.getElementById('act1-input');
+    if (el) savedAnswers[1] = el.value;
+  }
+  if (currentModal === 3) {
+    const el = document.getElementById('act3-input');
+    if (el) savedAnswers[3] = el.value;
+  }
+  if (currentModal === 4) {
+    const el = document.getElementById('act4-input');
+    if (el) savedAnswers[4] = el.value;
+  }
+  if (currentModal === 5) {
+    const el = document.getElementById('act5-input');
+    if (el) savedAnswers[5] = el.value;
+  }
+  if (currentModal === 6) {
+    const el = document.getElementById('tribunal-text');
+    if (el) savedAnswers[6] = el.value;
+  }
+  document.getElementById('modal-overlay').classList.remove('open');
+  currentModal = null;
+}
+
+function handleOverlayClick(e) {
+  if (e.target === document.getElementById('modal-overlay')) closeModal();
+}
+
+function handleEsc(e) {
+  if (e.key === 'Escape') closeModal();
+}
+
+// ── RADIO SELECTION ──
+function selectRadio(label, groupId) {
+  document.querySelectorAll(`#${groupId} .radio-option`).forEach(l => l.classList.remove('selected'));
+  label.classList.add('selected');
+  const inp = label.querySelector('input');
+  if (inp) {
+    inp.checked = true;
+    if (!savedAnswers['radios']) savedAnswers['radios'] = {};
+    if (!savedAnswers['radios'][currentModal]) savedAnswers['radios'][currentModal] = {};
+    savedAnswers['radios'][currentModal][inp.name] = inp.value;
+  }
+}
+
+// ── COMPLETION LOGIC ──
+function completeActivity(num, validator, errorMsg) {
+  if (validator && !validator()) {
+    alert(errorMsg || 'Please complete the activity before continuing.');
+    return;
+  }
+  // Save text
+  const textMap = { 1: 'act1-input', 3: 'act3-input', 4: 'act4-input', 5: 'act5-input' };
+  if (textMap[num]) {
+    const el = document.getElementById(textMap[num]);
+    if (el) savedAnswers[num] = el.value;
+  }
+  markComplete(num);
+  closeModal();
+}
+
+function completeAct2() {
+  const q1 = document.querySelector('input[name="q2-1"]:checked');
+  const q2 = document.querySelector('input[name="q2-2"]:checked');
+  if (!q1 || !q2) { alert('Please answer both questions before continuing.'); return; }
+  markComplete(2);
+  const correct1 = q1.value === 'a';
+  const correct2 = q2.value === 'no' || q2.value === 'partial';
+  closeModal();
+  if (correct1 && correct2) {
+    setTimeout(() => alert('✓ Correct analysis. The frequency mismatch is a key piece of evidence against the simple resonance explanation.'), 200);
+  }
+}
+
+function completeAct3() {
+  const q1 = document.querySelector('input[name="q3-1"]:checked');
+  const q2 = document.querySelector('input[name="q3-2"]:checked');
+  const q3 = document.getElementById('act3-input').value.trim();
+  if (!q1 || !q2 || q3.length < 20) { alert('Please answer all three questions before continuing.'); return; }
+  savedAnswers[3] = q3;
+  markComplete(3);
+  closeModal();
+}
+
+function completeAct4() {
+  const q1 = document.querySelector('input[name="q4-1"]:checked');
+  const q2 = document.querySelector('input[name="q4-2"]:checked');
+  const q3 = document.getElementById('act4-input').value.trim();
+  if (!q1 || !q2 || q3.length < 20) { alert('Please answer all three questions before continuing.'); return; }
+  savedAnswers[4] = q3;
+  markComplete(4);
+  closeModal();
+}
+
+function completeAct5() {
+  const q1 = document.querySelector('input[name="q5-1"]:checked');
+  const q2 = document.querySelector('input[name="q5-2"]:checked');
+  const q3 = document.getElementById('act5-input').value.trim();
+  if (!q1 || !q2 || q3.length < 20) { alert('Please answer all questions before continuing.'); return; }
+  savedAnswers[5] = q3;
+  markComplete(5);
+  closeModal();
+}
+
+// ── PROGRESS TRACKING ──
+function markComplete(num) {
+  completed.add(num);
+  const trigger = document.getElementById(`trigger-${num}`);
+  if (trigger) trigger.classList.add('completed');
+  const nav = document.getElementById(`nav-${num}`);
+  if (nav) nav.classList.add('completed');
+  updateProgress();
+}
+
+function updateProgress() {
+  const n = completed.size;
+  document.getElementById('progress-fill').style.width = `${(n / 6) * 100}%`;
+  document.getElementById('progress-text').textContent = `${n} of 6 activities completed`;
+}
+
+// ── WORD COUNT ──
+function updateWordCount() {
+  const el = document.getElementById('tribunal-text');
+  if (!el) return;
+  const words = el.value.trim().split(/\s+/).filter(w => w.length > 0).length;
+  const el2 = document.getElementById('word-count');
+  if (el2) el2.textContent = `${words} words ${words < 150 ? '— aim for ~200' : words > 280 ? '— consider trimming' : '✓'}`;
+}
+
+// ── CLAUDE API FEEDBACK ──
+async function submitTribunal() {
+  const text = document.getElementById('tribunal-text').value.trim();
+  if (text.split(/\s+/).filter(w => w).length < 50) {
+    alert('Please write at least 50 words before submitting for feedback.');
+    return;
+  }
+  savedAnswers[6] = text;
+
+  document.getElementById('submit-btn').disabled = true;
+  document.getElementById('submit-btn').textContent = 'Analysing...';
+
+  const panel = document.getElementById('feedback-panel');
+  const loading = document.getElementById('feedback-loading');
+  const content = document.getElementById('feedback-content');
+
+  panel.classList.add('visible');
+  loading.style.display = 'flex';
+  content.style.display = 'none';
+
+  const systemPrompt = `You are a formative feedback tutor reviewing a secondary physics student's tribunal report on the Tacoma Narrows Bridge collapse (1940). 
+
+The student has been working through an inquiry-based case file. The key learning goals are:
+1. Understand that the collapse was caused by aeroelastic flutter, NOT simple resonance
+2. Recognise that the vortex shedding frequency (~1.0 Hz) did not match the torsional oscillation frequency (0.2 Hz) — a key piece of evidence against resonance
+3. Understand that the solid plate girder design acted as an aerofoil, creating a self-reinforcing feedback loop when twisted
+4. Appreciate that the engineers' model was incomplete — it accounted for static wind loads but not dynamic aeroelastic effects
+5. Understand that this was a failure at the limits of knowledge, not negligence
+
+Provide warm, specific, constructive formative feedback in 3 short paragraphs:
+1. What they got right (be specific)
+2. What is missing, incomplete, or still framed around misconceptions (especially if they still rely on resonance without qualification)
+3. One specific suggestion to strengthen their report
+
+Keep feedback concise (under 180 words total), accessible for a senior secondary student, and encouraging. Do not use markdown headers or bullet points — write in flowing prose. Address the student directly as "you".`;
+
+  try {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        system: systemPrompt,
+        messages: [{ role: 'user', content: `Here is the student's tribunal report:\n\n"${text}"` }]
+      })
+    });
+
+    const data = await response.json();
+    const feedback = data.content?.[0]?.text || 'Unable to retrieve feedback. Please try again.';
+
+    loading.style.display = 'none';
+    content.style.display = 'block';
+    content.innerHTML = `<p style="white-space:pre-wrap;line-height:1.75;">${feedback.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</p>`;
+    savedAnswers['feedback'] = feedback;
+
+    markComplete(6);
+
+  } catch (err) {
+    loading.style.display = 'none';
+    content.style.display = 'block';
+    content.innerHTML = `<p style="color:var(--accent);">Unable to retrieve feedback at this time. Please check your connection and try again.</p>`;
+  }
+
+  document.getElementById('submit-btn').disabled = false;
+  document.getElementById('submit-btn').textContent = 'Resubmit for feedback →';
+}
+
+function showFeedback(feedbackText) {
+  const panel = document.getElementById('feedback-panel');
+  const loading = document.getElementById('feedback-loading');
+  const content = document.getElementById('feedback-content');
+  if (!panel) return;
+  panel.classList.add('visible');
+  loading.style.display = 'none';
+  content.style.display = 'block';
+  content.innerHTML = `<p style="white-space:pre-wrap;line-height:1.75;">${feedbackText.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</p>`;
+}
+</script>
+
+</body>
+</html>
