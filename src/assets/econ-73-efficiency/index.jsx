@@ -1,5 +1,10 @@
 import { useState } from 'react'
 import styles from './index.module.css'
+import {
+  ProductiveEfficiencyDiagram,
+  AllocativeEfficiencyDiagram,
+  DynamicEfficiencyDiagram,
+} from './diagrams.jsx'
 
 // ─────────────────────────────────────────────────────────────────
 // CONSTANTS
@@ -503,6 +508,8 @@ export default function EconEfficiency({ onResponse, onComplete, savedResponses 
             <p>New information from the ministry's research team: Veridian operates two manufacturing facilities running at 94% capacity. Independent analysis suggests their average cost per unit is approximately $12,400 — close to the industry minimum for this type of biologic drug. There is no evidence of significant X-inefficiency in their operations.</p>
           </div>
 
+          <ProductiveEfficiencyDiagram />
+
           <TaskPrompt>
             <p>Apply the concept of productive efficiency to the Nexavir market. Is Veridian productively efficient? What evidence supports your conclusion? Does productive efficiency tell us whether the market is working well for society?</p>
           </TaskPrompt>
@@ -531,6 +538,8 @@ export default function EconEfficiency({ onResponse, onComplete, savedResponses 
             <p>Consider the Nexavir figures directly. Veridian's price is $50,000. Its marginal cost is $180. The gap is $49,820. There are patients — potentially many of them — who would willingly pay more than $180 for treatment but cannot afford $50,000. They are entirely excluded from this market. They receive no treatment. From a purely allocative standpoint, this gap matters enormously.</p>
           </div>
 
+          <AllocativeEfficiencyDiagram />
+
           <TaskPrompt>
             <p>Is the Nexavir market allocatively efficient? Show your reasoning. Who is harmed by allocative inefficiency in this case, and how? What would allocative efficiency actually look like here — and would it be desirable?</p>
           </TaskPrompt>
@@ -557,6 +566,8 @@ export default function EconEfficiency({ onResponse, onComplete, savedResponses 
             <p>The key mechanism is profit as incentive. When firms expect to profit from innovation — from developing new products, new processes, new treatments — they invest. When profit is absent or uncertain, investment falls. This is why patents exist: not to reward firms for past innovation, but to create the expectation of future profit that makes risky, expensive innovation worthwhile in the first place. A patent is a deliberate grant of temporary monopoly power in exchange for the knowledge disclosed and the innovation delivered.</p>
             <p>This creates a fundamental dilemma. Allocative efficiency requires P = MC. But for a pharmaceutical firm that has spent $2.1 billion developing a drug, pricing at marginal cost means pricing at $180 — a price that recovers production costs but recovers nothing of the research investment. No rational firm invests $2.1 billion in drug development if it expects to earn $180 per unit. The patent and the high price are not incidental to the drug's existence. They may be constitutive of it. You cannot simultaneously have a drug priced at marginal cost and the incentive system that produced the drug. Something has to give.</p>
           </div>
+
+          <DynamicEfficiencyDiagram />
 
           <TaskPrompt>
             <p>Having now considered all three efficiency concepts, write a paragraph that an economist might write summarising the efficiency of the Nexavir market. Your summary must address all three concepts and acknowledge where they conflict with each other.</p>
