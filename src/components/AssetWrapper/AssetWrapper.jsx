@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { supabase } from '../../lib/supabase.js'
 import { getSessionId } from '../../lib/session.js'
+import ClassJoinPrompt from '../ClassJoinPrompt/ClassJoinPrompt.jsx'
 import styles from './AssetWrapper.module.css'
 
 // Vite statically analyses this glob at build time to bundle all asset modules.
@@ -121,6 +122,8 @@ export default function AssetWrapper({ assetId }) {
 
   return (
     <div className={styles.wrapper}>
+      <ClassJoinPrompt sessionId={sessionId} />
+
       {completion && (
         <div className={styles.completionBanner} role="status">
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">

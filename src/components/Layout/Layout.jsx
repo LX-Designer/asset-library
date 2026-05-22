@@ -1,8 +1,16 @@
 import { Link, Outlet } from 'react-router-dom'
 import styles from './Layout.module.css'
 import SpeechInput from '../SpeechInput/SpeechInput.jsx'
+import { useAuth } from '../../contexts/AuthContext.jsx'
+import { supabase } from '../../lib/supabase.js'
 
 export default function Layout() {
+  const { user } = useAuth()
+
+  function handleSignOut() {
+    supabase.auth.signOut()
+  }
+
   return (
     <div className={styles.root}>
       <header className={styles.header}>
@@ -15,6 +23,14 @@ export default function Layout() {
           </Link>
           <nav className={styles.nav} aria-label="Main">
             <Link to="/" className={styles.navLink}>Portfolio</Link>
+            {user ? (
+              <>
+                <Link to="/dashboard" className={styles.navLink}>Dashboard</Link>
+                <button onClick={handleSignOut} className={styles.navLink}>Sign out</button>
+              </>
+            ) : (
+              <Link to="/login" className={styles.navLink}>Teacher login</Link>
+            )}
           </nav>
         </div>
       </header>
