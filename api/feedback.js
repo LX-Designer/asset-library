@@ -35,7 +35,7 @@ Provide warm, specific, constructive formative feedback in exactly 3 short parag
 Keep total feedback under 180 words. Write in flowing prose — no headers, no bullet points. Address the student directly as "you". Tone: warm, collegiate, encouraging.`
 
   try {
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`
 
     const upstream = await fetch(url, {
       method: 'POST',
