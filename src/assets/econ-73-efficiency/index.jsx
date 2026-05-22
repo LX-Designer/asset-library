@@ -259,7 +259,7 @@ function FeedbackPanel({ loading, error, text }) {
   )
 }
 
-function ExpandableDoc({ title, children }) {
+function ExpandableDoc({ title, docRef, children }) {
   const [open, setOpen] = useState(false)
   return (
     <div className={styles.docItem}>
@@ -268,8 +268,11 @@ function ExpandableDoc({ title, children }) {
         onClick={() => setOpen(o => !o)}
         aria-expanded={open}
       >
-        {title}
-        <span className={`${styles.docChevron} ${open ? styles.docChevronOpen : ''}`}>▼</span>
+        <span>{title}</span>
+        <div className={styles.docToggleRight}>
+          {docRef && <span className={styles.docRef}>{docRef}</span>}
+          <span className={styles.docToggleIcon}>{open ? '−' : '+'}</span>
+        </div>
       </button>
       {open && <div className={styles.docContent}>{children}</div>}
     </div>
@@ -453,7 +456,7 @@ export default function EconEfficiency({ onResponse, onComplete, savedResponses 
           </div>
 
           <div className={styles.docList}>
-            <ExpandableDoc title="Ministry Market Data Summary">
+            <ExpandableDoc title="Ministry Market Data Summary" docRef="MIN/MKT/001">
               <table className={styles.dataTable}>
                 <thead>
                   <tr><th>Metric</th><th>Value</th></tr>
@@ -468,12 +471,12 @@ export default function EconEfficiency({ onResponse, onComplete, savedResponses 
               </table>
             </ExpandableDoc>
 
-            <ExpandableDoc title="Letter from the Harmon Syndrome Patient Alliance">
+            <ExpandableDoc title="Letter from the Harmon Syndrome Patient Alliance" docRef="HSA/PAT/002">
               <p>We write to you as advocates for the 8,400 individuals and families living with Harmon Syndrome worldwide. The current pricing of Nexavir — at $50,000 per annual course — has effectively created a two-tier system of survival: one for those fortunate enough to live in countries with funded reimbursement schemes or the personal wealth to afford treatment, and another for the majority of patients in low- and middle-income countries who have no access whatsoever.</p>
               <p>We do not dispute that pharmaceutical development requires significant investment. What we dispute is the principle that human need should be subordinate to ability to pay. A market that clears at a price that excludes the majority of patients who need the drug is not, in any meaningful sense, a market that is working. It is a market that is rationing survival. We urge the ministry to consider what it means for a market to "function correctly" when the outcome is preventable death.</p>
             </ExpandableDoc>
 
-            <ExpandableDoc title="Statement from the CEO of Veridian Pharmaceuticals">
+            <ExpandableDoc title="Statement from the CEO of Veridian Pharmaceuticals" docRef="VER/CEO/003">
               <p>Veridian Pharmaceuticals invested $2.1 billion over twelve years to bring Nexavir to patients. That investment was made in full knowledge that the market for Harmon Syndrome treatments is small — fewer than 9,000 patients globally. The only reason that investment was made at all is that our patent allows us to price the drug in a way that makes the R&D economically viable. Without that pricing freedom, Nexavir would not exist. Patients who receive treatment today do so because of the incentive structures that our critics wish to dismantle.</p>
               <p>Veridian reinvests 40% of its revenues into further R&D, including ongoing research into rare and neglected diseases. The alternative to our model is not cheaper drugs — it is no drugs. Governments and advocacy groups are entitled to their views, but any policy that undermines the commercial logic of pharmaceutical innovation will have consequences for patients that extend far beyond Nexavir. We would ask the ministry to weigh those consequences carefully before pursuing regulatory intervention.</p>
             </ExpandableDoc>
