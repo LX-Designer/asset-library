@@ -11,7 +11,7 @@ export default function Layout() {
             <svg className={styles.logoMark} width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
               <path d="M9 1L17 9L9 17L1 9Z" fill="#2563EB"/>
             </svg>
-            <span className={styles.logoText}>LearnLab</span>
+            <span className={styles.logoText}>InquiryLabs</span>
           </Link>
           <nav className={styles.nav} aria-label="Main">
             <Link to="/" className={styles.navLink}>Portfolio</Link>
@@ -25,7 +25,7 @@ export default function Layout() {
 
       <footer className={styles.footer}>
         <div className={styles.footerInner}>
-          <span className={styles.footerText}>LearnLab — built for learning.</span>
+          <span className={styles.footerText}>InquiryLabs — built for learning.</span>
         </div>
       </footer>
       <SpeechInput />

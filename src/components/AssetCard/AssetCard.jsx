@@ -32,7 +32,7 @@ export default function AssetCard({ asset }) {
 
       <div className={styles.footer}>
         <Link to={`/asset/${asset.id}`} className={styles.cta}>
-          Start asset
+          Start lab
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
             <path d="M2.5 7H11.5M7.5 3L11.5 7L7.5 11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>

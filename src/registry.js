@@ -1,6 +1,7 @@
 import placeholderQuizMeta  from './assets/placeholder-quiz/meta.js'
 import tacomaNarrowsMeta   from './assets/tacoma-narrows/meta.js'
 import econ73Meta          from './assets/econ-73-efficiency/meta.js'
+import koreanWarMeta       from './assets/korean-war/meta.js'
 
 /**
  * Central registry of all learning assets.
@@ -10,6 +11,7 @@ export const assetRegistry = [
   placeholderQuizMeta,
   tacomaNarrowsMeta,
   econ73Meta,
+  koreanWarMeta,
 ]
 
 export function getAssetMeta(id) {

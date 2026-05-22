@@ -10,8 +10,8 @@ export default function AssetPage() {
   if (!meta) {
     return (
       <div className={styles.notFound}>
-        <h1 className={styles.notFoundTitle}>Asset not found</h1>
-        <p className={styles.notFoundText}>There's no asset with the ID "{assetId}".</p>
+        <h1 className={styles.notFoundTitle}>Lab not found</h1>
+        <p className={styles.notFoundText}>There's no lab with the ID "{assetId}".</p>
         <Link to="/" className={styles.notFoundLink}>← Back to portfolio</Link>
       </div>
     )
