@@ -10,7 +10,7 @@ export default function Home() {
           <span className={styles.eyebrow}>Interactive learning</span>
           <h1 className={styles.title}>InquiryLabs</h1>
           <p className={styles.subtitle}>
-            Interactive labs for discovery, reasoning, and genuine learning across all areas of study.
+            Interactive scenarios that foster deep learning through situated practice, problem-solving, and genuine inquiry.
           </p>
         </div>
       </section>
