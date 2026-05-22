@@ -34,6 +34,7 @@ export default async function handler(req, res) {
     const data = await upstream.json()
 
     if (!upstream.ok) {
+      console.error('Gemini error', upstream.status, JSON.stringify(data))
       return res.status(upstream.status).json({ error: data.error?.message ?? 'Upstream API error' })
     }
 
