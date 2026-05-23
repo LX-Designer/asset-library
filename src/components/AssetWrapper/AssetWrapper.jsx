@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { supabase } from '../../lib/supabase.js'
 import { getSessionId } from '../../lib/session.js'
+import { getAssetMeta } from '../../registry.js'
 import ClassJoinPrompt from '../ClassJoinPrompt/ClassJoinPrompt.jsx'
 import styles from './AssetWrapper.module.css'
 
@@ -17,7 +18,9 @@ export default function AssetWrapper({ assetId }) {
   const [resetting, setResetting]           = useState(false)
   const [showConfirm, setShowConfirm]       = useState(false)
 
-  const sessionId = getSessionId()
+  const sessionId    = getSessionId()
+  const meta         = getAssetMeta(assetId)
+  const isFullLayout = meta?.layout === 'full'
 
   // Dynamically load the asset's React component
   useEffect(() => {
@@ -139,6 +142,23 @@ export default function AssetWrapper({ assetId }) {
     )
   }
 
+  // Full-layout assets manage their own complete UI (nav, sidebar, etc.)
+  // Skip the wrapper sidebar and pass onReset so the asset can wire it up itself.
+  if (isFullLayout) {
+    return (
+      <AssetComponent
+        key={resetKey}
+        onResponse={onResponse}
+        onComplete={onComplete}
+        savedResponses={savedResponses}
+        isCompleted={!!completion}
+        completion={completion}
+        onReset={handleReset}
+      />
+    )
+  }
+
+  // Non-full-layout assets: render inside the wrapper sidebar layout
   return (
     <div className={styles.layout}>
       <aside className={styles.sidebar}>

@@ -40,6 +40,11 @@ const CSS = `
     color: var(--ink);
     min-height: 100vh;
     overflow-x: hidden;
+    transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .kw-shell.sidebar-open { margin-left: 260px; }
+  @media (max-width: 700px) {
+    .kw-shell.sidebar-open { margin-left: 0; }
   }
 
   .kw-shell::before {
@@ -53,48 +58,157 @@ const CSS = `
   .display { font-family: 'Playfair Display', Georgia, serif; }
   .typewriter { font-family: 'Special Elite', monospace; }
 
-  .nav {
-    position: fixed; top: var(--nav-height, 60px); left: 0; right: 0; z-index: 100;
+  /* ─── SIDEBAR ─── */
+  .kw-burger {
+    position: fixed;
+    left: 12px;
+    top: calc(var(--nav-height, 60px) + 12px);
+    z-index: 102;
+    width: 36px;
+    height: 36px;
     background: var(--ink);
-    border-bottom: 2px solid var(--gold);
-    display: flex; align-items: center; gap: 0;
-    padding: 0 2rem;
-    height: 52px;
-    overflow-x: auto;
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    line-height: 1;
+    padding: 0;
+    transition: background 0.2s;
   }
-  .nav-title {
+  .kw-burger:hover { background: rgba(184,134,11,0.12); }
+
+  .kw-sidebar {
+    position: fixed;
+    left: 0;
+    top: var(--nav-height, 60px);
+    bottom: 0;
+    width: 260px;
+    background: var(--ink);
+    border-right: 2px solid var(--gold);
+    z-index: 101;
+    display: flex;
+    flex-direction: column;
+    transform: translateX(-260px);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+  .kw-sidebar.open { transform: translateX(0); }
+
+  .kw-sidebar-header {
+    padding: 0.85rem 1rem 0.85rem 3.5rem;
+    border-bottom: 1px solid rgba(184,134,11,0.3);
+    flex-shrink: 0;
+  }
+  .kw-sidebar-title {
     font-family: 'Playfair Display', serif;
     font-size: 0.8rem;
     color: var(--gold);
     letter-spacing: 0.15em;
     text-transform: uppercase;
-    white-space: nowrap;
-    margin-right: 2rem;
-    padding-right: 2rem;
-    border-right: 1px solid var(--olive);
+    line-height: 1.4;
   }
-  .nav-btn {
-    background: none; border: none; cursor: pointer;
+
+  .kw-sidebar-nav {
+    flex: 1;
+    padding: 0.5rem 0;
+    overflow-y: auto;
+  }
+  .kw-sidebar-btn {
+    display: block;
+    width: 100%;
+    background: none;
+    border: none;
+    border-left: 3px solid transparent;
+    cursor: pointer;
     font-family: 'Special Elite', monospace;
     font-size: 0.68rem;
     color: var(--paper-dark);
-    padding: 0 1rem;
-    height: 52px;
+    padding: 0.75rem 1rem 0.75rem 1.25rem;
     letter-spacing: 0.08em;
-    white-space: nowrap;
-    transition: color 0.2s, background 0.2s;
-    position: relative;
     text-transform: uppercase;
+    text-align: left;
+    white-space: nowrap;
+    transition: color 0.2s, background 0.2s, border-color 0.2s;
   }
-  .nav-btn:hover { color: var(--paper); }
-  .nav-btn.active {
+  .kw-sidebar-btn:hover {
+    color: var(--paper);
+    background: rgba(184,134,11,0.06);
+  }
+  .kw-sidebar-btn.active {
     color: var(--gold);
+    border-left-color: var(--gold);
     background: rgba(184,134,11,0.08);
   }
-  .nav-btn.active::after {
-    content: '';
-    position: absolute; bottom: 0; left: 0; right: 0;
-    height: 2px; background: var(--gold);
+  .kw-sidebar-divider {
+    height: 1px;
+    background: rgba(184,134,11,0.25);
+    margin: 0.4rem 1rem;
+  }
+
+  .kw-sidebar-footer {
+    flex-shrink: 0;
+    padding: 0.75rem 1rem 1.25rem;
+    border-top: 1px solid rgba(184,134,11,0.25);
+  }
+  .kw-reset-btn {
+    display: block;
+    width: 100%;
+    background: none;
+    border: 1px solid rgba(139,26,26,0.5);
+    cursor: pointer;
+    font-family: 'Special Elite', monospace;
+    font-size: 0.65rem;
+    color: var(--red);
+    padding: 0.6rem 1rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-align: left;
+    transition: background 0.2s, border-color 0.2s;
+  }
+  .kw-reset-btn:hover {
+    background: rgba(139,26,26,0.12);
+    border-color: var(--red-lt);
+  }
+
+  .kw-confirm-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(26,18,8,0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 200;
+  }
+  .kw-confirm-dialog {
+    background: var(--paper);
+    border: 1px solid var(--paper-dark);
+    padding: 2rem;
+    max-width: 360px;
+    width: calc(100% - 3rem);
+    box-shadow: 8px 8px 0 var(--paper-dark);
+  }
+  .kw-confirm-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem;
+    color: var(--ink);
+    margin-bottom: 0.75rem;
+  }
+  .kw-confirm-text {
+    font-family: 'Libre Baskerville', serif;
+    font-size: 0.88rem;
+    color: var(--olive);
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+    font-style: italic;
+  }
+  .kw-confirm-actions {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: flex-end;
   }
 
   .hero {
@@ -234,7 +348,7 @@ const CSS = `
     padding: 0;
     border-top: 6px solid var(--ink);
     position: relative;
-    scroll-margin-top: calc(var(--nav-height, 60px) + 52px);
+    scroll-margin-top: var(--nav-height, 60px);
   }
   .chapter-opener {
     min-height: 55vh;
@@ -930,7 +1044,7 @@ const CSS = `
   .chapter-sep { height: 2rem; background: var(--ink); }
 
   .progress-bar {
-    position: fixed; top: calc(var(--nav-height, 60px) + 52px); left: 0; right: 0; z-index: 99;
+    position: fixed; top: var(--nav-height, 60px); left: 0; right: 0; z-index: 99;
     height: 3px;
     background: rgba(255,255,255,0.05);
   }
@@ -988,21 +1102,75 @@ const EVIDENCE_CARDS = [
 
 // ─── COMPONENTS ──────────────────────────────────────────────────────────────
 
-function NavBar({ activeChapter, onNav }) {
+function Sidebar({ activeChapter, onNav, onReset, isOpen, onToggle }) {
+  const [showConfirm, setShowConfirm] = useState(false);
+
+  function handleReset() {
+    setShowConfirm(false);
+    if (onReset) onReset();
+  }
+
   return (
-    <nav className="nav">
-      <div className="nav-title">Korea 1950–53</div>
-      <button className="nav-btn" onClick={() => onNav("outcomes")}>Learning Outcomes</button>
-      {CHAPTERS.map(c => (
-        <button
-          key={c.id}
-          className={`nav-btn ${activeChapter === c.id ? "active" : ""}`}
-          onClick={() => onNav(c.id)}
+    <>
+      <button
+        className="kw-burger"
+        onClick={onToggle}
+        aria-label={isOpen ? "Close menu" : "Open menu"}
+        aria-expanded={isOpen}
+      >
+        {isOpen ? "✕" : "☰"}
+      </button>
+
+      <nav className={`kw-sidebar${isOpen ? " open" : ""}`} aria-label="Chapter navigation">
+        <div className="kw-sidebar-header">
+          <div className="kw-sidebar-title">Korea<br />1950–53</div>
+        </div>
+
+        <div className="kw-sidebar-nav">
+          <button className="kw-sidebar-btn" onClick={() => onNav("outcomes")}>
+            Learning Outcomes
+          </button>
+          <div className="kw-sidebar-divider" />
+          {CHAPTERS.map(c => (
+            <button
+              key={c.id}
+              className={`kw-sidebar-btn${activeChapter === c.id ? " active" : ""}`}
+              onClick={() => onNav(c.id)}
+            >
+              {c.num}. {c.short}
+            </button>
+          ))}
+        </div>
+
+        <div className="kw-sidebar-footer">
+          <button className="kw-reset-btn" onClick={() => setShowConfirm(true)}>
+            ⟳ Start again
+          </button>
+        </div>
+      </nav>
+
+      {showConfirm && (
+        <div
+          className="kw-confirm-overlay"
+          onClick={e => { if (e.target === e.currentTarget) setShowConfirm(false); }}
         >
-          {c.num}. {c.short}
-        </button>
-      ))}
-    </nav>
+          <div className="kw-confirm-dialog">
+            <div className="kw-confirm-title">Start again?</div>
+            <p className="kw-confirm-text">
+              All your progress on this inquiry will be permanently deleted.
+            </p>
+            <div className="kw-confirm-actions">
+              <button className="task-btn secondary" onClick={() => setShowConfirm(false)}>
+                Cancel
+              </button>
+              <button className="task-btn primary" onClick={handleReset}>
+                Yes, start again
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 }
 
@@ -1669,10 +1837,11 @@ function Timeline() {
 }
 
 // ─── MAIN COMPONENT ───────────────────────────────────────────────────────────
-export default function KoreanWarInquiry({ onResponse, onComplete, savedResponses, isCompleted }) {
-  const [responses, setResponses] = useState(() => savedResponses ?? {});
-  const [progress, setProgress]   = useState(0);
+export default function KoreanWarInquiry({ onResponse, onComplete, savedResponses, isCompleted, onReset }) {
+  const [responses, setResponses]         = useState(() => savedResponses ?? {});
+  const [progress, setProgress]           = useState(0);
   const [activeChapter, setActiveChapter] = useState(null);
+  const [sidebarOpen, setSidebarOpen]     = useState(false);
 
   function onUpdate(chapter, data) {
     setResponses(prev => {
@@ -1723,9 +1892,15 @@ export default function KoreanWarInquiry({ onResponse, onComplete, savedResponse
   }, []);
 
   return (
-    <div className="kw-shell">
+    <div className={`kw-shell${sidebarOpen ? " sidebar-open" : ""}`}>
       <style>{CSS}</style>
-      <NavBar activeChapter={activeChapter} onNav={navTo} />
+      <Sidebar
+        activeChapter={activeChapter}
+        onNav={navTo}
+        onReset={onReset}
+        isOpen={sidebarOpen}
+        onToggle={() => setSidebarOpen(o => !o)}
+      />
       <ProgressBar progress={progress} />
 
       <section className="hero">
