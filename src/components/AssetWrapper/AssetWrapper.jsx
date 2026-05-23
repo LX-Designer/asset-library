@@ -13,6 +13,9 @@ export default function AssetWrapper({ assetId }) {
   const [savedResponses, setSavedResponses] = useState({})
   const [completion, setCompletion]         = useState(null)
   const [dataLoading, setDataLoading]       = useState(true)
+  const [resetKey, setResetKey]             = useState(0)
+  const [resetting, setResetting]           = useState(false)
+  const [showConfirm, setShowConfirm]       = useState(false)
 
   const sessionId = getSessionId()
 
@@ -108,6 +111,22 @@ export default function AssetWrapper({ assetId }) {
     return { data, error }
   }, [assetId, sessionId])
 
+  // Deletes all saved progress for this session + asset and re-mounts the component
+  async function handleReset() {
+    setResetting(true)
+    await Promise.all([
+      supabase.from('asset_responses').delete()
+        .eq('session_id', sessionId).eq('asset_id', assetId),
+      supabase.from('asset_completions').delete()
+        .eq('session_id', sessionId).eq('asset_id', assetId),
+    ])
+    setSavedResponses({})
+    setCompletion(null)
+    setResetKey(k => k + 1)
+    setShowConfirm(false)
+    setResetting(false)
+  }
+
   if (loadError) {
     return <div className={styles.error}>{loadError}</div>
   }
@@ -121,27 +140,79 @@ export default function AssetWrapper({ assetId }) {
   }
 
   return (
-    <div className={styles.wrapper}>
-      <ClassJoinPrompt sessionId={sessionId} />
-
-      {completion && (
-        <div className={styles.completionBanner} role="status">
+    <div className={styles.layout}>
+      <aside className={styles.sidebar}>
+        <button
+          className={styles.resetBtn}
+          onClick={() => setShowConfirm(true)}
+          disabled={resetting}
+          title="Start again"
+          aria-label="Start again"
+        >
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-            <circle cx="8" cy="8" r="7" stroke="currentColor" strokeWidth="1.5"/>
-            <path d="M5 8L7 10L11 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            <path d="M2.5 8a5.5 5.5 0 1 1 1.1 3.3" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
+            <path d="M2.5 5v3h3" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
-          Completed
-          {completion.score != null && <span className={styles.score}>{completion.score}%</span>}
+          <span className={styles.resetBtnLabel}>Start again</span>
+        </button>
+      </aside>
+
+      <div className={styles.assetArea}>
+        <ClassJoinPrompt sessionId={sessionId} />
+
+        {completion && (
+          <div className={styles.completionBanner} role="status">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <circle cx="8" cy="8" r="7" stroke="currentColor" strokeWidth="1.5"/>
+              <path d="M5 8L7 10L11 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+            Completed
+            {completion.score != null && <span className={styles.score}>{completion.score}%</span>}
+          </div>
+        )}
+
+        <AssetComponent
+          key={resetKey}
+          onResponse={onResponse}
+          onComplete={onComplete}
+          savedResponses={savedResponses}
+          isCompleted={!!completion}
+          completion={completion}
+        />
+      </div>
+
+      {showConfirm && (
+        <div
+          className={styles.confirmOverlay}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="reset-confirm-title"
+          onClick={e => { if (e.target === e.currentTarget) setShowConfirm(false) }}
+        >
+          <div className={styles.confirmDialog}>
+            <p id="reset-confirm-title" className={styles.confirmTitle}>Start again?</p>
+            <p className={styles.confirmText}>
+              All your progress on this activity will be permanently deleted.
+            </p>
+            <div className={styles.confirmActions}>
+              <button
+                className={styles.confirmCancel}
+                onClick={() => setShowConfirm(false)}
+                disabled={resetting}
+              >
+                Cancel
+              </button>
+              <button
+                className={styles.confirmYes}
+                onClick={handleReset}
+                disabled={resetting}
+              >
+                {resetting ? 'Resetting…' : 'Yes, start again'}
+              </button>
+            </div>
+          </div>
         </div>
       )}
-
-      <AssetComponent
-        onResponse={onResponse}
-        onComplete={onComplete}
-        savedResponses={savedResponses}
-        isCompleted={!!completion}
-        completion={completion}
-      />
     </div>
   )
 }
