@@ -9,25 +9,35 @@ const DIFFICULTY_VARIANT = {
 
 export default function AssetCard({ asset }) {
   const variant = DIFFICULTY_VARIANT[asset.difficulty] ?? 'blue'
+  const tags = asset.tags ?? []
+  const timeLabel = asset.estimatedMinutes ? `${asset.estimatedMinutes} min` : (asset.estimatedTime ?? null)
 
   return (
     <article className={styles.card}>
       <div className={styles.body}>
         <div className={styles.topRow}>
-          <span className={`${styles.difficulty} ${styles[`difficulty--${variant}`]}`}>
-            {asset.difficulty}
-          </span>
-          <span className={styles.time}>{asset.estimatedMinutes} min</span>
+          {asset.difficulty && (
+            <span className={`${styles.difficulty} ${styles[`difficulty--${variant}`]}`}>
+              {asset.difficulty}
+            </span>
+          )}
+          {asset.inquiryType && (
+            <span className={styles.difficulty}>{asset.inquiryType}</span>
+          )}
+          {timeLabel && <span className={styles.time}>{timeLabel}</span>}
         </div>
 
         <h3 className={styles.title}>{asset.title}</h3>
-        <p className={styles.description}>{asset.description}</p>
+        {asset.description && <p className={styles.description}>{asset.description}</p>}
+        {asset.audience && !asset.description && <p className={styles.description}>{asset.audience}</p>}
 
-        <div className={styles.tags}>
-          {asset.tags.map(tag => (
-            <span key={tag} className={styles.tag}>{tag}</span>
-          ))}
-        </div>
+        {tags.length > 0 && (
+          <div className={styles.tags}>
+            {tags.map(tag => (
+              <span key={tag} className={styles.tag}>{tag}</span>
+            ))}
+          </div>
+        )}
       </div>
 
       <div className={styles.footer}>
