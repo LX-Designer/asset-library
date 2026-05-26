@@ -177,6 +177,76 @@ const TOC_ITEMS = [
   { id: 'closing', label: 'Closing Reflection' },
 ];
 
+// ── TaskBox ───────────────────────────────────────────────────────────────────
+
+function TaskBox({ taskKey, resp, draft, loading, isLocked, isCompleted, onDraftChange, onSubmit, styles: s }) {
+  const meta  = TASK_META[taskKey];
+  const filed = Boolean(resp?.submitted);
+
+  const wordCount = draft.trim().split(/\s+/).filter(Boolean).length;
+  const canSubmit = !isLocked && !filed && !loading && !isCompleted && wordCount >= meta.minWords;
+
+  const boxCls  = [s.taskBox,  filed ? s.filed : '', isLocked ? s.locked : ''].join(' ');
+  const stampCls = [s.taskStamp, filed ? s.filed : '', isLocked ? s.locked : ''].join(' ');
+
+  return (
+    <div className={boxCls} id={`task-${taskKey}`}>
+      <div className={s.taskStampWrap}>
+        <span className={stampCls}>
+          {filed ? '✓ FILED' : isLocked ? 'SEALED' : meta.stamp}
+        </span>
+      </div>
+      <div className={s.taskHeader}>
+        <h3 className={s.taskH3}>{meta.h3}</h3>
+        <p className={s.taskDesc}>{meta.desc}</p>
+      </div>
+
+      {isLocked ? (
+        <p className={s.lockedMessage}>File the preceding response to open this task.</p>
+      ) : filed ? (
+        <>
+          <div className={s.filedResponse}>
+            <div className={s.filedLabel}>YOUR RESPONSE — FILED</div>
+            <div className={s.filedText}>{resp.response}</div>
+          </div>
+          <FeedbackPanel loading={false} text={resp.feedback} />
+        </>
+      ) : (
+        <div className={s.taskBody}>
+          <p className={s.taskPrompt}>{meta.prompt}</p>
+          {meta.subPrompts && (
+            <ul className={s.taskSubPrompts}>
+              {meta.subPrompts.map((p, i) => <li key={i}>{p}</li>)}
+            </ul>
+          )}
+          <textarea
+            className={s.taskTextarea}
+            placeholder={meta.placeholder}
+            value={draft}
+            onChange={e => onDraftChange(taskKey, e.target.value)}
+            rows={7}
+            disabled={isCompleted}
+            aria-label={meta.h3}
+          />
+          <div className={s.taskActions}>
+            <button className={s.submitBtn} onClick={() => onSubmit(taskKey)} disabled={!canSubmit}>
+              FILE RESPONSE
+            </button>
+            {loading && (
+              <div className={s.feedbackLoading} aria-live="polite">
+                Reading your analysis…
+                <div className={s.loadingDots} aria-hidden="true">
+                  <span /><span /><span />
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ── Sub-components ────────────────────────────────────────────────────────────
 
 function ModalOverlay({ modalId, onClose }) {
@@ -403,85 +473,28 @@ export default function KoreanWarAsset({
     setTocOpen(false);
   };
 
-  // ── TaskBox (inline, uses closure over state) ─────────────────────────────
-  function TaskBox({ taskKey }) {
-    const meta    = TASK_META[taskKey];
-    const resp    = responses[taskKey];
-    const filed   = Boolean(resp?.submitted);
-    const loading = Boolean(feedbackLoading[taskKey]);
-    const draft   = drafts[taskKey] || '';
+  const handleDraftChange = useCallback((taskKey, value) => {
+    setDrafts(d => ({ ...d, [taskKey]: value }));
+  }, []);
 
-    // Sequential lock: previous task must be submitted
+  // helper to compute per-task lock state for the module-level TaskBox
+  const taskBoxProps = useCallback((taskKey) => {
     const idx = TASK_SEQUENCE.indexOf(taskKey);
     const prevLocked = idx > 0 && !isSubmitted(TASK_SEQUENCE[idx - 1]);
-
-    // Section gates for tasks with extra requirements
-    const sectionGated = taskKey === 'task5' ? !sec.task5Block : taskKey === 'closing' ? !sec.closing : false;
-    const isLocked = !isCompleted && (prevLocked || sectionGated);
-
-    const wordCount = draft.trim().split(/\s+/).filter(Boolean).length;
-    const canSubmit = !isLocked && !filed && !loading && !isCompleted && wordCount >= meta.minWords;
-
-    const boxCls = [styles.taskBox, filed ? styles.filed : '', isLocked ? styles.locked : ''].join(' ');
-    const stampCls = [styles.taskStamp, filed ? styles.filed : '', isLocked ? styles.locked : ''].join(' ');
-
-    return (
-      <div className={boxCls} id={`task-${taskKey}`}>
-        <div className={styles.taskStampWrap}>
-          <span className={stampCls}>
-            {filed ? '✓ FILED' : isLocked ? 'SEALED' : meta.stamp}
-          </span>
-        </div>
-        <div className={styles.taskHeader}>
-          <h3 className={styles.taskH3}>{meta.h3}</h3>
-          <p className={styles.taskDesc}>{meta.desc}</p>
-        </div>
-
-        {isLocked ? (
-          <p className={styles.lockedMessage}>File the preceding response to open this task.</p>
-        ) : filed ? (
-          <>
-            <div className={styles.filedResponse}>
-              <div className={styles.filedLabel}>YOUR RESPONSE — FILED</div>
-              <div className={styles.filedText}>{resp.response}</div>
-            </div>
-            <FeedbackPanel loading={false} text={resp.feedback} />
-          </>
-        ) : (
-          <div className={styles.taskBody}>
-            <p className={styles.taskPrompt}>{meta.prompt}</p>
-            {meta.subPrompts && (
-              <ul className={styles.taskSubPrompts}>
-                {meta.subPrompts.map((p, i) => <li key={i}>{p}</li>)}
-              </ul>
-            )}
-            <textarea
-              className={styles.taskTextarea}
-              placeholder={meta.placeholder}
-              value={draft}
-              onChange={e => setDrafts(d => ({ ...d, [taskKey]: e.target.value }))}
-              rows={7}
-              disabled={isCompleted}
-              aria-label={meta.h3}
-            />
-            <div className={styles.taskActions}>
-              <button className={styles.submitBtn} onClick={() => handleSubmit(taskKey)} disabled={!canSubmit}>
-                FILE RESPONSE
-              </button>
-              {loading && (
-                <div className={styles.feedbackLoading} aria-live="polite">
-                  Reading your analysis…
-                  <div className={styles.loadingDots} aria-hidden="true">
-                    <span /><span /><span />
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-      </div>
-    );
-  }
+    const sectionGated = taskKey === 'task5' ? !sec.task5Block
+      : taskKey === 'closing' ? !sec.closing : false;
+    return {
+      taskKey,
+      resp:        responses[taskKey],
+      draft:       drafts[taskKey] || '',
+      loading:     Boolean(feedbackLoading[taskKey]),
+      isLocked:    !isCompleted && (prevLocked || sectionGated),
+      isCompleted,
+      onDraftChange: handleDraftChange,
+      onSubmit:    handleSubmit,
+      styles,
+    };
+  }, [responses, drafts, feedbackLoading, isCompleted, isSubmitted, sec, handleDraftChange, handleSubmit]);
 
   // ── Render ────────────────────────────────────────────────────────────────
   return (
@@ -597,7 +610,7 @@ export default function KoreanWarAsset({
             </p>
           )}
 
-          <TaskBox taskKey="opening" />
+          <TaskBox {...taskBoxProps('opening')} />
         </div>
       </section>
 
@@ -695,7 +708,7 @@ export default function KoreanWarAsset({
               If you knew little about the war before this point, ask why. Was it because the war was "forgotten" everywhere? Or because some places and institutions remembered it very differently from others?
             </p>
 
-            <TaskBox taskKey="task1" />
+            <TaskBox {...taskBoxProps('task1')} />
 
             {/* Reveal 1 */}
             {reveals.reveal1 && (
@@ -767,7 +780,7 @@ export default function KoreanWarAsset({
               <SourceTabBtn label="South Korean official voice, 25 June 1950 — M2" modalId="M2" unlocked={modalUnlocked.M2} lockedMsg="File Task 2 to open this record." onOpen={setActiveModal} />
             </div>
 
-            <TaskBox taskKey="task2" />
+            <TaskBox {...taskBoxProps('task2')} />
 
             {/* Reveal 2 */}
             {reveals.reveal2 && (
@@ -810,7 +823,7 @@ export default function KoreanWarAsset({
               ))}
             </div>
 
-            <TaskBox taskKey="task3" />
+            <TaskBox {...taskBoxProps('task3')} />
           </div>
         </>
       )}
@@ -850,7 +863,7 @@ export default function KoreanWarAsset({
               </table>
             </div>
 
-            <TaskBox taskKey="task4" />
+            <TaskBox {...taskBoxProps('task4')} />
 
             {/* Reveal 3 */}
             {reveals.reveal3 && (
@@ -876,7 +889,7 @@ export default function KoreanWarAsset({
                   </div>
                 )}
 
-                <TaskBox taskKey="task5" />
+                <TaskBox {...taskBoxProps('task5')} />
 
                 {/* Reveal 4 */}
                 {reveals.reveal4 && (
@@ -928,7 +941,7 @@ export default function KoreanWarAsset({
               </div>
             )}
 
-            <TaskBox taskKey="closing" />
+            <TaskBox {...taskBoxProps('closing')} />
 
             {isSubmitted('closing') && (
               <p className={styles.reflectionNote} style={{ marginTop: '2rem' }}>
