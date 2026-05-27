@@ -2,36 +2,12 @@ import { Link } from 'react-router-dom'
 import styles from './FastFashion.module.css'
 
 const ACTIVITIES = [
-  {
-    num: 1,
-    name: 'Prior Thinking',
-    signpost: 'Attempt before reading the case file.',
-  },
-  {
-    num: 2,
-    name: 'Apply the Efficiency Criteria',
-    signpost: 'Read §01 and §02 first.',
-  },
-  {
-    num: 3,
-    name: 'Identify the Discontinuity',
-    signpost: 'Read §03 and §04 first.',
-  },
-  {
-    num: 4,
-    name: 'Analyse the Mechanism',
-    signpost: 'Read §05 and §06 first.',
-  },
-  {
-    num: 5,
-    name: 'Evaluate the Expert Positions',
-    signpost: 'Read §07 first.',
-  },
-  {
-    num: 6,
-    name: 'Culminating Task',
-    signpost: 'Review all sections and your earlier responses.',
-  },
+  { num: 1, name: 'Prior Thinking',               signpost: 'Before reading the case file.' },
+  { num: 2, name: 'Apply the Efficiency Criteria', signpost: 'Read sections 01 and 02 first.' },
+  { num: 3, name: 'Identify the Discontinuity',    signpost: 'Read sections 03 and 04 first.' },
+  { num: 4, name: 'Analyse the Mechanism',          signpost: 'Read sections 05 and 06 first.' },
+  { num: 5, name: 'Evaluate the Expert Positions',  signpost: 'Read section 07 first.' },
+  { num: 6, name: 'Culminating Task',               signpost: 'Draw on all sections.' },
 ]
 
 export default function Sidebar({ completedSet, isCompleted, onOpenModal, onReset }) {
@@ -46,23 +22,21 @@ export default function Sidebar({ completedSet, isCompleted, onOpenModal, onRese
         <div className={styles.completionBanner}>
           <span className={styles.completionBannerTitle}>Assessment complete</span>
           <p className={styles.completionBannerText}>
-            You have submitted all six activities. All responses remain accessible.
+            All six tasks submitted. Responses remain accessible.
           </p>
           {onReset && (
-            <button className={styles.resetBtn} onClick={onReset}>
-              Start again
-            </button>
+            <button className={styles.resetBtn} onClick={onReset}>Start again</button>
           )}
         </div>
       )}
 
       <div className={styles.sidebarHeader}>
-        <div className={styles.caseStamp}>Inquiry Labs — Consumer Markets Division</div>
+        <div className={styles.caseStamp}>Inquiry Labs · Consumer Markets Division</div>
         <div className={styles.sidebarTitle}>The Price of Fast Fashion</div>
-        <div className={styles.sidebarSub}>CTF-2024-0047-INT · Internal Review</div>
+        <div className={styles.sidebarSub}>CTF-2024-0047-INT</div>
       </div>
 
-      <div className={styles.progressLabel}>Inquiry Activities</div>
+      <div className={styles.progressLabel}>Inquiry Tasks</div>
 
       <div className={styles.activityList}>
         {ACTIVITIES.map(({ num, name, signpost }) => {
@@ -73,13 +47,13 @@ export default function Sidebar({ completedSet, isCompleted, onOpenModal, onRese
               className={`${styles.actItem} ${done ? styles.actItemDone : ''}`}
               onClick={() => onOpenModal(num)}
             >
-              <div className={`${styles.actNum} ${done ? styles.actNumDone : ''}`}>
-                {done ? '✓' : num}
-              </div>
-              <div className={styles.actText}>
+              <span className={`${styles.actNum} ${done ? styles.actNumDone : ''}`}>
+                {done ? '✓' : `0${num}`}
+              </span>
+              <span className={styles.actText}>
                 <span className={styles.actName}>{name}</span>
                 <span className={styles.actSignpost}>{signpost}</span>
-              </div>
+              </span>
             </button>
           )
         })}
@@ -89,9 +63,7 @@ export default function Sidebar({ completedSet, isCompleted, onOpenModal, onRese
         <div className={styles.progressBarWrap}>
           <div className={styles.progressBarFill} style={{ width: `${fillPct}%` }} />
         </div>
-        <div className={styles.progressText}>
-          {count} / 6 activities completed
-        </div>
+        <div className={styles.progressText}>{count} / 6 tasks complete</div>
       </div>
     </aside>
   )

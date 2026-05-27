@@ -23,9 +23,10 @@ export default function FastFashion({ onResponse, onComplete, savedResponses, is
     return a
   })
 
+  // modalId: number 1–6 (activity) | string 'rana-plaza'|'expert-a'|'expert-b' (doc view)
   const [activeModal, setActiveModal] = useState(null)
 
-  const openModal  = useCallback((num) => setActiveModal(num), [])
+  const openModal  = useCallback((id) => setActiveModal(id), [])
   const closeModal = useCallback(() => setActiveModal(null), [])
 
   const handleSubmit = useCallback(async (actNum, answerData) => {
@@ -39,7 +40,6 @@ export default function FastFashion({ onResponse, onComplete, savedResponses, is
     setActiveModal(null)
   }, [onResponse, onComplete])
 
-  // Act 6: saves and shows feedback but keeps modal open
   const handleComplete = useCallback(async (actNum, answerData) => {
     await onResponse(`act-${actNum}`, answerData)
     setAnswers(prev => ({ ...prev, [actNum]: answerData }))
@@ -59,15 +59,12 @@ export default function FastFashion({ onResponse, onComplete, savedResponses, is
         onReset={onReset}
       />
       <main className={styles.main}>
-        <CaseDocument
-          completedSet={completedSet}
-          onOpenModal={openModal}
-        />
+        <CaseDocument onOpenModal={openModal} />
       </main>
 
       {activeModal !== null && (
         <Modal
-          actNum={activeModal}
+          modalId={activeModal}
           answers={answers}
           completedSet={completedSet}
           onClose={closeModal}
