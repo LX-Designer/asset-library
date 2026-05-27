@@ -3,6 +3,7 @@ import tacomaNarrowsMeta   from './assets/tacoma-narrows/meta.js'
 import econ73Meta          from './assets/econ-73-efficiency/meta.js'
 import koreanWarMeta       from './assets/korean-war/meta.js'
 import fastFashionMeta     from './assets/fast-fashion/meta.js'
+import rivergateOverflowMeta from './assets/econ-73-rivergate/meta.js'
 
 /**
  * Central registry of all learning assets.
@@ -14,6 +15,7 @@ export const assetRegistry = [
   econ73Meta,
   koreanWarMeta,
   fastFashionMeta,
+  rivergateOverflowMeta,
 ]
 
 export function getAssetMeta(id) {
