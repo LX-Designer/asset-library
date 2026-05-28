@@ -30,7 +30,7 @@
   color: var(--ink);
   min-height: 100dvh;
   position: relative;
-  overflow-x: hidden;
+  overflow-x: clip;
   background:
     radial-gradient(circle at 8% 0%, rgba(201, 54, 45, 0.09), transparent 22rem),
     linear-gradient(rgba(255, 249, 236, 0.92), rgba(255, 249, 236, 0.92)),
@@ -474,11 +474,11 @@
 .root :global(.tracker-row label) { font-weight: 750; color: var(--econ-navy); font-size: 0.9rem; }
 .root :global(.tag-badge) {
   display: inline-flex; align-items: center; white-space: nowrap;
-  border-radius: 999px; padding: 0.4rem 0.48rem;
-  font-size: 0.73rem; font-weight: 850;
+  border-radius: 0; padding: 0.3rem 0.55rem;
+  font-size: 0.68rem; font-weight: 900;
   background: var(--soft); color: var(--muted);
   border: 1.5px solid var(--econ-navy);
-  text-transform: uppercase; letter-spacing: 0.04em;
+  text-transform: uppercase; letter-spacing: 0.06em;
 }
 .root :global(.tag-badge:not(.efficiency):not(.failure):not(.both):not(.unclear)) { display: none; }
 .root :global(.tag-badge.efficiency) { color: #2f6e4d; background: #e3f1e8; border-color: #abefc6; }
@@ -702,7 +702,8 @@
 }
 .root :global(.task-num) {
   width: 1.75rem; height: 1.75rem; min-width: 1.75rem; min-height: 1.75rem;
-  border-radius: 50%; background: #edf5f4; color: var(--econ-red-dark);
+  border-radius: 2px; background: var(--econ-red); color: white;
+  border: 1.5px solid var(--econ-red-dark);
   display: grid; place-items: center; font-weight: 900; font-size: 0.86rem;
   justify-self: center; align-self: start; margin-top: 0.16rem;
   line-height: 1;
@@ -892,11 +893,13 @@
 .root :global(.relevance-section) { background: rgba(255,255,255,0.82); border-top: 4px solid var(--econ-red); margin: 1rem 0 1.1rem; }
 .root :global(.relevance-section h3) { font-family: Georgia, "Times New Roman", serif; font-size: 1.02rem; color: var(--econ-navy); }
 .root :global(.relevance-section p) { color: var(--muted); }
-.root :global(.relevance-table) { width: 100%; border-collapse: collapse; font-size: 0.92rem; background: white; border: 1px solid rgba(16,22,45,0.16); }
+.root :global(.relevance-table) { width: 100%; border-collapse: collapse; font-size: 0.9rem; border: 2px solid var(--econ-navy); box-shadow: 5px 5px 0 rgba(16,22,45,0.07); }
 .root :global(.relevance-table th),
-.root :global(.relevance-table td) { text-align: left; vertical-align: top; padding: 0.72rem 0.75rem; border-bottom: 1px solid rgba(16,22,45,0.12); }
-.root :global(.relevance-table th) { background: var(--econ-navy); color: #fff8ea; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; }
-.root :global(.relevance-table tr:nth-child(even) td) { background: rgba(246,238,219,0.38); }
+.root :global(.relevance-table td) { text-align: left; vertical-align: top; padding: 0.72rem 0.82rem; border: 1.5px solid rgba(16,22,45,0.24); }
+.root :global(.relevance-table th) { background: var(--econ-navy); color: #fff8ea; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; border-color: rgba(255,255,255,0.12); }
+.root :global(.relevance-table td) { background: #fffdf6; }
+.root :global(.relevance-table td:nth-child(2)) { background: rgba(199,225,218,0.32); font-weight: 750; color: var(--econ-navy); }
+.root :global(.relevance-table td:nth-child(3)) { color: var(--muted); font-size: 0.88rem; }
 
 /* ---------- 22. Compare / reasoning disclosure ---------- */
 .root :global(.compare-box) {

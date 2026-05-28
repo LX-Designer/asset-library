@@ -584,8 +584,8 @@ export default function EconDossier({ onResponse, onComplete, savedResponses, on
         <section className="hero" aria-labelledby="hero-title">
           <div className="hero-content">
             <span className="eyebrow">Policy briefing file</span>
-            <h1 id="hero-title">When does a market outcome look efficient, and when does it fail?</h1>
-            <p>You are an economic adviser reviewing the market for electric scooters in a growing city. Use the case file as your evidence base, open the Economist's Toolkit when you need the concepts, and build a recommendation for the city government.</p>
+            <h1 id="hero-title">When is a market working efficiently, and when does it fail?</h1>
+            <p>You are an economic adviser reviewing the market for electric scooters in a growing city. Use the case file as your evidence base, open the Economist's Toolkit when you need to check and apply economic concepts, and make a recommendation to the city government about how to deal with the growing use of electric scooters.</p>
           </div>
         </section>
 
@@ -602,10 +602,10 @@ export default function EconDossier({ onResponse, onComplete, savedResponses, on
             <div className="section-kicker">Case overview</div>
             <h2>The electric scooter market</h2>
             <p className="lead">
-              Electric scooters have grown quickly in Metroville, a fictional city with crowded inner suburbs, busy public transport hubs, and rising demand for short-distance travel. Consumers value scooters because they are cheap, flexible, and available through phone apps. Firms compete to place scooters where demand is highest.
+              Electric scooters have grown quickly in Metroville, a fictional city with crowded inner suburbs, busy public transport hubs, and rising demand for short-distance travel. Consumers value scooters because they are cheap, flexible, and available through phone apps. Companies compete to place scooters where demand is highest.
             </p>
             <div className="callout">
-              <strong>Your role:</strong> Decide whether the market outcome is efficient, whether there is evidence of market failure, and whether government intervention could be justified.
+              <strong>Your role:</strong> Decide whether the market is working efficiently, whether there is evidence of market failure, and whether government intervention could be justified.
             </div>
             <div className="card-grid" style={{display:'grid',gridTemplateColumns:'repeat(2,minmax(0,1fr))',gap:'0.8rem',marginTop:'1rem'}}>
               <article className="concept-card example">
@@ -624,17 +624,17 @@ export default function EconDossier({ onResponse, onComplete, savedResponses, on
             <div className="section-kicker">How to use this investigation</div>
             <h2>Case file first. Concepts when you need them.</h2>
             <p className="lead">
-              The main page is the <strong>Market Case File</strong>: it contains the scooter market, data, stakeholders, policy options, and evidence. The economics theory sits separately in the <strong>Economist's Toolkit</strong>, because those concepts are the tools you use to analyse the case — not the case evidence itself.
+              The main page is the <strong>Market Case File</strong>: it contains the scooter market, data, stakeholders, policy options, and evidence. The economics theory sits separately in the <strong>Economist's Toolkit</strong>. Use the economic concepts contained within to analyse the case and support your recommendations.
             </p>
             <div className="stage-map" aria-label="Investigation stages">
-              <article className="stage-card"><span className="stage-label">Stage 1</span><h3>Build the evidence base</h3><p>Identify what suggests the market may be working efficiently, then tag evidence that complicates that claim.</p></article>
-              <article className="stage-card"><span className="stage-label">Stage 2</span><h3>Test the efficiency claim</h3><p>Use productive, allocative, and dynamic efficiency to decide how far the market appears efficient.</p></article>
+              <article className="stage-card"><span className="stage-label">Stage 1</span><h3>Build the evidence base</h3><p>Identify the evidence that suggests the market may be working efficiently or failing. Tag the evidence cards accordingly to support your claims.</p></article>
+              <article className="stage-card"><span className="stage-label">Stage 2</span><h3>Test the efficiency claim</h3><p>Use the concepts of productive, allocative, and dynamic efficiency to decide if the market appears efficient.</p></article>
               <article className="stage-card"><span className="stage-label">Stage 3</span><h3>Test for possible market failure</h3><p>Examine whether the market creates inefficient resource allocation, then identify the strongest possible causes.</p></article>
-              <article className="stage-card"><span className="stage-label">Stage 4</span><h3>Weigh policy trade-offs</h3><p>Use Pareto optimality and dynamic efficiency to judge whether intervention could improve outcomes and who may lose.</p></article>
+              <article className="stage-card"><span className="stage-label">Stage 4</span><h3>Weigh policy trade-offs</h3><p>Use the concepts of Pareto optimality and dynamic efficiency to judge whether intervention could improve outcomes, and if so, who will win and who may lose.</p></article>
               <article className="stage-card"><span className="stage-label">Stage 5</span><h3>Make and reflect on your judgement</h3><p>Write a recommendation, then reflect on how the evidence and concepts shaped your reasoning.</p></article>
             </div>
             <div className="callout">
-              <strong>Tip:</strong> Use the Contents, Tasks, and Toolkit buttons to jump through the case file, open tasks, or access the Economist's Toolkit without losing your place.
+              <strong>Tip:</strong> Use the investigative tools contained on the <strong>Contents</strong>,<strong> Tasks</strong>, and <strong>Toolkit</strong> tabs to jump through the case file, open tasks, or access the Economist's Toolkit without losing your place.
             </div>
           </section>
 
@@ -722,7 +722,7 @@ export default function EconDossier({ onResponse, onComplete, savedResponses, on
                 <p className="figure-context">The red section shows the share of scooter rentals controlled by the two largest firms.</p>
                 <div className="donut-wrap" role="img" aria-label="Donut chart: top two firms control 82% of rentals.">
                   <div className="donut">
-                    <div className="donut-inner">82%<br/><span style={{fontSize:'0.72rem',color:'#64748b'}}>top 2 firms</span></div>
+                    <div className="donut-inner">82%<br/></div>
                   </div>
                   <div>
                     <p className="donut-explainer">Two firms control <strong>82%</strong> of scooter rentals. Smaller providers struggle to access popular parking and charging locations.</p>
@@ -791,10 +791,7 @@ export default function EconDossier({ onResponse, onComplete, savedResponses, on
                 return (
                   <article key={item.id} id={item.id} className="evidence-card">
                     <div className="evidence-header">
-                      <div>
-                        <div className="evidence-title">{item.title}</div>
-                      </div>
-                      {selected && <span className={`tag-badge ${tag.className}`}>{tag.label}</span>}
+                      <div className="evidence-title">{item.title}</div>
                     </div>
                     <p>{item.text}</p>
                     <div className="tracker-row">
@@ -808,6 +805,7 @@ export default function EconDossier({ onResponse, onComplete, savedResponses, on
                           <option key={opt.value} value={opt.value}>{opt.label}</option>
                         ))}
                       </select>
+                      {selected && <span className={`tag-badge ${tag.className}`}>{tag.label}</span>}
                     </div>
                   </article>
                 )
