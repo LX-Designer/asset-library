@@ -112,6 +112,14 @@
     .btn.ghost { background: transparent; box-shadow: none; }
     .btn.small { padding: 0.5rem 0.7rem; font-size: 0.9rem; }
     .btn.warning { border-color: #fed7aa; color: #9a3412; background: #fff7ed; }
+    .btn.danger { border-color: #fca5a5; color: var(--danger); background: var(--danger-soft); }
+    .btn.danger:hover, .btn.danger:focus-visible { background: #fecaca; border-color: var(--danger); outline-color: rgba(180,35,24,0.18); }
+    .reset-confirm-backdrop { position: fixed; inset: 0; background: rgba(15,23,42,0.62); z-index: 200; display: none; place-items: center; padding: 1rem; }
+    .reset-confirm-backdrop.open { display: grid; }
+    .reset-confirm-dialog { background: white; border-radius: 18px; padding: 1.5rem; max-width: 420px; width: 100%; box-shadow: 0 24px 60px rgba(0,0,0,0.28); }
+    .reset-confirm-dialog h3 { margin: 0 0 0.5rem; }
+    .reset-confirm-dialog p { color: var(--muted); margin: 0 0 1.25rem; font-size: 0.95rem; }
+    .reset-confirm-actions { display: flex; gap: 0.6rem; justify-content: flex-end; }
 
     .layout {
       max-width: var(--max);
@@ -367,6 +375,9 @@
     .modal-header h2 { margin: 0; font-size: clamp(1.25rem, 3vw, 1.7rem); }
     .modal-close { color: white; background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.24); border-radius: 999px; width: 2.35rem; height: 2.35rem; font-size: 1.45rem; line-height: 1; display: grid; place-items: center; }
     .modal-body { padding: 1rem; display: grid; gap: 1rem; }
+    .unsaved-warning { background: var(--warn-soft); border-bottom: 1px solid #f3c96b; padding: 0.7rem 1rem; display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; font-size: 0.9rem; color: var(--warn); font-weight: 650; }
+    .unsaved-warning span { flex: 1; min-width: 180px; }
+    .unsaved-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
     .modal-card { border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 1rem; background: #fff; }
     .modal-card.prompt { background: var(--blue-soft); border-color: #b2ccff; }
     .modal-card.task { background: var(--accent-soft); border-color: #99e4d9; }
@@ -1691,6 +1702,7 @@
       font-size: 0.83rem;
       line-height: 1.34;
     }
+    @media (max-width: 480px) { .intro-extra { display: none; } }
 
     .contents-list,
     .investigation-tab-panel .task-list,
@@ -5043,7 +5055,7 @@
 
     <div class="investigation-panel-body">
       <section class="investigation-tab-panel active" id="panel-contents" role="tabpanel" aria-labelledby="tab-contents" data-tab-panel="contents">
-        <p class="panel-intro">Jump to a section of the market case file. The case file is the evidence base for your recommendation.</p>
+        <p class="panel-intro">Jump to a section of the market case file.<span class="intro-extra"> The case file is the evidence base for your recommendation.</span></p>
         <nav class="contents-list" aria-label="Case file contents">
           <button class="contents-button" type="button" data-panel-scroll-target="case-overview"><span>Case overview</span><span aria-hidden="true">›</span></button>
           <button class="contents-button" type="button" data-panel-scroll-target="how-to-investigate"><span>How to investigate</span><span aria-hidden="true">›</span></button>
@@ -5065,7 +5077,7 @@
       </section>
 
       <section class="investigation-tab-panel" id="panel-toolkit" role="tabpanel" aria-labelledby="tab-toolkit" data-tab-panel="toolkit" hidden>
-        <p class="panel-intro">These are analytical tools, not extra case evidence. Use them to interpret the market data, stakeholder views, policy options, and evidence cards.</p>
+        <p class="panel-intro">These are analytical tools, not extra case evidence.<span class="intro-extra"> Use them to interpret the market data, stakeholder views, policy options, and evidence cards.</span></p>
         <div class="toolkit-list sidebar-list" id="toolkitList" aria-label="Economics concept tools"></div>
       </section>
     </div>
@@ -5130,7 +5142,7 @@
           <article class="stage-card"><span class="stage-label">Stage 5</span><h3>Make and reflect on your judgement</h3><p>Write a recommendation, then reflect on how the evidence and concepts shaped your reasoning.</p></article>
         </div>
         <div class="callout">
-          <strong>Tip:</strong> Use the left-side Contents, Tasks, and Toolkit tabs to jump through the case file, open tasks, or access the Economist’s Toolkit without losing your place.
+          <strong>Tip:</strong> Use the Contents, Tasks, and Toolkit buttons to jump through the case file, open tasks, or access the Economist’s Toolkit without losing your place.
         </div>
       </section>
       <section id="market-data" class="dossier-section">
@@ -5153,7 +5165,7 @@
           <article class="metric-card">
             <span class="concept-label">Council cost</span>
             <div class="metric-value">$1.2m</div>
-            <p>Estimated annual public cost for scooter clearing, pavement repair, and safety management.</p>
+            <p>Estimated annual public cost for scooter clearing, pavement repair, and safety management. Note: Visual 2 uses a separate per-ride estimate of social cost, calculated differently.</p>
           </article>
         </div>
 
@@ -5161,7 +5173,7 @@
           <article class="visual-card">
             <span class="figure-label">Demand visual</span>
             <h3>Visual 1: daily scooter trips, Year 1 to Year 3</h3>
-            <p class="figure-context">This is the visual version of the demand growth card above: daily rides rose from <strong>8,000</strong> to <strong>26,000</strong> over two years.</p>
+            <p class="figure-context">Daily rides rose from <strong>8,000</strong> to <strong>26,000</strong> over two years. Rapid growth may signal consumer value — but consider whether it also amplifies external costs and pressure on public space.</p>
             <div class="svg-wrap" role="img" aria-label="Line chart showing daily scooter trips rising from 8,000 in Year 1 to 26,000 in Year 3 over a two-year period.">
               <svg viewBox="0 0 360 210" aria-hidden="true">
                 <line x1="54" y1="158" x2="320" y2="158" stroke="#94a3b8" stroke-width="2"/>
@@ -5280,7 +5292,7 @@
           <article class="policy-card">
             <h3>Option D: Firm permits and fleet caps</h3>
             <p>Limit the number of operators or scooters allowed in the city. This could reduce clutter, but it might weaken competition and reduce availability.</p>
-            <ul class="tradeoff-list" aria-label="Trade-off notes"><li>Stricter control</li><li>Risk of weaker competition</li><li>Possible clutter reduction</li></ul>
+            <ul class="tradeoff-list" aria-label="Trade-off notes"><li>Stricter control</li><li>Risk of weaker competition</li><li>Possible clutter reduction</li><li>Concentration risk: fewer permitted operators may acquire monopoly power — connect to your market concentration evidence</li></ul>
           </article>
         </div>
       </section>
@@ -5295,18 +5307,18 @@
       <section id="final-decision" class="dossier-section">
         <div class="section-kicker">Adviser briefing</div>
         <h2>Final decision area</h2>
-        <p class="lead">Form a final judgement: <strong>Does the evidence suggest market efficiency, market failure, or a mixed outcome?</strong></p>
+        <p class="lead">Return to your opening brief: <strong>is the market efficient, failing, or producing a mixed outcome — and is intervention justified?</strong> Use your saved notes and tagged evidence below to build your recommendation.</p>
         <div class="callout">Your final recommendation should use productive efficiency, allocative efficiency, Pareto optimality, dynamic efficiency, and market failure. It should refer to evidence from the dossier and explain whether government intervention is justified.</div>
         <div class="outcome-checkpoint" aria-labelledby="checkpoint-title">
           <h3 id="checkpoint-title">Before you advise the city: check your economic reasoning</h3>
           <p>Use this as a self-check before writing your final recommendation. The strongest responses do not just name concepts; they use each concept to interpret the case evidence.</p>
           <div class="checkpoint-grid">
-            <label class="checkpoint-card"><input type="checkbox"><span><strong>Productive efficiency</strong>Have you explained whether firms are producing at the lowest possible average cost?</span></label>
-            <label class="checkpoint-card"><input type="checkbox"><span><strong>Allocative efficiency</strong>Have you considered whether price reflects marginal cost, or whether MSB equals MSC once social costs are included?</span></label>
-            <label class="checkpoint-card"><input type="checkbox"><span><strong>Pareto optimality</strong>Have you identified who may be better off and who may be worse off under a policy change?</span></label>
-            <label class="checkpoint-card"><input type="checkbox"><span><strong>Dynamic efficiency</strong>Have you considered innovation, investment, and long-run improvement?</span></label>
-            <label class="checkpoint-card"><input type="checkbox"><span><strong>Market failure</strong>Have you explained why the free market may allocate resources inefficiently?</span></label>
-            <label class="checkpoint-card"><input type="checkbox"><span><strong>Reasons for failure</strong>Have you identified specific causes, rather than just saying “market failure”?</span></label>
+            <label class=”checkpoint-card”><input type=”checkbox” data-cp=”productive”><span><strong>Productive efficiency</strong>Have you explained whether firms are producing at the lowest possible average cost?</span></label>
+            <label class=”checkpoint-card”><input type=”checkbox” data-cp=”allocative”><span><strong>Allocative efficiency</strong>Have you considered whether price reflects marginal cost, or whether MSB equals MSC once social costs are included?</span></label>
+            <label class=”checkpoint-card”><input type=”checkbox” data-cp=”pareto”><span><strong>Pareto optimality</strong>Have you identified who may be better off and who may be worse off under a policy change?</span></label>
+            <label class=”checkpoint-card”><input type=”checkbox” data-cp=”dynamic”><span><strong>Dynamic efficiency</strong>Have you considered innovation, investment, and long-run improvement?</span></label>
+            <label class=”checkpoint-card”><input type=”checkbox” data-cp=”failure”><span><strong>Market failure</strong>Have you explained why the free market may allocate resources inefficiently?</span></label>
+            <label class=”checkpoint-card”><input type=”checkbox” data-cp=”reasons”><span><strong>Reasons for failure</strong>Have you identified specific causes, rather than just saying “market failure”?</span></label>
           </div>
         </div>
         <div id="finalSynthesis" class="synthesis-grid" aria-live="polite"></div>
@@ -5320,8 +5332,19 @@
   </div>
 
   <footer>
-    <p>Single-file interactive learning asset. The case file, Economist’s Toolkit, saved responses, and evidence tags run locally in this browser using localStorage.</p>
+    <p>A Level Economics 7.3 — Market Investigation Dossier. Your investigation notes are saved automatically and will be here when you return.</p>
   </footer>
+
+  <div class="reset-confirm-backdrop" id="resetConfirmBackdrop">
+    <div class="reset-confirm-dialog" role="alertdialog" aria-modal="true" aria-labelledby="resetConfirmTitle">
+      <h3 id="resetConfirmTitle">Reset all saved work?</h3>
+      <p>This will clear all saved task responses and evidence tags. This cannot be undone.</p>
+      <div class="reset-confirm-actions">
+        <button class="btn" type="button" id="resetCancel">Cancel</button>
+        <button class="btn danger" type="button" id="resetConfirmBtn">Reset everything</button>
+      </div>
+    </div>
+  </div>
 
   <div class="modal-backdrop" id="modalBackdrop">
     <section class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" aria-describedby="modalPrompt">
@@ -5331,6 +5354,13 @@
           <h2 id="modalTitle">Task title</h2>
         </div>
         <button class="modal-close" type="button" id="modalClose" aria-label="Close dialog">×</button>
+      </div>
+      <div class="unsaved-warning" id="unsavedWarning" hidden>
+        <span>You have unsaved text — your response will be lost.</span>
+        <div class="unsaved-actions">
+          <button class="btn" type="button" id="unsavedDiscard">Discard and close</button>
+          <button class="btn primary" type="button" id="unsavedSave">Save and close</button>
+        </div>
       </div>
       <div class="modal-body" id="modalBody"></div>
     </section>
@@ -5355,7 +5385,8 @@
   <script>
     const STORAGE_KEYS = {
       responses: "econ73_market_dossier_responses_v3",
-      evidence: "econ73_market_dossier_evidence_v3"
+      evidence: "econ73_market_dossier_evidence_v3",
+      checkpoints: "econ73_market_dossier_checkpoints_v1"
     };
 
     const evidenceItems = [
@@ -5478,7 +5509,7 @@
         prompt: "The scooter companies argue that the market is efficient because consumers are choosing the service, prices are low, and firms are competing to lower costs. What evidence in the case file supports this argument?",
         task: "Identify evidence that could suggest productive efficiency, allocative efficiency, or dynamic efficiency. Use the data snapshot and evidence cards, then add one caution about why this evidence may not prove full market efficiency.",
         responseGuide: "Aim for 4–6 sentences. Organise your answer by efficiency type, then add one caution about why the evidence may not prove full social efficiency.",
-        answerFrame: ["Productive efficiency evidence: ...", "Allocative efficiency evidence: ...", "Dynamic efficiency evidence: ...", "Caution / limitation: ..."],
+        answerFrame: ["Evidence I found: ...", "The type of efficiency this relates to, and why: ...", "One limitation of this argument: ..."],
         tools: ["productive", "allocative", "dynamic"],
         review: [
           { label: "Market data", target: "market-data" },
@@ -5554,8 +5585,8 @@
         stage: "Stage 5 · Make and reflect on your judgement",
         prompt: "The city government asks for your advice. Is the market working efficiently, partly failing, or seriously failing? Should the government intervene?",
         task: "After reviewing the Adviser briefing on the page, write a short recommendation using productive efficiency, allocative efficiency, Pareto optimality, dynamic efficiency, and market failure. Refer to evidence from the case file and explain whether intervention is justified.",
-        responseGuide: "Aim for 2–4 concise paragraphs, like a short policy recommendation. Choose a clear judgement and a proportionate response: no intervention, light intervention, targeted regulation, or stronger intervention. The evidence summary and outcome checklist stay in the Adviser briefing section, so this modal is just for drafting your response.",
-        answerFrame: ["My judgement: the market is working efficiently / partly failing / seriously failing because ...", "The market shows some efficiency because ...", "However, there is evidence of market failure because ...", "The strongest possible reason for market failure is ...", "I recommend no intervention / light intervention / targeted regulation / stronger intervention because ...", "This policy involves trade-offs because ...", "Overall ..."],
+        responseGuide: "Aim for 2–4 concise paragraphs, like a short policy recommendation. Choose a clear judgement and a proportionate response: no intervention, light intervention, targeted regulation, or stronger intervention.",
+        answerFrame: ["My judgement: the market is [efficient / partly failing / seriously failing] because ...", "The strongest evidence for [efficiency / market failure] is ...", "I recommend [no intervention / light intervention / targeted regulation / stronger intervention] because ...", "The key trade-off in this decision is ..."],
         tools: ["productive", "allocative", "pareto", "dynamic", "failure", "reasons"],
         review: [
           { label: "Adviser briefing", target: "final-decision" },
@@ -5568,9 +5599,9 @@
         title: "Reflect on your reasoning",
         stage: "Stage 5 · Make and reflect on your judgement",
         prompt: "How did your judgement develop as you moved through the dossier? Which concept helped you understand the case most clearly?",
-        task: "Reflect on uncertainty, evidence, and how economic concepts shaped the final judgement. Mention one piece of evidence that complicated your thinking.",
-        responseGuide: "Aim for 4–6 sentences. Focus on how your reasoning changed or became more precise, not just on repeating your recommendation.",
-        answerFrame: ["At first, I thought ...", "The evidence that complicated this was ...", "The concept that helped me most was ... because ...", "I am still uncertain about ..."],
+        task: "Look back at your saved responses in the Adviser briefing. Where did your thinking become more precise as you moved through the stages? Reflect on what changed your view, what evidence complicated your reasoning, and which concept helped most.",
+        responseGuide: "Aim for 4–6 sentences. Focus on how your reasoning changed or became more precise — not just on repeating your final recommendation.",
+        answerFrame: ["When I started, I thought ...", "My view shifted when ...", "The concept that helped most was ... because ...", "I am still uncertain about ..."],
         tools: ["productive", "allocative", "pareto", "dynamic", "failure"],
         review: [
           { label: "Final decision", target: "final-decision" },
@@ -5968,7 +5999,8 @@
 
     function updateProgress() {
       const savedCount = activities.filter(activity => Boolean((state.responses[activity.id] || "").trim())).length;
-      document.getElementById("progressPill").textContent = `${savedCount} of ${activities.length} responses saved`;
+      const taggedCount = Object.keys(state.evidenceTags).length;
+      document.getElementById("progressPill").textContent = `${savedCount}/${activities.length} tasks · ${taggedCount}/${evidenceItems.length} evidence tagged`;
     }
 
     function evidenceGroups() {
@@ -6033,7 +6065,9 @@
           <p class="empty-state">Use these notes to build your adviser recommendation. Edit earlier tasks any time if your judgement changes.</p>
         </article>
         ${responseBlock("1", "Activity 1 — Efficiency claims")}
+        ${responseBlock("2", "Activity 2 — Productive and allocative efficiency")}
         ${responseBlock("3", "Activity 3 — Possible market failure")}
+        ${responseBlock("4", "Activity 4 — Policy trade-offs")}
         ${responseBlock("5", "Activity 5 — Dynamic efficiency")}
         <article class="synthesis-card"><h3>Evidence tagged as suggesting market efficiency</h3>${evidenceListHTML(groups.efficiency)}</article>
         <article class="synthesis-card"><h3>Evidence tagged as suggesting market failure</h3>${evidenceListHTML(groups.failure)}</article>
@@ -6166,6 +6200,8 @@
         </div>
       `;
       modalBody.scrollTop = 0;
+      const warningBanner = document.getElementById("unsavedWarning");
+      if (warningBanner) warningBanner.hidden = true;
       backdrop.classList.add("open");
       document.body.style.overflow = "hidden";
       requestAnimationFrame(() => {
@@ -6183,7 +6219,7 @@
         button.addEventListener("click", () => openConceptModal(button.dataset.openToolFromTask));
       });
       document.getElementById("saveResponse").addEventListener("click", saveActiveResponse);
-      document.getElementById("closeAfterSave").addEventListener("click", closeModal);
+      document.getElementById("closeAfterSave").addEventListener("click", maybeCloseModal);
     }
 
     function saveActiveResponse() {
@@ -6206,6 +6242,8 @@
     }
 
     function closeModal() {
+      const warning = document.getElementById("unsavedWarning");
+      if (warning) warning.hidden = true;
       const backdrop = document.getElementById("modalBackdrop");
       backdrop.classList.remove("open");
       document.body.style.overflow = "";
@@ -6213,11 +6251,36 @@
       if (state.lastFocusedElement && typeof state.lastFocusedElement.focus === "function") state.lastFocusedElement.focus();
     }
 
+    function isDirty() {
+      const textarea = document.getElementById("activityResponse");
+      if (!textarea) return false;
+      const saved = state.responses[state.activeActivityId] ?? "";
+      return textarea.value !== saved;
+    }
+
+    function maybeCloseModal() {
+      if (isDirty()) {
+        const warning = document.getElementById("unsavedWarning");
+        if (warning) { warning.hidden = false; warning.querySelector("#unsavedDiscard")?.focus(); }
+        return;
+      }
+      closeModal();
+    }
+
     function resetAll() {
-      const confirmed = window.confirm("Reset all saved responses and evidence tracker tags for this asset?");
-      if (!confirmed) return;
+      document.getElementById("resetConfirmBackdrop").classList.add("open");
+    }
+
+    function hideResetConfirm() {
+      document.getElementById("resetConfirmBackdrop").classList.remove("open");
+    }
+
+    function doReset() {
+      hideResetConfirm();
       localStorage.removeItem(STORAGE_KEYS.responses);
       localStorage.removeItem(STORAGE_KEYS.evidence);
+      localStorage.removeItem(STORAGE_KEYS.checkpoints);
+      document.querySelectorAll("[data-cp]").forEach(cb => { cb.checked = false; });
       state.responses = {};
       state.evidenceTags = {};
       if (window.parent !== window) {
@@ -6229,10 +6292,12 @@
     }
 
     function activeBackdrop() {
+      const resetBackdrop = document.getElementById("resetConfirmBackdrop");
       const conceptBackdrop = document.getElementById("conceptModalBackdrop");
       const activityBackdrop = document.getElementById("modalBackdrop");
+      if (resetBackdrop && resetBackdrop.classList.contains("open")) return { backdrop: resetBackdrop, close: hideResetConfirm };
       if (conceptBackdrop && conceptBackdrop.classList.contains("open")) return { backdrop: conceptBackdrop, close: closeConceptModal };
-      if (activityBackdrop && activityBackdrop.classList.contains("open")) return { backdrop: activityBackdrop, close: closeModal };
+      if (activityBackdrop && activityBackdrop.classList.contains("open")) return { backdrop: activityBackdrop, close: maybeCloseModal };
       return null;
     }
 
@@ -6256,8 +6321,10 @@
       else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
     }
 
-    document.getElementById("modalClose").addEventListener("click", closeModal);
-    document.getElementById("modalBackdrop").addEventListener("click", event => { if (event.target.id === "modalBackdrop") closeModal(); });
+    document.getElementById("modalClose").addEventListener("click", maybeCloseModal);
+    document.getElementById("modalBackdrop").addEventListener("click", event => { if (event.target.id === "modalBackdrop") maybeCloseModal(); });
+    document.getElementById("unsavedDiscard").addEventListener("click", closeModal);
+    document.getElementById("unsavedSave").addEventListener("click", () => { saveActiveResponse(); closeModal(); });
     document.getElementById("conceptModalClose").addEventListener("click", closeConceptModal);
     document.getElementById("conceptModalBackdrop").addEventListener("click", event => { if (event.target.id === "conceptModalBackdrop") closeConceptModal(); });
     document.querySelectorAll("[data-open-investigation-tab]").forEach(button => {
@@ -6276,7 +6343,23 @@
     document.querySelectorAll("[data-close-investigation-panel]").forEach(button => button.addEventListener("click", closeInvestigationPanel));
     document.getElementById("resetAllTop")?.addEventListener("click", resetAll);
     document.getElementById("resetAllSide")?.addEventListener("click", resetAll);
+    document.getElementById("resetCancel").addEventListener("click", hideResetConfirm);
+    document.getElementById("resetConfirmBtn").addEventListener("click", doReset);
     document.addEventListener("keydown", handleModalKeys);
+
+    function initCheckpoints() {
+      const saved = loadJSON(STORAGE_KEYS.checkpoints, {});
+      document.querySelectorAll("[data-cp]").forEach(cb => {
+        if (saved[cb.dataset.cp]) cb.checked = true;
+        cb.addEventListener("change", () => {
+          const current = loadJSON(STORAGE_KEYS.checkpoints, {});
+          if (cb.checked) current[cb.dataset.cp] = true;
+          else delete current[cb.dataset.cp];
+          saveJSON(STORAGE_KEYS.checkpoints, current);
+        });
+      });
+    }
+    initCheckpoints();
 
 
 
