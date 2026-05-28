@@ -5,6 +5,7 @@ import koreanWarMeta       from './assets/korean-war/meta.js'
 import fastFashionMeta     from './assets/fast-fashion/meta.js'
 import rivergateOverflowMeta from './assets/econ-73-rivergate/meta.js'
 import econDossierMeta     from './assets/econ-73-dossier/meta.js'
+import franceRepublic1792Meta from './assets/france-republic-1792/meta.js'
 
 /**
  * Central registry of all learning assets.
@@ -18,6 +19,7 @@ export const assetRegistry = [
   fastFashionMeta,
   rivergateOverflowMeta,
   econDossierMeta,
+  franceRepublic1792Meta,
 ]
 
 export function getAssetMeta(id) {
