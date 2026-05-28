@@ -995,8 +995,9 @@
   }
   .root :global(.brand) { display: block; }
   .root :global(.masthead-name) { font-size: clamp(1.08rem, 5.4vw, 1.38rem); line-height: 0.96; }
-  .root :global(.brand-title) { display: block; margin-top: 0.08rem; font-size: 0.66rem; line-height: 1.15; }
-  .root :global(.layout) { width: calc(100% - 0.75rem); padding-bottom: calc(6rem + env(safe-area-inset-bottom)); }
+  .root :global(.brand-title) { display: block; margin-top: 0.08rem; font-size: 0.66rem; line-height: 1.15; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .root :global(.back-link) { border-right: none; padding-right: 0; margin-right: 0.55rem; }
+  .root :global(.layout) { width: calc(100% - 1.5rem); padding-bottom: calc(6rem + env(safe-area-inset-bottom)); }
   .panelOpen :global(.layout),
   .panelOpen :global(footer) { transform: none !important; max-width: none !important; }
   .root :global(.hero) { min-height: auto !important; }
@@ -1045,6 +1046,7 @@
   .root :global(.reason-grid) { grid-template-columns: 1fr !important; gap: 0.75rem !important; }
   .root :global(.evidence-grid) { grid-template-columns: 1fr !important; }
   .root :global(.evidence-card) { min-height: 0; padding: 1.82rem 0.82rem 0.85rem; }
+  .root :global(.modal-nav-btn) { width: 2.75rem; height: 2.75rem; }
   .root :global(.modal-backdrop.open),
   .root :global(.concept-backdrop.open) { align-items: stretch !important; justify-content: center !important; padding: 0.5rem !important; }
   .root :global(.modal),
