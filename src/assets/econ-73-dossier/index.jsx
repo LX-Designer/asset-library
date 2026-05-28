@@ -153,10 +153,7 @@ export default function EconDossier({ onResponse, onComplete, savedResponses, on
     else openPanel(tab)
   }
   function scrollToSection(id) {
-    closePanel()
-    setTimeout(() => {
-      document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-    }, panelOpen ? 240 : 0)
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
 
   // ── Activity modal ─────────────────────────────────────────────────────────
@@ -503,7 +500,7 @@ export default function EconDossier({ onResponse, onComplete, savedResponses, on
                     className="task-button"
                     type="button"
                     aria-haspopup="dialog"
-                    onClick={() => { closePanel(); setTimeout(() => openActivity(activity.id), 50) }}
+                    onClick={() => openActivity(activity.id)}
                   >
                     <span className="task-num">{activity.id}</span>
                     <span className="task-text">
