@@ -8,7 +8,7 @@ import styles from './AssetWrapper.module.css'
 // Vite statically analyses this glob at build time to bundle all asset modules.
 const assetModules = import.meta.glob('../../assets/*/index.jsx')
 
-export default function AssetWrapper({ assetId }) {
+export default function AssetWrapper({ assetId, backHref }) {
   const [AssetComponent, setAssetComponent] = useState(null)
   const [loadError, setLoadError]           = useState(null)
   const [savedResponses, setSavedResponses] = useState({})
@@ -154,6 +154,7 @@ export default function AssetWrapper({ assetId }) {
         isCompleted={!!completion}
         completion={completion}
         onReset={handleReset}
+        backHref={backHref}
       />
     )
   }

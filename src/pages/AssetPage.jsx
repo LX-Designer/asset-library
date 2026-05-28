@@ -18,8 +18,9 @@ export default function AssetPage() {
   }
 
   // Assets with layout: 'full' manage their own layout (sidebar, header, etc.)
+  // Pass backHref so the asset can render its own back-to-labs link.
   if (meta.layout === 'full') {
-    return <AssetWrapper assetId={assetId} />
+    return <AssetWrapper assetId={assetId} backHref="/" />
   }
 
   return (
@@ -29,7 +30,7 @@ export default function AssetPage() {
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
             <path d="M11.5 7H2.5M6.5 3L2.5 7L6.5 11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
-          Back to portfolio
+          Back to labs
         </Link>
 
         <header className={styles.assetHeader}>

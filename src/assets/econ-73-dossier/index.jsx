@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
+import { Link } from 'react-router-dom'
 import styles from './index.module.css'
 import { evidenceItems, tagOptions, conceptTools, activities, compareGuidance, relevanceRows } from './data.js'
 
@@ -104,7 +105,7 @@ function ConceptVisual({ type }) {
 
 // ── Main component ────────────────────────────────────────────────────────────
 
-export default function EconDossier({ onResponse, onComplete, savedResponses, onReset }) {
+export default function EconDossier({ onResponse, onComplete, savedResponses, onReset, backHref }) {
   // ── State ──────────────────────────────────────────────────────────────────
   const [responses, setResponses] = useState(() => {
     const sr = savedResponses || {}
@@ -416,6 +417,9 @@ export default function EconDossier({ onResponse, onComplete, savedResponses, on
       <header className="site-header document-bar">
         <div className="header-inner">
           <div className="brand" aria-label="Document identity">
+            {backHref && (
+              <Link to={backHref} className="back-link" aria-label="Back to InquiryLabs">← Labs</Link>
+            )}
             <span className="eyebrow masthead-name">Economic Brief</span>
             <span className="brand-title">Market Investigation Dossier · A Level Economics 7.3 · Efficiency and market failure</span>
           </div>
@@ -424,11 +428,6 @@ export default function EconDossier({ onResponse, onComplete, savedResponses, on
           </div>
         </div>
       </header>
-
-      {/* ── Scrim ── */}
-      {panelOpen && (
-        <div className="sidebar-scrim active" aria-hidden="true" onClick={closePanel} />
-      )}
 
       {/* ── Investigation side tabs ── */}
       <div className="investigation-side-tabs" aria-label="Open investigation panel">

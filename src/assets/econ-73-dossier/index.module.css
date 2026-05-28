@@ -89,6 +89,25 @@
   font-weight: 700;
   opacity: 0.92;
 }
+.root :global(.back-link) {
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 0.76rem;
+  font-weight: 750;
+  text-decoration: none;
+  white-space: nowrap;
+  flex-shrink: 0;
+  align-self: center;
+  padding-right: 0.9rem;
+  border-right: 1px solid rgba(255, 255, 255, 0.25);
+  line-height: 1;
+  letter-spacing: 0.01em;
+}
+.root :global(.back-link:hover),
+.root :global(.back-link:focus-visible) {
+  color: #fff;
+  outline: 2px solid rgba(255, 255, 255, 0.28);
+  outline-offset: 3px;
+}
 .root :global(.top-actions) { flex: 0 0 auto; }
 
 /* ---------- 4. Buttons ---------- */
@@ -568,13 +587,6 @@
 }
 .panelOpen :global(.investigation-side-tabs) { opacity: 0; pointer-events: none; visibility: hidden; transition: opacity 160ms ease; }
 
-/* ---------- 18. Sidebar scrim ---------- */
-.root :global(.sidebar-scrim) {
-  position: fixed; inset: 0; background: rgba(15,23,42,0.42);
-  z-index: 125; display: none;
-}
-.root :global(.sidebar-scrim.active) { display: block; }
-
 /* ---------- 19. Investigation panel ---------- */
 .root :global(.investigation-panel) {
   position: fixed;
@@ -975,7 +987,6 @@
     height: calc(100dvh - var(--header-offset)) !important;
     max-height: calc(100dvh - var(--header-offset)) !important;
   }
-  .root :global(.sidebar-scrim.active) { display: block; }
   .root :global(body) { padding-bottom: calc(4.25rem + env(safe-area-inset-bottom)); }
 }
 
