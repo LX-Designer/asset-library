@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
+import SharedActivityModal from '../../components/ActivityModal'
 import s from './FranceRepublic.module.css'
 import { ACTIVITIES, CHRONOLOGY, REFORMS, CAUSE_FACTORS, TURNING_POINTS, SECTIONS } from './data.js'
 
@@ -47,135 +48,32 @@ function SaveStatus({ status }) {
 export default function ActivityModal({ activityId, responses, onSave, onClose, scrollToSection }) {
   const actIndex = ACT_ORDER.indexOf(activityId)
   const activity = ACTIVITIES.find(a => a.id === activityId)
-  const panelRef = useRef(null)
-  const closeRef = useRef(null)
-
-  // Focus trap
-  useEffect(() => {
-    const panel = panelRef.current
-    if (!panel) return
-    const focusable = panel.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])')
-    const first = focusable[0]
-    const last = focusable[focusable.length - 1]
-    first?.focus()
-
-    const trap = (e) => {
-      if (e.key !== 'Tab') return
-      if (e.shiftKey) {
-        if (document.activeElement === first) { e.preventDefault(); last?.focus() }
-      } else {
-        if (document.activeElement === last) { e.preventDefault(); first?.focus() }
-      }
-    }
-    const esc = (e) => { if (e.key === 'Escape') onClose() }
-    panel.addEventListener('keydown', trap)
-    document.addEventListener('keydown', esc)
-    return () => {
-      panel.removeEventListener('keydown', trap)
-      document.removeEventListener('keydown', esc)
-    }
-  }, [onClose])
 
   if (!activity) return null
 
   const prevId = actIndex > 0 ? ACT_ORDER[actIndex - 1] : null
   const nextId = actIndex < ACT_ORDER.length - 1 ? ACT_ORDER[actIndex + 1] : null
-
-  const handleScrollTo = (sectionId) => {
-    onClose()
-    setTimeout(() => scrollToSection(sectionId), 100)
-  }
+  const prevActivity = prevId ? ACTIVITIES.find(a => a.id === prevId) : null
+  const nextActivity = nextId ? ACTIVITIES.find(a => a.id === nextId) : null
 
   return (
-    <div className={s.modalOverlay} onClick={e => e.target === e.currentTarget && onClose()} role="presentation">
-      <div
-        className={s.modalPanel}
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="modal-title"
-        ref={panelRef}
-      >
-        <div className={s.modalHeader}>
-          {activity.number !== null && (
-            <div className={s.modalNum}>Activity {activity.number} · {activity.thinkingMove}</div>
-          )}
-          {activity.number === null && (
-            <div className={s.modalNum}>{activity.label} · {activity.thinkingMove}</div>
-          )}
-          <h2 id="modal-title" className={s.modalTitle}>{activity.title}</h2>
-          <button
-            className={s.modalClose}
-            onClick={onClose}
-            ref={closeRef}
-            aria-label="Close activity"
-          >×</button>
-        </div>
-
-        <div className={s.modalBody}>
-          <div className={s.modalPurpose}>
-            <span className={s.modalPurposeLabel}>Why this matters</span>
-            {activity.purpose}
-          </div>
-
-          <p className={s.modalPrompt}>{activity.prompt}</p>
-
-          {activity.scaffold && (
-            <div className={s.modalScaffold}>{activity.scaffold}</div>
-          )}
-
-          {activity.evidenceSections.length > 0 && (
-            <div className={s.modalEvidenceLinks}>
-              <div className={s.modalEvidenceLabel}>Go to evidence</div>
-              <div className={s.modalEvidenceBtns}>
-                {activity.evidenceSections.map(sid => (
-                  <button
-                    key={sid}
-                    className={s.evidenceScrollBtn}
-                    onClick={() => handleScrollTo(sid)}
-                  >
-                    {SECTION_LABEL[sid] ?? sid}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-
-          <ActivityForm
-            activityId={activityId}
-            responses={responses}
-            onSave={onSave}
-          />
-        </div>
-
-        <div className={s.modalFooter}>
-          <button
-            className={s.modalNavBtn}
-            disabled={!prevId}
-            onClick={() => prevId && onClose(prevId)}
-            aria-label="Previous activity"
-          >
-            ← {prevId ? ACTIVITIES.find(a => a.id === prevId)?.label : 'Previous'}
-          </button>
-
-          <button className={s.modalResetBtn} onClick={() => {
-            if (window.confirm('Clear your response for this activity? The dossier will not be changed.')) {
-              onSave(activityId, null)
-            }
-          }}>
-            Clear this response
-          </button>
-
-          <button
-            className={s.modalNavBtn}
-            disabled={!nextId}
-            onClick={() => nextId && onClose(nextId)}
-            aria-label="Next activity"
-          >
-            {nextId ? ACTIVITIES.find(a => a.id === nextId)?.label : 'Next'} →
-          </button>
-        </div>
-      </div>
-    </div>
+    <SharedActivityModal
+      activityNumber={activity.number}
+      activityLabel={activity.label}
+      thinkingMove={activity.thinkingMove}
+      title={activity.title}
+      purpose={activity.purpose}
+      prompt={activity.prompt}
+      scaffold={activity.scaffold ?? null}
+      evidenceSections={activity.evidenceSections.map(id => ({ id, label: SECTION_LABEL[id] ?? id }))}
+      prevItem={prevActivity ? { id: prevActivity.id, label: prevActivity.label } : null}
+      nextItem={nextActivity ? { id: nextActivity.id, label: nextActivity.label } : null}
+      onClose={onClose}
+      onScrollTo={scrollToSection}
+      onClear={() => onSave(activityId, null)}
+    >
+      <ActivityForm activityId={activityId} responses={responses} onSave={onSave} />
+    </SharedActivityModal>
   )
 }
 
