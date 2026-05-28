@@ -774,6 +774,42 @@
 .root :global(.modal-body::-webkit-scrollbar-thumb) { background: rgba(201,54,45,0.92); border-radius: 99px; border: 2px solid rgba(16,22,45,0.12); }
 .root :global(.modal-body::-webkit-scrollbar-thumb:hover) { background: rgba(156,37,31,0.98); }
 
+/* Modal navigation */
+.root :global(.modal-nav-btn) {
+  color: white;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  border-radius: 999px;
+  width: 2.35rem; height: 2.35rem;
+  font-size: 1.6rem; line-height: 1;
+  display: grid; place-items: center;
+  box-shadow: none; flex-shrink: 0; align-self: center;
+}
+.root :global(.modal-nav-btn:hover),
+.root :global(.modal-nav-btn:focus-visible) {
+  background: rgba(255, 255, 255, 0.28);
+  outline: 3px solid rgba(255, 255, 255, 0.28);
+  outline-offset: 1px;
+}
+.root :global(.modal-nav-btn:disabled) {
+  opacity: 0.22; cursor: default; pointer-events: none;
+}
+.root :global(.modal-header-end) {
+  display: flex; align-items: flex-start; gap: 0.4rem; flex-shrink: 0;
+}
+
+/* Slide animations for modal navigation */
+@keyframes slideInRight {
+  from { transform: translateX(52px); opacity: 0; }
+  to   { transform: translateX(0);    opacity: 1; }
+}
+@keyframes slideInLeft {
+  from { transform: translateX(-52px); opacity: 0; }
+  to   { transform: translateX(0);     opacity: 1; }
+}
+.root :global(.modal-body.slide-forward)  { animation: slideInRight 200ms ease forwards; }
+.root :global(.modal-body.slide-backward) { animation: slideInLeft  200ms ease forwards; }
+
 /* Modal cards */
 .root :global(.modal-card) {
   border: 2px solid var(--econ-navy); border-left-width: 7px;
@@ -1021,4 +1057,6 @@
   .root :global(.investigation-panel),
   .root :global(.layout),
   .root :global(footer) { transition: none !important; }
+  .root :global(.modal-body.slide-forward),
+  .root :global(.modal-body.slide-backward) { animation: none !important; }
 }

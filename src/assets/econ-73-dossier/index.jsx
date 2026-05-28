@@ -123,6 +123,9 @@ export default function EconDossier({ onResponse, onComplete, savedResponses, on
   const [showUnsavedWarning, setShowUnsavedWarning] = useState(false)
   const [saveStatus, setSaveStatus] = useState('')
   const [showResetConfirm, setShowResetConfirm] = useState(false)
+  const [activitySlideDir, setActivitySlideDir] = useState(null)
+  const [conceptSlideDir, setConceptSlideDir] = useState(null)
+  const [pendingNav, setPendingNav] = useState(null)
   const saveStatusTimer = useRef(null)
   const lastFocusRef = useRef(null)
 
@@ -130,6 +133,8 @@ export default function EconDossier({ onResponse, onComplete, savedResponses, on
   const savedCount = activities.filter(a => (responses[a.id] || '').trim()).length
   const taggedCount = Object.keys(evidenceTags).length
   const isDirty = draftResponse !== (responses[activeActivityId] || '')
+  const activityIndex = activeActivityId ? activities.findIndex(a => a.id === activeActivityId) : -1
+  const conceptIndex  = activeConceptId  ? conceptTools.findIndex(t => t.id === activeConceptId)  : -1
 
   // ── Checkpoint ─────────────────────────────────────────────────────────────
   function toggleCheckpoint(key) {
@@ -157,7 +162,8 @@ export default function EconDossier({ onResponse, onComplete, savedResponses, on
   }
 
   // ── Activity modal ─────────────────────────────────────────────────────────
-  function openActivity(id) {
+  function openActivity(id, dir = null) {
+    setActivitySlideDir(dir)
     lastFocusRef.current = document.activeElement
     setActiveActivityId(id)
     setDraftResponse(responses[id] || '')
@@ -188,12 +194,31 @@ export default function EconDossier({ onResponse, onComplete, savedResponses, on
     const allDone = activities.every(a => (newResponses[a.id] || '').trim())
     if (allDone) onComplete(100, { asset: ASSET_ID })
   }
-  function saveAndClose() {
-    handleSaveResponse().then(() => closeActivity())
+  function discardAndResolve() {
+    const pending = pendingNav
+    setPendingNav(null)
+    setShowUnsavedWarning(false)
+    if (pending) openActivity(pending.id, pending.dir)
+    else closeActivity()
+  }
+  async function saveAndResolve() {
+    const pending = pendingNav
+    setPendingNav(null)
+    await handleSaveResponse()
+    if (pending) openActivity(pending.id, pending.dir)
+    else closeActivity()
+  }
+  function navigateActivity(dir) {
+    const next = dir === 'forward' ? activityIndex + 1 : activityIndex - 1
+    if (next < 0 || next >= activities.length) return
+    const nextId = activities[next].id
+    if (isDirty) { setPendingNav({ id: nextId, dir }); setShowUnsavedWarning(true); return }
+    openActivity(nextId, dir)
   }
 
   // ── Concept modal ──────────────────────────────────────────────────────────
-  function openConcept(id) {
+  function openConcept(id, dir = null) {
+    setConceptSlideDir(dir)
     lastFocusRef.current = document.activeElement
     setActiveConceptId(id)
   }
@@ -201,7 +226,13 @@ export default function EconDossier({ onResponse, onComplete, savedResponses, on
     setActiveConceptId(null)
     lastFocusRef.current?.focus()
   }
+  function navigateConcept(dir) {
+    const next = dir === 'forward' ? conceptIndex + 1 : conceptIndex - 1
+    if (next < 0 || next >= conceptTools.length) return
+    openConcept(conceptTools[next].id, dir)
+  }
   function openConceptFromActivity(id) {
+    setConceptSlideDir(null)
     setActiveConceptId(id)
   }
 
@@ -849,22 +880,28 @@ export default function EconDossier({ onResponse, onComplete, savedResponses, on
       >
         <section className="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" aria-describedby="modalPrompt">
           <div className="modal-header">
-            <div>
-              <span className="eyebrow" style={{color:'rgba(255,255,255,0.76)'}}>Investigation task</span>
+            <button className="modal-nav-btn" type="button" onClick={() => navigateActivity('backward')} disabled={activityIndex <= 0} aria-label="Previous task">‹</button>
+            <div style={{flex:1,minWidth:0}}>
+              <span className="eyebrow" style={{color:'rgba(255,255,255,0.76)'}}>
+                {activeActivity ? `Task ${activityIndex + 1} of ${activities.length}` : 'Investigation task'}
+              </span>
               <h2 id="modalTitle">{activeActivity ? `${activeActivity.id}. ${activeActivity.title}` : ''}</h2>
             </div>
-            <button className="modal-close" type="button" onClick={maybeCloseActivity} aria-label="Close dialog">×</button>
+            <div className="modal-header-end">
+              <button className="modal-nav-btn" type="button" onClick={() => navigateActivity('forward')} disabled={activityIndex >= activities.length - 1} aria-label="Next task">›</button>
+              <button className="modal-close" type="button" onClick={maybeCloseActivity} aria-label="Close dialog">×</button>
+            </div>
           </div>
           {showUnsavedWarning && (
             <div className="unsaved-warning">
               <span>You have unsaved text — your response will be lost.</span>
               <div className="unsaved-actions">
-                <button className="btn" type="button" onClick={closeActivity}>Discard and close</button>
-                <button className="btn primary" type="button" onClick={saveAndClose}>Save and close</button>
+                <button className="btn" type="button" onClick={discardAndResolve}>Discard and continue</button>
+                <button className="btn primary" type="button" onClick={saveAndResolve}>Save and continue</button>
               </div>
             </div>
           )}
-          <div className="modal-body" id="modalBody">
+          <div className={cx('modal-body', activitySlideDir && `slide-${activitySlideDir}`)} id="modalBody" key={activeActivityId}>
             {activeActivity && (
               <>
                 <section className="modal-card prompt" id="modalPrompt">
@@ -929,13 +966,19 @@ export default function EconDossier({ onResponse, onComplete, savedResponses, on
       >
         <section className="modal concept-modal" role="dialog" aria-modal="true" aria-labelledby="conceptModalTitle" aria-describedby="conceptModalIntro">
           <div className="modal-header">
-            <div>
-              <span className="eyebrow" style={{color:'rgba(255,255,255,0.76)'}}>Economist's Toolkit</span>
+            <button className="modal-nav-btn" type="button" onClick={() => navigateConcept('backward')} disabled={conceptIndex <= 0} aria-label="Previous concept">‹</button>
+            <div style={{flex:1,minWidth:0}}>
+              <span className="eyebrow" style={{color:'rgba(255,255,255,0.76)'}}>
+                {activeTool ? `Concept ${conceptIndex + 1} of ${conceptTools.length}` : "Economist's Toolkit"}
+              </span>
               <h2 id="conceptModalTitle">{activeTool?.title ?? ''}</h2>
             </div>
-            <button className="modal-close" type="button" onClick={closeConcept} aria-label="Close concept dialog">×</button>
+            <div className="modal-header-end">
+              <button className="modal-nav-btn" type="button" onClick={() => navigateConcept('forward')} disabled={conceptIndex >= conceptTools.length - 1} aria-label="Next concept">›</button>
+              <button className="modal-close" type="button" onClick={closeConcept} aria-label="Close concept dialog">×</button>
+            </div>
           </div>
-          <div className="modal-body" id="conceptModalBody">
+          <div className={cx('modal-body', conceptSlideDir && `slide-${conceptSlideDir}`)} id="conceptModalBody" key={activeConceptId}>
             {activeTool && renderConceptContent(activeTool)}
           </div>
         </section>
