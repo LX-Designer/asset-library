@@ -148,7 +148,8 @@
 }
 
 /* ---------- 6. Investigation panel open: layout shift ---------- */
-.panelOpen :global(.layout) {
+.panelOpen :global(.layout),
+.panelOpen :global(footer) {
   max-width: min(var(--max), calc(100vw - var(--investigation-panel-width) - 2rem));
   transform: translateX(calc(var(--investigation-panel-width) / 2));
 }
@@ -982,6 +983,7 @@
 .root :global(footer) {
   max-width: var(--max); width: min(var(--max), calc(100% - 2rem));
   margin: 0 auto; padding: 0 0 2rem; color: var(--muted); font-size: 0.92rem;
+  transition: transform 220ms ease, max-width 220ms ease;
 }
 
 /* ---------- 26. Media queries ---------- */
@@ -995,7 +997,8 @@
   .root :global(.masthead-name) { font-size: clamp(1.08rem, 5.4vw, 1.38rem); line-height: 0.96; }
   .root :global(.brand-title) { display: block; margin-top: 0.08rem; font-size: 0.66rem; line-height: 1.15; }
   .root :global(.layout) { width: calc(100% - 0.75rem); padding-bottom: calc(6rem + env(safe-area-inset-bottom)); }
-  .panelOpen :global(.layout) { transform: none !important; max-width: none !important; }
+  .panelOpen :global(.layout),
+  .panelOpen :global(footer) { transform: none !important; max-width: none !important; }
   .root :global(.hero) { min-height: auto !important; }
   .root :global(.hero::before),
   .root :global(.hero::after) { display: none; }
