@@ -1,0 +1,228 @@
+/*
+ * FloatingPanel chrome styles.
+ *
+ * Theme via CSS custom properties on any ancestor:
+ *
+ * --fp-bg              panel background          #ffffff
+ * --fp-border          border colour             #e5e7eb
+ * --fp-ink             primary text              #111827
+ * --fp-ink-mid         secondary text            #4b5563
+ * --fp-ink-light       tertiary text             #9ca3af
+ * --fp-accent          interactive accent        #374151
+ * --fp-subtle          subtle background         #f3f4f6
+ * --fp-shadow          box shadow                0 4px 24px rgba(0,0,0,0.14)
+ * --fp-tab-bg          tab background            #f3f4f6
+ * --fp-tab-border      tab border                #e5e7eb
+ * --fp-tab-ink         tab text                  #374151
+ * --fp-radius          corner radius             6px
+ * --fp-transition      transition timing         160ms ease
+ */
+
+/* ── Viewport tab ────────────────────────────────────────────────────────── */
+.tab {
+  position: fixed;
+  top: 50%;
+  z-index: 90;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  /* don't let the tab interfere with scrolling */
+  touch-action: none;
+  user-select: none;
+}
+
+.tab.left  { left: 0;  transform: translateY(-50%); }
+.tab.right { right: 0; transform: translateY(-50%); }
+
+.tabInner {
+  display: block;
+  padding: 12px 9px;
+  background: var(--fp-tab-bg, #f3f4f6);
+  border: 1px solid var(--fp-tab-border, #e5e7eb);
+  color: var(--fp-tab-ink, #374151);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  transition: background var(--fp-transition, 160ms ease),
+              color var(--fp-transition, 160ms ease);
+  writing-mode: vertical-rl;
+}
+
+.tab.left  .tabInner {
+  border-radius: 0 var(--fp-radius, 6px) var(--fp-radius, 6px) 0;
+  border-left: none;
+  transform: rotate(180deg);
+  box-shadow: 3px 0 10px rgba(0,0,0,0.08);
+}
+
+.tab.right .tabInner {
+  border-radius: var(--fp-radius, 6px) 0 0 var(--fp-radius, 6px);
+  border-right: none;
+  box-shadow: -3px 0 10px rgba(0,0,0,0.08);
+}
+
+.tab:hover .tabInner,
+.tab:focus-visible .tabInner {
+  background: var(--fp-accent, #374151);
+  color: #fff;
+  border-color: var(--fp-accent, #374151);
+}
+
+.tab:focus-visible {
+  outline: 2px solid var(--fp-accent, #374151);
+  outline-offset: 2px;
+}
+
+/* ── Shared panel structure ──────────────────────────────────────────────── */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 0 12px 0 16px;
+  height: 44px;
+  flex-shrink: 0;
+  border-bottom: 1px solid var(--fp-border, #e5e7eb);
+  background: var(--fp-bg, #ffffff);
+  cursor: grab;
+  user-select: none;
+}
+
+.header:active { cursor: grabbing; }
+
+.headerTitle {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--fp-ink-mid, #4b5563);
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.headerBtns {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.hBtn {
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  cursor: pointer;
+  color: var(--fp-ink-light, #9ca3af);
+  font-size: 16px;
+  line-height: 1;
+  transition: all var(--fp-transition, 160ms ease);
+}
+
+.hBtn:hover {
+  background: var(--fp-subtle, #f3f4f6);
+  border-color: var(--fp-border, #e5e7eb);
+  color: var(--fp-ink, #111827);
+}
+
+.hBtn:focus-visible {
+  outline: 2px solid var(--fp-accent, #374151);
+  outline-offset: 2px;
+}
+
+.hBtnClose:hover {
+  background: #fef2f2;
+  border-color: #fca5a5;
+  color: #dc2626;
+}
+
+.panelBody {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  min-height: 0;
+}
+
+/* ── Docked panel ────────────────────────────────────────────────────────── */
+.dockedPanel {
+  background: var(--fp-bg, #ffffff);
+  border: 1px solid var(--fp-border, #e5e7eb);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.dockedPanel.left {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  border-top: none;
+  border-bottom: none;
+  border-left: none;
+}
+
+.dockedPanel.right {
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100vh;
+  z-index: 80;
+  border-top: none;
+  border-bottom: none;
+  border-right: none;
+  box-shadow: var(--fp-shadow, -4px 0 24px rgba(0,0,0,0.10));
+}
+
+/* ── Floating panel ──────────────────────────────────────────────────────── */
+.floatingPanel {
+  background: var(--fp-bg, #ffffff);
+  border: 1px solid var(--fp-border, #e5e7eb);
+  border-radius: var(--fp-radius, 6px);
+  box-shadow: var(--fp-shadow, 0 4px 24px rgba(0,0,0,0.14));
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  z-index: 95 !important;
+}
+
+.floatingPanel .header {
+  cursor: grab;
+  border-radius: var(--fp-radius, 6px) var(--fp-radius, 6px) 0 0;
+}
+
+.floatingPanel .header:active { cursor: grabbing; }
+
+.floatingPanel.minimised {
+  border-radius: var(--fp-radius, 6px);
+}
+
+.floatingPanel.minimised .header {
+  border-bottom: none;
+  border-radius: var(--fp-radius, 6px);
+  cursor: grab;
+}
+
+/* ── Reduced motion ──────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .hBtn,
+  .tabInner {
+    transition-duration: 0ms !important;
+  }
+}
+
+/* ── Print ───────────────────────────────────────────────────────────────── */
+@media print {
+  .tab,
+  .floatingPanel { display: none !important; }
+  .dockedPanel.right { display: none !important; }
+}

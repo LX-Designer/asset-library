@@ -3,11 +3,24 @@ import s from './FranceRepublic.module.css'
 import PathwayMap from './PathwayMap.jsx'
 import CauseMap from './CauseMap.jsx'
 import ActivityModal from './ActivityModal.jsx'
+import FloatingPanel from '../../components/FloatingPanel'
 import {
   SECTIONS, ACTIVITIES, CHRONOLOGY, EVIDENCE_CARDS,
   FACTIONS, REFORMS, TURNING_POINTS, CAUSE_FACTORS,
   GLOSSARY, VISUAL_ASSETS, PATHWAY_NODES
 } from './data.js'
+
+// ── Media query hook ─────────────────────────────────────────────────────────
+function useIsDesktop() {
+  const [ok, setOk] = useState(() => typeof window !== 'undefined' && window.innerWidth >= 900)
+  useEffect(() => {
+    const mq = window.matchMedia('(min-width: 900px)')
+    const handler = (e) => setOk(e.matches)
+    mq.addEventListener('change', handler)
+    return () => mq.removeEventListener('change', handler)
+  }, [])
+  return ok
+}
 
 // ── Completion logic ─────────────────────────────────────────────────────────
 function getActivityStatus(id, responses) {
@@ -87,11 +100,7 @@ function VisualAssetCard({ va }) {
   return (
     <div className={s.vaCard}>
       <div className={s.vaImageWrap}>
-        <img
-          src={`/france-republic-1792/${va.filename}`}
-          alt={va.altText}
-          loading="lazy"
-        />
+        <img src={`/france-republic-1792/${va.filename}`} alt={va.altText} loading="lazy" />
       </div>
       {va.id === 'VA-005' && (
         <div className={s.vaContentNote}>
@@ -124,16 +133,104 @@ function Section({ id, label, title, children, intro }) {
   )
 }
 
+// ── Guide panel content ──────────────────────────────────────────────────────
+function GuideContent({ responses, completedCount, totalCount, progressPct, openModal, onViewNotes, onReset }) {
+  return (
+    <>
+      <div className={s.guideHeader}>
+        <div className={s.guideTitle}>Activity guide</div>
+        <div className={s.guideSubtitle}>From Monarchy to Republic</div>
+        <div className={s.guideProgress}>
+          {completedCount} of {totalCount} activities complete
+          <span
+            className={s.guideProgressFill}
+            style={{ '--progress': `${progressPct}%` }}
+            role="progressbar"
+            aria-valuenow={progressPct}
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-label={`${progressPct}% complete`}
+          />
+        </div>
+      </div>
+
+      <ul className={s.guideList} role="list">
+        {ACTIVITIES.map((act) => {
+          const status = getActivityStatus(act.id, responses)
+          return (
+            <li key={act.id} className={s.guideItem}>
+              <button
+                className={s.guideBtn}
+                onClick={() => openModal(act.id)}
+                aria-label={`${act.label}: ${act.title} — ${status.replace('-', ' ')}`}
+              >
+                <span className={`${s.guideDot} ${status !== 'not-started' ? s[status] : ''}`} aria-hidden="true" />
+                <span className={s.guideMeta}>
+                  <span className={s.guideItemLabel}>{act.label}</span>
+                  <span className={s.guideItemTitle}>{act.title}</span>
+                  <span className={`${s.guideStatusText} ${status !== 'not-started' ? s[status] : ''}`}>
+                    {status === 'not-started' ? 'Not started' : status === 'inprogress' ? 'In progress' : 'Complete'}
+                  </span>
+                </span>
+              </button>
+              {act.id === 'act9' && <div className={s.guideDivider} />}
+            </li>
+          )
+        })}
+      </ul>
+
+      <div className={s.guideFooter}>
+        <button className={s.guideFooterBtn} onClick={onViewNotes}>View my notes</button>
+        {onReset && (
+          <button
+            className={s.guideFooterBtn}
+            onClick={() => {
+              if (window.confirm('Clear all your responses and start again? The dossier will not be changed.')) {
+                onReset()
+              }
+            }}
+          >
+            Start again
+          </button>
+        )}
+      </div>
+    </>
+  )
+}
+
+// ── Notes panel content ──────────────────────────────────────────────────────
+function NotesContent({ responses }) {
+  return (
+    <div className={s.notesBody}>
+      {ACTIVITIES.filter(a => a.id !== 'init' && a.id !== 'reflection').map(act => {
+        const responseKey = act.id === 'final' ? 'final-response' : `${act.id}-response`
+        const value = responses[responseKey]
+        const hasContent = typeof value === 'string' && value.trim().length > 0
+        return (
+          <div key={act.id} className={s.notesItem}>
+            <div className={s.notesItemLabel}>{act.label}</div>
+            <div className={s.notesItemTitle}>{act.title}</div>
+            <div className={s.notesItemText}>
+              {hasContent ? value : <span className={s.notesEmpty}>Not yet completed</span>}
+            </div>
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
 // ── Main asset ───────────────────────────────────────────────────────────────
 export default function FranceRepublic1792({ onResponse, onComplete, savedResponses, isCompleted, onReset }) {
   const [responses, setResponses] = useState(savedResponses ?? {})
   const [activeModal, setActiveModal] = useState(null)
   const [activeSection, setActiveSection] = useState('intro')
-  const [guideOpen, setGuideOpen] = useState(false)
-  const [notesOpen, setNotesOpen] = useState(false)
-  const sectionRefs = useRef({})
+  const [guideOpen, setGuideOpen] = useState(false)      // mobile only
+  const [notesOpen, setNotesOpen] = useState(false)      // mobile only
+  const [notesDocked, setNotesDocked] = useState(false)  // desktop notes panel docked state
+  const isDesktop = useIsDesktop()
   const prevCompletedRef = useRef(false)
-  const guideCloseRef = useRef(null)
+  const notesFloatingRef = useRef(null)
 
   // IntersectionObserver for active section tracking
   useEffect(() => {
@@ -163,7 +260,6 @@ export default function FranceRepublic1792({ onResponse, onComplete, savedRespon
 
   const handleSave = useCallback(async (key, value) => {
     if (value === null) {
-      // reset individual key
       setResponses(prev => { const next = { ...prev }; delete next[key]; return next })
       await onResponse(key, null)
       return
@@ -172,8 +268,8 @@ export default function FranceRepublic1792({ onResponse, onComplete, savedRespon
     await onResponse(key, value)
   }, [onResponse])
 
-  const openModal = useCallback((id, nextId) => {
-    setActiveModal(nextId ?? id)
+  const openModal = useCallback((id) => {
+    setActiveModal(id)
     setGuideOpen(false)
   }, [])
 
@@ -197,77 +293,42 @@ export default function FranceRepublic1792({ onResponse, onComplete, savedRespon
   const completedCount = COMPLETION_REQUIRED.filter(id => getActivityStatus(id, responses) === 'complete').length
   const progressPct = Math.round((completedCount / COMPLETION_REQUIRED.length) * 100)
 
+  const guideProps = {
+    responses,
+    completedCount,
+    totalCount: COMPLETION_REQUIRED.length,
+    progressPct,
+    openModal,
+    onViewNotes: () => isDesktop ? (notesFloatingRef.current?.open?.()) : setNotesOpen(true),
+    onReset,
+  }
+
   return (
-    <div className={s.shell}>
+    <div
+      className={s.shell}
+      style={notesDocked ? { '--notes-panel-width': '320px' } : {}}
+    >
       {/* ── Activity Guide ── */}
-      <nav
-        className={`${s.guide} ${guideOpen ? s.open : ''}`}
-        aria-label="Activity guide"
-      >
-        <div className={s.guideHeader}>
-          <div className={s.guideTitle}>Activity guide</div>
-          <div className={s.guideSubtitle}>From Monarchy to Republic</div>
-          <div className={s.guideProgress}>
-            {completedCount} of {COMPLETION_REQUIRED.length} activities complete
-            <span
-              className={s.guideProgressFill}
-              style={{ '--progress': `${progressPct}%` }}
-              role="progressbar"
-              aria-valuenow={progressPct}
-              aria-valuemin={0}
-              aria-valuemax={100}
-              aria-label={`${progressPct}% complete`}
-            />
-          </div>
-        </div>
-
-        <ul className={s.guideList} role="list">
-          {ACTIVITIES.map((act, i) => {
-            const status = getActivityStatus(act.id, responses)
-            const isLast = i === ACTIVITIES.length - 1
-            return (
-              <li key={act.id} className={s.guideItem}>
-                <button
-                  className={s.guideBtn}
-                  onClick={() => openModal(act.id)}
-                  aria-label={`${act.label}: ${act.title} — ${status.replace('-', ' ')}`}
-                >
-                  <span className={`${s.guideDot} ${status !== 'not-started' ? s[status] : ''}`} aria-hidden="true" />
-                  <span className={s.guideMeta}>
-                    <span className={s.guideItemLabel}>{act.label}</span>
-                    <span className={s.guideItemTitle}>{act.title}</span>
-                    <span className={`${s.guideStatusText} ${status !== 'not-started' ? s[status] : ''}`}>
-                      {status === 'not-started' ? 'Not started' : status === 'inprogress' ? 'In progress' : status === 'saved' ? 'Saved' : 'Complete'}
-                    </span>
-                  </span>
-                </button>
-                {act.id === 'act9' && <div className={s.guideDivider} />}
-              </li>
-            )
-          })}
-        </ul>
-
-        <div className={s.guideFooter}>
-          <button className={s.guideFooterBtn} onClick={() => setNotesOpen(true)}>
-            View my notes
-          </button>
-          {onReset && (
-            <button
-              className={s.guideFooterBtn}
-              onClick={() => {
-                if (window.confirm('Clear all your responses and start again? The dossier will not be changed.')) {
-                  onReset()
-                }
-              }}
-            >
-              Start again
-            </button>
-          )}
-        </div>
-      </nav>
+      {isDesktop ? (
+        <FloatingPanel
+          id="france-guide"
+          title="Activity Guide"
+          tabLabel="Guide"
+          side="left"
+          width={260}
+          defaultHeight={600}
+          initialState="docked"
+        >
+          <GuideContent {...guideProps} />
+        </FloatingPanel>
+      ) : (
+        <nav className={`${s.guide} ${guideOpen ? s.open : ''}`} aria-label="Activity guide">
+          <GuideContent {...guideProps} />
+        </nav>
+      )}
 
       {/* ── Mobile guide backdrop ── */}
-      {guideOpen && (
+      {!isDesktop && guideOpen && (
         <div
           style={{ position: 'fixed', inset: 0, background: 'rgba(28,25,23,0.4)', zIndex: 34 }}
           onClick={() => setGuideOpen(false)}
@@ -276,7 +337,10 @@ export default function FranceRepublic1792({ onResponse, onComplete, savedRespon
       )}
 
       {/* ── Main content ── */}
-      <div className={s.main}>
+      <div
+        className={s.main}
+        style={notesDocked ? { paddingRight: 'var(--notes-panel-width, 0px)' } : {}}
+      >
         {/* Section nav */}
         <nav className={s.sectionNav} aria-label="Dossier sections">
           {SECTIONS.map(({ id, label }) => (
@@ -372,7 +436,6 @@ export default function FranceRepublic1792({ onResponse, onComplete, savedRespon
             intro="The republic did not emerge from one event. It emerged through a sequence of institutional changes: from the constitutional monarchy created in 1791, through the crisis of 1792, to the formal abolition of monarchy by the National Convention. Click each node to see what drove the transition."
           >
             <PathwayMap />
-
             <div className={s.tensionCard} style={{ marginTop: 28 }}>
               <div className={s.tensionLabel}>Interpretive tension</div>
               <div className={s.tensionText}>
@@ -421,24 +484,16 @@ export default function FranceRepublic1792({ onResponse, onComplete, savedRespon
             intro="Counter-revolutionaries aimed to halt or reverse the Revolution. They included émigré nobles, refractory clergy, foreign powers, and domestic royalists. Understanding why they failed — and why their efforts often intensified republican pressure rather than deflecting it — is an explicit part of the AS Level syllabus for this topic."
           >
             <div className={s.sectionBody}>
-              <p>
-                The most important form of counter-revolutionary pressure in 1792 was foreign military intervention, co-ordinated with the émigré movement. The Duke of Brunswick's Manifesto of July 1792, threatening Paris with destruction if the royal family were harmed, is the clearest example of counter-revolutionary pressure backfiring: instead of protecting Louis XVI, it convinced many Parisians that the king was aligned with France's enemies.
-              </p>
-              <p>
-                Refractory clergy — those who refused the oath to the Civil Constitution — provided a sustained domestic counter-revolutionary network rooted in parishes and local communities across France. Their presence sustained local conflict and gave the Revolution an enemy within as well as without.
-              </p>
-              <p>
-                Émigré nobles, organised in armies beyond the Rhine and pressing European courts for military intervention, created the permanent sense of an external counter-revolutionary threat that reinforced the revolutionary logic of emergency, suspicion, and exclusion.
-              </p>
+              <p>The most important form of counter-revolutionary pressure in 1792 was foreign military intervention, co-ordinated with the émigré movement. The Duke of Brunswick's Manifesto of July 1792, threatening Paris with destruction if the royal family were harmed, is the clearest example of counter-revolutionary pressure backfiring: instead of protecting Louis XVI, it convinced many Parisians that the king was aligned with France's enemies.</p>
+              <p>Refractory clergy — those who refused the oath to the Civil Constitution — provided a sustained domestic counter-revolutionary network rooted in parishes and local communities across France. Their presence sustained local conflict and gave the Revolution an enemy within as well as without.</p>
+              <p>Émigré nobles, organised in armies beyond the Rhine and pressing European courts for military intervention, created the permanent sense of an external counter-revolutionary threat that reinforced the revolutionary logic of emergency, suspicion, and exclusion.</p>
             </div>
-
             <div className={s.tensionCard}>
               <div className={s.tensionLabel}>Key question</div>
               <div className={s.tensionText}>
                 Did counter-revolution cause the republic, or did it fail to prevent one? The strongest historical argument is that counter-revolutionary pressure strengthened the republican case by making monarchy look like foreign collusion — the Brunswick Manifesto is the clearest evidence of this.
               </div>
             </div>
-
             <h3 className={s.subHeading}>Visual evidence: Brunswick Manifesto caricature</h3>
             <div className={s.vaGrid} style={{ gridTemplateColumns: 'minmax(260px, 400px)' }}>
               <VisualAssetCard va={VISUAL_ASSETS.find(v => v.id === 'VA-006')} />
@@ -462,7 +517,6 @@ export default function FranceRepublic1792({ onResponse, onComplete, savedRespon
                 </div>
               ))}
             </div>
-
             <h3 className={s.subHeading}>Visual evidence: Declaration of the Rights of Man, 1789</h3>
             <p className={s.sectionBody} style={{ marginBottom: 16 }}>
               The Declaration established the revolutionary standards — nation, rights, law — against which all later political decisions would be judged. Note that this is a symbolic painted representation, not a neutral document image.
@@ -485,14 +539,12 @@ export default function FranceRepublic1792({ onResponse, onComplete, savedRespon
                 return card ? <EvidenceCard key={id} card={card} /> : null
               })}
             </div>
-
             <div className={s.tensionCard} style={{ marginTop: 24 }}>
               <div className={s.tensionLabel}>Primary source — Louis XVI's declaration at Varennes</div>
               <div className={s.tensionText}>
                 Louis XVI left behind a declaration defending his departure, arguing he had been treated as "a prisoner in his own states" and had sought to "place himself in safety." The declaration also criticised the constitution as giving him no real authority. Whether this can be read as a rejection of constitutional monarchy altogether is one of the central interpretive questions of the period.
               </div>
             </div>
-
             <h3 className={s.subHeading}>Visual evidence: Varennes and Champ de Mars</h3>
             <div className={s.vaGrid}>
               <VisualAssetCard va={VISUAL_ASSETS.find(v => v.id === 'VA-003')} />
@@ -513,7 +565,6 @@ export default function FranceRepublic1792({ onResponse, onComplete, savedRespon
                 return card ? <EvidenceCard key={id} card={card} /> : null
               })}
             </div>
-
             <h3 className={s.subHeading}>Visual evidence: Fall of the Tuileries and September Massacres</h3>
             <div className={s.vaGrid}>
               <VisualAssetCard va={VISUAL_ASSETS.find(v => v.id === 'VA-004')} />
@@ -547,7 +598,6 @@ export default function FranceRepublic1792({ onResponse, onComplete, savedRespon
                 </div>
               ))}
             </div>
-
             <div className={s.tensionCard} style={{ marginTop: 20 }}>
               <div className={s.tensionLabel}>Synthesis point</div>
               <div className={s.tensionText}>
@@ -564,12 +614,10 @@ export default function FranceRepublic1792({ onResponse, onComplete, savedRespon
             intro="The cause map below organises factors by their causal role: structural pressures (long-term conditions), accelerating factors (developments that turned fragility into crisis), and triggering events (those that produced institutional breakdown). Click any node for a brief explanation."
           >
             <CauseMap />
-
             <h3 className={s.subHeading}>Cause-weighing guide</h3>
             <p className={s.sectionBody}>
               When you weigh causes in Activity 9, consider these questions for each factor: Was the republic possible without it? Did it weaken monarchy, strengthen republicanism, or both? Was it long-term, short-term, or immediate? Did it interact with other factors to become more or less decisive?
             </p>
-
             <div className={s.tensionCard} style={{ marginTop: 20 }}>
               <div className={s.tensionLabel}>Avoid this weak explanation</div>
               <div className={s.tensionText}>
@@ -603,24 +651,16 @@ export default function FranceRepublic1792({ onResponse, onComplete, savedRespon
             intro="Use this section with the Final task activity. The structured builder in the activity panel will help you pull together your saved notes and construct an AS Level-style historical judgement."
           >
             <div className={s.sectionBody}>
-              <p>
-                <strong>The central inquiry question:</strong> <em>How and why did France become a republic by 1792?</em>
-              </p>
-              <p>
-                A strong answer addresses both parts. <strong>How</strong> requires you to explain the political pathway — the mechanism by which constitutional monarchy moved through institutional crisis to the National Convention and formal abolition of monarchy. <strong>Why</strong> requires you to judge which causes were most significant and how they interacted.
-              </p>
-              <p>
-                The most defensible synthesis is <strong>cumulative collapse with decisive accelerants</strong>. Varennes mattered because it destroyed trust, but constitutional monarchy still survived for a year after it. War, invasion fear, the Brunswick Manifesto, and the insurrection of 10 August then transformed distrust into political overthrow. The republic was the result of accumulated breakdown, not a single cause.
-              </p>
+              <p><strong>The central inquiry question:</strong> <em>How and why did France become a republic by 1792?</em></p>
+              <p>A strong answer addresses both parts. <strong>How</strong> requires you to explain the political pathway — the mechanism by which constitutional monarchy moved through institutional crisis to the National Convention and formal abolition of monarchy. <strong>Why</strong> requires you to judge which causes were most significant and how they interacted.</p>
+              <p>The most defensible synthesis is <strong>cumulative collapse with decisive accelerants</strong>. Varennes mattered because it destroyed trust, but constitutional monarchy still survived for a year after it. War, invasion fear, the Brunswick Manifesto, and the insurrection of 10 August then transformed distrust into political overthrow. The republic was the result of accumulated breakdown, not a single cause.</p>
             </div>
-
             <div className={s.tensionCard}>
               <div className={s.tensionLabel}>Success criteria for your final response</div>
               <div className={s.tensionText}>
                 Uses accurate content knowledge · Supports claims with evidence · Explains the pathway (not only causes) · Shows clear causal reasoning · Weighs competing factors · Makes a justified conclusion · Reflects awareness that the outcome was not inevitable
               </div>
             </div>
-
             <div style={{ marginTop: 24 }}>
               <button
                 className={s.saveBtn}
@@ -635,14 +675,51 @@ export default function FranceRepublic1792({ onResponse, onComplete, savedRespon
       </div>
 
       {/* ── Mobile activity trigger ── */}
-      <button
-        className={s.mobileActivityTrigger}
-        onClick={() => setGuideOpen(prev => !prev)}
-        aria-label={`${guideOpen ? 'Close' : 'Open'} activity guide`}
-        aria-expanded={guideOpen}
-      >
-        Activities ({completedCount}/{COMPLETION_REQUIRED.length})
-      </button>
+      {!isDesktop && (
+        <button
+          className={s.mobileActivityTrigger}
+          onClick={() => setGuideOpen(prev => !prev)}
+          aria-label={`${guideOpen ? 'Close' : 'Open'} activity guide`}
+          aria-expanded={guideOpen}
+        >
+          Activities ({completedCount}/{COMPLETION_REQUIRED.length})
+        </button>
+      )}
+
+      {/* ── Desktop notes panel ── */}
+      {isDesktop && (
+        <FloatingPanel
+          id="france-notes"
+          title="My Notes"
+          tabLabel="Notes"
+          side="right"
+          width={320}
+          defaultHeight={560}
+          initialState="closed"
+          onDockedChange={setNotesDocked}
+        >
+          <NotesContent responses={responses} />
+        </FloatingPanel>
+      )}
+
+      {/* ── Mobile notes drawer ── */}
+      {!isDesktop && notesOpen && (
+        <>
+          <div className={s.notesOverlay} onClick={() => setNotesOpen(false)} aria-hidden="true" />
+          <div className={s.notesDrawer} role="complementary" aria-label="My saved notes">
+            <div className={s.notesHeader}>
+              <div className={s.notesTitle}>My notes</div>
+              <button
+                className={s.modalClose}
+                onClick={() => setNotesOpen(false)}
+                aria-label="Close notes"
+                style={{ position: 'static' }}
+              >×</button>
+            </div>
+            <NotesContent responses={responses} />
+          </div>
+        </>
+      )}
 
       {/* ── Activity modal ── */}
       {activeModal && (
@@ -654,54 +731,12 @@ export default function FranceRepublic1792({ onResponse, onComplete, savedRespon
           scrollToSection={scrollToSection}
         />
       )}
-
-      {/* ── Notes drawer ── */}
-      {notesOpen && (
-        <>
-          <div className={s.notesOverlay} onClick={() => setNotesOpen(false)} aria-hidden="true" />
-          <div
-            className={s.notesDrawer}
-            role="complementary"
-            aria-label="My saved notes"
-          >
-            <div className={s.notesHeader}>
-              <div className={s.notesTitle}>My notes</div>
-              <button
-                className={s.modalClose}
-                onClick={() => setNotesOpen(false)}
-                aria-label="Close notes"
-                style={{ position: 'static' }}
-              >×</button>
-            </div>
-            <div className={s.notesBody}>
-              {ACTIVITIES.filter(a => a.id !== 'init' && a.id !== 'reflection').map(act => {
-                const responseKey = act.id === 'final' ? 'final-response' : `${act.id}-response`
-                const value = responses[responseKey]
-                const hasContent = typeof value === 'string' && value.trim().length > 0
-                return (
-                  <div key={act.id} className={s.notesItem}>
-                    <div className={s.notesItemLabel}>{act.label}</div>
-                    <div className={s.notesItemTitle}>{act.title}</div>
-                    <div className={s.notesItemText}>
-                      {hasContent
-                        ? value
-                        : <span className={s.notesEmpty}>Not yet completed</span>
-                      }
-                    </div>
-                  </div>
-                )
-              })}
-            </div>
-          </div>
-        </>
-      )}
     </div>
   )
 }
 
 // ── Evidence card component ──────────────────────────────────────────────────
 function EvidenceCard({ card }) {
-  const [open, setOpen] = useState(false)
   return (
     <div className={s.evidenceCard}>
       <div className={s.evidenceCardHeader}>

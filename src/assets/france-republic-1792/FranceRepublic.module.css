@@ -30,7 +30,7 @@
   /* ── Shared ActivityModal theming ─── */
   --modal-overlay:         rgba(28, 25, 23, 0.55);
   --modal-panel-bg:        var(--fr-paper);
-  --modal-panel-max-width: min(600px, calc(100vw - var(--fr-guide-width)));
+  --modal-panel-max-width: 600px;
   --modal-border:          var(--fr-rule);
   --modal-ink:             var(--fr-ink);
   --modal-ink-mid:         var(--fr-ink-mid);
@@ -41,6 +41,21 @@
   --modal-label:           var(--fr-seal);
   --modal-serif:           var(--fr-serif);
   --modal-transition:      var(--fr-transition);
+
+  /* ── FloatingPanel theming ─── */
+  --fp-bg:          var(--fr-parchment-mid);
+  --fp-border:      var(--fr-rule);
+  --fp-ink:         var(--fr-ink);
+  --fp-ink-mid:     var(--fr-ink-mid);
+  --fp-ink-light:   var(--fr-ink-light);
+  --fp-accent:      var(--fr-accent);
+  --fp-subtle:      var(--fr-parchment);
+  --fp-shadow:      -4px 0 24px rgba(28,25,23,0.12), 0 4px 16px rgba(28,25,23,0.08);
+  --fp-tab-bg:      var(--fr-parchment-mid);
+  --fp-tab-border:  var(--fr-rule);
+  --fp-tab-ink:     var(--fr-ink-mid);
+  --fp-radius:      4px;
+  --fp-transition:  var(--fr-transition);
 }
 
 /* ── Shell / Layout ────────────────────────────────────────────────────────── */
@@ -50,7 +65,7 @@
   color: var(--fr-ink);
   min-height: 100vh;
   display: grid;
-  grid-template-columns: var(--fr-guide-width) 1fr;
+  grid-template-columns: auto 1fr;
   grid-template-rows: auto 1fr;
   position: relative;
 }
