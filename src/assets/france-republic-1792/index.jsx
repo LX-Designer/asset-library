@@ -10,6 +10,26 @@ import {
   GLOSSARY, VISUAL_ASSETS, PATHWAY_NODES
 } from './data.js'
 
+// ── Asset-specific CSS vars forwarded through FloatingPanel portals ──────────
+// FloatingPanel's anchor div lives inside .shell and reads these via
+// getComputedStyle. Chrome resolves var() chains at read time, so the portal
+// wrapper receives literal values (hex, font stacks) not unresolved var() refs.
+const FR_THEME_VARS = [
+  // Base tokens
+  '--fr-parchment', '--fr-parchment-mid', '--fr-paper', '--fr-paper-raised',
+  '--fr-ink', '--fr-ink-mid', '--fr-ink-light',
+  '--fr-rule', '--fr-rule-light',
+  '--fr-accent', '--fr-accent-hover', '--fr-accent-subtle',
+  '--fr-seal', '--fr-seal-subtle', '--fr-seal-muted',
+  '--fr-complete', '--fr-complete-subtle', '--fr-complete-muted',
+  '--fr-inprogress', '--fr-inprogress-subtle',
+  '--fr-serif', '--fr-sans', '--fr-transition',
+  // Modal-chrome tokens (used by SharedActivityModal)
+  '--modal-panel-bg', '--modal-border', '--modal-ink', '--modal-ink-mid',
+  '--modal-ink-light', '--modal-accent', '--modal-accent-hover',
+  '--modal-subtle', '--modal-label', '--modal-serif', '--modal-transition',
+]
+
 // ── Media query hook ─────────────────────────────────────────────────────────
 function useIsDesktop() {
   const [ok, setOk] = useState(() => typeof window !== 'undefined' && window.innerWidth >= 900)
@@ -133,90 +153,157 @@ function Section({ id, label, title, children, intro }) {
   )
 }
 
-// ── Guide panel content ──────────────────────────────────────────────────────
-function GuideContent({ responses, completedCount, totalCount, progressPct, openModal, onViewNotes, onReset }) {
+// ── Individual notes item — local draft keeps textarea snappy ────────────────
+// onBlur syncs to parent (avoids per-keystroke saves). useEffect keeps local
+// draft in sync when responses change externally (e.g. after saving in modal).
+function NotesItem({ act, responseKey, savedValue, openModal, onSave }) {
+  const [draft, setDraft] = useState(savedValue ?? '')
+
+  useEffect(() => {
+    setDraft(savedValue ?? '')
+  }, [savedValue])
+
+  const handleBlur = useCallback(() => {
+    const trimmed = draft.trim()
+    const prev = (savedValue ?? '').trim()
+    if (trimmed === prev) return          // no change — skip the round-trip
+    onSave(responseKey, trimmed || null)
+  }, [draft, savedValue, responseKey, onSave])
+
   return (
-    <>
-      <div className={s.guideHeader}>
-        <div className={s.guideTitle}>Activity guide</div>
-        <div className={s.guideSubtitle}>From Monarchy to Republic</div>
-        <div className={s.guideProgress}>
-          {completedCount} of {totalCount} activities complete
-          <span
-            className={s.guideProgressFill}
-            style={{ '--progress': `${progressPct}%` }}
-            role="progressbar"
-            aria-valuenow={progressPct}
-            aria-valuemin={0}
-            aria-valuemax={100}
-            aria-label={`${progressPct}% complete`}
-          />
-        </div>
-      </div>
-
-      <ul className={s.guideList} role="list">
-        {ACTIVITIES.map((act) => {
-          const status = getActivityStatus(act.id, responses)
-          return (
-            <li key={act.id} className={s.guideItem}>
-              <button
-                className={s.guideBtn}
-                onClick={() => openModal(act.id)}
-                aria-label={`${act.label}: ${act.title} — ${status.replace('-', ' ')}`}
-              >
-                <span className={`${s.guideDot} ${status !== 'not-started' ? s[status] : ''}`} aria-hidden="true" />
-                <span className={s.guideMeta}>
-                  <span className={s.guideItemLabel}>{act.label}</span>
-                  <span className={s.guideItemTitle}>{act.title}</span>
-                  <span className={`${s.guideStatusText} ${status !== 'not-started' ? s[status] : ''}`}>
-                    {status === 'not-started' ? 'Not started' : status === 'inprogress' ? 'In progress' : 'Complete'}
-                  </span>
-                </span>
-              </button>
-              {act.id === 'act9' && <div className={s.guideDivider} />}
-            </li>
-          )
-        })}
-      </ul>
-
-      <div className={s.guideFooter}>
-        <button className={s.guideFooterBtn} onClick={onViewNotes}>View my notes</button>
-        {onReset && (
-          <button
-            className={s.guideFooterBtn}
-            onClick={() => {
-              if (window.confirm('Clear all your responses and start again? The dossier will not be changed.')) {
-                onReset()
-              }
-            }}
-          >
-            Start again
-          </button>
-        )}
-      </div>
-    </>
+    <div className={s.notesItem}>
+      {/* Only the short label is a clickable link — title is static text below */}
+      <button
+        className={s.notesItemHeaderBtn}
+        onClick={() => openModal(act.id)}
+        title={`Open ${act.title}`}
+      >
+        <span className={s.notesItemLabel}>{act.label}</span>
+      </button>
+      <div className={s.notesItemTitle}>{act.title}</div>
+      <textarea
+        className={s.notesItemTextarea}
+        value={draft}
+        placeholder="Not yet completed"
+        onChange={e => setDraft(e.target.value)}
+        onBlur={handleBlur}
+        rows={3}
+        aria-label={`Notes for ${act.title}`}
+      />
+    </div>
   )
 }
 
-// ── Notes panel content ──────────────────────────────────────────────────────
-function NotesContent({ responses }) {
+// ── Merged guide + notes panel ───────────────────────────────────────────────
+// Single tabbed component used in both the desktop FloatingPanel and the
+// mobile guide drawer. activeTab/setActiveTab are lifted to the parent so
+// the viewport side-tabs can also drive which tab is shown on open.
+function GuidePanelContent({ responses, completedCount, totalCount, progressPct, openModal, onSave, onReset, activeTab, setActiveTab }) {
+
   return (
-    <div className={s.notesBody}>
-      {ACTIVITIES.filter(a => a.id !== 'init' && a.id !== 'reflection').map(act => {
-        const responseKey = act.id === 'final' ? 'final-response' : `${act.id}-response`
-        const value = responses[responseKey]
-        const hasContent = typeof value === 'string' && value.trim().length > 0
-        return (
-          <div key={act.id} className={s.notesItem}>
-            <div className={s.notesItemLabel}>{act.label}</div>
-            <div className={s.notesItemTitle}>{act.title}</div>
-            <div className={s.notesItemText}>
-              {hasContent ? value : <span className={s.notesEmpty}>Not yet completed</span>}
+    <>
+      {/* ── Sticky tab strip ── */}
+      <div className={s.guideTabs} role="tablist">
+        <button
+          className={`${s.guideTab} ${activeTab === 'activities' ? s.guideTabActive : ''}`}
+          role="tab"
+          aria-selected={activeTab === 'activities'}
+          onClick={() => setActiveTab('activities')}
+        >
+          Activities
+        </button>
+        <button
+          className={`${s.guideTab} ${activeTab === 'notes' ? s.guideTabActive : ''}`}
+          role="tab"
+          aria-selected={activeTab === 'notes'}
+          onClick={() => setActiveTab('notes')}
+        >
+          My Notes
+        </button>
+      </div>
+
+      {/* ── Activities tab ── */}
+      {activeTab === 'activities' && (
+        <>
+          <div className={s.guideHeader}>
+            <div className={s.guideTitle}>Activity guide</div>
+            <div className={s.guideSubtitle}>From Monarchy to Republic</div>
+            <div className={s.guideProgress}>
+              {completedCount} of {totalCount} activities complete
+              <span
+                className={s.guideProgressFill}
+                style={{ '--progress': `${progressPct}%` }}
+                role="progressbar"
+                aria-valuenow={progressPct}
+                aria-valuemin={0}
+                aria-valuemax={100}
+                aria-label={`${progressPct}% complete`}
+              />
             </div>
           </div>
-        )
-      })}
-    </div>
+
+          <ul className={s.guideList} role="list">
+            {ACTIVITIES.map((act) => {
+              const status = getActivityStatus(act.id, responses)
+              return (
+                <li key={act.id} className={s.guideItem}>
+                  <button
+                    className={s.guideBtn}
+                    onClick={() => openModal(act.id)}
+                    aria-label={`${act.label}: ${act.title} — ${status.replace('-', ' ')}`}
+                  >
+                    <span className={`${s.guideDot} ${status !== 'not-started' ? s[status] : ''}`} aria-hidden="true" />
+                    <span className={s.guideMeta}>
+                      <span className={s.guideItemLabel}>{act.label}</span>
+                      <span className={s.guideItemTitle}>{act.title}</span>
+                      <span className={`${s.guideStatusText} ${status !== 'not-started' ? s[status] : ''}`}>
+                        {status === 'not-started' ? 'Not started' : status === 'inprogress' ? 'In progress' : 'Complete'}
+                      </span>
+                    </span>
+                  </button>
+                  {act.id === 'act9' && <div className={s.guideDivider} />}
+                </li>
+              )
+            })}
+          </ul>
+
+          {onReset && (
+            <div className={s.guideFooter}>
+              <button
+                className={s.guideFooterBtn}
+                onClick={() => {
+                  if (window.confirm('Clear all your responses and start again? The dossier will not be changed.')) {
+                    onReset()
+                  }
+                }}
+              >
+                Start again
+              </button>
+            </div>
+          )}
+        </>
+      )}
+
+      {/* ── My Notes tab ── */}
+      {activeTab === 'notes' && (
+        <div className={s.notesBody}>
+          {ACTIVITIES.filter(a => a.id !== 'init' && a.id !== 'reflection').map(act => {
+            const responseKey = act.id === 'final' ? 'final-response' : `${act.id}-response`
+            const savedValue = typeof responses[responseKey] === 'string' ? responses[responseKey] : ''
+            return (
+              <NotesItem
+                key={act.id}
+                act={act}
+                responseKey={responseKey}
+                savedValue={savedValue}
+                openModal={openModal}
+                onSave={onSave}
+              />
+            )
+          })}
+        </div>
+      )}
+    </>
   )
 }
 
@@ -224,13 +311,14 @@ function NotesContent({ responses }) {
 export default function FranceRepublic1792({ onResponse, onComplete, savedResponses, isCompleted, onReset }) {
   const [responses, setResponses] = useState(savedResponses ?? {})
   const [activeModal, setActiveModal] = useState(null)
+  const [activityTrigger, setActivityTrigger] = useState(0)
   const [activeSection, setActiveSection] = useState('intro')
-  const [guideOpen, setGuideOpen] = useState(false)      // mobile only
-  const [notesOpen, setNotesOpen] = useState(false)      // mobile only
-  const [notesDocked, setNotesDocked] = useState(false)  // desktop notes panel docked state
+  const [guideOpen, setGuideOpen] = useState(false)         // mobile drawer open state
+  const [guideDesktopOpen, setGuideDesktopOpen] = useState(true) // desktop panel docked state
+  const [guideTrigger, setGuideTrigger] = useState(0)       // increments to (re-)open guide
+  const [guideActiveTab, setGuideActiveTab] = useState('activities') // lifted from GuidePanelContent
   const isDesktop = useIsDesktop()
   const prevCompletedRef = useRef(false)
-  const notesFloatingRef = useRef(null)
 
   // IntersectionObserver for active section tracking
   useEffect(() => {
@@ -270,12 +358,13 @@ export default function FranceRepublic1792({ onResponse, onComplete, savedRespon
 
   const openModal = useCallback((id) => {
     setActiveModal(id)
+    setActivityTrigger(t => t + 1)
     setGuideOpen(false)
   }, [])
 
-  const closeModal = useCallback((nextActivityId) => {
-    setActiveModal(null)
-    if (nextActivityId) setTimeout(() => setActiveModal(nextActivityId), 50)
+  // Navigate between activities without closing the panel
+  const navigateModal = useCallback((nextId) => {
+    setActiveModal(nextId)
   }, [])
 
   const scrollToSection = useCallback((sectionId) => {
@@ -299,31 +388,34 @@ export default function FranceRepublic1792({ onResponse, onComplete, savedRespon
     totalCount: COMPLETION_REQUIRED.length,
     progressPct,
     openModal,
-    onViewNotes: () => isDesktop ? (notesFloatingRef.current?.open?.()) : setNotesOpen(true),
+    onSave: handleSave,
     onReset,
+    activeTab: guideActiveTab,
+    setActiveTab: setGuideActiveTab,
   }
 
   return (
-    <div
-      className={s.shell}
-      style={notesDocked ? { '--notes-panel-width': '320px' } : {}}
-    >
+    <div className={s.shell}>
       {/* ── Activity Guide ── */}
       {isDesktop ? (
         <FloatingPanel
           id="france-guide"
           title="Activity Guide"
-          tabLabel="Guide"
           side="left"
           width={260}
           defaultHeight={600}
           initialState="docked"
+          sidebarOnly
+          noTab
+          triggerOpen={guideTrigger}
+          onDockedChange={(docked) => setGuideDesktopOpen(docked)}
+          themeVars={FR_THEME_VARS}
         >
-          <GuideContent {...guideProps} />
+          <GuidePanelContent {...guideProps} />
         </FloatingPanel>
       ) : (
         <nav className={`${s.guide} ${guideOpen ? s.open : ''}`} aria-label="Activity guide">
-          <GuideContent {...guideProps} />
+          <GuidePanelContent {...guideProps} />
         </nav>
       )}
 
@@ -336,33 +428,50 @@ export default function FranceRepublic1792({ onResponse, onComplete, savedRespon
         />
       )}
 
+      {/* ── Desktop guide side-tabs (visible when guide panel is closed) ── */}
+      {isDesktop && !guideDesktopOpen && (
+        <div className={s.guideSideTabs} aria-label="Open activity guide">
+          <button
+            className={s.guideSideTab}
+            onClick={() => { setGuideActiveTab('activities'); setGuideTrigger(t => t + 1) }}
+          >
+            Activities
+          </button>
+          <button
+            className={s.guideSideTab}
+            onClick={() => { setGuideActiveTab('notes'); setGuideTrigger(t => t + 1) }}
+          >
+            Notes
+          </button>
+        </div>
+      )}
+
       {/* ── Main content ── */}
-      <div
-        className={s.main}
-        style={notesDocked ? { paddingRight: 'var(--notes-panel-width, 0px)' } : {}}
-      >
+      <div className={s.main}>
         {/* Section nav */}
         <nav className={s.sectionNav} aria-label="Dossier sections">
-          {SECTIONS.map(({ id, label }) => (
-            <a
-              key={id}
-              href={`#${id}`}
-              className={`${s.sectionNavLink} ${activeSection === id ? s.active : ''}`}
-              onClick={e => { e.preventDefault(); scrollToSection(id) }}
-            >
-              {label}
-            </a>
-          ))}
-          <select
-            className={s.sectionNavSelect}
-            value={activeSection}
-            onChange={handleSectionNavChange}
-            aria-label="Jump to section"
-          >
+          <div className={s.sectionNavInner}>
             {SECTIONS.map(({ id, label }) => (
-              <option key={id} value={id}>{label}</option>
+              <a
+                key={id}
+                href={`#${id}`}
+                className={`${s.sectionNavLink} ${activeSection === id ? s.active : ''}`}
+                onClick={e => { e.preventDefault(); scrollToSection(id) }}
+              >
+                {label}
+              </a>
             ))}
-          </select>
+            <select
+              className={s.sectionNavSelect}
+              value={activeSection}
+              onChange={handleSectionNavChange}
+              aria-label="Jump to section"
+            >
+              {SECTIONS.map(({ id, label }) => (
+                <option key={id} value={id}>{label}</option>
+              ))}
+            </select>
+          </div>
         </nav>
 
         {/* Dossier */}
@@ -686,50 +795,53 @@ export default function FranceRepublic1792({ onResponse, onComplete, savedRespon
         </button>
       )}
 
-      {/* ── Desktop notes panel ── */}
+      {/* ── Activity panel (FloatingPanel, right side) ── */}
       {isDesktop && (
         <FloatingPanel
-          id="france-notes"
-          title="My Notes"
-          tabLabel="Notes"
+          id="france-activity"
+          title={activeModal ? (ACTIVITIES.find(a => a.id === activeModal)?.label ?? 'Activity') : 'Activity'}
           side="right"
-          width={320}
-          defaultHeight={560}
+          width={600}
+          defaultHeight={700}
           initialState="closed"
-          onDockedChange={setNotesDocked}
+          triggerOpen={activityTrigger}
+          onClose={() => setActiveModal(null)}
+          modalFirst
+          noTab
+          themeVars={FR_THEME_VARS}
         >
-          <NotesContent responses={responses} />
+          {activeModal && (
+            <ActivityModal
+              activityId={activeModal}
+              responses={responses}
+              onSave={handleSave}
+              onNavigate={navigateModal}
+              scrollToSection={scrollToSection}
+            />
+          )}
         </FloatingPanel>
       )}
 
-      {/* ── Mobile notes drawer ── */}
-      {!isDesktop && notesOpen && (
+      {/* ── Mobile: activity modal ── */}
+      {!isDesktop && activeModal && (
         <>
-          <div className={s.notesOverlay} onClick={() => setNotesOpen(false)} aria-hidden="true" />
-          <div className={s.notesDrawer} role="complementary" aria-label="My saved notes">
-            <div className={s.notesHeader}>
-              <div className={s.notesTitle}>My notes</div>
-              <button
-                className={s.modalClose}
-                onClick={() => setNotesOpen(false)}
-                aria-label="Close notes"
-                style={{ position: 'static' }}
-              >×</button>
-            </div>
-            <NotesContent responses={responses} />
+          <div
+            style={{ position: 'fixed', inset: 0, background: 'rgba(28,25,23,0.48)', zIndex: 50 }}
+            onClick={() => setActiveModal(null)}
+            aria-hidden="true"
+          />
+          <div style={{ position: 'fixed', top: 0, right: 0, bottom: 0, width: '100%', maxWidth: 560, zIndex: 51, overflowY: 'auto', background: 'var(--fr-paper, #fff)', borderLeft: '1px solid var(--fr-rule, #e5e7eb)' }}>
+            <ActivityModal
+              activityId={activeModal}
+              responses={responses}
+              onSave={handleSave}
+              onNavigate={navigateModal}
+              onClose={() => setActiveModal(null)}
+              showHeader
+              scrollToSection={scrollToSection}
+            />
           </div>
         </>
-      )}
-
-      {/* ── Activity modal ── */}
-      {activeModal && (
-        <ActivityModal
-          activityId={activeModal}
-          responses={responses}
-          onSave={handleSave}
-          onClose={closeModal}
-          scrollToSection={scrollToSection}
-        />
       )}
     </div>
   )

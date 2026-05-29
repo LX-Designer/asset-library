@@ -22,6 +22,7 @@
 .tab {
   position: fixed;
   top: 50%;
+  transform: translateY(-50%);
   z-index: 90;
   background: none;
   border: none;
@@ -32,8 +33,14 @@
   user-select: none;
 }
 
-.tab.left  { left: 0;  transform: translateY(-50%); }
-.tab.right { right: 0; transform: translateY(-50%); }
+.tab.left  { left: 0; }
+.tab.right { right: 0; }
+
+/* Top-corner variant — overrides the centred default */
+.tab.alignTop {
+  top: 0;
+  transform: none;
+}
 
 .tabInner {
   display: block;
@@ -93,6 +100,12 @@
 
 .header:active { cursor: grabbing; }
 
+/* Sidebar-only panels — header is not a drag handle */
+.headerStatic,
+.headerStatic:active {
+  cursor: default;
+}
+
 .headerTitle {
   font-size: 11px;
   font-weight: 700;
@@ -151,6 +164,28 @@
   overflow-y: auto;
   overflow-x: hidden;
   min-height: 0;
+  overscroll-behavior: contain;
+  /* Standard scrollbar (Firefox, Chrome 121+) */
+  scrollbar-width: thin;
+  scrollbar-color: var(--fp-border, #e5e7eb) transparent;
+}
+
+/* Webkit scrollbar (Chrome/Edge/Safari) */
+.panelBody::-webkit-scrollbar {
+  width: 5px;
+}
+
+.panelBody::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.panelBody::-webkit-scrollbar-thumb {
+  background: var(--fp-border, #e5e7eb);
+  border-radius: 3px;
+}
+
+.panelBody::-webkit-scrollbar-thumb:hover {
+  background: var(--fp-ink-light, #9ca3af);
 }
 
 /* ── Docked panel ────────────────────────────────────────────────────────── */
@@ -160,6 +195,7 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  position: relative;
 }
 
 .dockedPanel.left {
@@ -183,16 +219,38 @@
   box-shadow: var(--fp-shadow, -4px 0 24px rgba(0,0,0,0.10));
 }
 
+/* ── Docked resize handle ────────────────────────────────────────────────── */
+.resizeHandle {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 6px;
+  cursor: col-resize;
+  z-index: 10;
+  transition: background var(--fp-transition, 160ms ease);
+}
+
+.resizeHandle.left  { right: -3px; }
+.resizeHandle.right { left: -3px; }
+
+.resizeHandle:hover,
+.resizeHandle:active {
+  background: var(--fp-accent, #374151);
+  opacity: 0.25;
+}
+
 /* ── Floating panel ──────────────────────────────────────────────────────── */
 .floatingPanel {
   background: var(--fp-bg, #ffffff);
   border: 1px solid var(--fp-border, #e5e7eb);
   border-radius: var(--fp-radius, 6px);
   box-shadow: var(--fp-shadow, 0 4px 24px rgba(0,0,0,0.14));
-  display: flex;
+  /* react-rnd injects display:inline-block via inline style — override */
+  display: flex !important;
   flex-direction: column;
+  /* position:absolute is react-rnd's default; the fixed viewport wrapper
+     gives it viewport-relative coordinates without needing position:fixed here */
   overflow: hidden;
-  z-index: 95 !important;
 }
 
 .floatingPanel .header {
@@ -210,6 +268,17 @@
   border-bottom: none;
   border-radius: var(--fp-radius, 6px);
   cursor: grab;
+}
+
+/* ── Modal overlay (modalFirst) ─────────────────────────────────────────── */
+/* Rendered inside the viewport wrapper (position:fixed z-95).
+   Covers the full viewport and dims everything behind the panel.
+   pointerEvents is set to 'auto' via inline style to block background interaction. */
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.42);
+  z-index: 0;
 }
 
 /* ── Reduced motion ──────────────────────────────────────────────────────── */

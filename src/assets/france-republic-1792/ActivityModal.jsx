@@ -45,7 +45,9 @@ function SaveStatus({ status }) {
 }
 
 // ── Main modal ───────────────────────────────────────────────────────────────
-export default function ActivityModal({ activityId, responses, onSave, onClose, scrollToSection }) {
+// onNavigate handles prev/next without closing the FloatingPanel.
+// showHeader + onClose are for the mobile fallback (no FloatingPanel).
+export default function ActivityModal({ activityId, responses, onSave, onNavigate, onClose, showHeader = false, scrollToSection }) {
   const actIndex = ACT_ORDER.indexOf(activityId)
   const activity = ACTIVITIES.find(a => a.id === activityId)
 
@@ -68,9 +70,11 @@ export default function ActivityModal({ activityId, responses, onSave, onClose, 
       evidenceSections={activity.evidenceSections.map(id => ({ id, label: SECTION_LABEL[id] ?? id }))}
       prevItem={prevActivity ? { id: prevActivity.id, label: prevActivity.label } : null}
       nextItem={nextActivity ? { id: nextActivity.id, label: nextActivity.label } : null}
-      onClose={onClose}
+      onNavigate={onNavigate}
+      onClose={showHeader ? onClose : undefined}
       onScrollTo={scrollToSection}
       onClear={() => onSave(activityId, null)}
+      noHeader={!showHeader}
     >
       <ActivityForm activityId={activityId} responses={responses} onSave={onSave} />
     </SharedActivityModal>

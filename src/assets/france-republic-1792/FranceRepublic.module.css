@@ -81,6 +81,7 @@
   height: 100vh;
   overflow-y: auto;
   overflow-x: hidden;
+  overscroll-behavior: contain;
   display: flex;
   flex-direction: column;
   z-index: 20;
@@ -137,8 +138,7 @@
 .guideList {
   list-style: none;
   padding: 8px 0;
-  flex: 1;
-  overflow-y: auto;
+  /* Parent scroll container (.panelBody / .guide) handles overflow */
 }
 
 .guideItem {
@@ -191,11 +191,12 @@
 .guideDot.complete::after {
   content: '';
   position: absolute;
-  top: 3px; left: 5px;
+  top: 50%;
+  left: 50%;
   width: 5px; height: 3px;
   border-left: 1.5px solid white;
   border-bottom: 1.5px solid white;
-  transform: rotate(-45deg);
+  transform: translate(-50%, -65%) rotate(-45deg);
 }
 
 .guideDot.inprogress {
@@ -275,6 +276,128 @@
   color: var(--fr-accent);
 }
 
+/* ── Guide panel tab strip ─────────────────────────────────────────────────── */
+/* Sticky within .panelBody (desktop) and .guide (mobile) — both are
+   overflow-y:auto scroll containers, so sticky top:0 anchors to their top. */
+.guideTabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  padding: 10px 12px 0;
+  background: var(--fr-parchment-mid);
+  border-bottom: 1px solid var(--fr-rule);
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+
+.guideTab {
+  padding: 7px 6px;
+  background: var(--fr-parchment);
+  border: 1px solid var(--fr-rule);
+  border-bottom: none;
+  border-radius: 4px 4px 0 0;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--fr-ink-mid);
+  cursor: pointer;
+  transition: color var(--fr-transition), background var(--fr-transition);
+}
+
+.guideTab:hover {
+  color: var(--fr-accent);
+  background: var(--fr-paper);
+}
+
+.guideTab:focus-visible {
+  outline: 2px solid var(--fr-accent);
+  outline-offset: -2px;
+}
+
+.guideTabActive {
+  background: var(--fr-parchment-mid); /* matches panel bg so tab "opens into" body */
+  color: var(--fr-accent);
+  border-bottom-color: var(--fr-parchment-mid);
+  position: relative;
+  top: 1px;
+  z-index: 1;
+}
+
+/* ── Guide sidebar: viewport edge side-tabs (shown when guide is closed) ────── */
+/* Fixed to left edge, stacked vertically, horizontal text — same interaction
+   pattern as the econ dossier investigation side tabs. */
+.guideSideTabs {
+  position: fixed;
+  top: 44px;      /* below the FloatingPanel header height */
+  left: 0;
+  z-index: 90;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding-top: 8px;
+  pointer-events: none; /* gaps between tabs are click-through */
+}
+
+.guideSideTab {
+  pointer-events: auto;
+  display: block;
+  padding: 8px 14px 8px 10px;
+  background: var(--fp-bg, var(--fr-parchment-mid));
+  border: 1px solid var(--fp-border, var(--fr-rule));
+  border-left: none;
+  border-radius: 0 4px 4px 0;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--fp-ink-mid, var(--fr-ink-mid));
+  cursor: pointer;
+  white-space: nowrap;
+  box-shadow: 2px 2px 6px rgba(0,0,0,0.08);
+  transition: background var(--fr-transition), color var(--fr-transition), border-color var(--fr-transition);
+}
+
+.guideSideTab:hover,
+.guideSideTab:focus-visible {
+  background: var(--fr-accent);
+  color: #fff;
+  border-color: var(--fr-accent);
+}
+
+.guideSideTab:focus-visible {
+  outline: 2px solid var(--fr-accent);
+  outline-offset: 2px;
+}
+
+/* ── Notes tab: label-only link button ──────────────────────────────────────── */
+/* Only the short label chip is clickable; it extends edge-to-edge for a
+   comfortable hit target. The activity title sits below as static text. */
+.notesItemHeaderBtn {
+  display: inline-flex;
+  align-items: center;
+  width: calc(100% + 32px);   /* cancel .notesBody padding (16px each side) */
+  margin-left: -16px;
+  padding: 5px 16px 4px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  border-radius: 0;
+  transition: background var(--fr-transition);
+  margin-bottom: 2px;
+}
+
+.notesItemHeaderBtn:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.notesItemHeaderBtn:focus-visible {
+  outline: 2px solid var(--fr-accent);
+  outline-offset: -2px;
+}
+
 /* ── Main content area ─────────────────────────────────────────────────────── */
 .main {
   grid-column: 2;
@@ -291,10 +414,6 @@
   z-index: 10;
   background: var(--fr-paper);
   border-bottom: 1px solid var(--fr-rule);
-  padding: 0 24px;
-  display: flex;
-  align-items: center;
-  gap: 0;
   overflow-x: auto;
   scrollbar-width: none;
   -ms-overflow-style: none;
@@ -302,6 +421,16 @@
 }
 
 .sectionNav::-webkit-scrollbar { display: none; }
+
+/* Inner wrapper centres the nav links to the same max-width as the dossier */
+.sectionNavInner {
+  display: flex;
+  align-items: center;
+  max-width: 980px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 8px;
+}
 
 .sectionNavLink {
   padding: 12px 10px;
@@ -342,12 +471,16 @@
 .dossier {
   flex: 1;
   padding: 0;
+  max-width: 980px;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .section {
   padding: 48px 40px;
   border-bottom: 1px solid var(--fr-rule-light);
-  max-width: 860px;
+  max-width: 980px;
 }
 
 .section:last-child {
@@ -1666,6 +1799,7 @@
 .notesBody {
   padding: 16px 20px;
   flex: 1;
+  overscroll-behavior: contain;
 }
 
 .notesItem {
@@ -1678,30 +1812,44 @@
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--fr-seal);
-  margin-bottom: 4px;
 }
 
+/* Activity title — static text below the link button */
 .notesItemTitle {
   font-size: 13px;
   font-weight: 600;
   color: var(--fr-ink);
-  margin-bottom: 4px;
+  margin: 0 0 6px;
+  line-height: 1.4;
 }
 
-.notesItemText {
+/* Editable textarea in notes — synced with the activity modal response */
+.notesItemTextarea {
+  display: block;
+  width: 100%;
+  min-height: 68px;
+  resize: vertical;
   font-family: var(--fr-serif);
   font-size: 13px;
   color: var(--fr-ink-mid);
   line-height: 1.6;
   background: var(--fr-parchment);
+  border: 1px solid var(--fr-rule);
   border-radius: 3px;
   padding: 8px 10px;
+  box-sizing: border-box;
+  transition: border-color var(--fr-transition);
 }
 
-.notesEmpty {
-  font-size: 13px;
+.notesItemTextarea::placeholder {
   color: var(--fr-ink-light);
   font-style: italic;
+}
+
+.notesItemTextarea:focus {
+  outline: none;
+  border-color: var(--fr-accent);
+  background: var(--fr-paper);
 }
 
 /* ── Mobile activity trigger ───────────────────────────────────────────────── */

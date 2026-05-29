@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import { Rnd } from 'react-rnd'
 import s from './FloatingPanel.module.css'
@@ -40,30 +40,32 @@ const IconExpand = () => (
   </svg>
 )
 
-function PanelHeader({ title, state, onTransition }) {
+function PanelHeader({ title, state, onTransition, sidebarOnly, modalFirst }) {
   const isDocked    = state === 'docked'
   const isFloating  = state === 'floating'
   const isMinimised = state === 'minimised'
+  // Standard nav buttons only for the full-featured (non-restricted) mode
+  const showNav = !sidebarOnly && !modalFirst
   return (
-    <div className={s.header}>
+    <div className={`${s.header}${sidebarOnly ? ' ' + s.headerStatic : ''}`}>
       <span className={s.headerTitle}>{title}</span>
       <div className={s.headerBtns}>
-        {isDocked && (
+        {showNav && isDocked && (
           <button className={s.hBtn} onClick={() => onTransition('floating')} title="Pop out" aria-label="Pop out panel">
             <IconPopOut />
           </button>
         )}
-        {isFloating && (
+        {showNav && isFloating && (
           <button className={s.hBtn} onClick={() => onTransition('minimised')} title="Minimise" aria-label="Minimise panel">
             <IconMinimise />
           </button>
         )}
-        {isMinimised && (
+        {showNav && isMinimised && (
           <button className={s.hBtn} onClick={() => onTransition('floating')} title="Expand" aria-label="Expand panel">
             <IconExpand />
           </button>
         )}
-        {(isFloating || isMinimised) && (
+        {showNav && (isFloating || isMinimised) && (
           <button className={s.hBtn} onClick={() => onTransition('docked')} title="Dock to sidebar" aria-label="Dock panel">
             <IconDock />
           </button>
@@ -83,15 +85,22 @@ function PanelHeader({ title, state, onTransition }) {
  *   id              string              localStorage key prefix
  *   title           string              panel heading
  *   side            'left' | 'right'   which viewport edge for the tab
- *   width           number              docked width + default float width (px)
+ *   width           number              default float width (px)
  *   defaultHeight   number              default float height (px)
  *   tabLabel        string              text on the viewport edge tab
  *   initialState    'docked' | 'floating' | 'closed'
- *   onDockedChange  (isDocked) => void  optional; fires when docked state changes
+ *   onDockedChange  (isDocked, width) => void  fires when docked state or panel width changes
+ *   onClose         () => void          fires when panel transitions to closed
+ *   triggerOpen     number              increment to programmatically open from closed
+ *   noTab           bool                when closed, show nothing (no edge tab)
+ *   sidebarOnly     bool                docked/closed only — no pop-out, no minimise
+ *   tabAlign        'center' | 'top'    edge tab vertical position (default 'center')
+ *   modalFirst      bool                opens centred with dim overlay; drag header → free float
+ *   themeVars       string[]            extra CSS custom-property names to read from the
+ *                                       anchor (inside the asset shell) and forward to the
+ *                                       portal wrapper — use when the panel's children
+ *                                       reference asset-specific vars (e.g. '--fr-accent')
  *   children        ReactNode
- *
- * Theming: set --fp-* custom properties on an ancestor element.
- * See FloatingPanel.module.css for the full variable list.
  */
 export default function FloatingPanel({
   id,
@@ -102,6 +111,13 @@ export default function FloatingPanel({
   tabLabel,
   initialState = 'docked',
   onDockedChange,
+  onClose,
+  triggerOpen,
+  noTab = false,
+  sidebarOnly = false,
+  tabAlign = 'center',
+  modalFirst = false,
+  themeVars = [],
   children,
 }) {
   const stored = load(id)
@@ -113,40 +129,151 @@ export default function FloatingPanel({
       : { x: Math.max(0, vw - width - 20), y: 60 }
   }, [side, width])
 
-  const [panelState, setPanelState_] = useState(stored.state ?? initialState)
+  const [panelState, setPanelState_] = useState(() => {
+    const raw = stored.state ?? initialState
+    // modalFirst panels always start closed — only triggerOpen can open them
+    if (modalFirst) return 'closed'
+    // sidebarOnly panels can only be docked or closed
+    if (sidebarOnly && (raw === 'floating' || raw === 'minimised')) return 'docked'
+    return raw
+  })
   const [pos, setPos] = useState(() => {
     const p = stored.pos ?? defaultPos()
     return typeof window !== 'undefined' ? clampPos(p, width, defaultHeight) : p
   })
   const [size, setSize] = useState(stored.size ?? { width, height: defaultHeight })
+  const [dockedWidth, setDockedWidth] = useState(stored.dockedWidth ?? width)
+  // Dim overlay — true while modalFirst panel is in its initial centred position
+  const [showOverlay, setShowOverlay] = useState(false)
+
+  // Anchor div in document flow reads inherited CSS vars for portal use
+  const anchorRef = useRef(null)
+  const [portalStyle, setPortalStyle] = useState(null)
+
+  useEffect(() => {
+    if (!anchorRef.current) return
+    const cs = getComputedStyle(anchorRef.current)
+    const varNames = [
+      '--fp-bg', '--fp-border', '--fp-ink', '--fp-ink-mid', '--fp-ink-light',
+      '--fp-accent', '--fp-subtle', '--fp-shadow', '--fp-tab-bg', '--fp-tab-border',
+      '--fp-tab-ink', '--fp-radius', '--fp-transition',
+      // Asset-specific vars forwarded via the themeVars prop.
+      // Chrome resolves var() chains at getPropertyValue time, so these
+      // arrive as literal values (hex, font stack, etc.) — safe as inline styles.
+      ...themeVars,
+    ]
+    const vars = {}
+    varNames.forEach(v => { const val = cs.getPropertyValue(v).trim(); if (val) vars[v] = val })
+    if (Object.keys(vars).length > 0) setPortalStyle(vars)
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const isDocked    = panelState === 'docked'
   const isFloating  = panelState === 'floating'
   const isMinimised = panelState === 'minimised'
-  const isClosed    = panelState === 'closed'
 
   const transition = useCallback((newState) => {
+    if (newState === 'closed') {
+      setShowOverlay(false)
+      save(id, { state: newState, prevState: panelState })
+      onClose?.()
+    } else {
+      save(id, { state: newState })
+    }
     setPanelState_(newState)
-    save(id, { state: newState })
-  }, [id])
+  }, [id, panelState, onClose])
+
+  // Programmatic open: when triggerOpen increments, open the panel
+  useEffect(() => {
+    if (!triggerOpen) return
+
+    if (modalFirst) {
+      // Each trigger re-centres and re-shows the overlay (even if already floating).
+      // Clamp to viewport so the modal never opens larger than the window.
+      const w = Math.min(size.width,  window.innerWidth  - 48)
+      const h = Math.min(size.height, window.innerHeight - 48)
+      const newSize = (w !== size.width || h !== size.height) ? { width: w, height: h } : null
+      if (newSize) setSize(newSize)
+      const centrePos = {
+        x: Math.max(0, Math.round((window.innerWidth  - w) / 2)),
+        y: Math.max(0, Math.round((window.innerHeight - h) / 2)),
+      }
+      setPos(centrePos)
+      setShowOverlay(true)
+      setPanelState_('floating')
+      save(id, { state: 'floating', pos: centrePos })
+      return
+    }
+
+    // Standard open: restore previous state (or sensible default)
+    const st = load(id)
+    if (st.state === 'closed' || panelState === 'closed') {
+      const reopen = sidebarOnly
+        ? 'docked'
+        : ((st.prevState === 'floating' || st.prevState === 'minimised' || st.prevState === 'docked')
+            ? st.prevState : 'floating')
+      setPanelState_(reopen)
+      save(id, { state: reopen })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [triggerOpen])
 
   useEffect(() => {
-    onDockedChange?.(isDocked)
-  }, [isDocked, onDockedChange])
+    onDockedChange?.(isDocked, isDocked ? dockedWidth : 0)
+  }, [isDocked, dockedWidth, onDockedChange])
 
-  // Clamp position after window resize
+  // Clamp (or re-centre) position after window resize
   useEffect(() => {
     const handler = () => {
-      setPos(prev => clampPos(prev, size.width, size.height))
+      if (showOverlay) {
+        // Modal is still in its initial centred position — keep it centred
+        const w = Math.min(size.width,  window.innerWidth  - 48)
+        const h = Math.min(size.height, window.innerHeight - 48)
+        setPos({
+          x: Math.max(0, Math.round((window.innerWidth  - w) / 2)),
+          y: Math.max(0, Math.round((window.innerHeight - h) / 2)),
+        })
+      } else {
+        setPos(prev => clampPos(prev, size.width, size.height))
+      }
     }
     window.addEventListener('resize', handler)
     return () => window.removeEventListener('resize', handler)
-  }, [size])
+  }, [size, showOverlay])
 
-  const tab = (
+  // Docked-width drag resize
+  const handleDockedResize = useCallback((e) => {
+    e.preventDefault()
+    const startX = e.clientX
+    const startW = dockedWidth
+    const onMove = (ev) => {
+      const delta = side === 'left' ? ev.clientX - startX : startX - ev.clientX
+      setDockedWidth(Math.max(180, Math.min(600, startW + delta)))
+    }
+    const onUp = () => {
+      window.removeEventListener('mousemove', onMove)
+      window.removeEventListener('mouseup', onUp)
+      setDockedWidth(prev => { save(id, { dockedWidth: prev }); return prev })
+    }
+    window.addEventListener('mousemove', onMove)
+    window.addEventListener('mouseup', onUp)
+  }, [dockedWidth, side, id])
+
+  // Hidden anchor always rendered in document flow so CSS vars can be read
+  const anchorDiv = <div ref={anchorRef} style={{ display: 'none' }} aria-hidden="true" />
+
+  const tabClassName = [s.tab, s[side], tabAlign === 'top' ? s.alignTop : ''].filter(Boolean).join(' ')
+
+  const tab = noTab ? null : (
     <button
-      className={`${s.tab} ${s[side]}`}
-      onClick={() => transition('docked')}
+      className={tabClassName}
+      onClick={() => {
+        const st = load(id)
+        const reopen = sidebarOnly
+          ? 'docked'
+          : ((st.prevState === 'floating' || st.prevState === 'minimised')
+              ? st.prevState : 'docked')
+        transition(reopen)
+      }}
       aria-label={`Open ${title}`}
     >
       <span className={s.tabInner}>{tabLabel ?? title}</span>
@@ -156,48 +283,79 @@ export default function FloatingPanel({
   // ── Docked ──────────────────────────────────────────────────────────────────
   if (isDocked) {
     const panel = (
-      <div className={`${s.dockedPanel} ${s[side]}`} style={{ width }}>
-        <PanelHeader title={title} state={panelState} onTransition={transition} />
+      <div className={`${s.dockedPanel} ${s[side]}`} style={{ width: dockedWidth }}>
+        <PanelHeader title={title} state={panelState} onTransition={transition} sidebarOnly={sidebarOnly} modalFirst={modalFirst} />
         <div className={s.panelBody}>{children}</div>
+        <div className={`${s.resizeHandle} ${s[side]}`} onMouseDown={handleDockedResize} />
       </div>
     )
-    // Left side: in document flow (CSS grid slot)
-    if (side === 'left') return panel
-    // Right side: fixed portal so it doesn't affect grid
-    return createPortal(panel, document.body)
+    if (side === 'left') return <>{anchorDiv}{panel}</>
+    return (
+      <>
+        {anchorDiv}
+        {createPortal(<div style={portalStyle || {}}>{panel}</div>, document.body)}
+      </>
+    )
   }
 
   // ── Floating / minimised ─────────────────────────────────────────────────
   if (isFloating || isMinimised) {
     const rndSize = isMinimised ? { width: size.width, height: 44 } : size
+    // A viewport-filling fixed wrapper gives react-rnd a stable coordinate
+    // system (0,0 = viewport top-left) without fighting its position:absolute.
+    const viewportWrapper = {
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      width: '100%',
+      height: '100%',
+      pointerEvents: 'none',  // wrapper is transparent to clicks
+      zIndex: 95,
+      overflow: 'hidden',
+      ...(portalStyle || {}),
+    }
     return (
       <>
+        {anchorDiv}
         {side === 'left' && <div style={{ width: 0, flexShrink: 0, overflow: 'hidden' }} />}
         {createPortal(
-          <Rnd
-            className={`${s.floatingPanel} ${isMinimised ? s.minimised : ''}`}
-            position={pos}
-            size={rndSize}
-            minWidth={220}
-            minHeight={isMinimised ? 44 : 180}
-            dragHandleClassName={s.header}
-            enableResizing={!isMinimised}
-            bounds="window"
-            onDragStop={(_, d) => {
-              const p = { x: d.x, y: d.y }
-              setPos(p)
-              save(id, { pos: p })
-            }}
-            onResizeStop={(_, __, ref, ___, newPos) => {
-              const sz = { width: ref.offsetWidth, height: ref.offsetHeight }
-              setSize(sz)
-              setPos(newPos)
-              save(id, { size: sz, pos: newPos })
-            }}
-          >
-            <PanelHeader title={title} state={panelState} onTransition={transition} />
-            {!isMinimised && <div className={s.panelBody}>{children}</div>}
-          </Rnd>,
+          <div style={viewportWrapper}>
+            {/* Dim overlay — shown while panel is in its initial centred (modal-first) state.
+                pointerEvents:auto blocks background interaction while overlay is visible. */}
+            {showOverlay && (
+              <div
+                className={s.overlay}
+                style={{ pointerEvents: 'auto' }}
+                onClick={() => transition('closed')}
+              />
+            )}
+            <Rnd
+              className={`${s.floatingPanel} ${isMinimised ? s.minimised : ''}`}
+              style={{ pointerEvents: 'auto', zIndex: 1 }}
+              position={pos}
+              size={rndSize}
+              minWidth={220}
+              minHeight={isMinimised ? 44 : 180}
+              dragHandleClassName={s.header}
+              enableResizing={!isMinimised}
+              bounds="parent"
+              onDragStart={showOverlay ? () => setShowOverlay(false) : undefined}
+              onDragStop={(_, d) => {
+                const p = { x: d.x, y: d.y }
+                setPos(p)
+                save(id, { pos: p })
+              }}
+              onResizeStop={(_, __, ref, ___, newPos) => {
+                const sz = { width: ref.offsetWidth, height: ref.offsetHeight }
+                setSize(sz)
+                setPos(newPos)
+                save(id, { size: sz, pos: newPos })
+              }}
+            >
+              <PanelHeader title={title} state={panelState} onTransition={transition} sidebarOnly={sidebarOnly} modalFirst={modalFirst} />
+              {!isMinimised && <div className={s.panelBody}>{children}</div>}
+            </Rnd>
+          </div>,
           document.body
         )}
       </>
@@ -207,8 +365,9 @@ export default function FloatingPanel({
   // ── Closed ──────────────────────────────────────────────────────────────────
   return (
     <>
+      {anchorDiv}
       {side === 'left' && <div style={{ width: 0, flexShrink: 0, overflow: 'hidden' }} />}
-      {createPortal(tab, document.body)}
+      {tab && createPortal(<div style={portalStyle || {}}>{tab}</div>, document.body)}
     </>
   )
 }
