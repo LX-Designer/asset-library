@@ -260,6 +260,50 @@
 
 .clearBtn:hover { color: var(--modal-ink-mid, #4b5563); }
 
+/* ── Inline clear confirmation (replaces window.confirm) ─────────────────── */
+.clearConfirm {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.clearConfirmText {
+  font-size: 11px;
+  color: var(--modal-ink-mid, #4b5563);
+  white-space: nowrap;
+}
+
+.clearConfirmCancel {
+  padding: 4px 10px;
+  background: none;
+  border: 1px solid var(--modal-border, #e5e7eb);
+  border-radius: 4px;
+  font-size: 11px;
+  color: var(--modal-ink-mid, #4b5563);
+  cursor: pointer;
+  transition: all var(--modal-transition, 160ms ease);
+}
+
+.clearConfirmCancel:hover {
+  background: var(--modal-subtle, #f3f4f6);
+}
+
+.clearConfirmOk {
+  padding: 4px 10px;
+  background: none;
+  border: 1px solid var(--modal-accent, #374151);
+  border-radius: 4px;
+  font-size: 11px;
+  color: var(--modal-accent, #374151);
+  cursor: pointer;
+  transition: all var(--modal-transition, 160ms ease);
+}
+
+.clearConfirmOk:hover {
+  background: var(--modal-accent, #374151);
+  color: #fff;
+}
+
 
 /* ── Reduced motion ──────────────────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {

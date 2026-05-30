@@ -40,7 +40,7 @@ const IconExpand = () => (
   </svg>
 )
 
-function PanelHeader({ title, state, onTransition, sidebarOnly, modalFirst }) {
+function PanelHeader({ title, state, onTransition, onModalFirstPopOut, sidebarOnly, modalFirst }) {
   const isDocked    = state === 'docked'
   const isFloating  = state === 'floating'
   const isMinimised = state === 'minimised'
@@ -70,6 +70,17 @@ function PanelHeader({ title, state, onTransition, sidebarOnly, modalFirst }) {
             <IconDock />
           </button>
         )}
+        {/* modalFirst panels: dock when floating, pop-out when docked (re-centres with overlay) */}
+        {modalFirst && isFloating && (
+          <button className={s.hBtn} onClick={() => onTransition('docked')} title="Dock to sidebar" aria-label="Dock panel">
+            <IconDock />
+          </button>
+        )}
+        {modalFirst && isDocked && (
+          <button className={s.hBtn} onClick={onModalFirstPopOut} title="Pop out" aria-label="Pop out panel">
+            <IconPopOut />
+          </button>
+        )}
         <button className={`${s.hBtn} ${s.hBtnClose}`} onClick={() => onTransition('closed')} title="Close" aria-label="Close panel">
           ×
         </button>
@@ -82,25 +93,29 @@ function PanelHeader({ title, state, onTransition, sidebarOnly, modalFirst }) {
  * FloatingPanel — shared chrome for dockable / floatable side panels.
  *
  * Props:
- *   id              string              localStorage key prefix
- *   title           string              panel heading
- *   side            'left' | 'right'   which viewport edge for the tab
- *   width           number              default float width (px)
- *   defaultHeight   number              default float height (px)
- *   tabLabel        string              text on the viewport edge tab
- *   initialState    'docked' | 'floating' | 'closed'
- *   onDockedChange  (isDocked, width) => void  fires when docked state or panel width changes
- *   onClose         () => void          fires when panel transitions to closed
- *   triggerOpen     number              increment to programmatically open from closed
- *   noTab           bool                when closed, show nothing (no edge tab)
- *   sidebarOnly     bool                docked/closed only — no pop-out, no minimise
- *   tabAlign        'center' | 'top'    edge tab vertical position (default 'center')
- *   modalFirst      bool                opens centred with dim overlay; drag header → free float
- *   themeVars       string[]            extra CSS custom-property names to read from the
- *                                       anchor (inside the asset shell) and forward to the
- *                                       portal wrapper — use when the panel's children
- *                                       reference asset-specific vars (e.g. '--fr-accent')
- *   children        ReactNode
+ *   id                string              localStorage key prefix
+ *   title             string              panel heading
+ *   side              'left' | 'right'   which viewport edge for the tab
+ *   width             number              default float width (px)
+ *   defaultHeight     number              default float height (px)
+ *   defaultDockedWidth number             default docked width (falls back to width)
+ *   topOffset          string             CSS value for top offset when docked (e.g. 'var(--fr-nav-height)'); default '0px'
+ *   tabLabel          string              text on the viewport edge tab
+ *   initialState      'docked' | 'floating' | 'closed'
+ *   onDockedChange    (isDocked, width) => void  fires when docked state or panel width changes
+ *   onClose           () => void          fires when panel transitions to closed
+ *   triggerOpen       number              increment to programmatically open from closed
+ *   triggerDock       number              increment to programmatically dock panel
+ *   triggerClose      number              increment to programmatically close panel
+ *   noTab             bool                when closed, show nothing (no edge tab)
+ *   sidebarOnly       bool                docked/closed only — no pop-out, no minimise
+ *   tabAlign          'center' | 'top'    edge tab vertical position (default 'center')
+ *   modalFirst        bool                opens centred with dim overlay; drag header → free float
+ *   themeVars         string[]            extra CSS custom-property names to read from the
+ *                                         anchor (inside the asset shell) and forward to the
+ *                                         portal wrapper — use when the panel's children
+ *                                         reference asset-specific vars (e.g. '--fr-accent')
+ *   children          ReactNode
  */
 export default function FloatingPanel({
   id,
@@ -108,16 +123,22 @@ export default function FloatingPanel({
   side = 'left',
   width = 280,
   defaultHeight = 540,
+  defaultDockedWidth,
+  topOffset = '0px',
   tabLabel,
   initialState = 'docked',
   onDockedChange,
   onClose,
+  onFloat,
   triggerOpen,
+  triggerDock,
+  triggerClose,
   noTab = false,
   sidebarOnly = false,
   tabAlign = 'center',
   modalFirst = false,
   themeVars = [],
+  scrollTopKey,
   children,
 }) {
   const stored = load(id)
@@ -142,12 +163,27 @@ export default function FloatingPanel({
     return typeof window !== 'undefined' ? clampPos(p, width, defaultHeight) : p
   })
   const [size, setSize] = useState(stored.size ?? { width, height: defaultHeight })
-  const [dockedWidth, setDockedWidth] = useState(stored.dockedWidth ?? width)
+  // Default width used both as the initial value and to reset on close.
+  // We intentionally do NOT restore dockedWidth from localStorage: panels always
+  // reopen at their default width regardless of how the user last resized them.
+  const defaultDockedWidthValue = defaultDockedWidth ?? width
+  const [dockedWidth, setDockedWidth] = useState(defaultDockedWidthValue)
   // Dim overlay — true while modalFirst panel is in its initial centred position
   const [showOverlay, setShowOverlay] = useState(false)
 
   // Anchor div in document flow reads inherited CSS vars for portal use
   const anchorRef = useRef(null)
+  // Ref shared by both docked and floating panelBody renders (only one active at a time)
+  const panelBodyRef = useRef(null)
+  // Stable ref to the default docked width so transition/effect closures can
+  // reset dockedWidth without taking props as dependencies.
+  const defaultDockedWidthRef = useRef(defaultDockedWidthValue)
+
+  // Scroll panel body to top whenever scrollTopKey changes (e.g. activity navigation)
+  useEffect(() => {
+    if (scrollTopKey == null) return
+    panelBodyRef.current?.scrollTo({ top: 0, behavior: 'instant' })
+  }, [scrollTopKey])
   const [portalStyle, setPortalStyle] = useState(null)
 
   useEffect(() => {
@@ -172,15 +208,36 @@ export default function FloatingPanel({
   const isMinimised = panelState === 'minimised'
 
   const transition = useCallback((newState) => {
+    setShowOverlay(false)  // always clear overlay on any state transition
     if (newState === 'closed') {
-      setShowOverlay(false)
+      setDockedWidth(defaultDockedWidthRef.current)  // reset width so panel reopens at default size
       save(id, { state: newState, prevState: panelState })
       onClose?.()
     } else {
+      if (newState === 'docked') {
+        setDockedWidth(defaultDockedWidthRef.current)  // reset to default whenever panel docks
+      }
+      if (newState === 'floating') onFloat?.()
       save(id, { state: newState })
     }
     setPanelState_(newState)
-  }, [id, panelState, onClose])
+  }, [id, panelState, onClose, onFloat])
+
+  // For modalFirst panels: pop-out button re-centres with overlay, identical to triggerOpen.
+  const handleModalFirstPopOut = useCallback(() => {
+    const w = Math.min(size.width,  window.innerWidth  - 48)
+    const h = Math.min(size.height, window.innerHeight - 48)
+    const newSize = (w !== size.width || h !== size.height) ? { width: w, height: h } : null
+    if (newSize) setSize(newSize)
+    const centrePos = {
+      x: Math.max(0, Math.round((window.innerWidth  - w) / 2)),
+      y: Math.max(0, Math.round((window.innerHeight - h) / 2)),
+    }
+    setPos(centrePos)
+    setPanelState_('floating')
+    save(id, { state: 'floating', pos: centrePos })
+    onFloat?.()
+  }, [size, id, onFloat])
 
   // Programmatic open: when triggerOpen increments, open the panel
   useEffect(() => {
@@ -213,9 +270,32 @@ export default function FloatingPanel({
             ? st.prevState : 'floating')
       setPanelState_(reopen)
       save(id, { state: reopen })
+      if (reopen === 'floating') onFloat?.()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [triggerOpen])
+
+  // Programmatic dock: when triggerDock increments, transition panel to docked state
+  useEffect(() => {
+    if (!triggerDock) return
+    setShowOverlay(false)
+    setPanelState_('docked')
+    save(id, { state: 'docked' })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [triggerDock])
+
+  // Programmatic close: when triggerClose increments, transition panel to closed state
+  useEffect(() => {
+    if (!triggerClose) return
+    const st = load(id)
+    if (st.state === 'closed') return  // already closed — guard against stale state
+    setShowOverlay(false)
+    setDockedWidth(defaultDockedWidthRef.current)  // reset width so panel reopens at default size
+    save(id, { state: 'closed', prevState: st.state })
+    onClose?.()
+    setPanelState_('closed')
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [triggerClose])
 
   useEffect(() => {
     onDockedChange?.(isDocked, isDocked ? dockedWidth : 0)
@@ -252,7 +332,6 @@ export default function FloatingPanel({
     const onUp = () => {
       window.removeEventListener('mousemove', onMove)
       window.removeEventListener('mouseup', onUp)
-      setDockedWidth(prev => { save(id, { dockedWidth: prev }); return prev })
     }
     window.addEventListener('mousemove', onMove)
     window.addEventListener('mouseup', onUp)
@@ -282,10 +361,24 @@ export default function FloatingPanel({
 
   // ── Docked ──────────────────────────────────────────────────────────────────
   if (isDocked) {
+    // topOffset shifts the panel down so it starts below the asset's nav/header.
+    // The CSS default is top:0 / height:100vh; the inline style overrides both.
+    // marginTop is applied to left (sticky) panels only — it pushes the in-flow
+    // start position down so the panel's background doesn't bleed behind the nav.
+    // It is intentionally omitted for right (fixed) panels where margin stacks on
+    // top of the explicit `top` value and would double the offset.
+    const dockedStyle = topOffset && topOffset !== '0px'
+      ? {
+          width: dockedWidth,
+          top: topOffset,
+          height: `calc(100vh - ${topOffset})`,
+          ...(side === 'left' ? { marginTop: topOffset } : {}),
+        }
+      : { width: dockedWidth }
     const panel = (
-      <div className={`${s.dockedPanel} ${s[side]}`} style={{ width: dockedWidth }}>
-        <PanelHeader title={title} state={panelState} onTransition={transition} sidebarOnly={sidebarOnly} modalFirst={modalFirst} />
-        <div className={s.panelBody}>{children}</div>
+      <div className={`${s.dockedPanel} ${s[side]}`} style={dockedStyle}>
+        <PanelHeader title={title} state={panelState} onTransition={transition} onModalFirstPopOut={handleModalFirstPopOut} sidebarOnly={sidebarOnly} modalFirst={modalFirst} />
+        <div className={s.panelBody} ref={panelBodyRef}>{children}</div>
         <div className={`${s.resizeHandle} ${s[side]}`} onMouseDown={handleDockedResize} />
       </div>
     )
@@ -352,8 +445,8 @@ export default function FloatingPanel({
                 save(id, { size: sz, pos: newPos })
               }}
             >
-              <PanelHeader title={title} state={panelState} onTransition={transition} sidebarOnly={sidebarOnly} modalFirst={modalFirst} />
-              {!isMinimised && <div className={s.panelBody}>{children}</div>}
+              <PanelHeader title={title} state={panelState} onTransition={transition} onModalFirstPopOut={handleModalFirstPopOut} sidebarOnly={sidebarOnly} modalFirst={modalFirst} />
+              {!isMinimised && <div className={s.panelBody} ref={panelBodyRef}>{children}</div>}
             </Rnd>
           </div>,
           document.body

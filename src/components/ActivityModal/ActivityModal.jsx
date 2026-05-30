@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import s from './ActivityModal.module.css'
 
 /**
@@ -43,7 +44,10 @@ export default function ActivityModal({
   noHeader = false,
   children,
 }) {
+  const [showClearConfirm, setShowClearConfirm] = useState(false)
+
   const navigate = (id) => {
+    setShowClearConfirm(false)
     if (onNavigate) onNavigate(id)
     else onClose?.(id)
   }
@@ -106,16 +110,17 @@ export default function ActivityModal({
           ← {prevItem ? prevItem.label : 'Previous'}
         </button>
 
-        <button
-          className={s.clearBtn}
-          onClick={() => {
-            if (window.confirm('Clear your response for this activity? This cannot be undone.')) {
-              onClear()
-            }
-          }}
-        >
-          Clear this response
-        </button>
+        {showClearConfirm ? (
+          <div className={s.clearConfirm}>
+            <span className={s.clearConfirmText}>Clear this response?</span>
+            <button className={s.clearConfirmCancel} onClick={() => setShowClearConfirm(false)}>Cancel</button>
+            <button className={s.clearConfirmOk} onClick={() => { setShowClearConfirm(false); onClear() }}>Clear</button>
+          </div>
+        ) : (
+          <button className={s.clearBtn} onClick={() => setShowClearConfirm(true)}>
+            Clear this response
+          </button>
+        )}
 
         <button
           className={s.navBtn}

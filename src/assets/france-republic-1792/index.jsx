@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
+import { Link } from 'react-router-dom'
 import s from './FranceRepublic.module.css'
 import PathwayMap from './PathwayMap.jsx'
 import CauseMap from './CauseMap.jsx'
@@ -23,7 +24,7 @@ const FR_THEME_VARS = [
   '--fr-seal', '--fr-seal-subtle', '--fr-seal-muted',
   '--fr-complete', '--fr-complete-subtle', '--fr-complete-muted',
   '--fr-inprogress', '--fr-inprogress-subtle',
-  '--fr-serif', '--fr-sans', '--fr-transition',
+  '--fr-serif', '--fr-sans', '--fr-transition', '--fr-nav-height',
   // Modal-chrome tokens (used by SharedActivityModal)
   '--modal-panel-bg', '--modal-border', '--modal-ink', '--modal-ink-mid',
   '--modal-ink-light', '--modal-accent', '--modal-accent-hover',
@@ -198,12 +199,25 @@ function NotesItem({ act, responseKey, savedValue, openModal, onSave }) {
 // Single tabbed component used in both the desktop FloatingPanel and the
 // mobile guide drawer. activeTab/setActiveTab are lifted to the parent so
 // the viewport side-tabs can also drive which tab is shown on open.
-function GuidePanelContent({ responses, completedCount, totalCount, progressPct, openModal, onSave, onReset, activeTab, setActiveTab }) {
+function GuidePanelContent({ responses, completedCount, totalCount, progressPct, openModal, onSave, onReset, activeTab, setActiveTab, showTabs }) {
+  const [confirmReset, setConfirmReset] = useState(false)
+  const footerRef = useRef(null)
+
+  useEffect(() => {
+    if (confirmReset) {
+      footerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+    }
+  }, [confirmReset])
+
+  // Dismiss the reset confirmation if the user switches away from the Activities tab
+  useEffect(() => {
+    if (activeTab !== 'activities') setConfirmReset(false)
+  }, [activeTab])
 
   return (
     <>
-      {/* ── Sticky tab strip ── */}
-      <div className={s.guideTabs} role="tablist">
+      {/* ── Sticky tab strip — hidden when guide is floating (popped out) ── */}
+      {showTabs && <div className={s.guideTabs} role="tablist">
         <button
           className={`${s.guideTab} ${activeTab === 'activities' ? s.guideTabActive : ''}`}
           role="tab"
@@ -220,7 +234,7 @@ function GuidePanelContent({ responses, completedCount, totalCount, progressPct,
         >
           My Notes
         </button>
-      </div>
+      </div>}
 
       {/* ── Activities tab ── */}
       {activeTab === 'activities' && (
@@ -268,17 +282,35 @@ function GuidePanelContent({ responses, completedCount, totalCount, progressPct,
           </ul>
 
           {onReset && (
-            <div className={s.guideFooter}>
-              <button
-                className={s.guideFooterBtn}
-                onClick={() => {
-                  if (window.confirm('Clear all your responses and start again? The dossier will not be changed.')) {
-                    onReset()
-                  }
-                }}
-              >
-                Start again
-              </button>
+            <div className={s.guideFooter} ref={footerRef}>
+              {confirmReset ? (
+                <>
+                  <p className={s.guideConfirmText}>
+                    Clear all responses and start again?
+                  </p>
+                  <div className={s.guideConfirmBtns}>
+                    <button
+                      className={s.guideConfirmCancel}
+                      onClick={() => setConfirmReset(false)}
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      className={s.guideConfirmOk}
+                      onClick={() => { setConfirmReset(false); onReset() }}
+                    >
+                      Yes, clear everything
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <button
+                  className={s.guideFooterBtn}
+                  onClick={() => setConfirmReset(true)}
+                >
+                  Start again
+                </button>
+              )}
             </div>
           )}
         </>
@@ -308,17 +340,39 @@ function GuidePanelContent({ responses, completedCount, totalCount, progressPct,
 }
 
 // ── Main asset ───────────────────────────────────────────────────────────────
-export default function FranceRepublic1792({ onResponse, onComplete, savedResponses, isCompleted, onReset }) {
+export default function FranceRepublic1792({ onResponse, onComplete, savedResponses, isCompleted, onReset, backHref }) {
   const [responses, setResponses] = useState(savedResponses ?? {})
   const [activeModal, setActiveModal] = useState(null)
   const [activityTrigger, setActivityTrigger] = useState(0)
   const [activeSection, setActiveSection] = useState('intro')
   const [guideOpen, setGuideOpen] = useState(false)         // mobile drawer open state
-  const [guideDesktopOpen, setGuideDesktopOpen] = useState(true) // desktop panel docked state
-  const [guideTrigger, setGuideTrigger] = useState(0)       // increments to (re-)open guide
+  // Initialise from localStorage so the first render agrees with FloatingPanel
+  // (which also reads the same key synchronously), eliminating the side-tab flash.
+  const [guideDesktopOpen, setGuideDesktopOpen] = useState(() => {
+    try {
+      const stored = JSON.parse(localStorage.getItem('fp_france-guide') ?? 'null')
+      return stored?.state === 'docked'
+    } catch { return false }
+  })
+  const [guideDockTrigger, setGuideDockTrigger] = useState(0)       // increments to dock/open guide as sidebar
+  const [guideCloseTrigger, setGuideCloseTrigger] = useState(0)     // increments to close guide
+  const [guideIsFloating, setGuideIsFloating] = useState(() => {
+    try {
+      const stored = JSON.parse(localStorage.getItem('fp_france-guide') ?? 'null')
+      return stored?.state === 'floating'
+    } catch { return false }
+  })
+  const [activityDockTrigger, setActivityDockTrigger] = useState(0) // increments to dock activity panel
+  const [activityCloseTrigger, setActivityCloseTrigger] = useState(0) // increments to close activity panel
+  const [activityDockedWidth, setActivityDockedWidth] = useState(0) // width when activity panel is docked right
   const [guideActiveTab, setGuideActiveTab] = useState('activities') // lifted from GuidePanelContent
   const isDesktop = useIsDesktop()
   const prevCompletedRef = useRef(false)
+  // Tracks whether the activity panel is currently docked so we only fire
+  // guideCloseTrigger on the transition TO docked (not on width-resize while docked).
+  const activityIsDocked = useRef(false)
+  // Remembers the last activity the user opened so Work can reopen it.
+  const lastActivityRef = useRef(null)
 
   // IntersectionObserver for active section tracking
   useEffect(() => {
@@ -357,6 +411,7 @@ export default function FranceRepublic1792({ onResponse, onComplete, savedRespon
   }, [onResponse])
 
   const openModal = useCallback((id) => {
+    lastActivityRef.current = id
     setActiveModal(id)
     setActivityTrigger(t => t + 1)
     setGuideOpen(false)
@@ -364,6 +419,7 @@ export default function FranceRepublic1792({ onResponse, onComplete, savedRespon
 
   // Navigate between activities without closing the panel
   const navigateModal = useCallback((nextId) => {
+    lastActivityRef.current = nextId
     setActiveModal(nextId)
   }, [])
 
@@ -374,6 +430,52 @@ export default function FranceRepublic1792({ onResponse, onComplete, savedRespon
     el.scrollIntoView({ behavior: prefersReduced ? 'instant' : 'smooth', block: 'start' })
   }, [])
 
+  // Wraps scrollToSection for use inside the activity modal's evidence buttons.
+  // On desktop, also docks the activity panel to the right (evidence mode) so the
+  // user can read the dossier and the activity form simultaneously.
+  const handleScrollToEvidence = useCallback((sectionId) => {
+    scrollToSection(sectionId)
+    if (isDesktop) setActivityDockTrigger(t => t + 1)
+  }, [scrollToSection, isDesktop])
+
+  // Stable onDockedChange handler for the guide panel. useCallback with [] gives a
+  // stable reference so FloatingPanel's onDockedChange effect doesn't re-fire on
+  // every parent render. State setters are guaranteed stable by React.
+  const handleGuideDockedChange = useCallback((docked) => {
+    setGuideDesktopOpen(docked)
+    if (docked) setGuideIsFloating(false)
+  }, [])
+
+  // Stable onDockedChange handler for the activity panel.
+  // Uses activityIsDocked ref to fire guideCloseTrigger only on the FIRST dock
+  // transition (not on subsequent resize events while already docked).
+  const handleActivityDockedChange = useCallback((isDocked, width) => {
+    setActivityDockedWidth(isDocked ? width : 0)
+    if (isDocked && !activityIsDocked.current) {
+      setGuideCloseTrigger(t => t + 1)
+    }
+    activityIsDocked.current = isDocked
+  }, [])
+
+  // Explore view: dock the guide (activities tab), close the activity panel.
+  const handleExplore = useCallback(() => {
+    setActivityCloseTrigger(t => t + 1)
+    setGuideActiveTab('activities')
+    setGuideDockTrigger(t => t + 1)
+  }, [])
+
+  // Work view: dock the activity panel with the right activity, guide closes automatically.
+  // Priority: last viewed → first not-started → first activity overall.
+  const handleWork = useCallback(() => {
+    const target =
+      lastActivityRef.current ??
+      ACTIVITIES.find(a => getActivityStatus(a.id, responses) === 'not-started')?.id ??
+      ACTIVITIES[0].id
+    lastActivityRef.current = target
+    setActiveModal(target)
+    setActivityDockTrigger(t => t + 1)
+  }, [responses])
+
   const handleSectionNavChange = (e) => {
     scrollToSection(e.target.value)
     setActiveSection(e.target.value)
@@ -381,6 +483,11 @@ export default function FranceRepublic1792({ onResponse, onComplete, savedRespon
 
   const completedCount = COMPLETION_REQUIRED.filter(id => getActivityStatus(id, responses) === 'complete').length
   const progressPct = Math.round((completedCount / COMPLETION_REQUIRED.length) * 100)
+
+  // Derive which nav button is active based on current panel states.
+  // These reflect however the user arrived at the view (buttons, side-tabs, evidence dock, etc.)
+  const isExploreActive = guideDesktopOpen && activityDockedWidth === 0
+  const isWorkActive = activityDockedWidth > 0
 
   const guideProps = {
     responses,
@@ -392,6 +499,7 @@ export default function FranceRepublic1792({ onResponse, onComplete, savedRespon
     onReset,
     activeTab: guideActiveTab,
     setActiveTab: setGuideActiveTab,
+    showTabs: !isDesktop || guideDesktopOpen,
   }
 
   return (
@@ -402,13 +510,19 @@ export default function FranceRepublic1792({ onResponse, onComplete, savedRespon
           id="france-guide"
           title="Activity Guide"
           side="left"
-          width={260}
-          defaultHeight={600}
-          initialState="docked"
-          sidebarOnly
+          width={600}
+          defaultDockedWidth={260}
+          defaultHeight={700}
+          initialState="closed"
+          modalFirst
           noTab
-          triggerOpen={guideTrigger}
-          onDockedChange={(docked) => setGuideDesktopOpen(docked)}
+          topOffset="var(--fr-nav-height)"
+          triggerDock={guideDockTrigger}
+          triggerClose={guideCloseTrigger}
+          scrollTopKey={guideActiveTab}
+          onDockedChange={handleGuideDockedChange}
+          onFloat={() => setGuideIsFloating(true)}
+          onClose={() => setGuideIsFloating(false)}
           themeVars={FR_THEME_VARS}
         >
           <GuidePanelContent {...guideProps} />
@@ -430,16 +544,16 @@ export default function FranceRepublic1792({ onResponse, onComplete, savedRespon
 
       {/* ── Desktop guide side-tabs (visible when guide panel is closed) ── */}
       {isDesktop && !guideDesktopOpen && (
-        <div className={s.guideSideTabs} aria-label="Open activity guide">
+        <div className={`${s.guideSideTabs}${guideIsFloating ? ` ${s.guideSideTabsTucked}` : ''}`} aria-label="Open activity guide">
           <button
             className={s.guideSideTab}
-            onClick={() => { setGuideActiveTab('activities'); setGuideTrigger(t => t + 1) }}
+            onClick={() => { setGuideActiveTab('activities'); setGuideDockTrigger(t => t + 1) }}
           >
             Activities
           </button>
           <button
             className={s.guideSideTab}
-            onClick={() => { setGuideActiveTab('notes'); setGuideTrigger(t => t + 1) }}
+            onClick={() => { setGuideActiveTab('notes'); setGuideDockTrigger(t => t + 1) }}
           >
             Notes
           </button>
@@ -447,9 +561,20 @@ export default function FranceRepublic1792({ onResponse, onComplete, savedRespon
       )}
 
       {/* ── Main content ── */}
-      <div className={s.main}>
+      <div className={s.main} style={activityDockedWidth ? { paddingRight: `${activityDockedWidth}px` } : undefined}>
         {/* Section nav */}
         <nav className={s.sectionNav} aria-label="Dossier sections">
+          {/* Far left — back link, outside the centred section links */}
+          {backHref && (
+            <Link to={backHref} className={s.navBack}>
+              <svg width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true">
+                <path d="M10.5 6.5H2.5M5.5 3.5L2.5 6.5L5.5 9.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+              Labs
+            </Link>
+          )}
+
+          {/* Centre — section content links, flex:1 so they sit between the flanking items */}
           <div className={s.sectionNavInner}>
             {SECTIONS.map(({ id, label }) => (
               <a
@@ -471,6 +596,24 @@ export default function FranceRepublic1792({ onResponse, onComplete, savedRespon
                 <option key={id} value={id}>{label}</option>
               ))}
             </select>
+          </div>
+
+          {/* Far right — Explore / Work view switcher */}
+          <div className={s.navActions}>
+            <button
+              className={`${s.navActionBtn} ${isExploreActive ? s.navActionBtnActive : ''}`}
+              onClick={handleExplore}
+              aria-pressed={isExploreActive}
+            >
+              Explore
+            </button>
+            <button
+              className={`${s.navActionBtn} ${isWorkActive ? s.navActionBtnActive : ''}`}
+              onClick={handleWork}
+              aria-pressed={isWorkActive}
+            >
+              Work
+            </button>
           </div>
         </nav>
 
@@ -802,10 +945,16 @@ export default function FranceRepublic1792({ onResponse, onComplete, savedRespon
           title={activeModal ? (ACTIVITIES.find(a => a.id === activeModal)?.label ?? 'Activity') : 'Activity'}
           side="right"
           width={600}
+          defaultDockedWidth={480}
           defaultHeight={700}
           initialState="closed"
+          topOffset="var(--fr-nav-height)"
           triggerOpen={activityTrigger}
+          triggerDock={activityDockTrigger}
+          triggerClose={activityCloseTrigger}
+          scrollTopKey={activeModal}
           onClose={() => setActiveModal(null)}
+          onDockedChange={handleActivityDockedChange}
           modalFirst
           noTab
           themeVars={FR_THEME_VARS}
@@ -816,7 +965,7 @@ export default function FranceRepublic1792({ onResponse, onComplete, savedRespon
               responses={responses}
               onSave={handleSave}
               onNavigate={navigateModal}
-              scrollToSection={scrollToSection}
+              scrollToSection={handleScrollToEvidence}
             />
           )}
         </FloatingPanel>

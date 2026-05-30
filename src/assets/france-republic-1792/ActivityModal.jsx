@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from 'react'
+import { useState, useRef } from 'react'
 import SharedActivityModal from '../../components/ActivityModal'
 import s from './FranceRepublic.module.css'
 import { ACTIVITIES, CHRONOLOGY, REFORMS, CAUSE_FACTORS, TURNING_POINTS, SECTIONS } from './data.js'
@@ -29,13 +29,20 @@ const AI_SYSTEM_CAUSE = `You are a history tutor helping AS Level students think
 
 const AI_SYSTEM_FINAL = `You are a history tutor giving feedback on AS Level History essay writing about the French Revolution (1789–1792). The student is writing about how and why France became a republic by 1792. Give brief Socratic feedback (3–5 sentences) that identifies one strength in their reasoning and asks one challenging question about their argument. Do not write a model answer. Focus on: how well they address both 'how' and 'why', whether they weigh rather than list causes, and whether they avoid treating the republic as inevitable.`
 
-// ── Debounce hook ────────────────────────────────────────────────────────────
-function useDebounce(fn, delay) {
-  const timer = useRef(null)
-  return useCallback((...args) => {
-    clearTimeout(timer.current)
-    timer.current = setTimeout(() => fn(...args), delay)
-  }, [fn, delay])
+// ── Response keys for each activity (used by onClear) ───────────────────────
+const ACTIVITY_RESPONSE_KEYS = {
+  'init':       ['init-text', 'init-confidence'],
+  'act1':       ['act1-selections', 'act1-response'],
+  'act2':       ['act2-pathway', 'act2-response'],
+  'act3':       ['act3-table', 'act3-response'],
+  'act4':       ['act4-tags', 'act4-response'],
+  'act5':       ['act5-categories', 'act5-response'],
+  'act6':       ['act6-rating', 'act6-response'],
+  'act7':       ['act7-factors', 'act7-response'],
+  'act8':       ['act8-classifications', 'act8-response'],
+  'act9':       ['act9-matrix', 'act9-ranked', 'act9-response'],
+  'final':      ['final-response', 'final-confidence', 'final-checklist'],
+  'reflection': ['reflection'],
 }
 
 // ── Save status component ────────────────────────────────────────────────────
@@ -48,6 +55,8 @@ function SaveStatus({ status }) {
 // onNavigate handles prev/next without closing the FloatingPanel.
 // showHeader + onClose are for the mobile fallback (no FloatingPanel).
 export default function ActivityModal({ activityId, responses, onSave, onNavigate, onClose, showHeader = false, scrollToSection }) {
+  const [clearKey, setClearKey] = useState(0)
+
   const actIndex = ACT_ORDER.indexOf(activityId)
   const activity = ACTIVITIES.find(a => a.id === activityId)
 
@@ -57,6 +66,12 @@ export default function ActivityModal({ activityId, responses, onSave, onNavigat
   const nextId = actIndex < ACT_ORDER.length - 1 ? ACT_ORDER[actIndex + 1] : null
   const prevActivity = prevId ? ACTIVITIES.find(a => a.id === prevId) : null
   const nextActivity = nextId ? ACTIVITIES.find(a => a.id === nextId) : null
+
+  const handleClear = () => {
+    const keys = ACTIVITY_RESPONSE_KEYS[activityId] ?? []
+    keys.forEach(k => onSave(k, null))
+    setClearKey(k => k + 1)   // remount the form so local state resets
+  }
 
   return (
     <SharedActivityModal
@@ -73,10 +88,10 @@ export default function ActivityModal({ activityId, responses, onSave, onNavigat
       onNavigate={onNavigate}
       onClose={showHeader ? onClose : undefined}
       onScrollTo={scrollToSection}
-      onClear={() => onSave(activityId, null)}
+      onClear={handleClear}
       noHeader={!showHeader}
     >
-      <ActivityForm activityId={activityId} responses={responses} onSave={onSave} />
+      <ActivityForm key={clearKey} activityId={activityId} responses={responses} onSave={onSave} />
     </SharedActivityModal>
   )
 }
@@ -125,14 +140,10 @@ function FormInit({ responses, onSave }) {
   const { local, update, saveStatus, setSaveStatus } = useResponseState(['init-text', 'init-confidence'], responses)
 
   const doSave = () => {
-    onSave('init', { text: local['init-text'], confidence: local['init-confidence'] })
-    setSaveStatus('saved')
-  }
-
-  useEffect(() => {
     onSave('init-text', local['init-text'])
     onSave('init-confidence', local['init-confidence'])
-  }, [])
+    setSaveStatus('saved')
+  }
 
   return (
     <div>
