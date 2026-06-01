@@ -356,12 +356,9 @@ export default function FranceRepublic1792({ onResponse, onComplete, savedRespon
   })
   const [guideDockTrigger, setGuideDockTrigger] = useState(0)       // increments to dock/open guide as sidebar
   const [guideCloseTrigger, setGuideCloseTrigger] = useState(0)     // increments to close guide
-  const [guideIsFloating, setGuideIsFloating] = useState(() => {
-    try {
-      const stored = JSON.parse(localStorage.getItem('fp_france-guide') ?? 'null')
-      return stored?.state === 'floating'
-    } catch { return false }
-  })
+  // modalFirst panels always start as 'closed' regardless of localStorage, so
+  // guideIsFloating is always false on mount — onFloat/onClose manage it at runtime.
+  const [guideIsFloating, setGuideIsFloating] = useState(false)
   const [activityDockTrigger, setActivityDockTrigger] = useState(0) // increments to dock activity panel
   const [activityCloseTrigger, setActivityCloseTrigger] = useState(0) // increments to close activity panel
   const [activityDockedWidth, setActivityDockedWidth] = useState(0) // width when activity panel is docked right
@@ -470,6 +467,7 @@ export default function FranceRepublic1792({ onResponse, onComplete, savedRespon
     const target =
       lastActivityRef.current ??
       ACTIVITIES.find(a => getActivityStatus(a.id, responses) === 'not-started')?.id ??
+      ACTIVITIES.find(a => getActivityStatus(a.id, responses) === 'inprogress')?.id ??
       ACTIVITIES[0].id
     lastActivityRef.current = target
     setActiveModal(target)
@@ -499,7 +497,7 @@ export default function FranceRepublic1792({ onResponse, onComplete, savedRespon
     onReset,
     activeTab: guideActiveTab,
     setActiveTab: setGuideActiveTab,
-    showTabs: !isDesktop || guideDesktopOpen,
+    showTabs: !isDesktop || guideDesktopOpen || guideIsFloating,
   }
 
   return (
@@ -512,6 +510,7 @@ export default function FranceRepublic1792({ onResponse, onComplete, savedRespon
           side="left"
           width={600}
           defaultDockedWidth={260}
+          maxDockedWidth={360}
           defaultHeight={700}
           initialState="closed"
           modalFirst
@@ -561,7 +560,7 @@ export default function FranceRepublic1792({ onResponse, onComplete, savedRespon
       )}
 
       {/* ── Main content ── */}
-      <div className={s.main} style={activityDockedWidth ? { paddingRight: `${activityDockedWidth}px` } : undefined}>
+      <div className={s.main} style={isDesktop && activityDockedWidth ? { paddingRight: `${activityDockedWidth}px` } : undefined}>
         {/* Section nav */}
         <nav className={s.sectionNav} aria-label="Dossier sections">
           {/* Far left — back link, outside the centred section links */}

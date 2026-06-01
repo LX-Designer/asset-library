@@ -1,0 +1,439 @@
+import { useState, useEffect, useRef, useCallback } from 'react'
+import './tokens.css'
+import LabNav from './LabNav/LabNav.jsx'
+import LabSidebar from './LabSidebar/LabSidebar.jsx'
+import ActivitiesTab from './LabSidebar/tabs/ActivitiesTab.jsx'
+import ConceptsTab from './LabSidebar/tabs/ConceptsTab.jsx'
+import NotesTab from './LabSidebar/tabs/NotesTab.jsx'
+import ActivityPanel from './ActivityPanel/ActivityPanel.jsx'
+import ConceptsModal from './ConceptsModal/ConceptsModal.jsx'
+import EvidencePanel from './EvidencePanel/EvidencePanel.jsx'
+import ActivityModal from '../components/ActivityModal'
+import SpeechInput from '../components/SpeechInput/SpeechInput.jsx'
+import { useIsDesktop } from './hooks/useIsDesktop.js'
+import s from './LabShell.module.css'
+
+export default function LabShell({
+  config,
+  onResponse,
+  onComplete,
+  savedResponses,
+  isCompleted,
+  onReset,
+  backHref,
+  className,
+  children,
+}) {
+  const labId = config.labId
+
+  // ── Response state ──────────────────────────────────────────────────────────
+  const [responses, setResponses] = useState(savedResponses ?? {})
+
+  // ── Activity panel state ────────────────────────────────────────────────────
+  const [activeActivityId, setActiveActivityId] = useState(null)
+  const [activityTrigger, setActivityTrigger]       = useState(0)
+  const [activityDockTrigger, setActivityDockTrigger]   = useState(0)
+  const [activityCloseTrigger, setActivityCloseTrigger] = useState(0)
+  const [activityDockedWidth, setActivityDockedWidth]   = useState(0)
+  const activityIsDocked = useRef(false)
+  const lastActivityRef  = useRef(null)
+
+  // ── Guide sidebar state ─────────────────────────────────────────────────────
+  const [guideActiveTab, setGuideActiveTab] = useState(config.sidebar.defaultTab ?? 'activities')
+  // Initialise from localStorage so the first render agrees with FloatingPanel,
+  // eliminating the side-tab flash on mount.
+  const [guideDesktopOpen, setGuideDesktopOpen] = useState(() => {
+    try {
+      const stored = JSON.parse(localStorage.getItem(`fp_${labId}-guide`) ?? 'null')
+      return stored?.state === 'docked'
+    } catch { return false }
+  })
+  const [guideIsFloating, setGuideIsFloating] = useState(false)
+  const [guideDockTrigger, setGuideDockTrigger]   = useState(0)
+  const [guideCloseTrigger, setGuideCloseTrigger] = useState(0)
+  const [guideOpen, setGuideOpen] = useState(false)  // mobile drawer
+
+  // ── Concepts modal state ────────────────────────────────────────────────────
+  const [activeConceptId, setActiveConceptId] = useState(null)
+  const [conceptTrigger, setConceptTrigger]   = useState(0)
+
+  // ── Evidence panel state ─────────────────────────────────────────────────────
+  const [activeEvidenceId, setActiveEvidenceId] = useState(null)
+  const [evidenceTrigger, setEvidenceTrigger]   = useState(0)
+
+  // ── Notes ───────────────────────────────────────────────────────────────────
+  const notesValue = typeof responses['lab-notes'] === 'string' ? responses['lab-notes'] : ''
+
+  // ── Misc ────────────────────────────────────────────────────────────────────
+  const isDesktop       = useIsDesktop()
+  const prevCompletedRef = useRef(false)
+
+  // ── Completion tracking ─────────────────────────────────────────────────────
+  useEffect(() => {
+    if (isCompleted || prevCompletedRef.current) return
+    const required = config.activities.filter(a => a.required !== false)
+    const allDone  = required.every(a => {
+      const status = config.getActivityStatus(a.id, responses)
+      return status === 'complete'
+    })
+    if (allDone && required.length > 0) {
+      prevCompletedRef.current = true
+      onComplete(100, { asset: labId })
+    }
+  }, [responses, isCompleted, onComplete, config, labId])
+
+  // ── Open concept modal when activeConceptId changes ─────────────────────────
+  useEffect(() => {
+    if (activeConceptId) setConceptTrigger(t => t + 1)
+  }, [activeConceptId])
+
+  // Note: evidenceTrigger is NOT incremented on every activeEvidenceId change —
+  // only openEvidence() triggers the open animation. navigateEvidence() just
+  // swaps the content without re-centering or re-running the modal-first animation.
+
+  // ── handleSave ──────────────────────────────────────────────────────────────
+  const handleSave = useCallback(async (key, value) => {
+    if (value === null) {
+      setResponses(prev => { const next = { ...prev }; delete next[key]; return next })
+      await onResponse(key, null)
+      return
+    }
+    setResponses(prev => ({ ...prev, [key]: value }))
+    await onResponse(key, value)
+  }, [onResponse])
+
+  // ── Open / navigate activities ──────────────────────────────────────────────
+  const openActivity = useCallback((id) => {
+    lastActivityRef.current = id
+    setActiveActivityId(id)
+    setActivityTrigger(t => t + 1)
+    setGuideOpen(false)
+  }, [])
+
+  const navigateActivity = useCallback((id) => {
+    lastActivityRef.current = id
+    setActiveActivityId(id)
+  }, [])
+
+  const scrollToSection = useCallback((sectionId) => {
+    const el = document.getElementById(sectionId)
+    if (!el) return
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    el.scrollIntoView({ behavior: prefersReduced ? 'instant' : 'smooth', block: 'start' })
+  }, [])
+
+  const handleScrollToEvidence = useCallback((sectionId) => {
+    scrollToSection(sectionId)
+    if (isDesktop) setActivityDockTrigger(t => t + 1)
+  }, [scrollToSection, isDesktop])
+
+  // ── Guide docked-change handler ─────────────────────────────────────────────
+  const handleGuideDockedChange = useCallback((docked) => {
+    setGuideDesktopOpen(docked)
+    if (docked) setGuideIsFloating(false)
+  }, [])
+
+  // ── Activity docked-change handler ──────────────────────────────────────────
+  // Fires guideCloseTrigger only on the FIRST transition TO docked (not on
+  // width resize events while already docked).
+  const handleActivityDockedChange = useCallback((isDocked, width) => {
+    setActivityDockedWidth(isDocked ? width : 0)
+    if (isDocked && !activityIsDocked.current) {
+      setGuideCloseTrigger(t => t + 1)
+    }
+    activityIsDocked.current = isDocked
+  }, [])
+
+  // ── Explore / Work mode ─────────────────────────────────────────────────────
+  const handleExplore = useCallback(() => {
+    setActivityCloseTrigger(t => t + 1)
+    setGuideActiveTab('activities')
+    setGuideDockTrigger(t => t + 1)
+  }, [])
+
+  // Work mode: lowest in-progress activity has priority, then lowest not-started.
+  // "Lowest" = first occurrence in the config.activities array (lowest index).
+  const handleWork = useCallback(() => {
+    const acts = config.activities
+    const target =
+      acts.find(a => config.getActivityStatus(a.id, responses) === 'inprogress')?.id ??
+      acts.find(a => config.getActivityStatus(a.id, responses) === 'not-started')?.id ??
+      acts[0]?.id
+    if (!target) return
+    lastActivityRef.current = target
+    setActiveActivityId(target)
+    setActivityDockTrigger(t => t + 1)
+  }, [config, responses])
+
+  // ── Concepts ────────────────────────────────────────────────────────────────
+  const openConcept = useCallback((id) => {
+    setActiveConceptId(id)
+  }, [])
+
+  const openEvidence = useCallback((id) => {
+    setActiveEvidenceId(id)
+    setEvidenceTrigger(t => t + 1)   // triggers the modal-first open animation
+  }, [])
+
+  const navigateEvidence = useCallback((id) => {
+    setActiveEvidenceId(id)           // content swap only — no re-open animation
+  }, [])
+
+  const navigateConcept = useCallback((id) => {
+    setActiveConceptId(id)
+  }, [])
+
+  // ── Derived values ──────────────────────────────────────────────────────────
+  const requiredActs   = config.activities.filter(a => a.required !== false)
+  const completedCount = requiredActs.filter(a => config.getActivityStatus(a.id, responses) === 'complete').length
+  const totalCount     = requiredActs.length
+
+  const isExploreActive = guideDesktopOpen && activityDockedWidth === 0
+  const isWorkActive    = activityDockedWidth > 0
+
+  const tabs     = config.sidebar.tabs ?? ['activities']
+  const themeVars = config.themeVars ?? []
+
+  // ── Tab content ─────────────────────────────────────────────────────────────
+  function renderTabContent() {
+    return (
+      <>
+        {guideActiveTab === 'activities' && (
+          <ActivitiesTab
+            activities={config.activities}
+            responses={responses}
+            getActivityStatus={config.getActivityStatus}
+            completedCount={completedCount}
+            totalCount={totalCount}
+            labTitle={config.nav?.title}
+            labSubtitle={config.nav?.subtitle}
+            onOpenActivity={openActivity}
+            onReset={onReset}
+          />
+        )}
+        {guideActiveTab === 'concepts' && config.concepts && (
+          <ConceptsTab
+            concepts={config.concepts}
+            onOpenConcept={openConcept}
+          />
+        )}
+        {guideActiveTab === 'notes' && config.features?.notes && (
+          <NotesTab
+            value={notesValue}
+            onSave={val => handleSave('lab-notes', val)}
+          />
+        )}
+      </>
+    )
+  }
+
+  return (
+    <div className={`${s.shell} ${className ?? ''}`}>
+      {/* ── Nav ── */}
+      <LabNav
+        config={config}
+        backHref={backHref}
+        isExploreActive={isExploreActive}
+        isWorkActive={isWorkActive}
+        onExplore={handleExplore}
+        onWork={handleWork}
+      />
+
+      {/* ── Desktop guide sidebar ── */}
+      {isDesktop && (
+        <LabSidebar
+          config={config}
+          labId={labId}
+          triggerDock={guideDockTrigger}
+          triggerClose={guideCloseTrigger}
+          activeTab={guideActiveTab}
+          onTabChange={setGuideActiveTab}
+          onDockedChange={handleGuideDockedChange}
+          onFloat={() => setGuideIsFloating(true)}
+          onClose={() => setGuideIsFloating(false)}
+          themeVars={themeVars}
+        >
+          {renderTabContent()}
+        </LabSidebar>
+      )}
+
+      {/* ── Mobile guide drawer ── */}
+      {!isDesktop && (
+        <>
+          <LabSidebar
+            config={config}
+            labId={labId}
+            isMobile
+            guideOpen={guideOpen}
+            onMobileClose={() => setGuideOpen(false)}
+            activeTab={guideActiveTab}
+            onTabChange={setGuideActiveTab}
+          >
+            {renderTabContent()}
+          </LabSidebar>
+          {guideOpen && (
+            <div
+              className={s.mobileBackdrop}
+              onClick={() => setGuideOpen(false)}
+              aria-hidden="true"
+            />
+          )}
+        </>
+      )}
+
+      {/* ── Desktop side tabs (shown when guide is closed) ── */}
+      {isDesktop && !guideDesktopOpen && (
+        <div
+          className={`${s.sideTabs} ${guideIsFloating ? s.sideTabsTucked : ''}`}
+          aria-label="Open activity guide"
+        >
+          {tabs.map(tab => (
+            <button
+              key={tab}
+              className={s.sideTab}
+              onClick={() => { setGuideActiveTab(tab); setGuideDockTrigger(t => t + 1) }}
+            >
+              {tab.charAt(0).toUpperCase() + tab.slice(1)}
+            </button>
+          ))}
+        </div>
+      )}
+
+      {/* ── Main content ── */}
+      <div
+        className={s.main}
+        style={isDesktop && activityDockedWidth ? { paddingRight: `${activityDockedWidth}px` } : undefined}
+      >
+        <div
+          className={s.content}
+          style={{ maxWidth: config.content?.maxWidth ?? '960px' }}
+        >
+          {typeof children === 'function' ? children({ openEvidence }) : children}
+        </div>
+      </div>
+
+      {/* ── Mobile trigger button ── */}
+      {!isDesktop && (
+        <button
+          className={s.mobileTrigger}
+          onClick={() => setGuideOpen(p => !p)}
+          aria-label={`${guideOpen ? 'Close' : 'Open'} activity guide`}
+          aria-expanded={guideOpen}
+        >
+          Activities ({completedCount}/{totalCount})
+        </button>
+      )}
+
+      {/* ── Desktop activity panel ── */}
+      {isDesktop && (
+        <ActivityPanel
+          config={config}
+          labId={labId}
+          activeActivityId={activeActivityId}
+          responses={responses}
+          completedSet={new Set(
+            config.activities
+              .filter(a => config.getActivityStatus(a.id, responses) === 'complete')
+              .map(a => a.id)
+          )}
+          handleSave={handleSave}
+          onNavigate={navigateActivity}
+          onScrollTo={handleScrollToEvidence}
+          triggerOpen={activityTrigger}
+          triggerDock={activityDockTrigger}
+          triggerClose={activityCloseTrigger}
+          onDockedChange={handleActivityDockedChange}
+          onClose={() => setActiveActivityId(null)}
+          themeVars={themeVars}
+        />
+      )}
+
+      {/* ── Mobile activity modal ── */}
+      {!isDesktop && activeActivityId && (() => {
+        const activity = config.activities.find(a => a.id === activeActivityId)
+        const ActForm  = activity ? config.activityForms?.[activeActivityId] : null
+        const actIndex = activity ? config.activities.indexOf(activity) : -1
+        const prevActivity = actIndex > 0 ? config.activities[actIndex - 1] : null
+        const nextActivity = actIndex < config.activities.length - 1 ? config.activities[actIndex + 1] : null
+        return (
+          <>
+            <div
+              style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.48)', zIndex: 50 }}
+              onClick={() => setActiveActivityId(null)}
+              aria-hidden="true"
+            />
+            <div style={{
+              position: 'fixed', top: 0, right: 0, bottom: 0,
+              width: '100%', maxWidth: 560, zIndex: 51,
+              overflowY: 'auto',
+              background: 'var(--lab-surface)',
+              borderLeft: '1px solid var(--lab-rule)',
+            }}>
+              <ActivityModal
+                activityNumber={activity.number ?? null}
+                activityLabel={activity.label}
+                thinkingMove={activity.thinkingMove ?? ''}
+                title={activity.title}
+                purpose={activity.purpose ?? ''}
+                prompt={activity.prompt ?? ''}
+                scaffold={activity.scaffold ?? null}
+                evidenceSections={activity.evidenceSections ?? []}
+                prevItem={prevActivity ? { id: prevActivity.id, label: prevActivity.label } : null}
+                nextItem={nextActivity ? { id: nextActivity.id, label: nextActivity.label } : null}
+                onClose={() => setActiveActivityId(null)}
+                onNavigate={navigateActivity}
+                onScrollTo={scrollToSection}
+                onClear={() => {
+                  const keys = activity.clearKeys ?? [activity.id]
+                  keys.forEach(k => handleSave(k, null))
+                }}
+                showHeader
+              >
+                {ActForm && (
+                  <ActForm
+                    initialAnswers={responses[activeActivityId] ?? {}}
+                    isCompleted={config.getActivityStatus(activeActivityId, responses) === 'complete'}
+                    onSubmit={data => handleSave(activeActivityId, data)}
+                    onSave={data => handleSave(activeActivityId, data)}
+                    onClose={() => setActiveActivityId(null)}
+                  />
+                )}
+              </ActivityModal>
+            </div>
+          </>
+        )
+      })()}
+
+      {/* ── Concepts modal ── */}
+      {config.concepts && (
+        <ConceptsModal
+          config={config}
+          labId={labId}
+          activeConceptId={activeConceptId}
+          onNavigateConcept={navigateConcept}
+          onClose={() => setActiveConceptId(null)}
+          triggerOpen={conceptTrigger}
+          themeVars={themeVars}
+        />
+      )}
+
+      {/* ── Evidence panel ── */}
+      {config.evidenceComponent && (
+        <EvidencePanel
+          labId={labId}
+          activeEvidenceId={activeEvidenceId}
+          evidenceOrder={config.evidenceOrder}
+          evidenceMeta={config.evidenceMeta}
+          EvidenceComponent={config.evidenceComponent}
+          onClose={() => setActiveEvidenceId(null)}
+          onNavigate={navigateEvidence}
+          triggerOpen={evidenceTrigger}
+          themeVars={themeVars}
+        />
+      )}
+
+      {/* ── Voice to text ── */}
+      {config.features?.voiceToText && <SpeechInput />}
+    </div>
+  )
+}

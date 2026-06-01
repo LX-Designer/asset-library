@@ -1,0 +1,127 @@
+/* ── Shell layout ──────────────────────────────────────────────────────────── */
+.shell {
+  font-family: var(--lab-font-sans, inherit);
+  background: var(--lab-bg);
+  color: var(--lab-ink);
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: auto 1fr;
+  position: relative;
+}
+
+/* ── Main content area ─────────────────────────────────────────────────────── */
+.main {
+  grid-column: 2;
+  grid-row: 1 / -1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;              /* centres .content horizontally in available space */
+  padding-top: var(--lab-nav-height, 44px);
+  transition: padding-right var(--lab-transition);
+  overflow-x: auto;
+}
+
+/* ── Content wrapper — max-width set from config, centred by .main ─────────── */
+.content {
+  width: 100%;
+  /* max-width applied via inline style from config.content.maxWidth */
+}
+
+/* ── Desktop side tabs (visible when guide panel is closed) ────────────────── */
+.sideTabs {
+  position: fixed;
+  top: var(--lab-nav-height, 44px);
+  left: 0;
+  z-index: 25;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding-top: 8px;
+  pointer-events: none;
+}
+
+.sideTab {
+  pointer-events: auto;
+  display: block;
+  padding: 8px 14px 8px 10px;
+  background: var(--fp-bg, var(--lab-surface));
+  border: 1px solid var(--fp-border, var(--lab-rule));
+  border-left: none;
+  border-radius: 0 4px 4px 0;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--fp-ink-mid, var(--lab-ink-mid));
+  cursor: pointer;
+  white-space: nowrap;
+  box-shadow: 2px 2px 6px rgba(0,0,0,0.08);
+  transition: background var(--lab-transition), color var(--lab-transition),
+              border-color var(--lab-transition), transform var(--lab-transition);
+}
+
+.sideTab:hover,
+.sideTab:focus-visible {
+  background: var(--lab-accent);
+  color: #fff;
+  border-color: var(--lab-accent);
+}
+
+.sideTab:focus-visible {
+  outline: 2px solid var(--lab-accent);
+  outline-offset: 2px;
+}
+
+/* Guide is floating — tuck tabs off-screen, leaving only a decorative sliver */
+.sideTabsTucked {
+  pointer-events: none;
+}
+
+.sideTabsTucked .sideTab {
+  transform: translateX(calc(-100% + 5px));
+  pointer-events: none;
+}
+
+/* ── Mobile trigger button ─────────────────────────────────────────────────── */
+.mobileTrigger {
+  position: fixed;
+  bottom: 16px;
+  right: 16px;
+  z-index: 30;
+  padding: 10px 18px;
+  background: var(--lab-accent);
+  border: none;
+  border-radius: 24px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #fff;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+  transition: background var(--lab-transition), transform var(--lab-transition);
+}
+
+.mobileTrigger:hover {
+  background: var(--lab-accent-hover);
+  transform: translateY(-1px);
+}
+
+/* ── Mobile backdrop ───────────────────────────────────────────────────────── */
+.mobileBackdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  z-index: 34;
+}
+
+/* ── Mobile: hide sidebar from grid flow ─────────────────────────────────────
+   The mobile drawer is fixed-positioned so it doesn't participate in grid. */
+@media (max-width: 899px) {
+  .shell {
+    grid-template-columns: 1fr;
+  }
+  .main {
+    grid-column: 1;
+  }
+}

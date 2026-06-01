@@ -1,0 +1,53 @@
+.dialog {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.message {
+  font-size: 12px;
+  color: var(--lab-ink-mid);
+  margin: 0;
+  line-height: 1.45;
+}
+
+.actions {
+  display: flex;
+  gap: 6px;
+}
+
+.cancel {
+  flex: 1;
+  padding: 7px 10px;
+  background: none;
+  border: 1px solid var(--lab-rule);
+  border-radius: 4px;
+  font-size: 11px;
+  color: var(--lab-ink-mid);
+  cursor: pointer;
+  transition: all var(--lab-transition);
+}
+
+.cancel:hover {
+  background: var(--lab-surface-mid);
+  border-color: var(--lab-ink-light);
+  color: var(--lab-ink);
+}
+
+.confirm {
+  flex: 1;
+  padding: 7px 10px;
+  background: var(--lab-warn-subtle, #fffbeb);
+  border: 1px solid var(--lab-warn-muted, #fcd34d);
+  border-radius: 4px;
+  font-size: 11px;
+  color: var(--lab-warn);
+  cursor: pointer;
+  transition: all var(--lab-transition);
+}
+
+.confirm:hover {
+  background: var(--lab-warn);
+  border-color: var(--lab-warn);
+  color: #fff;
+}

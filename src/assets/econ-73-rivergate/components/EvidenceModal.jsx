@@ -1,4 +1,3 @@
-import { useEffect } from 'react'
 import styles from '../RivergateOverflow.module.css'
 
 const EVIDENCE_META = {
@@ -202,39 +201,22 @@ const CONTENT_MAP = {
   'expert-comparison': ExpertComparison,
 }
 
-export default function EvidenceModal({ evidenceId, onClose }) {
+/**
+ * EvidenceContent — renders the content body for a given evidenceId.
+ * Chrome (FloatingPanel, overlay, close button) is provided by LabShell's EvidencePanel.
+ */
+export default function EvidenceContent({ evidenceId }) {
   const meta = EVIDENCE_META[evidenceId]
   const ContentComponent = CONTENT_MAP[evidenceId]
-
-  useEffect(() => {
-    function onKey(e) { if (e.key === 'Escape') onClose() }
-    window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
-  }, [onClose])
-
-  useEffect(() => {
-    document.body.style.overflow = 'hidden'
-    return () => { document.body.style.overflow = '' }
-  }, [])
-
-  function handleOverlayClick(e) {
-    if (e.target === e.currentTarget) onClose()
-  }
-
   if (!meta || !ContentComponent) return null
 
   return (
-    <div className={styles.overlay} onClick={handleOverlayClick} role="dialog" aria-modal="true" aria-labelledby="ev-modal-title">
-      <div className={`${styles.modal} ${styles.evidenceModal}`}>
-        <div className={styles.modalHeader}>
-          <span className={styles.modalRef}>{meta.stamp}</span>
-          <h2 className={styles.modalTitle} id="ev-modal-title">{meta.title}</h2>
-          <button className={styles.modalClose} onClick={onClose} aria-label="Close">Close ✕</button>
-        </div>
-        <div className={styles.modalBody} style={{ padding: 0 }}>
-          <ContentComponent />
-        </div>
+    <div>
+      <div className={styles.evidenceDocHeader}>
+        <div className={styles.evidenceDocStamp}>{meta.stamp}</div>
+        <h2 className={styles.evidenceDocTitle}>{meta.title}</h2>
       </div>
+      <ContentComponent />
     </div>
   )
 }

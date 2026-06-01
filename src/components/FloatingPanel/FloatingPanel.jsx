@@ -40,7 +40,7 @@ const IconExpand = () => (
   </svg>
 )
 
-function PanelHeader({ title, state, onTransition, onModalFirstPopOut, sidebarOnly, modalFirst }) {
+function PanelHeader({ title, state, onTransition, onModalFirstPopOut, sidebarOnly, modalFirst, floatOnly }) {
   const isDocked    = state === 'docked'
   const isFloating  = state === 'floating'
   const isMinimised = state === 'minimised'
@@ -70,8 +70,8 @@ function PanelHeader({ title, state, onTransition, onModalFirstPopOut, sidebarOn
             <IconDock />
           </button>
         )}
-        {/* modalFirst panels: dock when floating, pop-out when docked (re-centres with overlay) */}
-        {modalFirst && isFloating && (
+        {/* modalFirst panels: dock when floating (suppressed when floatOnly) */}
+        {modalFirst && isFloating && !floatOnly && (
           <button className={s.hBtn} onClick={() => onTransition('docked')} title="Dock to sidebar" aria-label="Dock panel">
             <IconDock />
           </button>
@@ -99,6 +99,7 @@ function PanelHeader({ title, state, onTransition, onModalFirstPopOut, sidebarOn
  *   width             number              default float width (px)
  *   defaultHeight     number              default float height (px)
  *   defaultDockedWidth number             default docked width (falls back to width)
+ *   maxDockedWidth     number             maximum docked width from drag-resize (default 600)
  *   topOffset          string             CSS value for top offset when docked (e.g. 'var(--fr-nav-height)'); default '0px'
  *   tabLabel          string              text on the viewport edge tab
  *   initialState      'docked' | 'floating' | 'closed'
@@ -124,6 +125,7 @@ export default function FloatingPanel({
   width = 280,
   defaultHeight = 540,
   defaultDockedWidth,
+  maxDockedWidth = 600,
   topOffset = '0px',
   tabLabel,
   initialState = 'docked',
@@ -135,6 +137,7 @@ export default function FloatingPanel({
   triggerClose,
   noTab = false,
   sidebarOnly = false,
+  floatOnly = false,
   tabAlign = 'center',
   modalFirst = false,
   themeVars = [],
@@ -201,7 +204,7 @@ export default function FloatingPanel({
     const vars = {}
     varNames.forEach(v => { const val = cs.getPropertyValue(v).trim(); if (val) vars[v] = val })
     if (Object.keys(vars).length > 0) setPortalStyle(vars)
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [themeVars])
 
   const isDocked    = panelState === 'docked'
   const isFloating  = panelState === 'floating'
@@ -225,10 +228,10 @@ export default function FloatingPanel({
 
   // For modalFirst panels: pop-out button re-centres with overlay, identical to triggerOpen.
   const handleModalFirstPopOut = useCallback(() => {
-    const w = Math.min(size.width,  window.innerWidth  - 48)
-    const h = Math.min(size.height, window.innerHeight - 48)
-    const newSize = (w !== size.width || h !== size.height) ? { width: w, height: h } : null
-    if (newSize) setSize(newSize)
+    // Always reset to default size so pop-out is consistent regardless of previous resizing.
+    const w = Math.min(width,         window.innerWidth  - 48)
+    const h = Math.min(defaultHeight, window.innerHeight - 48)
+    setSize({ width: w, height: h })
     const centrePos = {
       x: Math.max(0, Math.round((window.innerWidth  - w) / 2)),
       y: Math.max(0, Math.round((window.innerHeight - h) / 2)),
@@ -237,19 +240,17 @@ export default function FloatingPanel({
     setPanelState_('floating')
     save(id, { state: 'floating', pos: centrePos })
     onFloat?.()
-  }, [size, id, onFloat])
+  }, [width, defaultHeight, id, onFloat])
 
   // Programmatic open: when triggerOpen increments, open the panel
   useEffect(() => {
     if (!triggerOpen) return
 
     if (modalFirst) {
-      // Each trigger re-centres and re-shows the overlay (even if already floating).
-      // Clamp to viewport so the modal never opens larger than the window.
-      const w = Math.min(size.width,  window.innerWidth  - 48)
-      const h = Math.min(size.height, window.innerHeight - 48)
-      const newSize = (w !== size.width || h !== size.height) ? { width: w, height: h } : null
-      if (newSize) setSize(newSize)
+      // Always reset to default size so every open is consistent regardless of previous resizing.
+      const w = Math.min(width,         window.innerWidth  - 48)
+      const h = Math.min(defaultHeight, window.innerHeight - 48)
+      setSize({ width: w, height: h })
       const centrePos = {
         x: Math.max(0, Math.round((window.innerWidth  - w) / 2)),
         y: Math.max(0, Math.round((window.innerHeight - h) / 2)),
@@ -279,6 +280,7 @@ export default function FloatingPanel({
   useEffect(() => {
     if (!triggerDock) return
     setShowOverlay(false)
+    setDockedWidth(defaultDockedWidthRef.current)  // consistent with transition('docked')
     setPanelState_('docked')
     save(id, { state: 'docked' })
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -327,7 +329,7 @@ export default function FloatingPanel({
     const startW = dockedWidth
     const onMove = (ev) => {
       const delta = side === 'left' ? ev.clientX - startX : startX - ev.clientX
-      setDockedWidth(Math.max(180, Math.min(600, startW + delta)))
+      setDockedWidth(Math.max(180, Math.min(maxDockedWidth, startW + delta)))
     }
     const onUp = () => {
       window.removeEventListener('mousemove', onMove)
@@ -335,7 +337,7 @@ export default function FloatingPanel({
     }
     window.addEventListener('mousemove', onMove)
     window.addEventListener('mouseup', onUp)
-  }, [dockedWidth, side, id])
+  }, [dockedWidth, side, maxDockedWidth])
 
   // Hidden anchor always rendered in document flow so CSS vars can be read
   const anchorDiv = <div ref={anchorRef} style={{ display: 'none' }} aria-hidden="true" />
@@ -377,7 +379,7 @@ export default function FloatingPanel({
       : { width: dockedWidth }
     const panel = (
       <div className={`${s.dockedPanel} ${s[side]}`} style={dockedStyle}>
-        <PanelHeader title={title} state={panelState} onTransition={transition} onModalFirstPopOut={handleModalFirstPopOut} sidebarOnly={sidebarOnly} modalFirst={modalFirst} />
+        <PanelHeader title={title} state={panelState} onTransition={transition} onModalFirstPopOut={handleModalFirstPopOut} sidebarOnly={sidebarOnly} modalFirst={modalFirst} floatOnly={floatOnly} />
         <div className={s.panelBody} ref={panelBodyRef}>{children}</div>
         <div className={`${s.resizeHandle} ${s[side]}`} onMouseDown={handleDockedResize} />
       </div>
@@ -436,16 +438,16 @@ export default function FloatingPanel({
               onDragStop={(_, d) => {
                 const p = { x: d.x, y: d.y }
                 setPos(p)
-                save(id, { pos: p })
+                if (!modalFirst) save(id, { pos: p })
               }}
               onResizeStop={(_, __, ref, ___, newPos) => {
                 const sz = { width: ref.offsetWidth, height: ref.offsetHeight }
                 setSize(sz)
                 setPos(newPos)
-                save(id, { size: sz, pos: newPos })
+                if (!modalFirst) save(id, { size: sz, pos: newPos })
               }}
             >
-              <PanelHeader title={title} state={panelState} onTransition={transition} onModalFirstPopOut={handleModalFirstPopOut} sidebarOnly={sidebarOnly} modalFirst={modalFirst} />
+              <PanelHeader title={title} state={panelState} onTransition={transition} onModalFirstPopOut={handleModalFirstPopOut} sidebarOnly={sidebarOnly} modalFirst={modalFirst} floatOnly={floatOnly} />
               {!isMinimised && <div className={s.panelBody} ref={panelBodyRef}>{children}</div>}
             </Rnd>
           </div>,

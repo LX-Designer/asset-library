@@ -1,0 +1,77 @@
+/* ── LabShell design token defaults ──────────────────────────────────────────
+   Labs override these on their root class (e.g. .myLabShell { --lab-accent: #c00; }).
+   Every shell component references only --lab-* tokens.
+   The --fp-* and --modal-* blocks map lab tokens → framework namespaces so that
+   FloatingPanel portals (which use getComputedStyle on the anchor) receive correct
+   values, and ActivityModal styles resolve correctly.
+   ──────────────────────────────────────────────────────────────────────────── */
+
+:root {
+  /* Surfaces */
+  --lab-bg:              #f8f8f6;
+  --lab-surface:         #ffffff;
+  --lab-surface-mid:     #f3f4f6;
+
+  /* Text */
+  --lab-ink:             #111827;
+  --lab-ink-mid:         #4b5563;
+  --lab-ink-light:       #9ca3af;
+
+  /* Borders */
+  --lab-rule:            #e5e7eb;
+  --lab-rule-light:      #f3f4f6;
+
+  /* Accent */
+  --lab-accent:          #2563eb;
+  --lab-accent-hover:    #1d4ed8;
+  --lab-accent-subtle:   #eff6ff;
+
+  /* Status */
+  --lab-complete:        #15803d;
+  --lab-complete-subtle: #f0fdf4;
+  --lab-complete-muted:  #86efac;
+  --lab-warn:            #b45309;
+  --lab-warn-subtle:     #fffbeb;
+  --lab-warn-muted:      #fcd34d;
+  --lab-flag:            #dc2626;
+
+  /* Typography */
+  --lab-font-serif:      Georgia, 'Times New Roman', serif;
+  --lab-font-sans:       'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --lab-font-mono:       'Courier New', monospace;
+
+  /* Layout */
+  --lab-nav-height:      44px;
+  --lab-transition:      160ms ease;
+
+  /* ── FloatingPanel namespace aliases ───────────────────────────────────────
+     FloatingPanel reads --fp-* from its anchor div via getComputedStyle.
+     Including these names in config.themeVars ensures portals receive resolved
+     literal values (hex / font stacks) rather than unresolved var() refs.     */
+  --fp-bg:               var(--lab-surface);
+  --fp-border:           var(--lab-rule);
+  --fp-ink:              var(--lab-ink);
+  --fp-ink-mid:          var(--lab-ink-mid);
+  --fp-ink-light:        var(--lab-ink-light);
+  --fp-accent:           var(--lab-accent);
+  --fp-subtle:           var(--lab-bg);
+  --fp-shadow:           0 4px 24px rgba(0, 0, 0, 0.12);
+  --fp-tab-bg:           var(--lab-surface);
+  --fp-tab-border:       var(--lab-rule);
+  --fp-tab-ink:          var(--lab-ink-mid);
+  --fp-radius:           4px;
+  --fp-transition:       var(--lab-transition);
+
+  /* ── ActivityModal namespace aliases ───────────────────────────────────── */
+  --modal-panel-bg:      var(--lab-surface);
+  --modal-border:        var(--lab-rule);
+  --modal-ink:           var(--lab-ink);
+  --modal-ink-mid:       var(--lab-ink-mid);
+  --modal-ink-light:     var(--lab-ink-light);
+  --modal-accent:        var(--lab-accent);
+  --modal-accent-hover:  var(--lab-accent-hover);
+  --modal-subtle:        var(--lab-bg);
+  --modal-label:         var(--lab-warn);
+  --modal-serif:         var(--lab-font-serif);
+  --modal-transition:    var(--lab-transition);
+}

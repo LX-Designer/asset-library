@@ -2,6 +2,7 @@
 
 /* ─── DESIGN TOKENS + SHELL ──────────────────────────────────────── */
 .shell {
+  /* ── Rivergate design tokens ──────────────────────────────────────── */
   --rg-ink:          #1f2933;
   --rg-muted:        #64748b;
   --rg-faint:        #94a3b8;
@@ -22,13 +23,59 @@
   --rg-serif:        'Source Serif 4', Georgia, serif;
   --rg-mono:         'IBM Plex Mono', 'Courier New', monospace;
 
-  display: flex;
-  flex-direction: column;
-  height: calc(100vh - var(--nav-height, 60px));
-  overflow: hidden;
-  background: var(--rg-paper);
-  color: var(--rg-ink);
-  font-family: var(--font-family, 'Inter', sans-serif);
+  /* ── LabShell token mapping ─────────────────────────────���─────────── */
+  --lab-bg:              var(--rg-paper);
+  --lab-surface:         var(--rg-panel);
+  --lab-surface-mid:     var(--rg-river-light);
+  --lab-ink:             var(--rg-ink);
+  --lab-ink-mid:         var(--rg-muted);
+  --lab-ink-light:       var(--rg-faint);
+  --lab-rule:            var(--rg-line);
+  --lab-rule-light:      #eaeff6;
+  --lab-accent:          var(--rg-river);
+  --lab-accent-hover:    #265e77;
+  --lab-accent-subtle:   var(--rg-river-light);
+  --lab-complete:        var(--rg-teal);
+  --lab-complete-subtle: var(--rg-teal-light);
+  --lab-complete-muted:  var(--rg-teal-mid);
+  --lab-warn:            var(--rg-amber);
+  --lab-warn-subtle:     var(--rg-amber-light);
+  --lab-warn-muted:      var(--rg-amber-mid);
+  --lab-flag:            var(--rg-flag);
+  --lab-font-serif:      var(--rg-serif);
+  --lab-font-mono:       var(--rg-mono);
+  --lab-nav-height:      44px;
+  --lab-transition:      160ms ease;
+
+  /* ── FloatingPanel aliases ─────────────────────────��──────────────── */
+  --fp-bg:          var(--rg-panel);
+  --fp-border:      var(--rg-line);
+  --fp-ink:         var(--rg-ink);
+  --fp-ink-mid:     var(--rg-muted);
+  --fp-ink-light:   var(--rg-faint);
+  --fp-accent:      var(--rg-river);
+  --fp-subtle:      var(--rg-paper);
+  --fp-shadow:      -4px 0 24px rgba(15,23,42,0.12), 0 4px 16px rgba(15,23,42,0.08);
+  --fp-tab-bg:      var(--rg-panel);
+  --fp-tab-border:  var(--rg-line);
+  --fp-tab-ink:     var(--rg-muted);
+  --fp-radius:      1px;
+  --fp-transition:  160ms ease;
+
+  /* ── ActivityModal aliases ────────────────────────────────────────── */
+  --modal-panel-bg:      var(--rg-panel);
+  --modal-border:        var(--rg-line);
+  --modal-ink:           var(--rg-ink);
+  --modal-ink-mid:       var(--rg-muted);
+  --modal-ink-light:     var(--rg-faint);
+  --modal-accent:        var(--rg-river);
+  --modal-accent-hover:  #265e77;
+  --modal-subtle:        var(--rg-paper);
+  --modal-label:         var(--rg-amber);
+  --modal-serif:         var(--rg-serif);
+  --modal-transition:    160ms ease;
+
+  /* ── Base styles (applied by LabShell root, not layout) ───────────── */
   font-size: 14px;
   line-height: 1.6;
 }
@@ -131,7 +178,7 @@
 /* ─── SECTION NAV (sticky within doc panel) ──────────────────────── */
 .sectionNav {
   position: sticky;
-  top: 0;
+  top: var(--lab-nav-height, 44px);
   z-index: 5;
   background: var(--rg-paper);
   border-bottom: 1px solid var(--rg-line);
@@ -202,7 +249,7 @@
 /* ─── DOCUMENT CONTENT ───────────────────────────────────────────── */
 .docContent {
   padding: 40px 48px 60px;
-  max-width: 820px;
+  width: 100%;   /* shell controls max-width via config.content.maxWidth */
 }
 
 /* ─── DOCUMENT HEADER BLOCK ──────────────────────────────────────── */
