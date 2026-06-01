@@ -137,7 +137,7 @@ export default {
   concepts: null,
 
   content: {
-    maxWidth: '960px',
+    maxWidth: '1100px',
   },
 
   features: {
