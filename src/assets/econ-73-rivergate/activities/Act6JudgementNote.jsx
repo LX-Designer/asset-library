@@ -1,5 +1,4 @@
-import { useState, useCallback } from 'react'
-import { SYSTEM_PROMPT } from '../data/feedbackPrompt.js'
+import { useState } from 'react'
 import styles from '../RivergateOverflow.module.css'
 
 function wordCount(text) {
@@ -13,49 +12,31 @@ function wordCountLabel(n) {
   return `${n} words ✓`
 }
 
-export default function Act6JudgementNote({ initialAnswers, isCompleted, onSave, onClose }) {
-  const [note,     setNote]     = useState(initialAnswers?.note     ?? '')
-  const [feedback, setFeedback] = useState(initialAnswers?.feedback ?? '')
-  const [loading,  setLoading]  = useState(false)
-  const [error,    setError]    = useState('')
-  const [hasFeedback, setHasFeedback] = useState(!!initialAnswers?.feedback)
+export default function Act6JudgementNote({ initialAnswers, isCompleted, onSubmit, onClose }) {
+  const [note,      setNote]      = useState(initialAnswers?.note ?? '')
+  const [error,     setError]     = useState('')
+  // Track whether feedback has been requested this session or was previously saved,
+  // so the button label can switch from "Submit" to "Resubmit".
+  const [submitted, setSubmitted] = useState(!!initialAnswers?.feedback)
 
   const wc = wordCount(note)
 
-  const handleSubmitForFeedback = useCallback(async () => {
+  function handleSubmitForFeedback() {
     if (wc < 50) {
       setError('Write at least 50 words before submitting for feedback.')
       return
     }
     setError('')
-    setLoading(true)
-    setFeedback('')
-
-    const userMessage = `Here is the student's economic judgement note:\n\n"${note.trim()}"`
-
-    try {
-      const res = await fetch('/api/ai-feedback', {
-        method:  'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify({ system: SYSTEM_PROMPT, userMessage }),
-      })
-      if (!res.ok) throw new Error(`Server error: ${res.status}`)
-      const data = await res.json()
-      const fb = data.text ?? 'Unable to retrieve feedback. Please try again.'
-      setFeedback(fb)
-      setHasFeedback(true)
-      onSave({ note: note.trim(), feedback: fb })
-    } catch {
-      setError('Unable to retrieve feedback at this time. Please check your connection and try again.')
-    } finally {
-      setLoading(false)
-    }
-  }, [note, wc, onSave])
+    setSubmitted(true)
+    onSubmit({ note: note.trim() })
+  }
 
   return (
     <>
       {isCompleted && (
-        <div className={styles.submittedNote}>Judgement note submitted — you may revise and resubmit for feedback.</div>
+        <div className={styles.submittedNote}>
+          Judgement note submitted — you may revise and resubmit for feedback.
+        </div>
       )}
 
       <div className={styles.formSection}>
@@ -104,33 +85,11 @@ export default function Act6JudgementNote({ initialAnswers, isCompleted, onSave,
         <button
           className={`${styles.btn} ${styles.btnPrimary}`}
           onClick={handleSubmitForFeedback}
-          disabled={loading}
           type="button"
         >
-          {loading ? 'Reviewing…' : hasFeedback ? 'Resubmit for feedback →' : 'Submit for feedback →'}
+          {submitted ? 'Resubmit for feedback →' : 'Submit for feedback →'}
         </button>
       </div>
-
-      {(loading || feedback) && (
-        <div className={styles.feedbackPanel}>
-          <div className={styles.feedbackPanelHeader}>
-            <span className={styles.feedbackPanelLabel}>Tutor Feedback</span>
-            <span className={styles.feedbackPanelSub}>AI-generated formative feedback</span>
-          </div>
-          <div className={styles.feedbackPanelBody}>
-            {loading ? (
-              <div className={styles.feedbackLoading}>
-                <div className={styles.dot} />
-                <div className={styles.dot} />
-                <div className={styles.dot} />
-                <span style={{ marginLeft: 8 }}>Reviewing your judgement note…</span>
-              </div>
-            ) : (
-              <p style={{ whiteSpace: 'pre-wrap', margin: 0 }}>{feedback}</p>
-            )}
-          </div>
-        </div>
-      )}
     </>
   )
 }

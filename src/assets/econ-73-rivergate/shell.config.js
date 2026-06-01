@@ -5,6 +5,7 @@ import Act3 from './activities/Act3Discontinuity.jsx'
 import Act4 from './activities/Act4MarketFailureDiagnosis.jsx'
 import Act5 from './activities/Act5ExpertAccounts.jsx'
 import Act6 from './activities/Act6JudgementNote.jsx'
+import { SYSTEM_PROMPT as ACT6_SYSTEM_PROMPT } from './data/feedbackPrompt.js'
 
 // CSS custom properties forwarded through FloatingPanel portals.
 // Must include --fp-* and --modal-* names so portals receive literal values.
@@ -120,6 +121,10 @@ export default {
       scaffold: 'Use the full case file. Aim for approximately 200 words.',
       evidenceSections: [],
       required: true,
+      feedback: {
+        systemPrompt: ACT6_SYSTEM_PROMPT,
+        buildMessage: (data) => `Here is the student's economic judgement note:\n\n"${data.note}"`,
+      },
     },
   ],
 
