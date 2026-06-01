@@ -94,6 +94,7 @@
   padding: 20px 24px;
   overflow-y: auto;
   min-height: 0;
+  background: var(--modal-panel-bg, transparent);
   /* Standard scrollbar (Firefox, Chrome 121+) */
   scrollbar-width: thin;
   scrollbar-color: var(--modal-border, #e5e7eb) transparent;

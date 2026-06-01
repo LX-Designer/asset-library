@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import { useState } from 'react'
 import styles from '../TacomaNarrows.module.css'
 
 function wordCount(text) {
@@ -12,42 +12,23 @@ function wordCountLabel(n) {
   return `${n} words ✓`
 }
 
-export default function Act6({ initialAnswers, isCompleted, onComplete, onClose }) {
-  const [report,   setReport]   = useState(initialAnswers?.report   ?? '')
-  const [feedback, setFeedback] = useState(initialAnswers?.feedback ?? '')
-  const [loading,  setLoading]  = useState(false)
-  const [error,    setError]    = useState('')
-  const [hasSubmitted, setHasSubmitted] = useState(!!initialAnswers?.feedback)
+export default function Act6({ initialAnswers, isCompleted, onSubmit, onClose }) {
+  const [report,    setReport]    = useState(initialAnswers?.report   ?? '')
+  const [error,     setError]     = useState('')
+  // Track whether feedback has been requested this session or was previously saved
+  const [submitted, setSubmitted] = useState(!!initialAnswers?.feedback)
 
   const wc = wordCount(report)
 
-  const handleSubmitFeedback = useCallback(async () => {
+  function handleSubmitForFeedback() {
     if (wc < 50) {
       setError('Please write at least 50 words before submitting for feedback.')
       return
     }
     setError('')
-    setLoading(true)
-    setFeedback('')
-
-    try {
-      const res = await fetch('/api/feedback', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ report: report.trim() }),
-      })
-      if (!res.ok) throw new Error(`Server error: ${res.status}`)
-      const data = await res.json()
-      const fb = data.feedback ?? 'Unable to retrieve feedback. Please try again.'
-      setFeedback(fb)
-      setHasSubmitted(true)
-      onComplete({ report: report.trim(), feedback: fb })
-    } catch (err) {
-      setError('Unable to retrieve feedback at this time. Please check your connection and try again.')
-    } finally {
-      setLoading(false)
-    }
-  }, [report, wc, onComplete])
+    setSubmitted(true)
+    onSubmit({ report: report.trim() })
+  }
 
   return (
     <>
@@ -78,38 +59,17 @@ export default function Act6({ initialAnswers, isCompleted, onComplete, onClose 
       {error && <p style={{ color: 'var(--tn-accent)', fontSize: 13, marginTop: 8 }}>{error}</p>}
 
       <div className={styles.actions} style={{ marginTop: 10 }}>
-        <button className={styles.btn} onClick={onClose}>
+        <button className={styles.btn} onClick={onClose} type="button">
           Save &amp; close
         </button>
         <button
           className={`${styles.btn} ${styles.btnDanger}`}
-          onClick={handleSubmitFeedback}
-          disabled={loading}
+          onClick={handleSubmitForFeedback}
+          type="button"
         >
-          {loading ? 'Analysing…' : hasSubmitted ? 'Resubmit for feedback →' : 'Submit for feedback →'}
+          {submitted ? 'Resubmit for feedback →' : 'Submit for feedback →'}
         </button>
       </div>
-
-      {(loading || feedback) && (
-        <div className={styles.feedbackPanel}>
-          <div className={styles.feedbackHeader}>
-            <span>Tribunal Feedback</span>
-            <span className={styles.feedbackHeaderNote}>AI-generated formative feedback</span>
-          </div>
-          <div className={styles.feedbackBody}>
-            {loading ? (
-              <div className={styles.feedbackLoading}>
-                <div className={styles.feedbackDot} />
-                <div className={styles.feedbackDot} />
-                <div className={styles.feedbackDot} />
-                <span style={{ marginLeft: 6 }}>Analysing your report…</span>
-              </div>
-            ) : (
-              <p style={{ whiteSpace: 'pre-wrap', lineHeight: 1.75, margin: 0 }}>{feedback}</p>
-            )}
-          </div>
-        </div>
-      )}
     </>
   )
 }

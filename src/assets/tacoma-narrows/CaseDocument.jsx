@@ -1,10 +1,10 @@
 import styles from './TacomaNarrows.module.css'
 
-function Trigger({ num, label, sub, done, onOpen }) {
+function Trigger({ num, label, sub, done, openActivity }) {
   return (
     <button
       className={`${styles.trigger} ${done ? styles.triggerDone : ''}`}
-      onClick={() => onOpen(num)}
+      onClick={() => openActivity('act-' + num)}
     >
       <span className={styles.triggerNum}>ACT 0{num}</span>
       <span className={styles.triggerContent}>
@@ -16,8 +16,8 @@ function Trigger({ num, label, sub, done, onOpen }) {
   )
 }
 
-export default function CaseDocument({ completedSet, onOpenModal }) {
-  const done = (n) => completedSet.has(n)
+export default function CaseDocument({ openActivity, responses }) {
+  const done = (n) => responses['act-' + n] != null
 
   return (
     <>
@@ -60,8 +60,41 @@ export default function CaseDocument({ completedSet, onOpenModal }) {
 
       <div className={styles.contentWrap}>
 
+        {/* ── BEFORE YOU BEGIN ── */}
+        <details className={styles.beforeDetails}>
+          <summary className={styles.beforeSummary}>
+            ⓘ Before you begin — assumptions and learning goals
+          </summary>
+          <div className={styles.beforeContent}>
+            <div className={styles.beforeGrid}>
+              <div className={styles.beforeCard}>
+                <span className={styles.beforeCardTitle}>Assumed prior knowledge</span>
+                <ul className={styles.beforeList}>
+                  <li>Oscillation and frequency (Hz)</li>
+                  <li>Basic concept of resonance</li>
+                  <li>Newton's laws of motion</li>
+                  <li>Concept of damping</li>
+                  <li>Reading and interpreting data tables</li>
+                  <li>Basic structural forces — tension and compression</li>
+                </ul>
+              </div>
+              <div className={styles.beforeCard}>
+                <span className={styles.beforeCardTitle}>You will learn to</span>
+                <ul className={styles.beforeList}>
+                  <li>Distinguish resonance from aeroelastic flutter as failure mechanisms</li>
+                  <li>Use frequency data to evaluate competing physical explanations</li>
+                  <li>Identify limitations in an engineering model</li>
+                  <li>Analyse how a design decision changes structural behaviour</li>
+                  <li>Evaluate expert claims against primary source evidence</li>
+                  <li>Construct an evidence-based argument in a formal written format</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </details>
+
         {/* ── ACTIVITY 1 TRIGGER ── */}
-        <Trigger num={1} sub="Before you read" label="Record your initial hypothesis" done={done(1)} onOpen={onOpenModal} />
+        <Trigger num={1} sub="Before you read" label="Record your initial hypothesis" done={done(1)} openActivity={openActivity} />
 
         {/* ── § 01  INCIDENT OVERVIEW ── */}
         <section className={styles.section}>
@@ -209,8 +242,8 @@ export default function CaseDocument({ completedSet, onOpenModal }) {
         </section>
 
         {/* ── ACTIVITY 2 & 3 TRIGGERS ── */}
-        <Trigger num={2} sub="Data analysis"        label="Does the frequency evidence support resonance?" done={done(2)} onOpen={onOpenModal} />
-        <Trigger num={3} sub="Timeline reconstruction" label="Two phases — do they need two explanations?" done={done(3)} onOpen={onOpenModal} />
+        <Trigger num={2} sub="Data analysis"        label="Does the frequency evidence support resonance?" done={done(2)} openActivity={openActivity} />
+        <Trigger num={3} sub="Timeline reconstruction" label="Two phases — do they need two explanations?" done={done(3)} openActivity={openActivity} />
 
         <div className={styles.divider}>· · ·</div>
 
@@ -241,7 +274,7 @@ export default function CaseDocument({ completedSet, onOpenModal }) {
         </section>
 
         {/* ── ACTIVITY 4 TRIGGER ── */}
-        <Trigger num={4} sub="Design analysis" label="What did the solid girder design change?" done={done(4)} onOpen={onOpenModal} />
+        <Trigger num={4} sub="Design analysis" label="What did the solid girder design change?" done={done(4)} openActivity={openActivity} />
 
         <div className={styles.divider}>· · ·</div>
 
@@ -278,7 +311,7 @@ export default function CaseDocument({ completedSet, onOpenModal }) {
         </section>
 
         {/* ── ACTIVITY 5 TRIGGER ── */}
-        <Trigger num={5} sub="Expert evaluation" label="Which account does the evidence support?" done={done(5)} onOpen={onOpenModal} />
+        <Trigger num={5} sub="Expert evaluation" label="Which account does the evidence support?" done={done(5)} openActivity={openActivity} />
 
         <div className={styles.divider}>· · ·</div>
 
@@ -304,7 +337,7 @@ export default function CaseDocument({ completedSet, onOpenModal }) {
         </section>
 
         {/* ── ACTIVITY 6 TRIGGER ── */}
-        <Trigger num={6} sub="Final task — Tribunal report" label="Write your findings for the inquiry tribunal" done={done(6)} onOpen={onOpenModal} />
+        <Trigger num={6} sub="Final task — Tribunal report" label="Write your findings for the inquiry tribunal" done={done(6)} openActivity={openActivity} />
 
       </div>
     </>

@@ -1,11 +1,10 @@
 /* ─────────────────────────────────────────────────────────────────────────────
-   TACOMA NARROWS — single CSS module used by all sub-components in this asset.
-   Custom properties are scoped to .shell so they cascade to every child,
-   including the modal (which renders inside .shell, not as a portal).
+   TACOMA NARROWS — CSS module for CaseDocument and activity form components.
+   Design tokens scoped to .shell; LabShell handles all layout and chrome.
 ───────────────────────────────────────────────────────────────────────────── */
 
 .shell {
-  /* Design tokens */
+  /* ── Tacoma design tokens ─────────────────────────────────────────────── */
   --tn-ink:          #1a1814;
   --tn-ink-mid:      #4a4640;
   --tn-ink-light:    #8a8480;
@@ -22,205 +21,65 @@
   --tn-serif:        'Source Serif 4', Georgia, serif;
   --tn-display:      'DM Serif Display', Georgia, serif;
 
-  display: flex;
-  align-items: flex-start;
-  min-height: calc(100vh - var(--nav-height, 60px));
-  background: var(--tn-paper);
-  font-family: var(--tn-serif);
-  font-size: 17px;
-  line-height: 1.75;
-  color: var(--tn-ink);
+  /* ── LabShell token mapping — dark panel theme ────────────────────────────
+     Nav, sidebar and activity panel chrome use --tn-ink as the surface colour,
+     matching the original dark sidebar aesthetic.
+     ActivityModal body overrides --modal-panel-bg to --tn-paper so form
+     content stays readable on a cream/paper background.                     */
+  --lab-bg:              var(--tn-paper);
+  --lab-surface:         var(--tn-ink);
+  --lab-surface-mid:     #2a2620;
+  --lab-ink:             var(--tn-paper);
+  --lab-ink-mid:         rgba(245,240,232,0.6);
+  --lab-ink-light:       rgba(245,240,232,0.35);
+  --lab-rule:            rgba(245,240,232,0.12);
+  --lab-rule-light:      rgba(245,240,232,0.07);
+  --lab-accent:          var(--tn-accent);
+  --lab-accent-hover:    var(--tn-accent-lt);
+  --lab-accent-subtle:   rgba(139,26,26,0.2);
+  --lab-complete:        var(--tn-green);
+  --lab-complete-subtle: rgba(45,90,61,0.2);
+  --lab-complete-muted:  rgba(45,90,61,0.45);
+  --lab-warn:            var(--tn-gold);
+  --lab-warn-subtle:     rgba(184,134,11,0.15);
+  --lab-warn-muted:      rgba(184,134,11,0.4);
+  --lab-flag:            var(--tn-accent);
+  --lab-font-serif:      var(--tn-serif);
+  --lab-font-mono:       var(--tn-mono);
+  --lab-nav-height:      44px;
+  --lab-transition:      160ms ease;
+
+  /* FloatingPanel aliases */
+  --fp-bg:           var(--lab-surface);
+  --fp-border:       var(--lab-rule);
+  --fp-ink:          var(--lab-ink);
+  --fp-ink-mid:      var(--lab-ink-mid);
+  --fp-ink-light:    var(--lab-ink-light);
+  --fp-accent:       var(--lab-accent);
+  --fp-subtle:       rgba(245,240,232,0.06);
+  --fp-tab-bg:       var(--lab-surface);
+  --fp-tab-border:   var(--lab-rule);
+  --fp-tab-ink:      var(--lab-ink-mid);
+  --fp-radius:       4px;
+  --fp-transition:   var(--lab-transition);
+  --fp-shadow:       0 4px 24px rgba(0,0,0,0.32);
+
+  /* ActivityModal aliases — cream body so form content is readable on dark chrome */
+  --modal-panel-bg:      var(--tn-paper);
+  --modal-border:        var(--tn-border-s);
+  --modal-ink:           var(--tn-ink);
+  --modal-ink-mid:       var(--tn-ink-mid);
+  --modal-ink-light:     var(--tn-ink-light);
+  --modal-accent:        var(--tn-accent);
+  --modal-accent-hover:  var(--tn-accent-lt);
+  --modal-subtle:        var(--tn-paper-dark);
+  --modal-label:         var(--tn-accent);
+  --modal-serif:         var(--tn-serif);
+  --modal-transition:    var(--lab-transition);
 }
 
-/* ── SIDEBAR ─────────────────────────────────────────────────────────────── */
+/* ── DOCUMENT HEADER ─────────────────────────────────────────────────────── */
 
-.sidebar {
-  width: 260px;
-  flex-shrink: 0;
-  background: var(--tn-ink);
-  color: var(--tn-paper);
-  position: sticky;
-  top: var(--nav-height, 60px);
-  height: calc(100vh - var(--nav-height, 60px));
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(245,240,232,0.15) transparent;
-}
-
-.sidebar::-webkit-scrollbar { width: 4px; }
-.sidebar::-webkit-scrollbar-thumb { background: rgba(245,240,232,0.15); border-radius: 2px; }
-
-.sidebarBack {
-  display: block;
-  color: rgba(245,240,232,0.5);
-  font-size: 11px;
-  font-family: var(--tn-mono);
-  text-decoration: none;
-  padding: 14px 20px 6px;
-  letter-spacing: 0.04em;
-  transition: color 0.2s;
-}
-.sidebarBack:hover { color: rgba(245,240,232,0.9); }
-
-.sidebarHeader {
-  padding: 12px 24px 20px;
-  border-bottom: 1px solid rgba(245,240,232,0.12);
-}
-
-.caseStamp {
-  font-family: var(--tn-mono);
-  font-size: 9px;
-  letter-spacing: 0.15em;
-  color: rgba(245,240,232,0.45);
-  text-transform: uppercase;
-  margin-bottom: 8px;
-}
-
-.sidebarTitle {
-  font-family: var(--tn-display);
-  font-size: 18px;
-  line-height: 1.25;
-  color: var(--tn-paper);
-}
-
-.sidebarSub {
-  font-family: var(--tn-mono);
-  font-size: 10px;
-  color: rgba(245,240,232,0.4);
-  margin-top: 6px;
-  letter-spacing: 0.08em;
-}
-
-.beforeBtn {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  margin-top: 14px;
-  font-family: var(--tn-mono);
-  font-size: 9px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: rgba(245,240,232,0.5);
-  background: rgba(245,240,232,0.07);
-  border: 1px solid rgba(245,240,232,0.12);
-  border-radius: 3px;
-  padding: 6px 10px;
-  cursor: pointer;
-  transition: color 0.15s, background 0.15s;
-  width: 100%;
-  text-align: left;
-}
-.beforeBtn:hover {
-  color: rgba(245,240,232,0.85);
-  background: rgba(245,240,232,0.12);
-}
-
-.progressLabel {
-  font-family: var(--tn-mono);
-  font-size: 9px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: rgba(245,240,232,0.35);
-  padding: 20px 24px 10px;
-}
-
-.activityList {
-  padding: 0 16px 16px;
-  flex: 1;
-}
-
-.actItem {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  padding: 10px;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background 0.15s;
-  margin-bottom: 4px;
-  border: none;
-  background: none;
-  width: 100%;
-  text-align: left;
-  color: var(--tn-paper);
-}
-.actItem:hover { background: rgba(245,240,232,0.07); }
-.actItemActive { background: rgba(245,240,232,0.12) !important; }
-
-.actNum {
-  font-family: var(--tn-mono);
-  font-size: 10px;
-  font-weight: 500;
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  border: 1px solid rgba(245,240,232,0.25);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  margin-top: 1px;
-  color: rgba(245,240,232,0.5);
-  transition: all 0.2s;
-}
-.actNumDone {
-  background: var(--tn-green);
-  color: var(--tn-paper);
-  border-color: var(--tn-green);
-}
-
-.actText { flex: 1; }
-
-.actName {
-  font-family: var(--tn-mono);
-  font-size: 10px;
-  font-weight: 500;
-  color: rgba(245,240,232,0.75);
-  letter-spacing: 0.04em;
-  display: block;
-  line-height: 1.4;
-}
-
-.actSub {
-  font-size: 10px;
-  color: rgba(245,240,232,0.35);
-  display: block;
-  margin-top: 1px;
-  font-family: var(--tn-mono);
-}
-
-.sidebarFooter {
-  padding: 16px 24px;
-  border-top: 1px solid rgba(245,240,232,0.1);
-}
-
-.progressBarWrap {
-  background: rgba(245,240,232,0.1);
-  border-radius: 2px;
-  height: 3px;
-  margin-bottom: 8px;
-  overflow: hidden;
-}
-
-.progressBarFill {
-  height: 100%;
-  background: var(--tn-green);
-  border-radius: 2px;
-  transition: width 0.4s ease;
-}
-
-.progressText {
-  font-family: var(--tn-mono);
-  font-size: 9px;
-  color: rgba(245,240,232,0.3);
-  letter-spacing: 0.08em;
-}
-
-/* ── MAIN SCROLL AREA ────────────────────────────────────────────────────── */
-
-.main { flex: 1; min-width: 0; }
 
 /* ── DOCUMENT HEADER ─────────────────────────────────────────────────────── */
 
@@ -529,84 +388,6 @@
   flex-shrink: 0;
 }
 
-/* ── MODAL OVERLAY ───────────────────────────────────────────────────────── */
-
-.overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(15,12,10,0.75);
-  z-index: 200;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 24px;
-  animation: fadeIn 0.18s ease forwards;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to   { opacity: 1; }
-}
-
-.modal {
-  background: var(--tn-paper);
-  border-radius: 4px;
-  max-width: 680px;
-  width: 100%;
-  max-height: 85vh;
-  overflow-y: auto;
-  box-shadow: 0 24px 80px rgba(0,0,0,0.4);
-  animation: slideUp 0.18s ease forwards;
-  scrollbar-width: thin;
-}
-
-@keyframes slideUp {
-  from { transform: translateY(14px); opacity: 0.8; }
-  to   { transform: translateY(0);    opacity: 1; }
-}
-
-.modalHeader {
-  background: var(--tn-ink);
-  color: var(--tn-paper);
-  padding: 24px 28px;
-  position: sticky;
-  top: 0;
-  z-index: 1;
-}
-
-.modalActLabel {
-  font-family: var(--tn-mono);
-  font-size: 9px;
-  letter-spacing: 0.15em;
-  opacity: 0.45;
-  text-transform: uppercase;
-  margin-bottom: 4px;
-}
-
-.modalTitle {
-  font-family: var(--tn-display);
-  font-size: 22px;
-  font-style: italic;
-}
-
-.modalClose {
-  position: absolute;
-  top: 20px; right: 24px;
-  background: none;
-  border: 1px solid rgba(245,240,232,0.2);
-  color: var(--tn-paper);
-  cursor: pointer;
-  font-family: var(--tn-mono);
-  font-size: 11px;
-  padding: 4px 10px;
-  border-radius: 3px;
-  opacity: 0.7;
-  letter-spacing: 0.06em;
-  transition: opacity 0.15s;
-}
-.modalClose:hover { opacity: 1; }
-
-.modalBody { padding: 28px; }
 
 .instruction {
   background: var(--tn-paper-dark);
@@ -754,66 +535,6 @@
   letter-spacing: 0.06em;
 }
 
-/* ── FEEDBACK PANEL ──────────────────────────────────────────────────────── */
-
-.feedbackPanel {
-  margin-top: 20px;
-  border: 1px solid var(--tn-border);
-  border-radius: 3px;
-  overflow: hidden;
-}
-
-.feedbackHeader {
-  background: var(--tn-ink);
-  color: var(--tn-paper);
-  padding: 10px 16px;
-  font-family: var(--tn-mono);
-  font-size: 10px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.feedbackHeaderNote {
-  opacity: 0.4;
-  font-size: 9px;
-  margin-left: auto;
-}
-
-.feedbackBody {
-  padding: 20px;
-  font-size: 15px;
-  line-height: 1.7;
-  background: var(--tn-paper-dark);
-  min-height: 80px;
-}
-
-.feedbackLoading {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  color: var(--tn-ink-mid);
-  font-size: 13px;
-  font-family: var(--tn-mono);
-}
-
-.feedbackDot {
-  width: 6px; height: 6px;
-  border-radius: 50%;
-  background: var(--tn-accent);
-  animation: pulse 1.2s ease-in-out infinite;
-}
-.feedbackDot:nth-child(2) { animation-delay: 0.2s; }
-.feedbackDot:nth-child(3) { animation-delay: 0.4s; }
-
-@keyframes pulse {
-  0%, 100% { opacity: 0.3; transform: scale(0.8); }
-  50%       { opacity: 1;   transform: scale(1); }
-}
-
-.feedbackError { color: var(--tn-accent); font-size: 14px; }
 
 /* ── MODAL ACTIONS ───────────────────────────────────────────────────────── */
 
@@ -856,7 +577,41 @@
 .btnDanger:hover { background: var(--tn-accent-lt); }
 .btnDanger:disabled { opacity: 0.6; cursor: not-allowed; }
 
-/* ── BEFORE YOU BEGIN MODAL CONTENT ─────────────────────────────────────── */
+/* ── BEFORE YOU BEGIN — collapsible section in CaseDocument ─────────────── */
+
+.beforeDetails {
+  margin: 0 0 32px;
+  border: 1px solid var(--tn-border);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.beforeSummary {
+  font-family: var(--tn-mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--tn-ink-light);
+  padding: 10px 16px;
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  user-select: none;
+  transition: background 0.15s, color 0.15s;
+}
+.beforeSummary::-webkit-details-marker { display: none; }
+.beforeSummary:hover { background: var(--tn-paper-dark); color: var(--tn-ink-mid); }
+
+.beforeDetails[open] .beforeSummary {
+  border-bottom: 1px solid var(--tn-border);
+  background: var(--tn-paper-dark);
+}
+
+.beforeContent {
+  padding: 16px 20px 20px;
+}
 
 .beforeGrid {
   display: grid;
@@ -909,7 +664,6 @@
 /* ── RESPONSIVE ──────────────────────────────────────────────────────────── */
 
 @media (max-width: 900px) {
-  .sidebar { display: none; }
   .docHeader { padding: 40px 24px 32px; }
   .docTitle  { font-size: 34px; }
   .contentWrap { padding: 40px 24px; }

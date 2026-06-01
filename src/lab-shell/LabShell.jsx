@@ -308,7 +308,7 @@ export default function LabShell({
           className={s.content}
           style={{ maxWidth: config.content?.maxWidth ?? '960px' }}
         >
-          {typeof children === 'function' ? children({ openEvidence }) : children}
+          {typeof children === 'function' ? children({ openEvidence, openActivity, responses }) : children}
         </div>
       </div>
 
