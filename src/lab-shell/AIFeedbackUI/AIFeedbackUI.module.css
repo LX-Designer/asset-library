@@ -33,7 +33,7 @@
 
 .text {
   font-size: 13px;
-  color: var(--lab-ink);
+  color: var(--modal-ink, var(--lab-ink));
   line-height: 1.6;
   margin: 0;
   white-space: pre-wrap;

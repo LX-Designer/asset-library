@@ -164,6 +164,7 @@
   max-width: 780px;
   margin: 0 auto;
   padding: 64px 60px;
+  color: var(--tn-ink);
 }
 
 .contentWrap p {
