@@ -1,4 +1,5 @@
 import styles from './TacomaNarrows.module.css'
+import LabFigure from '../../lab-shell/LabFigure/LabFigure.jsx'
 
 function Trigger({ num, label, sub, done, openActivity }) {
   return (
@@ -114,16 +115,11 @@ export default function CaseDocument({ openActivity, responses }) {
             The bridge was closed to vehicle traffic before it collapsed. The only confirmed casualty was a three-legged cocker spaniel named Tubby, left in a vehicle by the last driver to attempt to cross. No human lives were lost.
           </div>
 
-          <figure className={styles.diagram}>
-            <img
-              src="/tacoma-narrows/tacoma-narrow-bridge.jpg"
-              alt="The Tacoma Narrows Bridge oscillating violently before collapse, 7 November 1940"
-              loading="lazy"
-            />
-            <figcaption className={styles.diagramCaption}>
-              The Tacoma Narrows Bridge mid-oscillation, photographed on the morning of 7 November 1940. The roadway deck is visibly twisted along its length — one side elevated, the other depressed.
-            </figcaption>
-          </figure>
+          <LabFigure
+            src="/tacoma-narrows/tacoma-narrow-bridge.jpg"
+            alt="The Tacoma Narrows Bridge oscillating violently before collapse, 7 November 1940"
+            caption="The Tacoma Narrows Bridge mid-oscillation, photographed on the morning of 7 November 1940. The roadway deck is visibly twisted along its length — one side elevated, the other depressed."
+          />
 
           <p>The collapse shocked the engineering world. Tacoma Narrows was not an experimental structure — it had been reviewed by eminent engineers and approved by federal funding authorities. It was the third-longest suspension bridge in the world. Its collapse represented not merely a structural failure, but a failure of the profession's models and assumptions.</p>
         </section>
@@ -174,16 +170,11 @@ export default function CaseDocument({ openActivity, responses }) {
             </tbody>
           </table>
 
-          <figure className={styles.diagram}>
-            <img
-              src="/tacoma-narrows/girder-comparison.svg"
-              alt="Cross-section comparison: 7.6m open-lattice truss (original design) versus 2.4m solid plate girder (built)"
-              loading="lazy"
-            />
-            <figcaption className={styles.diagramCaption}>
-              Cross-section comparison of the two stiffening girder designs. The open-lattice truss (left) allows wind to pass through; the solid plate girder (right) acts as an aerodynamic surface, generating lift and drag forces the original model did not account for.
-            </figcaption>
-          </figure>
+          <LabFigure
+            src="/tacoma-narrows/girder-comparison.svg"
+            alt="Cross-section comparison: 7.6m open-lattice truss (original design) versus 2.4m solid plate girder (built)"
+            caption="Cross-section comparison of the two stiffening girder designs. The open-lattice truss (left) allows wind to pass through; the solid plate girder (right) acts as an aerodynamic surface, generating lift and drag forces the original model did not account for."
+          />
 
           <div className={styles.callout}>
             <span className={styles.calloutLabel}>Design note</span>
@@ -257,16 +248,11 @@ export default function CaseDocument({ openActivity, responses }) {
             </tbody>
           </table>
 
-          <figure className={styles.diagram}>
-            <img
-              src="/tacoma-narrows/frequency-diagram.svg"
-              alt="Diagram showing the three key frequencies: natural vertical frequency 0.6 Hz, vortex shedding frequency 1.0 Hz, and torsional collapse frequency 0.2 Hz"
-              loading="lazy"
-            />
-            <figcaption className={styles.diagramCaption}>
-              The three critical frequencies. A resonance explanation requires the vortex shedding frequency to match the oscillation frequency at collapse. The data shows they do not.
-            </figcaption>
-          </figure>
+          <LabFigure
+            src="/tacoma-narrows/frequency-diagram.svg"
+            alt="Diagram showing the three key frequencies: natural vertical frequency 0.6 Hz, vortex shedding frequency 1.0 Hz, and torsional collapse frequency 0.2 Hz"
+            caption="The three critical frequencies. A resonance explanation requires the vortex shedding frequency to match the oscillation frequency at collapse. The data shows they do not."
+          />
 
           <div className={`${styles.callout} ${styles.calloutDanger}`}>
             <span className={styles.calloutLabel}>Data anomaly — flag for tribunal</span>
@@ -341,16 +327,11 @@ export default function CaseDocument({ openActivity, responses }) {
               <p>This is qualitatively different from resonance. In resonance, an external force drives a system at its natural frequency. In flutter, the structure itself generates the forces that destroy it. The wind supplies energy; the motion of the structure decides how that energy is applied. No external periodic forcing is required — or present."</p>
             </div>
           </div>
-          <figure className={styles.diagram}>
-            <img
-              src="/tacoma-narrows/flutter-feedback.svg"
-              alt="Diagram of the aeroelastic flutter feedback loop: twist changes aerodynamic force, which amplifies the twist"
-              loading="lazy"
-            />
-            <figcaption className={styles.diagramCaption}>
-              The aeroelastic flutter feedback loop described by Dr. Osei-Mensah. Unlike resonance, flutter is self-sustaining — the structure's own motion generates the forces that destroy it.
-            </figcaption>
-          </figure>
+          <LabFigure
+            src="/tacoma-narrows/flutter-feedback.svg"
+            alt="Diagram of the aeroelastic flutter feedback loop: twist changes aerodynamic force, which amplifies the twist"
+            caption="The aeroelastic flutter feedback loop described by Dr. Osei-Mensah. Unlike resonance, flutter is self-sustaining — the structure's own motion generates the forces that destroy it."
+          />
         </section>
 
         {/* ── ACTIVITY 5 TRIGGER ── */}

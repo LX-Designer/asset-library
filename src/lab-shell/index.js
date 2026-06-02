@@ -9,3 +9,4 @@ export { useIsDesktop }        from './hooks/useIsDesktop.js'
 // UI atoms
 export { default as ActivityTextarea } from './ActivityTextarea/ActivityTextarea.jsx'
 export { default as AIFeedbackUI }     from './AIFeedbackUI/AIFeedbackUI.jsx'
+export { default as LabFigure }        from './LabFigure/LabFigure.jsx'
