@@ -132,9 +132,13 @@ export default function LabShell({
   const openActivity = useCallback((id) => {
     lastActivityRef.current = id
     setActiveActivityId(id)
-    setActivityTrigger(t => t + 1)
-    setGuideOpen(false)
-  }, [])
+    if (activeActivityId === null) {
+      // Panel is closed — trigger the open animation, which will close the sidebar.
+      setActivityTrigger(t => t + 1)
+    }
+    // If panel is already open, just swap the content in-place. Leave sidebar alone.
+    setGuideOpen(false) // always close the mobile drawer
+  }, [activeActivityId])
 
   const navigateActivity = useCallback((id) => {
     lastActivityRef.current = id
