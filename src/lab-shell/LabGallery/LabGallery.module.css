@@ -1,36 +1,42 @@
 /* ── LabGallery ──────────────────────────────────────────────────────────────
-   In-document image gallery with prev/next navigation and lightbox zoom.
-   Inherits --lab-figure-* tokens (same as LabFigure) for border/bg/caption.
-   Lightbox uses fixed values — it's always on a dark overlay regardless of theme.
+   In-document image gallery with stable aspect-ratio container, prev/next
+   navigation, and a lightbox with smooth step-zoom.
+
+   In-document figure inherits --lab-figure-* tokens (same as LabFigure).
+   Lightbox uses fixed dark-overlay values — independent of lab theme.
 ─────────────────────────────────────────────────────────────────────────── */
 
 /* ── Figure container ─────────────────────────────────────────────────────── */
 
 .figure {
-  margin: 32px 0;
+  /* maxWidth applied inline from prop (default 680px) */
+  margin: 32px auto;
   border: 1px solid var(--lab-figure-border, rgba(0, 0, 0, 0.12));
   border-radius: 4px;
   overflow: hidden;
   background: var(--lab-figure-bg, rgba(0, 0, 0, 0.02));
 }
 
-/* ── Image + overlaid controls ────────────────────────────────────────────── */
+/* ── Image area — fixed aspect ratio so height is stable between images ───── */
 
 .imageWrap {
   position: relative;
-  display: block;
-  line-height: 0; /* removes inline gap below img */
+  aspect-ratio: 5 / 4;   /* matches both Tacoma bridge images (~1.22–1.24 ratio) */
+  overflow: hidden;
+  line-height: 0;
+  background: var(--lab-figure-bg, rgba(0, 0, 0, 0.02));
 }
 
 .image {
   display: block;
   width: 100%;
-  height: auto;
+  height: 100%;
+  object-fit: cover;     /* fills the fixed-ratio box; minor edge cropping */
   cursor: zoom-in;
   transition: opacity 0.15s;
 }
 
-.image:hover { opacity: 0.94; }
+.image:hover { opacity: 0.93; }
 
 /* ── Prev / next arrows ───────────────────────────────────────────────────── */
 
@@ -49,7 +55,7 @@
   align-items: center;
   justify-content: center;
   z-index: 2;
-  transition: background 0.15s, transform 0.1s;
+  transition: background 0.15s, transform 0.12s;
   flex-shrink: 0;
 }
 
@@ -84,8 +90,8 @@
   transition: background 0.15s, transform 0.15s;
 }
 
-.dot:hover   { background: rgba(255, 255, 255, 0.75); }
-.dotActive   { background: rgba(255, 255, 255, 0.95); transform: scale(1.25); }
+.dot:hover  { background: rgba(255, 255, 255, 0.75); }
+.dotActive  { background: rgba(255, 255, 255, 0.95); transform: scale(1.3); }
 
 /* ── Caption strip ────────────────────────────────────────────────────────── */
 
@@ -112,7 +118,6 @@
   align-items: center;
   justify-content: center;
   padding: 56px 64px 48px;
-  gap: 0;
   animation: fadeIn 0.15s ease;
 }
 
@@ -138,11 +143,30 @@
   align-items: center;
   justify-content: center;
   transition: background 0.15s, color 0.15s;
+  z-index: 2;
 }
 
 .close:hover {
   background: rgba(255, 255, 255, 0.18);
   color: #fff;
+}
+
+/* ── Zoom level badge ─────────────────────────────────────────────────────── */
+
+.zoomBadge {
+  position: absolute;
+  top: 18px;
+  left: 20px;
+  font-family: var(--lab-font-mono, monospace);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 3px;
+  padding: 3px 8px;
+  pointer-events: none;
+  z-index: 2;
 }
 
 /* ── Lightbox prev / next ─────────────────────────────────────────────────── */
@@ -162,7 +186,7 @@
   align-items: center;
   justify-content: center;
   z-index: 2;
-  transition: background 0.15s, color 0.15s, transform 0.1s;
+  transition: background 0.15s, color 0.15s, transform 0.12s;
 }
 
 .lbArrow:hover {
@@ -176,36 +200,30 @@
 
 /* ── Lightbox image ───────────────────────────────────────────────────────── */
 
+/*
+  Fixed viewport-relative bounding box so both images (regardless of their
+  natural pixel dimensions) occupy the same visual space.
+  overflow: hidden clips the image when scaled beyond 1× so it doesn't
+  bleed over the caption or nav arrows — the zoom is centred and the user
+  sees the central portion of the image enlarged.
+*/
 .lbImageWrap {
-  flex: 1;
+  width: min(90vw, 1100px);
+  height: 70vh;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  width: 100%;
-  min-height: 0;
-}
-
-.lbImageWrapZoomed {
-  overflow: auto;
-  align-items: flex-start;
-  justify-content: flex-start;
+  flex-shrink: 0;
 }
 
 .lbImage {
-  max-width: 100%;
-  max-height: 100%;
+  width: 100%;
+  height: 100%;
   object-fit: contain;
-  border-radius: 2px;
+  transform-origin: center center;
+  transition: transform 0.25s ease;
   display: block;
-  transition: max-width 0.2s ease, max-height 0.2s ease;
-}
-
-.lbImageZoomed {
-  max-width: none;
-  max-height: none;
-  width: auto;
-  height: auto;
 }
 
 /* ── Lightbox footer (caption + counter) ─────────────────────────────────── */
@@ -214,9 +232,8 @@
   display: flex;
   align-items: baseline;
   gap: 16px;
-  padding-top: 16px;
-  width: 100%;
-  max-width: 900px;
+  padding-top: 14px;
+  width: min(90vw, 1100px);
   flex-shrink: 0;
 }
 
@@ -240,8 +257,10 @@
 /* ── Mobile ───────────────────────────────────────────────────────────────── */
 
 @media (max-width: 600px) {
-  .overlay { padding: 48px 16px 32px; }
-  .lbArrowPrev { left: 4px; }
-  .lbArrowNext { right: 4px; }
-  .lbArrow { width: 40px; height: 40px; }
+  .overlay      { padding: 48px 12px 28px; }
+  .lbImageWrap  { width: 96vw; height: 60vh; }
+  .lbFooter     { width: 96vw; }
+  .lbArrowPrev  { left: 4px; }
+  .lbArrowNext  { right: 4px; }
+  .lbArrow      { width: 40px; height: 40px; }
 }

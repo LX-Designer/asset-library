@@ -7,38 +7,47 @@ import s from './LabGallery.module.css'
  *
  * - Single image: renders like LabFigure (no navigation shown).
  * - Multiple images: prev/next arrows overlaid on the image, dot indicators.
- * - Click any image to open a lightbox; click again (or press Escape) to close.
- * - In the lightbox, click the image to toggle between contained and full-width zoom.
- *
- * Images should live in public/[lab-id]/ and be referenced as
- * src="/[lab-id]/filename.ext".
+ * - Container is a fixed aspect ratio (default 5:4) so height is stable
+ *   regardless of each image's natural dimensions.
+ * - Click any image to open a lightbox. In the lightbox, click to cycle
+ *   through three zoom levels (1× → 1.5× → 2× → back) with smooth animation.
+ * - Keyboard: ArrowLeft / ArrowRight to navigate, Escape to close.
  *
  * Props:
- *   images: Array<{ src: string, alt: string, caption?: string }>
+ *   images:   Array<{ src: string, alt: string, caption?: string }>
+ *   maxWidth: string  — CSS max-width for the in-document figure (default '680px')
  */
-export default function LabGallery({ images }) {
-  const [activeIdx, setActiveIdx]     = useState(0)
-  const [lightboxOpen, setLightboxOpen] = useState(false)
-  const [zoomed, setZoomed]           = useState(false)
 
-  const current  = images[activeIdx]
-  const multi    = images.length > 1
-  const hasPrev  = activeIdx > 0
-  const hasNext  = activeIdx < images.length - 1
+const ZOOM_SCALES = [1, 1.5, 2]
+
+export default function LabGallery({ images, maxWidth = '680px' }) {
+  const [activeIdx, setActiveIdx]   = useState(0)
+  const [lightboxOpen, setLightboxOpen] = useState(false)
+  const [zoomLevel, setZoomLevel]   = useState(0)
+
+  const current = images[activeIdx]
+  const multi   = images.length > 1
+  const hasPrev = activeIdx > 0
+  const hasNext = activeIdx < images.length - 1
 
   const prev = useCallback(() => {
-    if (hasPrev) { setActiveIdx(i => i - 1); setZoomed(false) }
+    if (hasPrev) { setActiveIdx(i => i - 1); setZoomLevel(0) }
   }, [hasPrev])
 
   const next = useCallback(() => {
-    if (hasNext) { setActiveIdx(i => i + 1); setZoomed(false) }
+    if (hasNext) { setActiveIdx(i => i + 1); setZoomLevel(0) }
   }, [hasNext])
 
-  const openLightbox  = ()  => { setLightboxOpen(true); setZoomed(false) }
-  const closeLightbox = ()  => { setLightboxOpen(false); setZoomed(false) }
-  const toggleZoom    = (e) => { e.stopPropagation(); setZoomed(z => !z) }
+  const openLightbox  = ()  => { setLightboxOpen(true);  setZoomLevel(0) }
+  const closeLightbox = ()  => { setLightboxOpen(false); setZoomLevel(0) }
 
-  // Keyboard navigation when lightbox is open
+  // Cycle: 1× → 1.5× → 2× → 1×
+  const cycleZoom = (e) => {
+    e.stopPropagation()
+    setZoomLevel(z => (z + 1) % ZOOM_SCALES.length)
+  }
+
+  // Keyboard navigation while lightbox is open
   useEffect(() => {
     if (!lightboxOpen) return
     const onKey = (e) => {
@@ -50,20 +59,22 @@ export default function LabGallery({ images }) {
     return () => window.removeEventListener('keydown', onKey)
   }, [lightboxOpen, prev, next])
 
-  // Prevent body scroll while lightbox is open
+  // Lock body scroll while lightbox is open
   useEffect(() => {
-    if (lightboxOpen) {
-      document.body.style.overflow = 'hidden'
-    } else {
-      document.body.style.overflow = ''
-    }
+    document.body.style.overflow = lightboxOpen ? 'hidden' : ''
     return () => { document.body.style.overflow = '' }
   }, [lightboxOpen])
 
+  const scale      = ZOOM_SCALES[zoomLevel]
+  const atMaxZoom  = zoomLevel === ZOOM_SCALES.length - 1
+  const zoomCursor = atMaxZoom ? 'zoom-out' : 'zoom-in'
+  const zoomTitle  = atMaxZoom ? 'Click to zoom out' : 'Click to zoom in'
+  const zoomLabel  = scale === 1 ? null : `${scale}×`
+
   return (
     <>
-      {/* ── In-document gallery ── */}
-      <figure className={s.figure}>
+      {/* ── In-document gallery ───────────────────────────────────────────── */}
+      <figure className={s.figure} style={{ maxWidth }}>
         <div className={s.imageWrap}>
           <img
             src={current.src}
@@ -98,7 +109,7 @@ export default function LabGallery({ images }) {
                   aria-selected={i === activeIdx}
                   aria-label={`Image ${i + 1}: ${img.alt}`}
                   className={`${s.dot} ${i === activeIdx ? s.dotActive : ''}`}
-                  onClick={() => { setActiveIdx(i); setZoomed(false) }}
+                  onClick={() => { setActiveIdx(i); setZoomLevel(0) }}
                 />
               ))}
             </div>
@@ -110,9 +121,15 @@ export default function LabGallery({ images }) {
         )}
       </figure>
 
-      {/* ── Lightbox portal ── */}
+      {/* ── Lightbox portal ───────────────────────────────────────────────── */}
       {lightboxOpen && createPortal(
-        <div className={s.overlay} onClick={closeLightbox} role="dialog" aria-modal="true" aria-label="Image viewer">
+        <div
+          className={s.overlay}
+          onClick={closeLightbox}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Image viewer"
+        >
           {/* Close */}
           <button className={s.close} onClick={closeLightbox} aria-label="Close image viewer">
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
@@ -120,31 +137,44 @@ export default function LabGallery({ images }) {
             </svg>
           </button>
 
-          {/* Lightbox prev/next */}
+          {/* Zoom level badge */}
+          {zoomLabel && (
+            <span className={s.zoomBadge} aria-live="polite">{zoomLabel}</span>
+          )}
+
+          {/* Lightbox prev / next */}
           {multi && hasPrev && (
-            <button className={`${s.lbArrow} ${s.lbArrowPrev}`} onClick={e => { e.stopPropagation(); prev() }} aria-label="Previous image">
+            <button
+              className={`${s.lbArrow} ${s.lbArrowPrev}`}
+              onClick={e => { e.stopPropagation(); prev() }}
+              aria-label="Previous image"
+            >
               <svg width="11" height="20" viewBox="0 0 11 20" fill="none" aria-hidden="true">
                 <path d="M10 1L1 10L10 19" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
             </button>
           )}
           {multi && hasNext && (
-            <button className={`${s.lbArrow} ${s.lbArrowNext}`} onClick={e => { e.stopPropagation(); next() }} aria-label="Next image">
+            <button
+              className={`${s.lbArrow} ${s.lbArrowNext}`}
+              onClick={e => { e.stopPropagation(); next() }}
+              aria-label="Next image"
+            >
               <svg width="11" height="20" viewBox="0 0 11 20" fill="none" aria-hidden="true">
                 <path d="M1 1L10 10L1 19" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
             </button>
           )}
 
-          {/* Image (scrollable when zoomed) */}
-          <div className={`${s.lbImageWrap} ${zoomed ? s.lbImageWrapZoomed : ''}`} onClick={e => e.stopPropagation()}>
+          {/* Image — click to cycle zoom, transform stays centred */}
+          <div className={s.lbImageWrap} onClick={e => e.stopPropagation()}>
             <img
               src={current.src}
               alt={current.alt}
-              className={`${s.lbImage} ${zoomed ? s.lbImageZoomed : ''}`}
-              onClick={toggleZoom}
-              style={{ cursor: zoomed ? 'zoom-out' : 'zoom-in' }}
-              title={zoomed ? 'Click to shrink' : 'Click to zoom'}
+              className={s.lbImage}
+              onClick={cycleZoom}
+              style={{ transform: `scale(${scale})`, cursor: zoomCursor }}
+              title={zoomTitle}
             />
           </div>
 
