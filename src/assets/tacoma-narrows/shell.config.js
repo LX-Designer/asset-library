@@ -40,6 +40,14 @@ export default {
     subtitle: '1940-TN-001 · Inquiry Tribunal',
     navCenter: null,
     showWorkExplore: true,
+    sections: [
+      { id: 'tn-overview',       label: 'Overview' },
+      { id: 'tn-specifications', label: 'Specifications' },
+      { id: 'tn-data',           label: 'Data' },
+      { id: 'tn-design',         label: 'Design' },
+      { id: 'tn-experts',        label: 'Experts' },
+      { id: 'tn-investigation',  label: 'Findings' },
+    ],
   },
 
   sidebar: {

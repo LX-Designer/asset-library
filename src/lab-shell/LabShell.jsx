@@ -61,6 +61,11 @@ export default function LabShell({
   const [activeEvidenceId, setActiveEvidenceId] = useState(null)
   const [evidenceTrigger, setEvidenceTrigger]   = useState(0)
 
+  // ── Section nav active tracking ─────────────────────────────────────────────
+  const [activeSection, setActiveSection] = useState(
+    config.nav?.sections?.[0]?.id ?? null
+  )
+
   // ── Notes ───────────────────────────────────────────────────────────────────
   const notesValue = typeof responses['lab-notes'] === 'string' ? responses['lab-notes'] : ''
 
@@ -90,6 +95,27 @@ export default function LabShell({
   // Note: evidenceTrigger is NOT incremented on every activeEvidenceId change —
   // only openEvidence() triggers the open animation. navigateEvidence() just
   // swaps the content without re-centering or re-running the modal-first animation.
+
+  // ── IntersectionObserver: highlight active section in nav ───────────────────
+  // Runs once on mount — config is a stable imported constant.
+  // rootMargin shrinks the viewport to a band in the upper half so a section
+  // becomes "active" as its top edge scrolls into reading position.
+  useEffect(() => {
+    const sections = config.nav?.sections
+    if (!sections?.length) return
+    const observers = []
+    sections.forEach(({ id }) => {
+      const el = document.getElementById(id)
+      if (!el) return
+      const obs = new IntersectionObserver(
+        ([entry]) => { if (entry.isIntersecting) setActiveSection(id) },
+        { rootMargin: '-30% 0px -60% 0px' }
+      )
+      obs.observe(el)
+      observers.push(obs)
+    })
+    return () => observers.forEach(obs => obs.disconnect())
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   // ── handleSave ──────────────────────────────────────────────────────────────
   const handleSave = useCallback(async (key, value) => {
@@ -237,6 +263,8 @@ export default function LabShell({
         isWorkActive={isWorkActive}
         onExplore={handleExplore}
         onWork={handleWork}
+        activeSection={activeSection}
+        onSectionClick={scrollToSection}
       />
 
       {/* ── Desktop guide sidebar ── */}
@@ -308,7 +336,7 @@ export default function LabShell({
           className={s.content}
           style={{ maxWidth: config.content?.maxWidth ?? '960px' }}
         >
-          {typeof children === 'function' ? children({ openEvidence, openActivity, responses }) : children}
+          {typeof children === 'function' ? children({ openEvidence, openActivity, responses, scrollToSection }) : children}
         </div>
       </div>
 

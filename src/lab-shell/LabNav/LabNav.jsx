@@ -8,7 +8,11 @@ export default function LabNav({
   isWorkActive,
   onExplore,
   onWork,
+  activeSection,
+  onSectionClick,
 }) {
+  const sections = config.nav?.sections ?? []
+
   return (
     <nav className={s.nav} aria-label="Lab navigation">
       {backHref ? (
@@ -24,14 +28,43 @@ export default function LabNav({
 
       <div className={s.centre}>
         {config.nav.navCenter ?? (
-          <>
-            {config.nav.title && (
-              <span className={s.title}>{config.nav.title}</span>
-            )}
-            {config.nav.subtitle && (
-              <span className={s.subtitle}>{config.nav.subtitle}</span>
-            )}
-          </>
+          sections.length > 0 ? (
+            <>
+              {/* Desktop: scrollable section link buttons */}
+              <div className={s.sectionLinks}>
+                {sections.map(({ id, label }) => (
+                  <button
+                    key={id}
+                    className={`${s.sectionLink} ${activeSection === id ? s.sectionLinkActive : ''}`}
+                    onClick={() => onSectionClick?.(id)}
+                    aria-current={activeSection === id ? 'location' : undefined}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+              {/* Mobile: select dropdown */}
+              <select
+                className={s.sectionSelect}
+                value={activeSection ?? ''}
+                onChange={e => onSectionClick?.(e.target.value)}
+                aria-label="Jump to section"
+              >
+                {sections.map(({ id, label }) => (
+                  <option key={id} value={id}>{label}</option>
+                ))}
+              </select>
+            </>
+          ) : (
+            <>
+              {config.nav.title && (
+                <span className={s.title}>{config.nav.title}</span>
+              )}
+              {config.nav.subtitle && (
+                <span className={s.subtitle}>{config.nav.subtitle}</span>
+              )}
+            </>
+          )
         )}
       </div>
 

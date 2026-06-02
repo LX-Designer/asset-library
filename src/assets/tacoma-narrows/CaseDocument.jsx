@@ -97,7 +97,7 @@ export default function CaseDocument({ openActivity, responses }) {
         <Trigger num={1} sub="Before you read" label="Record your initial hypothesis" done={done(1)} openActivity={openActivity} />
 
         {/* ── § 01  INCIDENT OVERVIEW ── */}
-        <section className={styles.section}>
+        <section id="tn-overview" className={styles.section}>
           <div className={styles.sectionHeader}>
             <span className={styles.sectionCode}>§ 01</span>
             <h2 className={`${styles.sectionTitle} ${styles.sectionTitleItalic}`}>Incident Overview</h2>
@@ -120,7 +120,7 @@ export default function CaseDocument({ openActivity, responses }) {
         <div className={styles.divider}>· · ·</div>
 
         {/* ── § 02  BRIDGE SPECIFICATIONS ── */}
-        <section className={styles.section}>
+        <section id="tn-specifications" className={styles.section}>
           <div className={styles.sectionHeader}>
             <span className={styles.sectionCode}>§ 02</span>
             <h2 className={styles.sectionTitle}>Bridge Specifications</h2>
@@ -172,7 +172,7 @@ export default function CaseDocument({ openActivity, responses }) {
         <div className={styles.divider}>· · ·</div>
 
         {/* ── § 03  WIND & OSCILLATION DATA ── */}
-        <section className={styles.section}>
+        <section id="tn-data" className={styles.section}>
           <div className={styles.sectionHeader}>
             <span className={styles.sectionCode}>§ 03</span>
             <h2 className={styles.sectionTitle}>Wind and Oscillation Data</h2>
@@ -248,7 +248,7 @@ export default function CaseDocument({ openActivity, responses }) {
         <div className={styles.divider}>· · ·</div>
 
         {/* ── § 04  ENGINEERING SIGN-OFF ── */}
-        <section className={styles.section}>
+        <section id="tn-design" className={styles.section}>
           <div className={styles.sectionHeader}>
             <span className={styles.sectionCode}>§ 04</span>
             <h2 className={styles.sectionTitle}>Original Engineering Sign-Off</h2>
@@ -279,7 +279,7 @@ export default function CaseDocument({ openActivity, responses }) {
         <div className={styles.divider}>· · ·</div>
 
         {/* ── § 05  EXPERT WITNESSES ── */}
-        <section className={styles.section}>
+        <section id="tn-experts" className={styles.section}>
           <div className={styles.sectionHeader}>
             <span className={styles.sectionCode}>§ 05</span>
             <h2 className={styles.sectionTitle}>Expert Witness Statements</h2>
@@ -316,7 +316,7 @@ export default function CaseDocument({ openActivity, responses }) {
         <div className={styles.divider}>· · ·</div>
 
         {/* ── § 06  POST-COLLAPSE ── */}
-        <section className={styles.section}>
+        <section id="tn-investigation" className={styles.section}>
           <div className={styles.sectionHeader}>
             <span className={styles.sectionCode}>§ 06</span>
             <h2 className={styles.sectionTitle}>Post-Collapse Investigation</h2>

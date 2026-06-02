@@ -106,3 +106,65 @@
   border-color: var(--lab-accent-hover);
   color: #ffffff;
 }
+
+/* ── Section nav links (desktop) ─────────────────────────────────────────── */
+.sectionLinks {
+  display: flex;
+  align-items: center;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  width: 100%;
+  justify-content: center;
+}
+
+.sectionLinks::-webkit-scrollbar { display: none; }
+
+.sectionLink {
+  padding: 13px 10px;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  font-size: 11.5px;
+  font-weight: 500;
+  color: var(--lab-ink-mid);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color var(--lab-transition), border-bottom-color var(--lab-transition);
+  flex-shrink: 0;
+}
+
+.sectionLink:hover {
+  color: var(--lab-ink);
+  border-bottom-color: var(--lab-rule);
+}
+
+.sectionLink:focus-visible {
+  outline: 2px solid var(--lab-accent);
+  outline-offset: -2px;
+}
+
+.sectionLinkActive {
+  color: var(--lab-ink) !important;
+  border-bottom-color: var(--lab-accent) !important;
+  font-weight: 600;
+}
+
+/* ── Section select (mobile only) ────────────────────────────────────────── */
+.sectionSelect {
+  display: none;
+  width: 100%;
+  max-width: 220px;
+  padding: 4px 8px;
+  font-size: 13px;
+  border: none;
+  background: transparent;
+  color: var(--lab-ink);
+  cursor: pointer;
+  outline: none;
+}
+
+@media (max-width: 899px) {
+  .sectionLinks  { display: none; }
+  .sectionSelect { display: block; }
+}
