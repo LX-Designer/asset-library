@@ -660,6 +660,32 @@
   color: var(--tn-ink-light);
 }
 
+/* ── DIAGRAMS / FIGURES ──────────────────────────────────────────────────── */
+
+.diagram {
+  margin: 32px 0;
+  border: 1px solid var(--tn-border);
+  border-radius: 4px;
+  overflow: hidden;
+  background: var(--tn-paper-dark);
+}
+
+.diagram img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.diagramCaption {
+  padding: 12px 16px;
+  font-family: var(--tn-mono);
+  font-size: 11px;
+  line-height: 1.6;
+  color: var(--tn-ink-mid);
+  border-top: 1px solid var(--tn-border);
+  background: var(--tn-paper-darker);
+}
+
 /* ── RESPONSIVE ──────────────────────────────────────────────────────────── */
 
 @media (max-width: 900px) {
