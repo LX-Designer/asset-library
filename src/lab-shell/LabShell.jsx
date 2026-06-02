@@ -145,7 +145,11 @@ export default function LabShell({
     const el = document.getElementById(sectionId)
     if (!el) return
     const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    el.scrollIntoView({ behavior: prefersReduced ? 'instant' : 'smooth', block: 'start' })
+    // Offset by the fixed nav height (read from CSS var so it works for any lab)
+    // plus 16px breathing room so the heading clears the nav comfortably.
+    const navHeight = parseFloat(getComputedStyle(el).getPropertyValue('--lab-nav-height')) || 44
+    const top = el.getBoundingClientRect().top + window.scrollY - navHeight - 16
+    window.scrollTo({ top: Math.max(0, top), behavior: prefersReduced ? 'instant' : 'smooth' })
   }, [])
 
   const handleScrollToEvidence = useCallback((sectionId) => {
