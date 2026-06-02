@@ -1,5 +1,6 @@
 import styles from './TacomaNarrows.module.css'
 import LabFigure from '../../lab-shell/LabFigure/LabFigure.jsx'
+import LabGallery from '../../lab-shell/LabGallery/LabGallery.jsx'
 
 function Trigger({ num, label, sub, done, openActivity }) {
   return (
@@ -115,11 +116,18 @@ export default function CaseDocument({ openActivity, responses }) {
             The bridge was closed to vehicle traffic before it collapsed. The only confirmed casualty was a three-legged cocker spaniel named Tubby, left in a vehicle by the last driver to attempt to cross. No human lives were lost.
           </div>
 
-          <LabFigure
-            src="/tacoma-narrows/tacoma-narrow-bridge.jpg"
-            alt="The Tacoma Narrows Bridge oscillating violently before collapse, 7 November 1940"
-            caption="The Tacoma Narrows Bridge mid-oscillation, photographed on the morning of 7 November 1940. The roadway deck is visibly twisted along its length — one side elevated, the other depressed."
-          />
+          <LabGallery images={[
+            {
+              src: '/tacoma-narrows/tacoma-narrow-bridge.jpg',
+              alt: 'The Tacoma Narrows Bridge oscillating violently before collapse, 7 November 1940',
+              caption: 'The Tacoma Narrows Bridge mid-oscillation on the morning of 7 November 1940. The roadway deck is visibly twisted — one side elevated, the other depressed.',
+            },
+            {
+              src: '/tacoma-narrows/tacoma-narrows-bridge-collapse.jpg',
+              alt: 'The central span of the Tacoma Narrows Bridge breaking apart and falling into Puget Sound, 7 November 1940',
+              caption: 'The central span breaks free from its suspender cables and falls 190 feet into Puget Sound at 11:10 a.m. The bridge had been open to traffic for 128 days.',
+            },
+          ]} />
 
           <p>The collapse shocked the engineering world. Tacoma Narrows was not an experimental structure — it had been reviewed by eminent engineers and approved by federal funding authorities. It was the third-longest suspension bridge in the world. Its collapse represented not merely a structural failure, but a failure of the profession's models and assumptions.</p>
         </section>
