@@ -203,6 +203,48 @@
   outline-offset: 2px;
 }
 
+/* Toolkit concept links */
+.conceptLinks {
+  margin-bottom: 20px;
+}
+
+.conceptLabel {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--modal-ink-light, #9ca3af);
+  margin-bottom: 7px;
+}
+
+.conceptBtns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.conceptBtn {
+  padding: 5px 10px;
+  background: var(--modal-subtle, #f3f4f6);
+  border: 1px solid var(--modal-accent, #374151);
+  border-radius: 3px;
+  font-size: 11.5px;
+  color: var(--modal-accent, #374151);
+  cursor: pointer;
+  transition: all var(--modal-transition, 160ms ease);
+  font-weight: 500;
+}
+
+.conceptBtn:hover {
+  background: var(--modal-accent, #374151);
+  color: #fff;
+}
+
+.conceptBtn:focus-visible {
+  outline: 2px solid var(--modal-accent, #374151);
+  outline-offset: 2px;
+}
+
 /* ── Footer — sticky at scroll container bottom ──────────────────────────── */
 .footer {
   padding: 14px 16px;
@@ -311,7 +353,8 @@
   .closeBtn,
   .navBtn,
   .clearBtn,
-  .evidenceScrollBtn {
+  .evidenceScrollBtn,
+  .conceptBtn {
     transition-duration: 0ms !important;
   }
 }

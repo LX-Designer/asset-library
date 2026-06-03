@@ -100,6 +100,31 @@ export default function ConceptsModal({
               </div>
             )}
 
+            {concept.table && (
+              <div className={s.tableWrap}>
+                <table className={s.table}>
+                  {concept.table.headers?.length > 0 && (
+                    <thead>
+                      <tr>
+                        {concept.table.headers.map((h, i) => (
+                          <th key={i} className={s.th}>{h}</th>
+                        ))}
+                      </tr>
+                    </thead>
+                  )}
+                  <tbody>
+                    {concept.table.rows.map((row, i) => (
+                      <tr key={i}>
+                        {row.map((cell, j) => (
+                          <td key={j} className={s.td}>{cell}</td>
+                        ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+
             {concept.visual && config.conceptVisuals?.[concept.visual] && (
               <div className={s.visual}>
                 {(() => { const Visual = config.conceptVisuals[concept.visual]; return <Visual /> })()}

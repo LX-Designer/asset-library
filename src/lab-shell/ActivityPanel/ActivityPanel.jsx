@@ -13,6 +13,7 @@ export default function ActivityPanel({
   handleSave,
   onNavigate,
   onScrollTo,
+  onOpenConcept,
   triggerOpen,
   triggerDock,
   triggerClose,
@@ -107,10 +108,12 @@ export default function ActivityPanel({
           prompt={activity.prompt ?? ''}
           scaffold={activity.scaffold ?? null}
           evidenceSections={activity.evidenceSections ?? []}
+          conceptLinks={activity.conceptLinks ?? []}
           prevItem={prevActivity ? { id: prevActivity.id, label: prevActivity.label } : null}
           nextItem={nextActivity ? { id: nextActivity.id, label: nextActivity.label } : null}
           onNavigate={onNavigate}
           onScrollTo={onScrollTo}
+          onOpenConcept={onOpenConcept}
           onClear={handleClear}
           noHeader
         >

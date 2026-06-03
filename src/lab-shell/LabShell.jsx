@@ -344,7 +344,7 @@ export default function LabShell({
           className={s.content}
           style={{ maxWidth: config.content?.maxWidth ?? '960px' }}
         >
-          {typeof children === 'function' ? children({ openEvidence, openActivity, responses, scrollToSection }) : children}
+          {typeof children === 'function' ? children({ openEvidence, openActivity, responses, scrollToSection, onSave: handleSave }) : children}
         </div>
       </div>
 
@@ -375,6 +375,7 @@ export default function LabShell({
           handleSave={handleSave}
           onNavigate={navigateActivity}
           onScrollTo={handleScrollToEvidence}
+          onOpenConcept={openConcept}
           triggerOpen={activityTrigger}
           triggerDock={activityDockTrigger}
           triggerClose={activityCloseTrigger}
@@ -414,11 +415,13 @@ export default function LabShell({
                 prompt={activity.prompt ?? ''}
                 scaffold={activity.scaffold ?? null}
                 evidenceSections={activity.evidenceSections ?? []}
+                conceptLinks={activity.conceptLinks ?? []}
                 prevItem={prevActivity ? { id: prevActivity.id, label: prevActivity.label } : null}
                 nextItem={nextActivity ? { id: nextActivity.id, label: nextActivity.label } : null}
                 onClose={() => setActiveActivityId(null)}
                 onNavigate={navigateActivity}
                 onScrollTo={scrollToSection}
+                onOpenConcept={openConcept}
                 onClear={() => {
                   const keys = activity.clearKeys ?? [activity.id]
                   keys.forEach(k => handleSave(k, null))

@@ -16,12 +16,14 @@ import s from './ActivityModal.module.css'
  *   purpose          string           — "Why this matters" text
  *   prompt           string           — main activity question
  *   scaffold         string | null    — optional italic hint
- *   evidenceSections { id, label }[]  — pre-resolved section links
+ *   evidenceSections { id, label }[]          — scroll-to section links
+ *   conceptLinks     { id, title }[]          — toolkit concept links (opens concept modal)
  *   prevItem         { id, label } | null
  *   nextItem         { id, label } | null
  *   onClose          () => void | null        — optional; shows × if provided
  *   onNavigate       (id) => void | null      — prev/next; falls back to onClose(id)
  *   onScrollTo       (sectionId) => void
+ *   onOpenConcept    (conceptId) => void      — opens concept modal from activity panel
  *   onClear          () => void
  *   noHeader         bool             — skip header div (when FloatingPanel title suffices)
  *   children         ReactNode        — the activity form
@@ -35,11 +37,13 @@ export default function ActivityModal({
   prompt,
   scaffold,
   evidenceSections = [],
+  conceptLinks = [],
   prevItem,
   nextItem,
   onClose,
   onNavigate,
   onScrollTo,
+  onOpenConcept,
   onClear,
   noHeader = false,
   children,
@@ -91,6 +95,23 @@ export default function ActivityModal({
                   onClick={() => onScrollTo?.(id)}
                 >
                   {label}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {conceptLinks.length > 0 && (
+          <div className={s.conceptLinks}>
+            <div className={s.conceptLabel}>Economist's Toolkit</div>
+            <div className={s.conceptBtns}>
+              {conceptLinks.map(({ id, title }) => (
+                <button
+                  key={id}
+                  className={s.conceptBtn}
+                  onClick={() => onOpenConcept?.(id)}
+                >
+                  {title}
                 </button>
               ))}
             </div>
