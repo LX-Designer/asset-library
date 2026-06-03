@@ -113,11 +113,8 @@ export default {
     maxDockedWidth: 400,
     defaultTab: 'activities',
     tabs: ['activities', 'concepts'],
-    accentHeader: true,
-    // FloatingPanel PanelHeader — uses the standard dock/close controls on
-    // an accent background. fpTitle is kept short (the full heading is in
-    // the ActivitiesTab accent header below the tab strip).
-    fpAccentHeader: true,
+    accentHeader: false,   // ActivitiesTab header stays cream — only the FP PanelHeader is red
+    fpAccentHeader: true,  // FloatingPanel PanelHeader: red with standard dock/close controls
     statusLabels: {
       complete:      'Response saved',
       'not-started': 'Not yet saved',
