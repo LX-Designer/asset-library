@@ -9,7 +9,6 @@ export default function ConceptsModal({
   onNavigateConcept,
   onClose,
   triggerOpen,
-  accentHeader = false,
   themeVars,
 }) {
   const [slideDir, setSlideDir] = useState(null)
@@ -37,18 +36,17 @@ export default function ConceptsModal({
       initialState="closed"
       modalFirst
       noTab
+      noHeader
       triggerOpen={triggerOpen}
       onClose={onClose}
-      accentHeader={accentHeader}
       themeVars={themeVars}
     >
       {concept && (
         <div className={s.wrap}>
           <div className={s.header}>
-            <div className={s.headerMid}>
-              <span className={s.count}>{conceptIndex + 1} / {concepts.length}</span>
-              <span className={s.conceptTitle}>{concept.title}</span>
-            </div>
+            <span className={s.count}>Concept {conceptIndex + 1} of {concepts.length}</span>
+            <h2 className={s.conceptTitle}>{concept.title}</h2>
+            <button className={s.closeBtn} onClick={onClose} aria-label="Close">×</button>
           </div>
 
           <div

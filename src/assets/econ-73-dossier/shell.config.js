@@ -137,10 +137,6 @@ export default {
     accentHeader: true,
   },
 
-  conceptsPanel: {
-    accentHeader: true,
-  },
-
   activities,
   concepts,
 

@@ -6,38 +6,59 @@
 
 .header {
   display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 14px;
+  flex-direction: column;
+  gap: 4px;
+  padding: 14px 52px 16px 16px;  /* right padding clears the × button */
   background: var(--lab-accent, #374151);
   border-bottom: 2px solid rgba(0, 0, 0, 0.14);
   flex-shrink: 0;
-}
-
-
-.headerMid {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
+  position: relative;
 }
 
 .count {
   font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
+  font-weight: 700;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: rgba(255, 255, 255, 0.72);
 }
 
 .conceptTitle {
-  font-size: 14px;
-  font-weight: 600;
+  font-size: 22px;
+  font-weight: 700;
   color: #ffffff;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  margin: 0;
+  line-height: 1.2;
+}
+
+/* Circular close button — absolute top-right of the accent header */
+.closeBtn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.32);
+  color: #ffffff;
+  font-size: 20px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background var(--lab-transition), border-color var(--lab-transition);
+}
+
+.closeBtn:hover {
+  background: rgba(255, 255, 255, 0.28);
+  border-color: rgba(255, 255, 255, 0.55);
+}
+
+.closeBtn:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.8);
+  outline-offset: 2px;
 }
 
 /* Scrollable body */

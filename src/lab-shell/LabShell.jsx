@@ -461,7 +461,6 @@ export default function LabShell({
           onNavigateConcept={navigateConcept}
           onClose={() => setActiveConceptId(null)}
           triggerOpen={conceptTrigger}
-          accentHeader={config.conceptsPanel?.accentHeader ?? false}
           themeVars={themeVars}
         />
       )}
