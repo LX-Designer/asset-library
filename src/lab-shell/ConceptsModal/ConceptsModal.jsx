@@ -36,24 +36,20 @@ export default function ConceptsModal({
       initialState="closed"
       modalFirst
       noTab
-      noHeader
+      accentHeader
       triggerOpen={triggerOpen}
       onClose={onClose}
       themeVars={themeVars}
     >
       {concept && (
         <div className={s.wrap}>
-          <div className={s.header}>
-            <span className={s.count}>Concept {conceptIndex + 1} of {concepts.length}</span>
-            <h2 className={s.conceptTitle}>{concept.title}</h2>
-            <button className={s.closeBtn} onClick={onClose} aria-label="Close">×</button>
-          </div>
-
           <div
             className={`${s.body} ${slideDir ? s[`slide${slideDir.charAt(0).toUpperCase() + slideDir.slice(1)}`] : ''}`}
             key={activeConceptId}
             onAnimationEnd={() => setSlideDir(null)}
           >
+            {/* Eyebrow count — sits at the top of the scrollable body */}
+            <p className={s.count}>Concept {conceptIndex + 1} of {concepts.length}</p>
             {concept.summary && (
               <p className={s.summary}>{concept.summary}</p>
             )}

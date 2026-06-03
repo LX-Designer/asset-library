@@ -57,7 +57,7 @@ export default function LabSidebar({
   return (
     <FloatingPanel
       id={`${labId}-guide`}
-      title="Activity Guide"
+      title={config.sidebar?.header?.fpTitle ?? 'Activity Guide'}
       side={config.sidebar.side ?? 'left'}
       width={600}
       defaultDockedWidth={config.sidebar.defaultDockedWidth ?? 260}
@@ -66,8 +66,7 @@ export default function LabSidebar({
       initialState="closed"
       modalFirst
       noTab
-      noHeader={config.sidebar?.noHeader ?? false}
-      sidebarOnly={config.sidebar?.sidebarOnly ?? false}
+      accentHeader={config.sidebar?.fpAccentHeader ?? false}
       topOffset="var(--lab-nav-height)"
       triggerDock={triggerDock}
       triggerClose={triggerClose}

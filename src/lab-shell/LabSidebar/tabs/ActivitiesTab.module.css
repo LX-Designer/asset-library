@@ -203,8 +203,6 @@
 .headerAccent {
   background: var(--lab-accent);
   border-bottom-color: var(--lab-ink);
-  /* leave room for the circular close button on the right */
-  padding-right: 44px;
 }
 
 .headerAccent .eyebrow  { color: rgba(255,255,255,0.72); }
@@ -214,30 +212,6 @@
 .headerAccent .progressFill { background: rgba(255,255,255,0.22); }
 .headerAccent .progressFill::after { background: rgba(255,255,255,0.88); }
 
-/* Circular close button inside the accent header */
-.closeBtn {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.15);
-  border: 1px solid rgba(255, 255, 255, 0.32);
-  color: #ffffff;
-  font-size: 18px;
-  line-height: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: background var(--lab-transition), border-color var(--lab-transition);
-}
-
-.closeBtn:hover {
-  background: rgba(255, 255, 255, 0.28);
-  border-color: rgba(255, 255, 255, 0.55);
-}
 
 /* Footer */
 .footer {

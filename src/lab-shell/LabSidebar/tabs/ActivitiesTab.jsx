@@ -22,8 +22,6 @@ export default function ActivitiesTab({
   eyebrow,
   sidebarTitle,
   sidebarSubtitle,
-  // Close callback — when provided with accentHeader, renders a circular × button
-  onClose,
   onOpenActivity,
   onReset,
 }) {
@@ -42,10 +40,6 @@ export default function ActivitiesTab({
   return (
     <>
       <div className={`${s.header} ${accentHeader ? s.headerAccent : ''}`}>
-        {/* Circular close button — shown in accent header when onClose is provided */}
-        {accentHeader && onClose && (
-          <button className={s.closeBtn} onClick={onClose} aria-label="Close guide">×</button>
-        )}
         <div className={s.eyebrow}>{eyebrow ?? 'Activity guide'}</div>
         {(sidebarTitle ?? labTitle) && <div className={s.title}>{sidebarTitle ?? labTitle}</div>}
         {(sidebarSubtitle ?? labSubtitle) && <div className={s.subtitle}>{sidebarSubtitle ?? labSubtitle}</div>}

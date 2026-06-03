@@ -114,18 +114,18 @@ export default {
     defaultTab: 'activities',
     tabs: ['activities', 'concepts'],
     accentHeader: true,
-    // Hide the generic FloatingPanel chrome strip — the accentHeader in
-    // ActivitiesTab acts as the sidebar's visual header instead.
-    noHeader: true,
-    sidebarOnly: true,
+    // FloatingPanel PanelHeader — uses the standard dock/close controls on
+    // an accent background. fpTitle is kept short (the full heading is in
+    // the ActivitiesTab accent header below the tab strip).
+    fpAccentHeader: true,
     statusLabels: {
       complete:      'Response saved',
       'not-started': 'Not yet saved',
       inprogress:    'In progress',
     },
-    // Header text shown in the ActivitiesTab accent header
     header: {
-      eyebrow:  'Investigation Tools',
+      fpTitle:  'Case support',        // shown in the FloatingPanel PanelHeader
+      eyebrow:  'Investigation Tools', // shown in the ActivitiesTab header
       title:    'Case support',
       subtitle: 'Choose a tab to jump through the case file, open tasks, or access economic concepts.',
     },

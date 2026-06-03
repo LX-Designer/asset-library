@@ -246,9 +246,6 @@ export default function LabShell({
             eyebrow={config.sidebar.header?.eyebrow}
             sidebarTitle={config.sidebar.header?.title}
             sidebarSubtitle={config.sidebar.header?.subtitle}
-            onClose={config.sidebar?.noHeader
-              ? () => setGuideCloseTrigger(t => t + 1)
-              : undefined}
             onOpenActivity={openActivity}
             onReset={onReset}
           />
