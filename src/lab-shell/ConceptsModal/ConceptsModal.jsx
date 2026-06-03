@@ -45,22 +45,10 @@ export default function ConceptsModal({
       {concept && (
         <div className={s.wrap}>
           <div className={s.header}>
-            <button
-              className={s.navBtn}
-              disabled={conceptIndex <= 0}
-              onClick={() => navigate('backward')}
-              aria-label="Previous concept"
-            >‹</button>
             <div className={s.headerMid}>
               <span className={s.count}>{conceptIndex + 1} / {concepts.length}</span>
               <span className={s.conceptTitle}>{concept.title}</span>
             </div>
-            <button
-              className={s.navBtn}
-              disabled={conceptIndex >= concepts.length - 1}
-              onClick={() => navigate('forward')}
-              aria-label="Next concept"
-            >›</button>
           </div>
 
           <div
@@ -132,6 +120,26 @@ export default function ConceptsModal({
                 {(() => { const Visual = config.conceptVisuals[concept.visual]; return <Visual /> })()}
               </div>
             )}
+          </div>
+
+          {/* Footer navigation — prev / next concept */}
+          <div className={s.footer}>
+            <button
+              className={s.footerBtn}
+              disabled={conceptIndex <= 0}
+              onClick={() => navigate('backward')}
+              aria-label="Previous concept"
+            >
+              ← {conceptIndex > 0 ? concepts[conceptIndex - 1].title : 'Previous'}
+            </button>
+            <button
+              className={s.footerBtn}
+              disabled={conceptIndex >= concepts.length - 1}
+              onClick={() => navigate('forward')}
+              aria-label="Next concept"
+            >
+              {conceptIndex < concepts.length - 1 ? concepts[conceptIndex + 1].title : 'Next'} →
+            </button>
           </div>
         </div>
       )}
