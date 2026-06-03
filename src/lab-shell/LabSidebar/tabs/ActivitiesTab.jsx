@@ -2,6 +2,12 @@ import { useState, useRef, useEffect } from 'react'
 import ResetDialog from '../../ResetDialog/ResetDialog.jsx'
 import s from './ActivitiesTab.module.css'
 
+const DEFAULT_STATUS_LABELS = {
+  'not-started': 'Not started',
+  'inprogress':  'In progress',
+  'complete':    'Complete',
+}
+
 export default function ActivitiesTab({
   activities,
   responses,
@@ -10,12 +16,16 @@ export default function ActivitiesTab({
   totalCount,
   labTitle,
   labSubtitle,
+  accentHeader = false,
+  statusLabels = {},
   onOpenActivity,
   onReset,
 }) {
   const [confirmReset, setConfirmReset] = useState(false)
   const footerRef = useRef(null)
   const progressPct = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0
+
+  const labels = { ...DEFAULT_STATUS_LABELS, ...statusLabels }
 
   useEffect(() => {
     if (confirmReset) {
@@ -25,7 +35,7 @@ export default function ActivitiesTab({
 
   return (
     <>
-      <div className={s.header}>
+      <div className={`${s.header} ${accentHeader ? s.headerAccent : ''}`}>
         <div className={s.eyebrow}>Activity guide</div>
         {labTitle   && <div className={s.title}>{labTitle}</div>}
         {labSubtitle && <div className={s.subtitle}>{labSubtitle}</div>}
@@ -45,25 +55,47 @@ export default function ActivitiesTab({
 
       <ul className={s.list} role="list">
         {activities.map((act) => {
-          const status = getActivityStatus(act.id, responses)
+          const status   = getActivityStatus(act.id, responses)
+          const hasbadge = act.number != null
+
           return (
             <li key={act.id} className={s.item}>
               <button
                 className={s.btn}
                 onClick={() => onOpenActivity(act.id)}
-                aria-label={`${act.label}: ${act.title} — ${status.replace('-', ' ')}`}
+                aria-label={`${act.label}: ${act.title} — ${labels[status] ?? status}`}
               >
-                <span
-                  className={`${s.dot} ${status === 'complete' ? s.complete : ''} ${status === 'inprogress' ? s.inprogress : ''}`}
-                  aria-hidden="true"
-                />
+                {/* Status indicator — numbered square badge OR circular dot */}
+                {hasbadge ? (
+                  <span
+                    className={`${s.badge} ${status === 'complete' ? s.badgeComplete : ''}`}
+                    aria-hidden="true"
+                  >
+                    {act.number}
+                  </span>
+                ) : (
+                  <span
+                    className={`${s.dot} ${status === 'complete' ? s.complete : ''} ${status === 'inprogress' ? s.inprogress : ''}`}
+                    aria-hidden="true"
+                  />
+                )}
+
                 <span className={s.meta}>
-                  <span className={s.label}>{act.label}</span>
+                  {/* Stage label (e.g. "Stage 1 · Build the evidence base") */}
+                  {act.stageLabel && (
+                    <span className={s.stageLabel}>{act.stageLabel}</span>
+                  )}
+                  {/* Fallback label for labs without badges or stage labels */}
+                  {!hasbadge && !act.stageLabel && (
+                    <span className={s.label}>{act.label}</span>
+                  )}
                   <span className={s.actTitle}>{act.title}</span>
                   <span className={`${s.statusText} ${status === 'complete' ? s.complete : ''} ${status === 'inprogress' ? s.inprogress : ''}`}>
-                    {status === 'not-started' ? 'Not started' : status === 'inprogress' ? 'In progress' : 'Complete'}
+                    {labels[status] ?? status}
                   </span>
                 </span>
+
+                <span className={s.chevron} aria-hidden="true">›</span>
               </button>
             </li>
           )

@@ -241,6 +241,8 @@ export default function LabShell({
             totalCount={totalCount}
             labTitle={config.nav?.title}
             labSubtitle={config.nav?.subtitle}
+            accentHeader={config.sidebar.accentHeader ?? false}
+            statusLabels={config.sidebar.statusLabels ?? {}}
             onOpenActivity={openActivity}
             onReset={onReset}
           />

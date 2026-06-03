@@ -43,6 +43,17 @@
   --lab-chrome-heading-weight: 700;
   --lab-chrome-label-size:     12px;
   --lab-chrome-radius:         3px;
+
+  /* Nav surface — solid crimson bar with white text, heavy navy bottom border */
+  --lab-nav-surface:           var(--econ-red);
+  --lab-nav-ink:               #ffffff;
+  --lab-nav-ink-mid:           rgba(255, 255, 255, 0.88);
+  --lab-nav-ink-light:         rgba(255, 255, 255, 0.65);
+  --lab-nav-rule:              rgba(255, 255, 255, 0.28);
+  --lab-nav-border-bottom:     4px solid var(--econ-navy);
+  --lab-nav-btn-hover-bg:      rgba(255, 255, 255, 0.12);
+  --lab-nav-btn-active-bg:     rgba(255, 255, 255, 0.92);
+  --lab-nav-btn-active-text:   var(--econ-navy);
 }
 
 /* ---------- 2. Content wrapper: root + base ---------- */

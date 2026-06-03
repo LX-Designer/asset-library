@@ -40,6 +40,20 @@
   --lab-font-sans:       'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   --lab-font-mono:       'Courier New', monospace;
 
+  /* Nav surface — separate from chrome-surface so the nav bar can carry a
+     different background (e.g. accent red) while panels stay paper-toned.
+     All four ink tokens plus the border/button tokens adapt every element
+     in LabNav when the nav colour changes. */
+  --lab-nav-surface:          var(--lab-chrome-surface, var(--lab-surface));
+  --lab-nav-ink:              var(--lab-ink);
+  --lab-nav-ink-mid:          var(--lab-ink-mid);
+  --lab-nav-ink-light:        var(--lab-ink-light);
+  --lab-nav-rule:             var(--lab-rule);
+  --lab-nav-border-bottom:    1px solid var(--lab-rule);
+  --lab-nav-btn-hover-bg:     var(--lab-surface-mid);
+  --lab-nav-btn-active-bg:    var(--lab-accent);
+  --lab-nav-btn-active-text:  #ffffff;
+
   /* Chrome register — per-lab typographic scale and surface for shell UI.
      Override these on the lab's root class to shift the visual register of
      the sidebar, nav, activity panel, and concept modal as a coherent unit.

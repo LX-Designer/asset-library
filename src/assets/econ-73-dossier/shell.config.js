@@ -22,6 +22,7 @@ const stagePhase = {
 // ── CSS custom properties forwarded through FloatingPanel portals ─────────────
 // Includes --lab-chrome-* so portals pick up warm paper surface and type scale;
 // includes --econ-* so form components and visuals resolve their palette vars.
+// Nav tokens are NOT forwarded — the nav bar is not a portal.
 const THEME_VARS = [
   '--lab-bg', '--lab-surface', '--lab-surface-mid',
   '--lab-ink', '--lab-ink-mid', '--lab-ink-light',
@@ -30,7 +31,7 @@ const THEME_VARS = [
   '--lab-complete', '--lab-complete-subtle', '--lab-complete-muted',
   '--lab-warn', '--lab-warn-subtle', '--lab-warn-muted',
   '--lab-flag', '--lab-font-serif', '--lab-font-mono', '--lab-nav-height', '--lab-transition',
-  // Chrome register — forward so portals inherit warm paper surface
+  // Chrome register — forward so portals inherit warm paper surface and type scale
   '--lab-chrome-surface', '--lab-chrome-font-size', '--lab-chrome-heading-weight',
   '--lab-chrome-label-size', '--lab-chrome-radius',
   // FloatingPanel
@@ -71,10 +72,13 @@ const activities = actData.map(a => ({
   number: parseInt(a.id),
   label: `Task ${a.id.padStart(2, '0')}`,
   title: a.title,
+  // thinkingMove — brief phrase shown in the activity panel header subtitle
   thinkingMove: stagePhase[a.id] ?? '',
-  purpose: '',            // rendered by form component via activityData
+  // stageLabel — full stage string shown in the sidebar activity list
+  stageLabel: a.stage ?? '',
+  purpose: '',
   prompt: a.prompt,
-  scaffold: null,         // task instruction handled inside the form component
+  scaffold: null,         // task instruction rendered inside the form component
   evidenceSections: a.review.map(r => ({ id: r.target, label: r.label })),
   conceptLinks: (a.tools ?? []).map(toolId => {
     const tool = conceptTools.find(t => t.id === toolId)
@@ -103,10 +107,16 @@ export default {
 
   sidebar: {
     side: 'left',
-    defaultDockedWidth: 280,
-    maxDockedWidth: 380,
+    defaultDockedWidth: 300,
+    maxDockedWidth: 400,
     defaultTab: 'activities',
     tabs: ['activities', 'concepts'],
+    accentHeader: true,
+    statusLabels: {
+      complete:      'Response saved',
+      'not-started': 'Not yet saved',
+      inprogress:    'In progress',
+    },
   },
 
   activityPanel: {
