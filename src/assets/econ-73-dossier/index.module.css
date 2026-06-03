@@ -46,10 +46,10 @@
     repeating-linear-gradient(90deg, rgba(16, 22, 45, 0.024) 0, rgba(16, 22, 45, 0.024) 1px, transparent 1px, transparent 32px),
     #efe1ca;
 
-  /* Rule / border warmth — replace the default cool-grey rule with a navy-tinted
-     one so internal chrome borders feel like the original document aesthetic. */
-  --lab-rule:            rgba(16, 22, 45, 0.2);
-  --lab-rule-light:      rgba(16, 22, 45, 0.1);
+  /* Rule / border warmth — darker navy so tab strip and internal dividers
+     read clearly against the warm paper background. */
+  --lab-rule:            rgba(16, 22, 45, 0.55);
+  --lab-rule-light:      rgba(16, 22, 45, 0.28);
   --lab-surface-mid:     rgba(16, 22, 45, 0.04);
 
   /* FloatingPanel + ActivityModal surfaces — set directly (not through the
@@ -57,11 +57,14 @@
      the default white before .labShell's --lab-chrome-surface override applies. */
   --fp-bg:               var(--econ-paper);
   --fp-tab-bg:           var(--econ-paper);
+  --fp-subtle:           rgba(16, 22, 45, 0.05);   /* hover bg — matches ConceptsTab */
   --modal-panel-bg:      var(--econ-paper);
-  --modal-subtle:        var(--econ-paper-warm);
+  --modal-subtle:        var(--econ-paper-warm);    /* warm paper for button hover bg */
+  --modal-accent:        var(--econ-navy);          /* navy for evidence/toolkit buttons */
 
-  /* FloatingPanel border — navy-tinted to match content section borders. */
-  --fp-border:           rgba(16, 22, 45, 0.28);
+  /* FloatingPanel + sidebar borders — solid opaque navy, matching content
+     section borders and giving clear definition to all chrome panels. */
+  --fp-border:           var(--econ-navy);
 
   /* Chrome register — shifts the visual weight of sidebar, nav, panels */
   --lab-chrome-surface:        var(--econ-paper);
