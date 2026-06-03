@@ -6,7 +6,6 @@
   gap: 4px;
   padding: 10px 12px 0;
   background: var(--lab-chrome-surface, var(--lab-surface));
-  border-bottom: var(--lab-chrome-border-width, 1px) solid var(--lab-rule);
   position: sticky;
   top: 0;
   z-index: 2;
@@ -15,7 +14,7 @@
 
 .tab {
   padding: 7px 6px;
-  background: var(--lab-rule-light, rgba(0,0,0,0.08));
+  background: var(--lab-surface-mid);
   border: var(--lab-chrome-border-width, 1px) solid var(--lab-rule);
   border-bottom: none;
   border-radius: var(--lab-chrome-radius, 4px) var(--lab-chrome-radius, 4px) 0 0;
