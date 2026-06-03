@@ -18,13 +18,6 @@ export default function ConceptsTab({ concepts, onOpenConcept }) {
               onClick={() => onOpenConcept(concept.id)}
             >
               <span className={s.conceptTitle}>{concept.title}</span>
-              {concept.chips?.length > 0 && (
-                <span className={s.chips}>
-                  {concept.chips.map(chip => (
-                    <span key={chip} className={s.chip}>{chip}</span>
-                  ))}
-                </span>
-              )}
               <span className={s.arrow} aria-hidden="true">›</span>
             </button>
           </li>
