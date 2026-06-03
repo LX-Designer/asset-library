@@ -141,6 +141,7 @@ export default function FloatingPanel({
   triggerDock,
   triggerClose,
   noTab = false,
+  noHeader = false,
   sidebarOnly = false,
   floatOnly = false,
   tabAlign = 'center',
@@ -385,7 +386,7 @@ export default function FloatingPanel({
       : { width: dockedWidth }
     const panel = (
       <div className={`${s.dockedPanel} ${s[side]}`} style={dockedStyle}>
-        <PanelHeader title={title} state={panelState} onTransition={transition} onModalFirstPopOut={handleModalFirstPopOut} sidebarOnly={sidebarOnly} modalFirst={modalFirst} floatOnly={floatOnly} accentHeader={accentHeader} />
+        {!noHeader && <PanelHeader title={title} state={panelState} onTransition={transition} onModalFirstPopOut={handleModalFirstPopOut} sidebarOnly={sidebarOnly} modalFirst={modalFirst} floatOnly={floatOnly} accentHeader={accentHeader} />}
         <div className={s.panelBody} ref={panelBodyRef}>{children}</div>
         <div className={`${s.resizeHandle} ${s[side]}`} onMouseDown={handleDockedResize} />
       </div>
@@ -437,7 +438,7 @@ export default function FloatingPanel({
               size={rndSize}
               minWidth={220}
               minHeight={isMinimised ? 44 : 180}
-              dragHandleClassName={s.header}
+              dragHandleClassName={noHeader ? undefined : s.header}
               enableResizing={!isMinimised}
               bounds="parent"
               onDragStart={showOverlay ? () => setShowOverlay(false) : undefined}
@@ -453,7 +454,7 @@ export default function FloatingPanel({
                 if (!modalFirst) save(id, { size: sz, pos: newPos })
               }}
             >
-              <PanelHeader title={title} state={panelState} onTransition={transition} onModalFirstPopOut={handleModalFirstPopOut} sidebarOnly={sidebarOnly} modalFirst={modalFirst} floatOnly={floatOnly} accentHeader={accentHeader} />
+              {!noHeader && <PanelHeader title={title} state={panelState} onTransition={transition} onModalFirstPopOut={handleModalFirstPopOut} sidebarOnly={sidebarOnly} modalFirst={modalFirst} floatOnly={floatOnly} accentHeader={accentHeader} />}
               {!isMinimised && <div className={s.panelBody} ref={panelBodyRef}>{children}</div>}
             </Rnd>
           </div>,

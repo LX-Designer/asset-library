@@ -117,7 +117,6 @@ export default function ActivityPanel({
           onScrollTo={onScrollTo}
           onOpenConcept={onOpenConcept}
           onClear={handleClear}
-          noHeader
         >
           {ActForm && (
             <ActForm

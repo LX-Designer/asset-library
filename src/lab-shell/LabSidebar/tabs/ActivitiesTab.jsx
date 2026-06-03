@@ -18,6 +18,12 @@ export default function ActivitiesTab({
   labSubtitle,
   accentHeader = false,
   statusLabels = {},
+  // Configurable sidebar header text (overrides labTitle / labSubtitle)
+  eyebrow,
+  sidebarTitle,
+  sidebarSubtitle,
+  // Close callback — when provided with accentHeader, renders a circular × button
+  onClose,
   onOpenActivity,
   onReset,
 }) {
@@ -36,9 +42,13 @@ export default function ActivitiesTab({
   return (
     <>
       <div className={`${s.header} ${accentHeader ? s.headerAccent : ''}`}>
-        <div className={s.eyebrow}>Activity guide</div>
-        {labTitle   && <div className={s.title}>{labTitle}</div>}
-        {labSubtitle && <div className={s.subtitle}>{labSubtitle}</div>}
+        {/* Circular close button — shown in accent header when onClose is provided */}
+        {accentHeader && onClose && (
+          <button className={s.closeBtn} onClick={onClose} aria-label="Close guide">×</button>
+        )}
+        <div className={s.eyebrow}>{eyebrow ?? 'Activity guide'}</div>
+        {(sidebarTitle ?? labTitle) && <div className={s.title}>{sidebarTitle ?? labTitle}</div>}
+        {(sidebarSubtitle ?? labSubtitle) && <div className={s.subtitle}>{sidebarSubtitle ?? labSubtitle}</div>}
         <div className={s.progress}>
           {completedCount} of {totalCount} {totalCount === 1 ? 'activity' : 'activities'} complete
           <span

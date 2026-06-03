@@ -2,6 +2,50 @@
    Rendered inside ActivityPanel (FloatingPanel portal).
    Uses --econ-* and --modal-* vars forwarded via themeVars.               */
 
+/* ── Problem + Your task boxes (shown at top of form) ──────────────────────── */
+
+/* Shared label (uppercase eyebrow above each box) */
+.boxLabel {
+  display: block;
+  font-size: 0.68rem;
+  font-weight: 900;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  margin-bottom: 0.3rem;
+}
+
+.boxText {
+  margin: 0;
+  line-height: 1.6;
+  font-size: 0.97rem;
+}
+
+/* Problem box — blue-tinted, navy border, matches old dossier */
+.problemBox {
+  border: 1.5px solid rgba(36, 63, 117, 0.55);
+  border-left: 6px solid var(--econ-blue, #243f75);
+  background: rgba(36, 63, 117, 0.06);
+  padding: 0.85rem 1rem;
+  margin-bottom: 0.85rem;
+}
+
+.problemBox .boxLabel { color: var(--econ-blue, #243f75); }
+.problemBox .boxText  { color: var(--econ-navy, #10162d); font-family: Georgia, 'Times New Roman', serif; }
+
+/* Your task box — warm paper, navy accent, matches old dossier */
+.taskBox {
+  border: 1.5px solid rgba(16, 22, 45, 0.22);
+  border-left: 6px solid var(--econ-navy, #10162d);
+  background: rgba(244, 234, 215, 0.55);
+  padding: 0.85rem 1rem;
+  margin-bottom: 0.85rem;
+}
+
+.taskBox .boxLabel { color: var(--econ-navy, #10162d); }
+.taskBox .boxText  { color: var(--econ-navy, #10162d); }
+
+/* ── Stage badge ────────────────────────────────────────────────────────────── */
+
 /* Stage badge */
 .stageNote {
   display: inline-flex;

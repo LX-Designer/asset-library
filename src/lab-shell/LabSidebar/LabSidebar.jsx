@@ -66,6 +66,8 @@ export default function LabSidebar({
       initialState="closed"
       modalFirst
       noTab
+      noHeader={config.sidebar?.noHeader ?? false}
+      sidebarOnly={config.sidebar?.sidebarOnly ?? false}
       topOffset="var(--lab-nav-height)"
       triggerDock={triggerDock}
       triggerClose={triggerClose}

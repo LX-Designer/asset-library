@@ -80,7 +80,7 @@ export default function ActivityModal({
           </div>
         )}
 
-        <p className={s.prompt}>{prompt}</p>
+        {prompt && <p className={s.prompt}>{prompt}</p>}
 
         {scaffold && (
           <div className={s.scaffold}>{scaffold}</div>

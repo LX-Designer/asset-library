@@ -77,8 +77,10 @@ const activities = actData.map(a => ({
   // stageLabel — full stage string shown in the sidebar activity list
   stageLabel: a.stage ?? '',
   purpose: '',
-  prompt: a.prompt,
-  scaffold: null,         // task instruction rendered inside the form component
+  // prompt and task are rendered inside ActivityForm (with box styling);
+  // passing empty here prevents ActivityModal duplicating the question above the form.
+  prompt: '',
+  scaffold: null,
   evidenceSections: a.review.map(r => ({ id: r.target, label: r.label })),
   conceptLinks: (a.tools ?? []).map(toolId => {
     const tool = conceptTools.find(t => t.id === toolId)
@@ -112,10 +114,20 @@ export default {
     defaultTab: 'activities',
     tabs: ['activities', 'concepts'],
     accentHeader: true,
+    // Hide the generic FloatingPanel chrome strip — the accentHeader in
+    // ActivitiesTab acts as the sidebar's visual header instead.
+    noHeader: true,
+    sidebarOnly: true,
     statusLabels: {
       complete:      'Response saved',
       'not-started': 'Not yet saved',
       inprogress:    'In progress',
+    },
+    // Header text shown in the ActivitiesTab accent header
+    header: {
+      eyebrow:  'Investigation Tools',
+      title:    'Case support',
+      subtitle: 'Choose a tab to jump through the case file, open tasks, or access economic concepts.',
     },
   },
 

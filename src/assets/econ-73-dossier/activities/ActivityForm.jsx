@@ -22,6 +22,22 @@ export default function ActivityForm({ activity, guidance, initialAnswers, isCom
 
   return (
     <div>
+      {/* Problem box — the main investigative question */}
+      {activity.prompt && (
+        <div className={s.problemBox}>
+          <span className={s.boxLabel}>Problem</span>
+          <p className={s.boxText}>{activity.prompt}</p>
+        </div>
+      )}
+
+      {/* Your task box — detailed instructions for what to write */}
+      {activity.task && (
+        <div className={s.taskBox}>
+          <span className={s.boxLabel}>Your task</span>
+          <p className={s.boxText}>{activity.task}</p>
+        </div>
+      )}
+
       {activity.stage && (
         <span className={s.stageNote}>{activity.stage}</span>
       )}
