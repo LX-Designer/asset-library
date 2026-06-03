@@ -5,6 +5,7 @@
  *
  * --fp-bg              panel background          #ffffff
  * --fp-border          border colour             #e5e7eb
+ * --fp-border-width    border width              1px
  * --fp-ink             primary text              #111827
  * --fp-ink-mid         secondary text            #4b5563
  * --fp-ink-light       tertiary text             #9ca3af
@@ -46,7 +47,7 @@
   display: block;
   padding: 12px 9px;
   background: var(--fp-tab-bg, #f3f4f6);
-  border: 1px solid var(--fp-tab-border, #e5e7eb);
+  border: var(--fp-border-width, 1px) solid var(--fp-tab-border, #e5e7eb);
   color: var(--fp-tab-ink, #374151);
   font-size: 11px;
   font-weight: 700;
@@ -92,7 +93,7 @@
   padding: 0 12px 0 16px;
   height: 44px;
   flex-shrink: 0;
-  border-bottom: 1px solid var(--fp-border, #e5e7eb);
+  border-bottom: var(--fp-border-width, 1px) solid var(--fp-border, #e5e7eb);
   background: var(--fp-bg, #ffffff);
   cursor: grab;
   user-select: none;
@@ -191,7 +192,7 @@
 /* ── Docked panel ────────────────────────────────────────────────────────── */
 .dockedPanel {
   background: var(--fp-bg, #ffffff);
-  border: 1px solid var(--fp-border, #e5e7eb);
+  border: var(--fp-border-width, 1px) solid var(--fp-border, #e5e7eb);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -242,7 +243,7 @@
 /* ── Floating panel ──────────────────────────────────────────────────────── */
 .floatingPanel {
   background: var(--fp-bg, #ffffff);
-  border: 1px solid var(--fp-border, #e5e7eb);
+  border: var(--fp-border-width, 1px) solid var(--fp-border, #e5e7eb);
   border-radius: var(--fp-radius, 6px);
   box-shadow: var(--fp-shadow, 0 4px 24px rgba(0,0,0,0.14));
   /* react-rnd injects display:inline-block via inline style — override */

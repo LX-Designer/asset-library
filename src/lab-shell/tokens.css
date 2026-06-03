@@ -63,6 +63,7 @@
   --lab-chrome-label-size:     11px;               /* font size for uppercase label/tab text */
   --lab-chrome-surface:        var(--lab-surface); /* background of panels, sidebar, nav bar */
   --lab-chrome-radius:         4px;                /* border radius on chrome UI elements */
+  --lab-chrome-border-width:  1px;                /* border width for all shell chrome panels and tabs */
 
   /* Layout */
   --lab-nav-height:      44px;
@@ -83,6 +84,7 @@
   --fp-tab-bg:           var(--lab-chrome-surface, var(--lab-surface));
   --fp-tab-border:       var(--lab-rule);
   --fp-tab-ink:          var(--lab-ink-mid);
+  --fp-border-width:     var(--lab-chrome-border-width, 1px);
   --fp-radius:           var(--lab-chrome-radius, 4px);
   --fp-transition:       var(--lab-transition);
 

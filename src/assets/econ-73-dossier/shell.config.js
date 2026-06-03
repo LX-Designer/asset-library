@@ -31,14 +31,14 @@ const THEME_VARS = [
   '--lab-complete', '--lab-complete-subtle', '--lab-complete-muted',
   '--lab-warn', '--lab-warn-subtle', '--lab-warn-muted',
   '--lab-flag', '--lab-font-serif', '--lab-font-mono', '--lab-nav-height', '--lab-transition',
-  // Chrome register — forward so portals inherit warm paper surface and type scale
+  // Chrome register — forward so portals inherit warm paper surface, type scale, and border width
   '--lab-chrome-surface', '--lab-chrome-font-size', '--lab-chrome-heading-weight',
-  '--lab-chrome-label-size', '--lab-chrome-radius',
+  '--lab-chrome-label-size', '--lab-chrome-radius', '--lab-chrome-border-width',
   // FloatingPanel
   '--fp-bg', '--fp-border', '--fp-ink', '--fp-ink-mid', '--fp-ink-light',
   '--fp-accent', '--fp-subtle', '--fp-shadow',
   '--fp-tab-bg', '--fp-tab-border', '--fp-tab-ink',
-  '--fp-radius', '--fp-transition',
+  '--fp-border-width', '--fp-radius', '--fp-transition',
   // ActivityModal
   '--modal-panel-bg', '--modal-border', '--modal-ink', '--modal-ink-mid',
   '--modal-ink-light', '--modal-accent', '--modal-accent-hover',

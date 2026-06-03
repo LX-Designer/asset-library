@@ -72,6 +72,8 @@
   --lab-chrome-heading-weight: 700;
   --lab-chrome-label-size:     12px;
   --lab-chrome-radius:         3px;
+  --lab-chrome-border-width:   2px;
+  --fp-border-width:           2px;   /* set directly — var() chain from tokens.css evaluates at :root */
 
   /* Nav surface — solid crimson bar with white text, heavy navy bottom border */
   --lab-nav-surface:           var(--econ-red);

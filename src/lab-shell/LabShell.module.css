@@ -47,7 +47,7 @@
   display: block;
   padding: 8px 14px 8px 10px;
   background: var(--fp-bg, var(--lab-surface));
-  border: 1px solid var(--fp-border, var(--lab-rule));
+  border: var(--lab-chrome-border-width, 1px) solid var(--fp-border, var(--lab-rule));
   border-left: none;
   border-radius: 0 var(--lab-chrome-radius, 4px) var(--lab-chrome-radius, 4px) 0;
   font-size: var(--lab-chrome-label-size, 11px);
