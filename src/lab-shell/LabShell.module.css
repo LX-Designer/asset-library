@@ -49,9 +49,9 @@
   background: var(--fp-bg, var(--lab-surface));
   border: 1px solid var(--fp-border, var(--lab-rule));
   border-left: none;
-  border-radius: 0 4px 4px 0;
-  font-size: 11px;
-  font-weight: 700;
+  border-radius: 0 var(--lab-chrome-radius, 4px) var(--lab-chrome-radius, 4px) 0;
+  font-size: var(--lab-chrome-label-size, 11px);
+  font-weight: var(--lab-chrome-heading-weight, 700);
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--fp-ink-mid, var(--lab-ink-mid));
@@ -94,7 +94,7 @@
   background: var(--lab-accent);
   border: none;
   border-radius: 24px;
-  font-size: 12px;
+  font-size: var(--lab-chrome-font-size, 12px);
   font-weight: 600;
   color: #fff;
   cursor: pointer;

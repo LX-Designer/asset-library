@@ -5,7 +5,7 @@
   right: 0;
   z-index: 30;
   height: var(--lab-nav-height, 44px);
-  background: var(--lab-surface);
+  background: var(--lab-chrome-surface, var(--lab-surface));
   border-bottom: 1px solid var(--lab-rule);
   display: flex;
   align-items: center;
@@ -46,7 +46,7 @@
 }
 
 .title {
-  font-size: 12px;
+  font-size: var(--lab-chrome-font-size, 12px);
   font-weight: 600;
   color: var(--lab-ink-mid);
   white-space: nowrap;
@@ -73,8 +73,8 @@
   padding: 5px 12px;
   background: none;
   border: 1px solid var(--lab-rule);
-  border-radius: 3px;
-  font-size: 11px;
+  border-radius: var(--lab-chrome-radius, 3px);
+  font-size: var(--lab-chrome-label-size, 11px);
   font-weight: 600;
   letter-spacing: 0.07em;
   text-transform: uppercase;

@@ -40,7 +40,7 @@
 
 .conceptTitle {
   flex: 1;
-  font-size: 12px;
+  font-size: var(--lab-chrome-font-size, 12px);
   font-weight: 500;
   color: var(--lab-ink-mid);
 }

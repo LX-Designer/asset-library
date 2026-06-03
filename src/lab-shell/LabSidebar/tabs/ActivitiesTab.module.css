@@ -136,7 +136,7 @@
 }
 
 .actTitle {
-  font-size: 12px;
+  font-size: var(--lab-chrome-font-size, 12px);
   color: var(--lab-ink-mid);
   line-height: 1.35;
   display: block;

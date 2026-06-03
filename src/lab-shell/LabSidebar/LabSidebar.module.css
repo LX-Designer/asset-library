@@ -5,7 +5,7 @@
   grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
   gap: 4px;
   padding: 10px 12px 0;
-  background: var(--lab-surface);
+  background: var(--lab-chrome-surface, var(--lab-surface));
   border-bottom: 1px solid var(--lab-rule);
   position: sticky;
   top: 0;
@@ -18,9 +18,9 @@
   background: var(--lab-surface-mid);
   border: 1px solid var(--lab-rule);
   border-bottom: none;
-  border-radius: 4px 4px 0 0;
-  font-size: 11px;
-  font-weight: 700;
+  border-radius: var(--lab-chrome-radius, 4px) var(--lab-chrome-radius, 4px) 0 0;
+  font-size: var(--lab-chrome-label-size, 11px);
+  font-weight: var(--lab-chrome-heading-weight, 700);
   letter-spacing: 0.07em;
   text-transform: uppercase;
   color: var(--lab-ink-mid);
@@ -28,7 +28,7 @@
   transition: color var(--lab-transition), background var(--lab-transition);
 }
 
-.tab:hover { color: var(--lab-ink); background: var(--lab-surface); }
+.tab:hover { color: var(--lab-ink); background: var(--lab-chrome-surface, var(--lab-surface)); }
 
 .tab:focus-visible {
   outline: 2px solid var(--lab-accent);
@@ -36,7 +36,7 @@
 }
 
 .tabActive {
-  background: var(--lab-surface);
+  background: var(--lab-chrome-surface, var(--lab-surface));
   color: var(--lab-ink);
   border-bottom-color: var(--lab-surface);
   position: relative;
@@ -51,7 +51,7 @@
   left: 0;
   bottom: 0;
   width: min(300px, 85vw);
-  background: var(--lab-surface);
+  background: var(--lab-chrome-surface, var(--lab-surface));
   border-right: 1px solid var(--lab-rule);
   z-index: 35;
   overflow-y: auto;

@@ -40,6 +40,16 @@
   --lab-font-sans:       'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   --lab-font-mono:       'Courier New', monospace;
 
+  /* Chrome register — per-lab typographic scale and surface for shell UI.
+     Override these on the lab's root class to shift the visual register of
+     the sidebar, nav, activity panel, and concept modal as a coherent unit.
+     Defaults match the current shell measurements so existing labs are unaffected. */
+  --lab-chrome-font-size:      12px;               /* base font size for chrome body text */
+  --lab-chrome-heading-weight: 700;                /* weight for tab labels and panel headings */
+  --lab-chrome-label-size:     11px;               /* font size for uppercase label/tab text */
+  --lab-chrome-surface:        var(--lab-surface); /* background of panels, sidebar, nav bar */
+  --lab-chrome-radius:         4px;                /* border radius on chrome UI elements */
+
   /* Layout */
   --lab-nav-height:      44px;
   --lab-transition:      160ms ease;
@@ -48,7 +58,7 @@
      FloatingPanel reads --fp-* from its anchor div via getComputedStyle.
      Including these names in config.themeVars ensures portals receive resolved
      literal values (hex / font stacks) rather than unresolved var() refs.     */
-  --fp-bg:               var(--lab-surface);
+  --fp-bg:               var(--lab-chrome-surface, var(--lab-surface));
   --fp-border:           var(--lab-rule);
   --fp-ink:              var(--lab-ink);
   --fp-ink-mid:          var(--lab-ink-mid);
@@ -56,14 +66,14 @@
   --fp-accent:           var(--lab-accent);
   --fp-subtle:           var(--lab-bg);
   --fp-shadow:           0 4px 24px rgba(0, 0, 0, 0.12);
-  --fp-tab-bg:           var(--lab-surface);
+  --fp-tab-bg:           var(--lab-chrome-surface, var(--lab-surface));
   --fp-tab-border:       var(--lab-rule);
   --fp-tab-ink:          var(--lab-ink-mid);
-  --fp-radius:           4px;
+  --fp-radius:           var(--lab-chrome-radius, 4px);
   --fp-transition:       var(--lab-transition);
 
   /* ── ActivityModal namespace aliases ───────────────────────────────────── */
-  --modal-panel-bg:      var(--lab-surface);
+  --modal-panel-bg:      var(--lab-chrome-surface, var(--lab-surface));
   --modal-border:        var(--lab-rule);
   --modal-ink:           var(--lab-ink);
   --modal-ink-mid:       var(--lab-ink-mid);
@@ -73,5 +83,6 @@
   --modal-subtle:        var(--lab-bg);
   --modal-label:         var(--lab-warn);
   --modal-serif:         var(--lab-font-serif);
+  --modal-heading-weight: var(--lab-chrome-heading-weight, 700);
   --modal-transition:    var(--lab-transition);
 }
