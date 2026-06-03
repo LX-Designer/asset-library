@@ -6,6 +6,7 @@
   gap: 4px;
   padding: 10px 12px 0;
   background: var(--lab-chrome-surface, var(--lab-surface));
+  border-bottom: var(--lab-chrome-border-width, 1px) solid var(--lab-rule);
   position: sticky;
   top: 0;
   z-index: 2;
@@ -34,10 +35,24 @@
   outline-offset: -2px;
 }
 
-/* Active tab: lighter surface background, all tabs sit at the same height */
+/* Active tab: lighter surface background, sits at the same height as inactive tabs.
+   ::after paints a surface-coloured stripe over the strip's border-bottom exactly
+   beneath this tab — the border appears to run left and right but not under it. */
 .tabActive {
   background: var(--lab-chrome-surface, var(--lab-surface));
   color: var(--lab-ink);
+  position: relative;
+  z-index: 1;
+}
+
+.tabActive::after {
+  content: '';
+  position: absolute;
+  bottom: calc(-1 * var(--lab-chrome-border-width, 1px));
+  left: 0;
+  right: 0;
+  height: var(--lab-chrome-border-width, 1px);
+  background: var(--lab-chrome-surface, var(--lab-surface));
 }
 
 /* ── Mobile drawer ─────────────────────────────────────────────────────────── */
