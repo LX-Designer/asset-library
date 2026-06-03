@@ -15,7 +15,7 @@
 
 .tab {
   padding: 7px 6px;
-  background: var(--lab-surface-mid);
+  background: var(--lab-rule-light, rgba(0,0,0,0.08));
   border: var(--lab-chrome-border-width, 1px) solid var(--lab-rule);
   border-bottom: none;
   border-radius: var(--lab-chrome-radius, 4px) var(--lab-chrome-radius, 4px) 0 0;
@@ -35,16 +35,10 @@
   outline-offset: -2px;
 }
 
+/* Active tab: lighter surface background, all tabs sit at the same height */
 .tabActive {
   background: var(--lab-chrome-surface, var(--lab-surface));
   color: var(--lab-ink);
-  /* Shift down by exactly the border width so the tab overlaps the strip's
-     bottom border, then paint that overlap in the surface colour to erase
-     the line directly beneath the active tab — classic folder-tab effect. */
-  position: relative;
-  top: var(--lab-chrome-border-width, 1px);
-  border-bottom: var(--lab-chrome-border-width, 1px) solid var(--lab-chrome-surface, var(--lab-surface));
-  z-index: 1;
 }
 
 /* ── Mobile drawer ─────────────────────────────────────────────────────────── */
