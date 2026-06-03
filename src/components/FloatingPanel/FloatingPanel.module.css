@@ -107,6 +107,34 @@
   cursor: default;
 }
 
+/* Accent header — lab's primary colour as background, white text/icons.
+   Applied via accentHeader prop on FloatingPanel.
+   Uses --lab-accent so portals pick up the forwarded lab colour. */
+.headerAccent {
+  background: var(--lab-accent, #374151);
+  border-bottom-color: rgba(0, 0, 0, 0.18);
+}
+
+.headerAccent .headerTitle {
+  color: #ffffff;
+}
+
+.headerAccent .hBtn {
+  color: rgba(255, 255, 255, 0.65);
+}
+
+.headerAccent .hBtn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.3);
+  color: #ffffff;
+}
+
+.headerAccent .hBtnClose:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.3);
+  color: #ffffff;
+}
+
 .headerTitle {
   font-size: 11px;
   font-weight: 700;

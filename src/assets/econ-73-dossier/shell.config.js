@@ -122,6 +122,11 @@ export default {
   activityPanel: {
     side: 'right',
     defaultDockedWidth: 520,
+    accentHeader: true,
+  },
+
+  conceptsPanel: {
+    accentHeader: true,
   },
 
   activities,

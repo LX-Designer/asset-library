@@ -40,14 +40,19 @@ const IconExpand = () => (
   </svg>
 )
 
-function PanelHeader({ title, state, onTransition, onModalFirstPopOut, sidebarOnly, modalFirst, floatOnly }) {
+function PanelHeader({ title, state, onTransition, onModalFirstPopOut, sidebarOnly, modalFirst, floatOnly, accentHeader }) {
   const isDocked    = state === 'docked'
   const isFloating  = state === 'floating'
   const isMinimised = state === 'minimised'
   // Standard nav buttons only for the full-featured (non-restricted) mode
   const showNav = !sidebarOnly && !modalFirst
+  const headerClass = [
+    s.header,
+    sidebarOnly ? s.headerStatic : '',
+    accentHeader ? s.headerAccent : '',
+  ].filter(Boolean).join(' ')
   return (
-    <div className={`${s.header}${sidebarOnly ? ' ' + s.headerStatic : ''}`}>
+    <div className={headerClass}>
       <span className={s.headerTitle}>{title}</span>
       <div className={s.headerBtns}>
         {showNav && isDocked && (
@@ -140,6 +145,7 @@ export default function FloatingPanel({
   floatOnly = false,
   tabAlign = 'center',
   modalFirst = false,
+  accentHeader = false,
   themeVars = [],
   scrollTopKey,
   children,
@@ -379,7 +385,7 @@ export default function FloatingPanel({
       : { width: dockedWidth }
     const panel = (
       <div className={`${s.dockedPanel} ${s[side]}`} style={dockedStyle}>
-        <PanelHeader title={title} state={panelState} onTransition={transition} onModalFirstPopOut={handleModalFirstPopOut} sidebarOnly={sidebarOnly} modalFirst={modalFirst} floatOnly={floatOnly} />
+        <PanelHeader title={title} state={panelState} onTransition={transition} onModalFirstPopOut={handleModalFirstPopOut} sidebarOnly={sidebarOnly} modalFirst={modalFirst} floatOnly={floatOnly} accentHeader={accentHeader} />
         <div className={s.panelBody} ref={panelBodyRef}>{children}</div>
         <div className={`${s.resizeHandle} ${s[side]}`} onMouseDown={handleDockedResize} />
       </div>
@@ -447,7 +453,7 @@ export default function FloatingPanel({
                 if (!modalFirst) save(id, { size: sz, pos: newPos })
               }}
             >
-              <PanelHeader title={title} state={panelState} onTransition={transition} onModalFirstPopOut={handleModalFirstPopOut} sidebarOnly={sidebarOnly} modalFirst={modalFirst} floatOnly={floatOnly} />
+              <PanelHeader title={title} state={panelState} onTransition={transition} onModalFirstPopOut={handleModalFirstPopOut} sidebarOnly={sidebarOnly} modalFirst={modalFirst} floatOnly={floatOnly} accentHeader={accentHeader} />
               {!isMinimised && <div className={s.panelBody} ref={panelBodyRef}>{children}</div>}
             </Rnd>
           </div>,

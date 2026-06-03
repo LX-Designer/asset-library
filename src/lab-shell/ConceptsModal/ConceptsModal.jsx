@@ -9,6 +9,7 @@ export default function ConceptsModal({
   onNavigateConcept,
   onClose,
   triggerOpen,
+  accentHeader = false,
   themeVars,
 }) {
   const [slideDir, setSlideDir] = useState(null)
@@ -38,6 +39,7 @@ export default function ConceptsModal({
       noTab
       triggerOpen={triggerOpen}
       onClose={onClose}
+      accentHeader={accentHeader}
       themeVars={themeVars}
     >
       {concept && (

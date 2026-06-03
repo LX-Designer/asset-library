@@ -19,6 +19,7 @@ export default function ActivityPanel({
   triggerClose,
   onDockedChange,
   onClose,
+  accentHeader = false,
   themeVars,
 }) {
   const [clearKey, setClearKey] = useState(0)
@@ -96,6 +97,7 @@ export default function ActivityPanel({
       onDockedChange={onDockedChange}
       modalFirst
       noTab
+      accentHeader={accentHeader}
       themeVars={themeVars}
     >
       {activity && (

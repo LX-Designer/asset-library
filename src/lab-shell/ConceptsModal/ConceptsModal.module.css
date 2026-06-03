@@ -9,7 +9,8 @@
   align-items: center;
   gap: 8px;
   padding: 10px 14px;
-  border-bottom: 1px solid var(--lab-rule);
+  background: var(--lab-accent, #374151);
+  border-bottom: 2px solid rgba(0, 0, 0, 0.14);
   flex-shrink: 0;
 }
 
@@ -19,20 +20,20 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: none;
-  border: 1px solid var(--lab-rule);
-  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 50%;
   font-size: 16px;
-  color: var(--lab-ink-mid);
+  color: #ffffff;
   cursor: pointer;
   flex-shrink: 0;
   transition: all var(--lab-transition);
 }
 
 .navBtn:hover:not(:disabled) {
-  background: var(--lab-accent-subtle);
-  border-color: var(--lab-accent);
-  color: var(--lab-accent);
+  background: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.55);
+  color: #ffffff;
 }
 
 .navBtn:disabled {
@@ -53,13 +54,13 @@
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--lab-ink-light);
+  color: rgba(255, 255, 255, 0.72);
 }
 
 .conceptTitle {
   font-size: 14px;
   font-weight: 600;
-  color: var(--lab-ink);
+  color: #ffffff;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

@@ -383,6 +383,7 @@ export default function LabShell({
           triggerClose={activityCloseTrigger}
           onDockedChange={handleActivityDockedChange}
           onClose={() => setActiveActivityId(null)}
+          accentHeader={config.activityPanel?.accentHeader ?? false}
           themeVars={themeVars}
         />
       )}
@@ -454,6 +455,7 @@ export default function LabShell({
           onNavigateConcept={navigateConcept}
           onClose={() => setActiveConceptId(null)}
           triggerOpen={conceptTrigger}
+          accentHeader={config.conceptsPanel?.accentHeader ?? false}
           themeVars={themeVars}
         />
       )}

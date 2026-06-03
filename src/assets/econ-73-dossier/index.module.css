@@ -63,8 +63,10 @@
   --modal-accent:        var(--econ-navy);          /* navy for evidence/toolkit buttons */
 
   /* FloatingPanel + sidebar borders — solid opaque navy, matching content
-     section borders and giving clear definition to all chrome panels. */
-  --fp-border:           var(--econ-navy);
+     section borders and giving clear definition to all chrome panels.
+     Set as a literal (not var()) so getComputedStyle forwarding to portals
+     returns a resolved value rather than a var() token chain. */
+  --fp-border:           #10162d;
 
   /* Chrome register — shifts the visual weight of sidebar, nav, panels */
   --lab-chrome-surface:        var(--econ-paper);
