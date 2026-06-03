@@ -73,10 +73,12 @@ export default function ActivityModal({
       )}
 
       <div className={s.body}>
-        <div className={s.purpose}>
-          <span className={s.purposeLabel}>Why this matters</span>
-          {purpose}
-        </div>
+        {purpose && (
+          <div className={s.purpose}>
+            <span className={s.purposeLabel}>Why this matters</span>
+            {purpose}
+          </div>
+        )}
 
         <p className={s.prompt}>{prompt}</p>
 

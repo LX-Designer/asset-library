@@ -1,0 +1,189 @@
+/* ── Activity form styles ─────────────────────────────────────────────────────
+   Rendered inside ActivityPanel (FloatingPanel portal).
+   Uses --econ-* and --modal-* vars forwarded via themeVars.               */
+
+/* Stage badge */
+.stageNote {
+  display: inline-flex;
+  align-items: center;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.68rem;
+  font-weight: 900;
+  color: var(--econ-red, #c9362d);
+  border-left: 4px solid var(--econ-red, #c9362d);
+  background: rgba(201,54,45,0.08);
+  padding: 0.45rem 0.65rem;
+  margin-bottom: 0.8rem;
+  display: block;
+}
+
+/* Support boxes */
+.guidance,
+.miniExample,
+.answerFrame {
+  border: 1px solid rgba(16,22,45,0.16);
+  background: rgba(246,238,219,0.58);
+  padding: 0.9rem 1rem;
+  margin-bottom: 0.85rem;
+}
+
+.guidance  { border-left: 5px solid var(--econ-navy, #10162d); background: rgba(16,22,45,0.045); }
+.miniExample { border-left: 5px solid var(--econ-red, #c9362d); background: rgba(201,54,45,0.07); }
+.answerFrame { border-left: 5px solid #9cc9bf; background: rgba(156,201,191,0.16); }
+.rankingFrame { border-left-color: var(--econ-red, #c9362d); background: rgba(255,255,255,0.75); }
+
+.guidance strong,
+.miniExample strong,
+.answerFrame strong {
+  display: block;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 0.96rem;
+  color: var(--econ-navy, #10162d);
+  margin-bottom: 0.3rem;
+}
+
+.guidance p,
+.miniExample p,
+.answerFrame p { margin: 0.3rem 0 0; color: var(--muted, #58616f); font-size: 0.92rem; }
+
+.answerFrame ul {
+  margin: 0.55rem 0 0;
+  padding-left: 1.15rem;
+  color: var(--muted, #58616f);
+  font-size: 0.92rem;
+}
+
+.answerFrame li + li { margin-top: 0.3rem; }
+
+/* Textarea */
+.textarea {
+  display: block;
+  width: 100%;
+  min-height: 160px;
+  border: 1.8px solid var(--econ-navy, #10162d);
+  padding: 0.85rem;
+  resize: vertical;
+  color: var(--ink, #171717);
+  background: #fffdf6;
+  line-height: 1.5;
+  font: inherit;
+  margin-top: 0.5rem;
+}
+
+.textarea:focus-visible {
+  border-color: var(--econ-red, #c9362d);
+  outline: 3px solid rgba(199,53,45,0.16);
+}
+
+/* Actions row */
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  margin-top: 1rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid rgba(16,22,45,0.16);
+}
+
+.saveBtn {
+  border: 2px solid var(--econ-red-dark, #982822);
+  background: var(--econ-red, #c9362d);
+  color: white;
+  padding: 0.52rem 0.9rem;
+  border-radius: 3px;
+  font-weight: 850;
+  font: inherit;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: 3px 3px 0 rgba(152,40,34,0.35);
+  transition: background 120ms;
+}
+
+.saveBtn:hover,
+.saveBtn:focus-visible {
+  background: var(--econ-red-dark, #982822);
+  outline: 3px solid rgba(199,53,45,0.18);
+  outline-offset: 2px;
+}
+
+.savedStatus {
+  font-size: 0.85rem;
+  color: #2f6e4d;
+  font-weight: 800;
+  min-height: 1.2rem;
+}
+
+/* Compare / reasoning disclosure */
+.compareBox {
+  border: 2px solid var(--econ-navy, #10162d);
+  border-left: 8px solid var(--econ-red, #c9362d);
+  background: #fff4df;
+  overflow: hidden;
+  margin-top: 1rem;
+}
+
+.compareBox summary {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  min-height: 3.25rem;
+  margin: 0;
+  padding: 0.9rem 1.15rem;
+  cursor: pointer;
+  font-weight: 900;
+  color: var(--econ-red, #c9362d);
+  line-height: 1.3;
+  font: inherit;
+}
+
+.compareBox summary::-webkit-details-marker { display: none; }
+
+.compareBox summary::before {
+  content: "›";
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 0.72rem;
+  flex: 0 0 0.72rem;
+  color: var(--econ-red, #c9362d);
+  font-weight: 950;
+  transition: transform 0.16s ease;
+}
+
+.compareBox[open] summary { border-bottom: 1px solid rgba(17,23,47,0.18); }
+.compareBox[open] summary::before { transform: rotate(90deg); }
+
+.compareIntro {
+  color: var(--muted, #58616f);
+  margin: 0.7rem 1.15rem 0.55rem;
+  font-style: italic;
+  font-size: 0.92rem;
+}
+
+.compareBox ul {
+  margin: 0.45rem 0 0;
+  padding: 0 1.15rem 0.85rem 2rem;
+}
+
+.compareBox li {
+  color: var(--muted, #58616f);
+  font-size: 0.92rem;
+}
+
+.compareBox li + li { margin-top: 0.3rem; }
+
+.caution {
+  margin: 0.1rem 1.15rem 1.15rem;
+  border-left: 4px solid #a64d15;
+  background: #fff0d6;
+  padding: 0.65rem 0.75rem;
+  color: #7c2d12;
+  font-size: 0.92rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .compareBox summary::before { transition: none; }
+}

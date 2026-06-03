@@ -1,12 +1,10 @@
-import { useState, useEffect, useRef, useCallback } from 'react'
-import { Link } from 'react-router-dom'
+import { useState } from 'react'
+import LabShell from '../../lab-shell/LabShell.jsx'
+import config from './shell.config.js'
 import styles from './index.module.css'
-import { evidenceItems, tagOptions, conceptTools, activities, compareGuidance, relevanceRows } from './data.js'
+import { evidenceItems, tagOptions } from './data.js'
 
-const ASSET_ID = 'econ-73-dossier'
 const CHECKPOINTS_KEY = 'econ73_checkpoints_v1'
-
-function cx(...args) { return args.filter(Boolean).join(' ') }
 
 function loadCheckpoints() {
   try { return JSON.parse(localStorage.getItem(CHECKPOINTS_KEY) || '{}') } catch { return {} }
@@ -15,128 +13,22 @@ function saveCheckpoints(cp) {
   try { localStorage.setItem(CHECKPOINTS_KEY, JSON.stringify(cp)) } catch {}
 }
 
-// ── Concept tool visuals ──────────────────────────────────────────────────────
+// ── Dossier content ───────────────────────────────────────────────────────────
+// Rendered as children of LabShell. Manages only checkpoint state (localStorage)
+// — all response state is owned by the shell and passed down via render props.
 
-function VisualProductive() {
-  return (
-    <article className="visual-card toolkit-visual">
-      <h3>Productive efficiency visual</h3>
-      <div className="bar-chart" aria-label="Bar chart: average cost per ride falling 22% after better fleet management.">
-        <div className="bar-row"><strong>Before</strong><div className="bar-track"><div className="bar-fill blue" style={{width:'100%'}}></div></div><span>$3.10</span></div>
-        <div className="bar-row"><strong>After</strong><div className="bar-track"><div className="bar-fill" style={{width:'78%'}}></div></div><span>$2.42</span></div>
-      </div>
-      <p className="visual-caption">Lower average cost may support productive efficiency. It does not prove the number of rides is socially efficient.</p>
-    </article>
-  )
-}
-
-function VisualSocialCost() {
-  return (
-    <article className="visual-card toolkit-visual">
-      <span className="figure-label">Cost visual</span>
-      <h3>Allocative efficiency and market failure visual</h3>
-      <p className="figure-context">This compares the private price paid by riders with the estimated social cost once external costs are included.</p>
-      <div className="cost-gap" aria-label="Comparison: private scooter price $4.20, estimated social cost $5.30 ($4.20 + $1.10 external).">
-        <div className="cost-line"><strong>Private price paid by rider</strong><div className="cost-box"><span className="segment private" style={{width:'79%'}}>$4.20</span></div></div>
-        <div className="cost-line"><strong>Estimated social cost</strong><div className="cost-box"><span className="segment private" style={{width:'79%'}}>$4.20</span><span className="segment external" style={{width:'21%'}}>+$1.10</span></div></div>
-        <div className="visual-legend" aria-hidden="true">
-          <span className="legend-item"><span className="legend-swatch private"></span>Private price</span>
-          <span className="legend-item"><span className="legend-swatch external"></span>Estimated external cost</span>
-          <span className="legend-item">Total estimated social cost: <strong>$5.30</strong></span>
-        </div>
-      </div>
-      <p className="visual-caption">If social cost is higher than private price, the market price may encourage too many rides.</p>
-    </article>
-  )
-}
-
-function VisualTradeoff() {
-  return (
-    <article className="visual-card toolkit-visual">
-      <h3>Pareto trade-off visual</h3>
-      <div className="svg-wrap" role="img" aria-label="Diagram: policy benefits for pedestrians and costs for some scooter users and firms.">
-        <svg viewBox="0 0 420 170" aria-hidden="true">
-          <rect x="20" y="40" width="150" height="80" rx="4" fill="#dcfae6" stroke="#abefc6" strokeWidth="2"/>
-          <text x="42" y="73" fill="#067647" fontSize="15" fontWeight="800">Better off</text>
-          <text x="42" y="96" fill="#475569" fontSize="13">pedestrians, city</text>
-          <line x1="178" y1="80" x2="242" y2="80" stroke="#94a3b8" strokeWidth="4" strokeLinecap="round"/>
-          <polygon points="242,80 230,72 230,88" fill="#94a3b8"/>
-          <rect x="250" y="40" width="150" height="80" rx="4" fill="#fff3dc" stroke="#fed7aa" strokeWidth="2"/>
-          <text x="276" y="73" fill="#b45309" fontSize="15" fontWeight="800">Worse off?</text>
-          <text x="276" y="96" fill="#475569" fontSize="13">some users, firms</text>
-          <text x="100" y="148" textAnchor="middle" fill="#475569" fontSize="12">Not a Pareto improvement if anyone loses</text>
-        </svg>
-      </div>
-      <p className="visual-caption">Many policies are not Pareto improvements, even when they may improve overall welfare.</p>
-    </article>
-  )
-}
-
-function VisualInnovation() {
-  return (
-    <article className="visual-card toolkit-visual">
-      <h3>Dynamic efficiency timeline</h3>
-      <div className="svg-wrap" role="img" aria-label="Timeline showing innovation from current scooters to safer designs and better batteries.">
-        <svg viewBox="0 0 430 180" aria-hidden="true">
-          <line x1="50" y1="92" x2="380" y2="92" stroke="#94a3b8" strokeWidth="4" strokeLinecap="round"/>
-          <circle cx="70" cy="92" r="13" fill="#c9362d"/>
-          <circle cx="210" cy="92" r="13" fill="#c9362d"/>
-          <circle cx="350" cy="92" r="13" fill="#c9362d"/>
-          <text x="38" y="128" fill="#10162d" fontSize="13" fontWeight="800">Now</text>
-          <text x="152" y="128" fill="#10162d" fontSize="13" fontWeight="800">Safer design</text>
-          <text x="297" y="128" fill="#10162d" fontSize="13" fontWeight="800">Better batteries</text>
-          <text x="48" y="62" fill="#475569" fontSize="13">current fleet</text>
-          <text x="166" y="62" fill="#475569" fontSize="13">investment</text>
-          <text x="300" y="62" fill="#475569" fontSize="13">long-run gain</text>
-        </svg>
-      </div>
-      <p className="visual-caption">Dynamic efficiency asks how today's rules affect future innovation and investment.</p>
-    </article>
-  )
-}
-
-function ConceptVisual({ type }) {
-  if (type === 'productive') return <VisualProductive />
-  if (type === 'social-cost') return <VisualSocialCost />
-  if (type === 'tradeoff') return <VisualTradeoff />
-  if (type === 'innovation') return <VisualInnovation />
-  return null
-}
-
-// ── Main component ────────────────────────────────────────────────────────────
-
-export default function EconDossier({ onResponse, onComplete, savedResponses, onReset, backHref }) {
-  // ── State ──────────────────────────────────────────────────────────────────
-  const [responses, setResponses] = useState(() => {
-    const sr = savedResponses || {}
-    const r = {}
-    activities.forEach(a => { if (sr[`act-${a.id}`] !== undefined) r[a.id] = sr[`act-${a.id}`] })
-    return r
-  })
-  const [evidenceTags, setEvidenceTags] = useState(() => (savedResponses || {})['evidence-tags'] || {})
+function DossierContent({ responses, onSave, openActivity }) {
   const [checkpoints, setCheckpoints] = useState(loadCheckpoints)
-  const [panelOpen, setPanelOpen] = useState(false)
-  const [activeTab, setActiveTab] = useState('contents')
-  const [activeActivityId, setActiveActivityId] = useState(null)
-  const [activeConceptId, setActiveConceptId] = useState(null)
-  const [draftResponse, setDraftResponse] = useState('')
-  const [showUnsavedWarning, setShowUnsavedWarning] = useState(false)
-  const [saveStatus, setSaveStatus] = useState('')
-  const [showResetConfirm, setShowResetConfirm] = useState(false)
-  const [activitySlideDir, setActivitySlideDir] = useState(null)
-  const [conceptSlideDir, setConceptSlideDir] = useState(null)
-  const [pendingNav, setPendingNav] = useState(null)
-  const saveStatusTimer = useRef(null)
-  const lastFocusRef = useRef(null)
 
-  // ── Derived values ─────────────────────────────────────────────────────────
-  const savedCount = activities.filter(a => (responses[a.id] || '').trim()).length
-  const taggedCount = Object.keys(evidenceTags).length
-  const isDirty = draftResponse !== (responses[activeActivityId] || '')
-  const activityIndex = activeActivityId ? activities.findIndex(a => a.id === activeActivityId) : -1
-  const conceptIndex  = activeConceptId  ? conceptTools.findIndex(t => t.id === activeConceptId)  : -1
+  const evidenceTags = responses['evidence-tags'] || {}
 
-  // ── Checkpoint ─────────────────────────────────────────────────────────────
+  function handleTagChange(itemId, value) {
+    const newTags = { ...evidenceTags }
+    if (value) newTags[itemId] = value
+    else delete newTags[itemId]
+    onSave('evidence-tags', newTags)
+  }
+
   function toggleCheckpoint(key) {
     const next = { ...checkpoints }
     if (next[key]) delete next[key]
@@ -145,130 +37,7 @@ export default function EconDossier({ onResponse, onComplete, savedResponses, on
     saveCheckpoints(next)
   }
 
-  // ── Investigation panel ────────────────────────────────────────────────────
-  function openPanel(tab = 'contents') {
-    setPanelOpen(true)
-    setActiveTab(tab)
-  }
-  function closePanel() {
-    setPanelOpen(false)
-  }
-  function togglePanel(tab = 'contents') {
-    if (panelOpen && activeTab === tab) closePanel()
-    else openPanel(tab)
-  }
-  function scrollToSection(id) {
-    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-  }
-
-  // ── Activity modal ─────────────────────────────────────────────────────────
-  function openActivity(id, dir = null) {
-    setActivitySlideDir(dir)
-    lastFocusRef.current = document.activeElement
-    setActiveActivityId(id)
-    setDraftResponse(responses[id] || '')
-    setShowUnsavedWarning(false)
-    setSaveStatus('')
-  }
-  function closeActivity() {
-    setActiveActivityId(null)
-    setDraftResponse('')
-    setShowUnsavedWarning(false)
-    setSaveStatus('')
-    lastFocusRef.current?.focus()
-  }
-  function maybeCloseActivity() {
-    if (isDirty) { setShowUnsavedWarning(true); return }
-    closeActivity()
-  }
-  async function handleSaveResponse() {
-    if (!activeActivityId) return
-    const text = draftResponse
-    const newResponses = { ...responses, [activeActivityId]: text }
-    setResponses(newResponses)
-    setShowUnsavedWarning(false)
-    if (saveStatusTimer.current) clearTimeout(saveStatusTimer.current)
-    setSaveStatus('Saved')
-    saveStatusTimer.current = setTimeout(() => setSaveStatus(''), 1800)
-    await onResponse(`act-${activeActivityId}`, text)
-    const allDone = activities.every(a => (newResponses[a.id] || '').trim())
-    if (allDone) onComplete(100, { asset: ASSET_ID })
-  }
-  function discardAndResolve() {
-    const pending = pendingNav
-    setPendingNav(null)
-    setShowUnsavedWarning(false)
-    if (pending) openActivity(pending.id, pending.dir)
-    else closeActivity()
-  }
-  async function saveAndResolve() {
-    const pending = pendingNav
-    setPendingNav(null)
-    await handleSaveResponse()
-    if (pending) openActivity(pending.id, pending.dir)
-    else closeActivity()
-  }
-  function navigateActivity(dir) {
-    const next = dir === 'forward' ? activityIndex + 1 : activityIndex - 1
-    if (next < 0 || next >= activities.length) return
-    const nextId = activities[next].id
-    if (isDirty) { setPendingNav({ id: nextId, dir }); setShowUnsavedWarning(true); return }
-    openActivity(nextId, dir)
-  }
-
-  // ── Concept modal ──────────────────────────────────────────────────────────
-  function openConcept(id, dir = null) {
-    setConceptSlideDir(dir)
-    lastFocusRef.current = document.activeElement
-    setActiveConceptId(id)
-  }
-  function closeConcept() {
-    setActiveConceptId(null)
-    lastFocusRef.current?.focus()
-  }
-  function navigateConcept(dir) {
-    const next = dir === 'forward' ? conceptIndex + 1 : conceptIndex - 1
-    if (next < 0 || next >= conceptTools.length) return
-    openConcept(conceptTools[next].id, dir)
-  }
-  function openConceptFromActivity(id) {
-    setConceptSlideDir(null)
-    setActiveConceptId(id)
-  }
-
-  // ── Evidence tags ──────────────────────────────────────────────────────────
-  async function handleTagChange(itemId, value) {
-    const newTags = { ...evidenceTags }
-    if (value) newTags[itemId] = value
-    else delete newTags[itemId]
-    setEvidenceTags(newTags)
-    await onResponse('evidence-tags', newTags)
-  }
-
-  // ── Reset ──────────────────────────────────────────────────────────────────
-  async function doReset() {
-    setShowResetConfirm(false)
-    saveCheckpoints({})
-    await onReset()
-  }
-
-  // ── Keyboard handlers ──────────────────────────────────────────────────────
-  useEffect(() => {
-    function handleKey(e) {
-      if (e.key === 'Escape') {
-        if (activeConceptId) { closeConcept(); return }
-        if (showResetConfirm) { setShowResetConfirm(false); return }
-        if (activeActivityId) { maybeCloseActivity(); return }
-        if (panelOpen) { closePanel(); return }
-      }
-    }
-    document.addEventListener('keydown', handleKey)
-    return () => document.removeEventListener('keydown', handleKey)
-  })
-
-  // ── Helpers ────────────────────────────────────────────────────────────────
   function getTagMeta(value) { return tagOptions.find(o => o.value === value) || tagOptions[0] }
-  function getTool(id) { return conceptTools.find(t => t.id === id) }
 
   function evidenceGroups() {
     const g = { efficiency: [], failure: [], both: [], unclear: [], untagged: [] }
@@ -280,91 +49,6 @@ export default function EconDossier({ onResponse, onComplete, savedResponses, on
     return g
   }
 
-  // ── Concept modal content ─────────────────────────────────────────────────
-  function renderConceptContent(tool) {
-    if (!tool) return null
-    return (
-      <>
-        <p className="toolkit-intro">Use this concept as an analytical lens for the case file. It is not extra evidence; it helps you decide what the evidence means.</p>
-        <div className="toolkit-detail-header">
-          <h3>{tool.title}</h3>
-          <p>{tool.summary}</p>
-        </div>
-        {tool.cards && (
-          <div className="toolkit-card-grid">
-            {tool.cards.map(card => (
-              <article key={card.label} className={`concept-card ${card.type}`}>
-                <span className="concept-label">{card.label}</span>
-                <p>{card.text}</p>
-              </article>
-            ))}
-          </div>
-        )}
-        {tool.id === 'reasons' && (
-          <section className="relevance-section" aria-labelledby="relevance-title">
-            <h3 id="relevance-title">Which reasons are strongest in this case?</h3>
-            <p>This case includes all syllabus reasons, but they are not equally central. Use this table to prioritise your diagnosis.</p>
-            <div className="table-scroll">
-              <table className="relevance-table">
-                <thead><tr><th>Reason</th><th>Case relevance</th><th>How to use it</th></tr></thead>
-                <tbody>
-                  {relevanceRows.map(row => (
-                    <tr key={row[0]}><td>{row[0]}</td><td><strong>{row[1]}</strong></td><td>{row[2]}</td></tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </section>
-        )}
-        {tool.reasons && (
-          <div className="reason-grid">
-            {tool.reasons.map(r => (
-              <article key={r.title} className="reason-card">
-                <h3>{r.title}</h3><p>{r.text}</p>
-              </article>
-            ))}
-          </div>
-        )}
-        {tool.visual && <ConceptVisual type={tool.visual} />}
-      </>
-    )
-  }
-
-  // ── Activity modal support elements ───────────────────────────────────────
-  function renderActivitySupport(activity) {
-    return (
-      <>
-        {activity.stage && <div className="activity-stage-note">{activity.stage}</div>}
-        {activity.responseGuide && (
-          <div className="response-guidance">
-            <strong>Response guidance</strong>
-            <p>{activity.responseGuide}</p>
-          </div>
-        )}
-        {activity.miniExample && (
-          <div className="mini-example">
-            <strong>Mini-example</strong>
-            <p>{activity.miniExample}</p>
-          </div>
-        )}
-        {activity.answerFrame && (
-          <div className="answer-frame">
-            <strong>Suggested answer structure</strong>
-            <ul>{activity.answerFrame.map((item, i) => <li key={i}>{item}</li>)}</ul>
-          </div>
-        )}
-        {activity.rankingFrame && (
-          <div className="answer-frame ranking-frame">
-            <strong>Ranking scaffold</strong>
-            <p>Use this to decide which reasons for market failure are strongest, rather than listing everything.</p>
-            <ul>{activity.rankingFrame.map((item, i) => <li key={i}>{item}</li>)}</ul>
-          </div>
-        )}
-      </>
-    )
-  }
-
-  // ── Final synthesis content ────────────────────────────────────────────────
   function renderSynthesis() {
     const groups = evidenceGroups()
     function EvidenceList({ items }) {
@@ -402,7 +86,13 @@ export default function EconDossier({ onResponse, onComplete, savedResponses, on
           <h3>Saved investigation notes</h3>
           <p className="empty-state">Use these notes to build your adviser recommendation. Edit earlier tasks any time if your judgement changes.</p>
         </article>
-        {[['1','Activity 1 — Efficiency claims'],['2','Activity 2 — Productive and allocative efficiency'],['3','Activity 3 — Possible market failure'],['4','Activity 4 — Policy trade-offs'],['5','Activity 5 — Dynamic efficiency']].map(([id, label]) => {
+        {[
+          ['act-1', 'Activity 1 — Efficiency claims'],
+          ['act-2', 'Activity 2 — Productive and allocative efficiency'],
+          ['act-3', 'Activity 3 — Possible market failure'],
+          ['act-4', 'Activity 4 — Policy trade-offs'],
+          ['act-5', 'Activity 5 — Dynamic efficiency'],
+        ].map(([id, label]) => {
           const text = (responses[id] || '').trim()
           return (
             <article key={id} className="synthesis-card">
@@ -419,166 +109,11 @@ export default function EconDossier({ onResponse, onComplete, savedResponses, on
     )
   }
 
-  // ── Compare guidance ──────────────────────────────────────────────────────
-  function renderCompareGuidance(activityId) {
-    const g = compareGuidance[activityId]
-    if (!g) return null
-    return (
-      <details className="compare-box">
-        <summary>Compare your reasoning</summary>
-        <p className="compare-intro">{g.intro}</p>
-        <ul>{g.bullets.map((b, i) => <li key={i}>{b}</li>)}</ul>
-        {g.caution && <p className="common-misconception"><strong>Common trap:</strong> {g.caution}</p>}
-      </details>
-    )
-  }
-
-  // ── Render ────────────────────────────────────────────────────────────────
-  const activeTool = activeConceptId ? getTool(activeConceptId) : null
-  const activeActivity = activeActivityId ? activities.find(a => a.id === activeActivityId) : null
-
   return (
-    <div className={cx(styles.root, panelOpen && styles.panelOpen)}>
+    <div className={styles.root}>
       <a className="skip-link" href="#main">Skip to dossier</a>
 
-      {/* ── Header ── */}
-      <header className="site-header document-bar">
-        <div className="header-inner">
-          <div className="brand" aria-label="Document identity">
-            {backHref && (
-              <Link to={backHref} className="back-link" aria-label="Back to InquiryLabs">← Labs</Link>
-            )}
-            <span className="eyebrow masthead-name">Economic Brief</span>
-            <span className="brand-title">Market Investigation Dossier · A Level Economics 7.3 · Efficiency and market failure</span>
-          </div>
-          <div className="top-actions" aria-label="Document actions">
-            <button className="btn small warning" type="button" onClick={() => setShowResetConfirm(true)} aria-label="Reset saved work">Reset</button>
-          </div>
-        </div>
-      </header>
-
-      {/* ── Investigation side tabs ── */}
-      <div className="investigation-side-tabs" aria-label="Open investigation panel">
-        {['contents','tasks','toolkit'].map(tab => (
-          <button
-            key={tab}
-            className={cx('investigation-side-tab', panelOpen && activeTab === tab && 'active')}
-            type="button"
-            onClick={() => togglePanel(tab)}
-            aria-expanded={panelOpen && activeTab === tab}
-            aria-controls="investigationPanel"
-          >
-            <span>{tab.charAt(0).toUpperCase() + tab.slice(1)}</span>
-          </button>
-        ))}
-      </div>
-
-      {/* ── Investigation panel ── */}
-      <aside className="investigation-panel" id="investigationPanel" aria-label="Investigation panel" aria-hidden={!panelOpen}>
-        <div className="investigation-panel-header">
-          <div>
-            <span className="eyebrow">Investigation tools</span>
-            <h2>Case support</h2>
-            <p>Choose a tab to jump through the case file, open tasks, or access economic concepts.</p>
-          </div>
-          <button className="modal-close panel-close" type="button" onClick={closePanel} aria-label="Close investigation panel">×</button>
-        </div>
-
-        <div className="investigation-tabs" role="tablist" aria-label="Investigation panel sections">
-          {['contents','tasks','toolkit'].map(tab => (
-            <button
-              key={tab}
-              className={cx('investigation-tab', activeTab === tab && 'active')}
-              type="button" role="tab"
-              aria-selected={activeTab === tab}
-              onClick={() => setActiveTab(tab)}
-            >
-              {tab.charAt(0).toUpperCase() + tab.slice(1)}
-            </button>
-          ))}
-        </div>
-
-        <div className="investigation-panel-body">
-          {/* Contents tab */}
-          <section
-            className={cx('investigation-tab-panel', activeTab === 'contents' && 'active')}
-            role="tabpanel"
-            hidden={activeTab !== 'contents'}
-          >
-            <p className="panel-intro">Jump to a section of the market case file.<span className="intro-extra"> The case file is the evidence base for your recommendation.</span></p>
-            <nav className="contents-list" aria-label="Case file contents">
-              {[['case-overview','Case overview'],['how-to-investigate','How to investigate'],['market-data','Market data'],['stakeholders','Stakeholders'],['policy-options','Policy options'],['evidence','Evidence board'],['final-decision','Adviser briefing']].map(([id, label]) => (
-                <button key={id} className="contents-button" type="button" onClick={() => scrollToSection(id)}>
-                  <span>{label}</span><span aria-hidden="true">›</span>
-                </button>
-              ))}
-            </nav>
-          </section>
-
-          {/* Tasks tab */}
-          <section
-            className={cx('investigation-tab-panel', activeTab === 'tasks' && 'active')}
-            role="tabpanel"
-            hidden={activeTab !== 'tasks'}
-          >
-            <p className="panel-intro">Open a task, then use the case file and toolkit to build your adviser notes.</p>
-            <div className="task-list">
-              {activities.map(activity => {
-                const hasResponse = Boolean((responses[activity.id] || '').trim())
-                return (
-                  <button
-                    key={activity.id}
-                    className="task-button"
-                    type="button"
-                    aria-haspopup="dialog"
-                    onClick={() => openActivity(activity.id)}
-                  >
-                    <span className="task-num">{activity.id}</span>
-                    <span className="task-text">
-                      {activity.stage && <span className="task-stage">{activity.stage}</span>}
-                      <span className="task-title">{activity.title}</span>
-                      <span className={cx('task-status', hasResponse && 'saved')}>
-                        {hasResponse ? 'Response saved' : 'Not yet saved'}
-                      </span>
-                    </span>
-                    <span className="task-chevron" aria-hidden="true">›</span>
-                  </button>
-                )
-              })}
-            </div>
-            <div className="panel-footer">
-              <div className="progress-pill">
-                {savedCount}/{activities.length} tasks · {taggedCount}/{evidenceItems.length} evidence tagged
-              </div>
-              <button className="btn warning" type="button" onClick={() => setShowResetConfirm(true)}>Reset saved work</button>
-            </div>
-          </section>
-
-          {/* Toolkit tab */}
-          <section
-            className={cx('investigation-tab-panel', activeTab === 'toolkit' && 'active')}
-            role="tabpanel"
-            hidden={activeTab !== 'toolkit'}
-          >
-            <p className="panel-intro">These are analytical tools, not extra case evidence.<span className="intro-extra"> Use them to interpret the market data, stakeholder views, policy options, and evidence cards.</span></p>
-            <div className="toolkit-list" aria-label="Economics concept tools">
-              {conceptTools.map(tool => (
-                <button
-                  key={tool.id}
-                  className="toolkit-button"
-                  type="button"
-                  onClick={() => openConcept(tool.id)}
-                >
-                  <span>{tool.title}</span><span aria-hidden="true">›</span>
-                </button>
-              ))}
-            </div>
-          </section>
-        </div>
-      </aside>
-
-      {/* ── Main content ── */}
-      <div className="layout">
+      <div className={styles.contentGrid}>
 
         {/* Hero */}
         <section className="hero" aria-labelledby="hero-title">
@@ -588,12 +123,6 @@ export default function EconDossier({ onResponse, onComplete, savedResponses, on
             <p>You are an economic adviser reviewing the market for electric scooters in a growing city. Use the case file as your evidence base, open the Economist's Toolkit when you need to check and apply economic concepts, and make a recommendation to the city government about how to deal with the growing use of electric scooters.</p>
           </div>
         </section>
-
-        <nav className="sticky-nav" aria-label="Case file navigation">
-          {[['#case-overview','Case'],['#how-to-investigate','How to investigate'],['#market-data','Data'],['#stakeholders','Stakeholders'],['#policy-options','Policy'],['#evidence','Evidence'],['#final-decision','Briefing']].map(([href, label]) => (
-            <a key={href} className="nav-link" href={href}>{label}</a>
-          ))}
-        </nav>
 
         <main id="main">
 
@@ -634,7 +163,7 @@ export default function EconDossier({ onResponse, onComplete, savedResponses, on
               <article className="stage-card"><span className="stage-label">Stage 5</span><h3>Make and reflect on your judgement</h3><p>Write a recommendation, then reflect on how the evidence and concepts shaped your reasoning.</p></article>
             </div>
             <div className="callout">
-              <strong>Tip:</strong> Use the investigative tools contained on the <strong>Contents</strong>,<strong> Tasks</strong>, and <strong>Toolkit</strong> tabs to jump through the case file, open tasks, or access the Economist's Toolkit without losing your place.
+              <strong>Tip:</strong> Use the <strong>Activities</strong> and <strong>Concepts</strong> tabs in the guide panel to open tasks or access the Economist's Toolkit without losing your place in the case file.
             </div>
           </section>
 
@@ -759,22 +288,22 @@ export default function EconDossier({ onResponse, onComplete, savedResponses, on
               <article className="policy-card">
                 <h3>Option A: No new intervention</h3>
                 <p>Let firms continue competing and innovating. This may protect dynamic efficiency, but external costs may remain unpriced.</p>
-                <ul className="tradeoff-list" aria-label="Trade-off notes"><li>Low regulation</li><li>Low risk to innovation</li><li>High risk that external costs remain</li></ul>
+                <ul className="tradeoff-list"><li>Low regulation</li><li>Low risk to innovation</li><li>High risk that external costs remain</li></ul>
               </article>
               <article className="policy-card">
                 <h3>Option B: Parking zones and safety rules</h3>
                 <p>Require geofenced parking, speed limits in crowded areas, and clearer safety messaging. This targets external costs without banning scooters.</p>
-                <ul className="tradeoff-list" aria-label="Trade-off notes"><li>Targeted regulation</li><li>Some convenience cost</li><li>Possible safety benefit</li></ul>
+                <ul className="tradeoff-list"><li>Targeted regulation</li><li>Some convenience cost</li><li>Possible safety benefit</li></ul>
               </article>
               <article className="policy-card">
                 <h3>Option C: Per-ride levy</h3>
                 <p>Add a small charge to each ride to fund pavement repair, safety enforcement, and public-space management. Prices would move closer to social cost.</p>
-                <ul className="tradeoff-list" aria-label="Trade-off notes"><li>Creates a price signal</li><li>May reduce demand</li><li>Funds public costs</li></ul>
+                <ul className="tradeoff-list"><li>Creates a price signal</li><li>May reduce demand</li><li>Funds public costs</li></ul>
               </article>
               <article className="policy-card">
                 <h3>Option D: Firm permits and fleet caps</h3>
                 <p>Limit the number of operators or scooters allowed in the city. This could reduce clutter, but it might weaken competition and reduce availability.</p>
-                <ul className="tradeoff-list" aria-label="Trade-off notes"><li>Stricter control</li><li>Risk of weaker competition</li><li>Possible clutter reduction</li><li>Concentration risk: fewer permitted operators may acquire monopoly power — connect to your market concentration evidence</li></ul>
+                <ul className="tradeoff-list"><li>Stricter control</li><li>Risk of weaker competition</li><li>Possible clutter reduction</li><li>Concentration risk: fewer permitted operators may acquire monopoly power — connect to your market concentration evidence</li></ul>
               </article>
             </div>
           </section>
@@ -846,8 +375,8 @@ export default function EconDossier({ onResponse, onComplete, savedResponses, on
               {renderSynthesis()}
             </div>
             <div style={{display:'flex',gap:'0.6rem',flexWrap:'wrap',marginTop:'1rem'}}>
-              <button className="btn primary" type="button" onClick={() => openActivity('6')}>Write recommendation</button>
-              <button className="btn" type="button" onClick={() => openActivity('7')}>Reflect on reasoning</button>
+              <button className="btn primary" type="button" onClick={() => openActivity('act-6')}>Write recommendation</button>
+              <button className="btn" type="button" onClick={() => openActivity('act-7')}>Reflect on reasoning</button>
             </div>
           </section>
 
@@ -857,131 +386,31 @@ export default function EconDossier({ onResponse, onComplete, savedResponses, on
       <footer>
         <p>A Level Economics 7.3 — Market Investigation Dossier. Your investigation notes are saved automatically and will be here when you return.</p>
       </footer>
-
-      {/* ── Reset confirm modal ── */}
-      <div className={cx('reset-confirm-backdrop', showResetConfirm && 'open')} id="resetConfirmBackdrop">
-        <div className="reset-confirm-dialog" role="alertdialog" aria-modal="true" aria-labelledby="resetConfirmTitle">
-          <h3 id="resetConfirmTitle">Reset all saved work?</h3>
-          <p>This will clear all saved task responses and evidence tags. This cannot be undone.</p>
-          <div className="reset-confirm-actions">
-            <button className="btn" type="button" onClick={() => setShowResetConfirm(false)}>Cancel</button>
-            <button className="btn danger" type="button" onClick={doReset}>Reset everything</button>
-          </div>
-        </div>
-      </div>
-
-      {/* ── Activity modal ── */}
-      <div
-        className={cx('modal-backdrop', activeActivity && 'open')}
-        id="modalBackdrop"
-        onClick={e => { if (e.target.id === 'modalBackdrop') maybeCloseActivity() }}
-      >
-        <section className="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" aria-describedby="modalPrompt">
-          <div className="modal-header">
-            <button className="modal-nav-btn" type="button" onClick={() => navigateActivity('backward')} disabled={activityIndex <= 0} aria-label="Previous task">‹</button>
-            <div style={{flex:1,minWidth:0}}>
-              <span className="eyebrow" style={{color:'rgba(255,255,255,0.76)'}}>
-                {activeActivity ? `Task ${activityIndex + 1} of ${activities.length}` : 'Investigation task'}
-              </span>
-              <h2 id="modalTitle">{activeActivity ? `${activeActivity.id}. ${activeActivity.title}` : ''}</h2>
-            </div>
-            <div className="modal-header-end">
-              <button className="modal-nav-btn" type="button" onClick={() => navigateActivity('forward')} disabled={activityIndex >= activities.length - 1} aria-label="Next task">›</button>
-              <button className="modal-close" type="button" onClick={maybeCloseActivity} aria-label="Close dialog">×</button>
-            </div>
-          </div>
-          {showUnsavedWarning && (
-            <div className="unsaved-warning">
-              <span>You have unsaved text — your response will be lost.</span>
-              <div className="unsaved-actions">
-                <button className="btn" type="button" onClick={discardAndResolve}>Discard and continue</button>
-                <button className="btn primary" type="button" onClick={saveAndResolve}>Save and continue</button>
-              </div>
-            </div>
-          )}
-          <div className={cx('modal-body', activitySlideDir && `slide-${activitySlideDir}`)} id="modalBody" key={activeActivityId}>
-            {activeActivity && (
-              <>
-                <section className="modal-card prompt" id="modalPrompt">
-                  <h3>Problem</h3>
-                  <p>{activeActivity.prompt}</p>
-                </section>
-                <section className="modal-card task">
-                  <h3>Your task</h3>
-                  <p>{activeActivity.task}</p>
-                  {renderActivitySupport(activeActivity)}
-                  {activeActivity.tools?.length > 0 && (
-                    <>
-                      <h3 style={{marginTop:'1rem'}}>Suggested economist tools</h3>
-                      <div className="toolkit-links" aria-label="Suggested Economist's Toolkit concepts">
-                        {activeActivity.tools.map(toolId => {
-                          const t = getTool(toolId)
-                          return t ? (
-                            <button key={toolId} type="button" onClick={() => openConceptFromActivity(toolId)}>{t.title}</button>
-                          ) : null
-                        })}
-                      </div>
-                    </>
-                  )}
-                  <h3 style={{marginTop:'1rem'}}>Suggested case file sections</h3>
-                  <div className="review-links" aria-label="Suggested case file sections">
-                    {activeActivity.review.map(link => (
-                      <button key={link.target} type="button" onClick={() => { closeActivity(); setTimeout(() => document.getElementById(link.target)?.scrollIntoView({behavior:'smooth',block:'start'}), 50) }}>
-                        {link.label}
-                      </button>
-                    ))}
-                  </div>
-                </section>
-                <section className="modal-card">
-                  <label htmlFor="activityResponse"><strong>Your response</strong></label>
-                  <p className="empty-state">Use evidence from the case file and concepts from the Economist's Toolkit. This is not a quiz answer; it is an adviser note.</p>
-                  <textarea
-                    id="activityResponse"
-                    placeholder="Write your response here..."
-                    value={draftResponse}
-                    onChange={e => { setDraftResponse(e.target.value); setShowUnsavedWarning(false) }}
-                  />
-                </section>
-                {renderCompareGuidance(activeActivity.id)}
-                <div className="modal-actions">
-                  <div style={{display:'flex',gap:'0.6rem',flexWrap:'wrap'}}>
-                    <button className="btn primary" type="button" onClick={handleSaveResponse}>Save response</button>
-                    <button className="btn" type="button" onClick={maybeCloseActivity}>Close</button>
-                  </div>
-                  <span className="save-status" role="status" aria-live="polite">{saveStatus}</span>
-                </div>
-              </>
-            )}
-          </div>
-        </section>
-      </div>
-
-      {/* ── Concept modal ── */}
-      <div
-        className={cx('modal-backdrop', 'concept-backdrop', activeTool && 'open')}
-        id="conceptModalBackdrop"
-        onClick={e => { if (e.target.id === 'conceptModalBackdrop') closeConcept() }}
-      >
-        <section className="modal concept-modal" role="dialog" aria-modal="true" aria-labelledby="conceptModalTitle" aria-describedby="conceptModalIntro">
-          <div className="modal-header">
-            <button className="modal-nav-btn" type="button" onClick={() => navigateConcept('backward')} disabled={conceptIndex <= 0} aria-label="Previous concept">‹</button>
-            <div style={{flex:1,minWidth:0}}>
-              <span className="eyebrow" style={{color:'rgba(255,255,255,0.76)'}}>
-                {activeTool ? `Concept ${conceptIndex + 1} of ${conceptTools.length}` : "Economist's Toolkit"}
-              </span>
-              <h2 id="conceptModalTitle">{activeTool?.title ?? ''}</h2>
-            </div>
-            <div className="modal-header-end">
-              <button className="modal-nav-btn" type="button" onClick={() => navigateConcept('forward')} disabled={conceptIndex >= conceptTools.length - 1} aria-label="Next concept">›</button>
-              <button className="modal-close" type="button" onClick={closeConcept} aria-label="Close concept dialog">×</button>
-            </div>
-          </div>
-          <div className={cx('modal-body', conceptSlideDir && `slide-${conceptSlideDir}`)} id="conceptModalBody" key={activeConceptId}>
-            {activeTool && renderConceptContent(activeTool)}
-          </div>
-        </section>
-      </div>
-
     </div>
+  )
+}
+
+// ── Exported lab component ────────────────────────────────────────────────────
+
+export default function EconDossier({ onResponse, onComplete, savedResponses, isCompleted, onReset, backHref }) {
+  return (
+    <LabShell
+      config={config}
+      onResponse={onResponse}
+      onComplete={onComplete}
+      savedResponses={savedResponses}
+      isCompleted={isCompleted}
+      onReset={onReset}
+      backHref={backHref}
+      className={styles.labShell}
+    >
+      {({ openActivity, responses, onSave }) => (
+        <DossierContent
+          responses={responses}
+          onSave={onSave}
+          openActivity={openActivity}
+        />
+      )}
+    </LabShell>
   )
 }

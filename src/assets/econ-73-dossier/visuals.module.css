@@ -1,0 +1,203 @@
+/* ── Toolkit visual component styles ─────────────────────────────────────────
+   Rendered inside FloatingPanel portals, so these use --econ-* vars forwarded
+   via themeVars rather than relying on .root inheritance.                     */
+
+.wrap {
+  border: 2px solid var(--econ-navy, #10162d);
+  border-top: 7px solid var(--econ-blue, #243f75);
+  background: #fffdf6;
+  padding: 0.82rem;
+  overflow: visible;
+}
+
+.wrap h3 {
+  margin: 0 0 0.65rem;
+  font-size: 1.08rem;
+  color: var(--econ-navy, #10162d);
+}
+
+.caption {
+  color: var(--muted, #58616f);
+  font-size: 0.9rem;
+  margin-top: 0.85rem;
+  margin-bottom: 0;
+}
+
+.figureLabel {
+  display: inline-block;
+  margin-bottom: 0.45rem;
+  color: var(--econ-red-dark, #982822);
+  font-size: 0.68rem;
+  font-weight: 950;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.figureContext {
+  margin: -0.25rem 0 0.75rem;
+  color: var(--muted, #58616f);
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+/* ── SVG wrap (Tradeoff, Innovation) ─────────────────────────────────────── */
+.svgWrap {
+  position: relative;
+  background:
+    linear-gradient(rgba(244,234,215,0.92), rgba(244,234,215,0.92)),
+    repeating-linear-gradient(0deg, rgba(16,22,45,0.08) 0 1px, transparent 1px 26px),
+    repeating-linear-gradient(90deg, rgba(16,22,45,0.06) 0 1px, transparent 1px 26px);
+  border: 1.5px solid rgba(16,22,45,0.45);
+  min-height: 180px;
+  padding: 1.35rem 0.85rem 0.85rem;
+  display: grid;
+  place-items: center;
+  overflow: visible;
+}
+
+.svgWrap::before {
+  content: "FIGURE";
+  position: absolute;
+  left: 0.55rem;
+  top: 0.45rem;
+  color: rgba(16,22,45,0.48);
+  font-size: 0.58rem;
+  font-weight: 950;
+  letter-spacing: 0.15em;
+}
+
+.svgWrap svg {
+  width: 100%;
+  max-width: 720px;
+  height: auto;
+  display: block;
+}
+
+/* ── Bar chart (VisualProductive) ────────────────────────────────────────── */
+.barChart {
+  display: grid;
+  gap: 0.65rem;
+  margin-top: 0.75rem;
+  border: 1.5px solid rgba(16,22,45,0.45);
+  background:
+    linear-gradient(rgba(244,234,215,0.92), rgba(244,234,215,0.92)),
+    repeating-linear-gradient(0deg, rgba(16,22,45,0.08) 0 1px, transparent 1px 26px),
+    repeating-linear-gradient(90deg, rgba(16,22,45,0.06) 0 1px, transparent 1px 26px);
+  padding: 1rem;
+}
+
+.barRow {
+  display: grid;
+  grid-template-columns: minmax(74px, 100px) minmax(0, 1fr) minmax(48px, 60px);
+  gap: 0.75rem;
+  align-items: center;
+  font-size: 0.9rem;
+  color: var(--econ-navy, #10162d);
+}
+
+.barTrack {
+  height: 0.85rem;
+  border-radius: 999px;
+  background: #e2e8f0;
+  overflow: hidden;
+}
+
+.barFill {
+  height: 100%;
+  border-radius: 999px;
+  background: var(--econ-red, #c9362d);
+}
+
+.barFillBlue {
+  background: var(--econ-blue, #243f75);
+}
+
+/* ── Cost gap (VisualSocialCost) ─────────────────────────────────────────── */
+.costGap {
+  position: relative;
+  background:
+    linear-gradient(rgba(244,234,215,0.92), rgba(244,234,215,0.92)),
+    repeating-linear-gradient(0deg, rgba(16,22,45,0.08) 0 1px, transparent 1px 26px),
+    repeating-linear-gradient(90deg, rgba(16,22,45,0.06) 0 1px, transparent 1px 26px);
+  border: 1.5px solid rgba(16,22,45,0.45);
+  display: grid;
+  align-content: center;
+  gap: 0.95rem;
+  padding: 1.6rem 1rem 1rem;
+}
+
+.costGap::before {
+  content: "FIGURE";
+  position: absolute;
+  left: 0.55rem;
+  top: 0.45rem;
+  color: rgba(16,22,45,0.48);
+  font-size: 0.58rem;
+  font-weight: 950;
+  letter-spacing: 0.15em;
+}
+
+.costLine {
+  display: grid;
+  grid-template-columns: minmax(112px, 0.42fr) minmax(0, 1fr);
+  gap: 0.85rem;
+  align-items: center;
+}
+
+.costLine strong {
+  line-height: 1.15;
+  color: var(--econ-navy, #10162d);
+  font-size: 0.92rem;
+}
+
+.costBox {
+  display: flex;
+  align-items: stretch;
+  height: 2.15rem;
+  border: 1.5px solid var(--econ-navy, #10162d);
+  background: #e9dfcf;
+  overflow: hidden;
+}
+
+.segment {
+  display: grid;
+  place-items: center;
+  color: white;
+  font-weight: 920;
+  font-size: 0.78rem;
+  min-width: 2.5rem;
+}
+
+.segmentPrivate  { background: var(--econ-blue, #243f75); }
+.segmentExternal { background: var(--econ-red, #c9362d); }
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem 0.85rem;
+  align-items: center;
+  margin-top: 0.7rem;
+  padding-top: 0.7rem;
+  border-top: 1.5px solid rgba(16,22,45,0.18);
+  color: var(--muted, #58616f);
+  font-size: 0.82rem;
+  font-weight: 750;
+}
+
+.legendItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  white-space: nowrap;
+}
+
+.legendSwatch {
+  width: 0.85rem;
+  height: 0.85rem;
+  border: 1.5px solid var(--econ-navy, #10162d);
+  display: inline-block;
+  flex: 0 0 auto;
+}
+
+.legendSwatchPrivate  { background: var(--econ-blue, #243f75); }
+.legendSwatchExternal { background: var(--econ-red, #c9362d); }
