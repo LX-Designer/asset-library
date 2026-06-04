@@ -4,21 +4,39 @@
   height: 100%;
 }
 
-/* Eyebrow count shown at top of scrollable body ("Concept 3 of 6") */
+/* Sticky title header — count eyebrow + concept title */
+.header {
+  padding: 16px 18px 14px;
+  border-bottom: var(--fp-border-width, 1px) solid var(--fp-border, var(--lab-rule));
+  background: var(--fp-bg, var(--lab-surface));
+  flex-shrink: 0;
+}
+
+/* Eyebrow count ("Concept 3 of 6") */
 .count {
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--lab-ink-light, #9ca3af);
-  margin: 0 0 2px;
+  color: var(--lab-ink-mid);
+  margin: 0 0 4px;
+}
+
+/* Concept title */
+.title {
+  font-family: var(--lab-font-serif, Georgia, 'Times New Roman', serif);
+  font-size: 19px;
+  font-weight: 700;
+  color: var(--fp-ink, #111827);
+  line-height: 1.25;
+  margin: 0;
 }
 
 /* Scrollable body */
 .body {
   flex: 1;
   overflow-y: auto;
-  padding: 16px 14px;
+  padding: 14px;
   display: flex;
   flex-direction: column;
   gap: 14px;

@@ -35,6 +35,7 @@ export default function ConceptsModal({
       defaultHeight={680}
       initialState="closed"
       modalFirst
+      floatOnly
       noTab
       accentHeader
       triggerOpen={triggerOpen}
@@ -43,13 +44,17 @@ export default function ConceptsModal({
     >
       {concept && (
         <div className={s.wrap}>
+          {/* Sticky title header — count eyebrow + concept title */}
+          <div className={s.header} key={`h-${activeConceptId}`}>
+            <p className={s.count}>Concept {conceptIndex + 1} of {concepts.length}</p>
+            <h2 className={s.title}>{concept.title}</h2>
+          </div>
+
           <div
             className={`${s.body} ${slideDir ? s[`slide${slideDir.charAt(0).toUpperCase() + slideDir.slice(1)}`] : ''}`}
             key={activeConceptId}
             onAnimationEnd={() => setSlideDir(null)}
           >
-            {/* Eyebrow count — sits at the top of the scrollable body */}
-            <p className={s.count}>Concept {conceptIndex + 1} of {concepts.length}</p>
             {concept.summary && (
               <p className={s.summary}>{concept.summary}</p>
             )}
