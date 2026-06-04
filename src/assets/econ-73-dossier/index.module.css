@@ -34,6 +34,7 @@
   --lab-accent-subtle:  rgba(201, 54, 45, 0.08);
   --lab-ink:            var(--econ-navy);
   --lab-ink-mid:        var(--muted);
+  --lab-tab-ink:        #111;           /* sidebar tab labels — neutral black not navy */
   --lab-font-serif:     Georgia, 'Times New Roman', serif;
 
   /* Page background — full layered gradient with grid texture and radial red tint.
