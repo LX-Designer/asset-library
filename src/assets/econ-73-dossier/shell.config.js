@@ -93,7 +93,7 @@ export default {
   labId: 'econ-73-dossier',
 
   nav: {
-    title: 'Market Investigation Dossier',
+    title: 'The Scooter Market: Efficiency or Market Failure?',
     subtitle: 'A Level Economics 7.3',
     showWorkExplore: true,
     sections: [
@@ -123,7 +123,7 @@ export default {
     header: {
       fpTitle:  'Case support',        // shown in the FloatingPanel PanelHeader
       eyebrow:  'Activity Guide',      // shown in the ActivitiesTab header
-      title:    'Market Investigation Dossier',
+      title:    'The Scooter Market: Efficiency or Market Failure?',
       subtitle: '',
     },
     conceptsIntro: 'These economic concepts are the analytical tools you should apply when completing the activities.',
