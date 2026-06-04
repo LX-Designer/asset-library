@@ -80,10 +80,8 @@ export default function ActivityPanel({
   const ActForm = activeActivityId ? config.activityForms?.[activeActivityId] : null
 
   const totalActivities = config.activities.length
-  const titleEyebrow = activity
-    ? (activity.number != null
-        ? `Task ${activity.number} of ${totalActivities}`
-        : activity.label)
+  const titleEyebrow = activity?.number != null
+    ? `Task ${activity.number} of ${totalActivities}`
     : undefined
   const panelTitle = activity
     ? (activity.number != null ? `${activity.number}. ${activity.title}` : activity.title)

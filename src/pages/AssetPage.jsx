@@ -3,6 +3,14 @@ import { getAssetMeta } from '../registry.js'
 import AssetWrapper from '../components/AssetWrapper/AssetWrapper.jsx'
 import styles from './AssetPage.module.css'
 
+const LEVEL_LABELS = {
+  'lower-secondary':  'Lower Secondary',
+  'middle-secondary': 'Middle Secondary',
+  'senior-secondary': 'Senior Secondary',
+  'undergraduate':    'Undergraduate',
+  'postgraduate':     'Postgraduate',
+}
+
 export default function AssetPage() {
   const { assetId } = useParams()
   const meta = getAssetMeta(assetId)
@@ -35,14 +43,19 @@ export default function AssetPage() {
 
         <header className={styles.assetHeader}>
           <div className={styles.badges}>
-            <span className={styles.difficultyBadge}>{meta.level ?? meta.difficulty}</span>
+            <span className={styles.difficultyBadge}>
+              {LEVEL_LABELS[meta.level] ?? meta.level ?? meta.difficulty ?? '—'}
+            </span>
             <span className={styles.timeBadge}>{meta.estimatedMinutes} min</span>
           </div>
 
           <div className={styles.tags}>
-            {meta.tags.map(tag => (
-              <span key={tag} className={styles.tag}>{tag}</span>
-            ))}
+            {meta.discipline && (
+              <span className={styles.tag}>{meta.discipline}</span>
+            )}
+            {meta.labType && (
+              <span className={styles.tag}>{meta.labType}</span>
+            )}
           </div>
 
           <h1 className={styles.title}>{meta.title}</h1>

@@ -9,10 +9,6 @@ const LEVEL_CONFIG = {
   'postgraduate':     { label: 'Postgraduate',     color: 'rose'   },
 }
 
-export function getLevelLabel(level) {
-  return LEVEL_CONFIG[level]?.label ?? level ?? '—'
-}
-
 export default function AssetCard({ asset }) {
   const cfg     = LEVEL_CONFIG[asset.level] ?? { label: asset.level ?? '—', color: 'blue' }
   const colorCls = styles[`level--${cfg.color}`]

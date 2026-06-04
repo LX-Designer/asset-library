@@ -1,10 +1,6 @@
 export default {
   id: 'econ-73-efficiency',
   title: 'Efficiency & Market Failure',
-  subject: 'Economics',
-  level: 'Cambridge A-Level',
-  topic: '7.3',
-  duration: '90–150 minutes',
   estimatedMinutes: 120,
   level: 'senior-secondary',
   discipline: 'Economics',
