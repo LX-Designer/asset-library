@@ -1,9 +1,9 @@
 import FloatingPanel from '../../components/FloatingPanel'
 import s from './LabSidebar.module.css'
 
-const TAB_LABELS = {
+export const TAB_LABELS = {
   activities: 'Activities',
-  concepts:   'Concepts',
+  concepts:   'Toolkit',
   notes:      'Notes',
 }
 

@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import './tokens.css'
 import LabNav from './LabNav/LabNav.jsx'
-import LabSidebar from './LabSidebar/LabSidebar.jsx'
+import LabSidebar, { TAB_LABELS } from './LabSidebar/LabSidebar.jsx'
 import ActivitiesTab from './LabSidebar/tabs/ActivitiesTab.jsx'
 import ConceptsTab from './LabSidebar/tabs/ConceptsTab.jsx'
 import NotesTab from './LabSidebar/tabs/NotesTab.jsx'
@@ -334,7 +334,7 @@ export default function LabShell({
               className={s.sideTab}
               onClick={() => { setGuideActiveTab(tab); setGuideDockTrigger(t => t + 1) }}
             >
-              {tab.charAt(0).toUpperCase() + tab.slice(1)}
+              {TAB_LABELS[tab] ?? tab.charAt(0).toUpperCase() + tab.slice(1)}
             </button>
           ))}
         </div>
