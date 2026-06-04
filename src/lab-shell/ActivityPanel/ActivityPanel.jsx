@@ -79,16 +79,20 @@ export default function ActivityPanel({
 
   const ActForm = activeActivityId ? config.activityForms?.[activeActivityId] : null
 
+  const totalActivities = config.activities.length
   const titleEyebrow = activity
     ? (activity.number != null
-        ? `Activity ${activity.number} · ${activity.thinkingMove}`
-        : `${activity.label} · ${activity.thinkingMove}`)
+        ? `Task ${activity.number} of ${totalActivities}`
+        : activity.label)
     : undefined
+  const panelTitle = activity
+    ? (activity.number != null ? `${activity.number}. ${activity.title}` : activity.title)
+    : 'Activity'
 
   return (
     <FloatingPanel
       id={`${labId}-activity`}
-      title={activity?.title ?? 'Activity'}
+      title={panelTitle}
       titleEyebrow={titleEyebrow}
       side="right"
       width={600}

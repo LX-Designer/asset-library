@@ -123,6 +123,20 @@
   color: rgba(255, 255, 255, 0.70);
 }
 
+/* Large title — used when titleEyebrow is present (two-line header) */
+.headerTitleLarge {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--fp-ink, #111827);
+  line-height: 1.25;
+  white-space: normal;
+  min-width: 0;
+}
+
+.headerAccent .headerTitleLarge {
+  color: #ffffff;
+}
+
 .header:active { cursor: grabbing; }
 
 /* Sidebar-only panels — header is not a drag handle */

@@ -55,7 +55,7 @@ function PanelHeader({ title, titleEyebrow, state, onTransition, onModalFirstPop
     <div className={headerClass}>
       <div className={s.headerTitleWrap}>
         {titleEyebrow && <span className={s.headerEyebrow}>{titleEyebrow}</span>}
-        <span className={s.headerTitle}>{title}</span>
+        <span className={titleEyebrow ? s.headerTitleLarge : s.headerTitle}>{title}</span>
       </div>
       <div className={s.headerBtns}>
         {showNav && isDocked && (
