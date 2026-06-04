@@ -284,7 +284,9 @@
 
 .floatingPanel .header {
   cursor: grab;
-  border-radius: var(--fp-radius, 6px) var(--fp-radius, 6px) 0 0;
+  /* overflow:hidden on .floatingPanel clips to the panel's border-radius —
+     a separate border-radius on the header is not needed and causes the
+     header background to leave white gaps in the panel's top corners. */
 }
 
 .floatingPanel .header:active { cursor: grabbing; }
