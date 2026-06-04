@@ -262,12 +262,13 @@
 }
 
 .navBtn {
-  padding: 7px 14px;
-  background: none;
-  border: 1px solid var(--modal-border, #e5e7eb);
-  border-radius: 4px;
-  font-size: 12px;
-  color: var(--modal-ink-mid, #4b5563);
+  padding: 5px 10px;
+  background: var(--modal-panel-bg, #ffffff);
+  border: 1px solid var(--modal-ink-light, #9ca3af);
+  border-radius: 3px;
+  font-size: 11.5px;
+  font-weight: 500;
+  color: var(--modal-accent, #374151);
   cursor: pointer;
   transition: all var(--modal-transition, 160ms ease);
   white-space: nowrap;
@@ -276,7 +277,6 @@
 .navBtn:hover:not(:disabled) {
   background: var(--modal-subtle, #f3f4f6);
   border-color: var(--modal-accent, #374151);
-  color: var(--modal-accent, #374151);
 }
 
 .navBtn:disabled {
