@@ -1,21 +1,30 @@
 import { Link } from 'react-router-dom'
 import styles from './AssetCard.module.css'
 
-const DIFFICULTY_VARIANT = {
-  beginner:     'green',
-  intermediate: 'blue',
-  advanced:     'purple',
+const LEVEL_CONFIG = {
+  'lower-primary':    { label: 'Lower Primary',    color: 'green'  },
+  'upper-primary':    { label: 'Upper Primary',    color: 'amber'  },
+  'lower-secondary':  { label: 'Lower Secondary',  color: 'teal'   },
+  'middle-secondary': { label: 'Middle Secondary', color: 'blue'   },
+  'senior-secondary': { label: 'Senior Secondary', color: 'violet' },
+  'undergraduate':    { label: 'Undergraduate',    color: 'rose'   },
+  'postgraduate':     { label: 'Postgraduate',     color: 'slate'  },
+}
+
+export function getLevelLabel(level) {
+  return LEVEL_CONFIG[level]?.label ?? level ?? '—'
 }
 
 export default function AssetCard({ asset }) {
-  const variant = DIFFICULTY_VARIANT[asset.difficulty] ?? 'blue'
+  const cfg     = LEVEL_CONFIG[asset.level] ?? { label: asset.level ?? '—', color: 'blue' }
+  const colorCls = styles[`level--${cfg.color}`]
 
   return (
     <article className={styles.card}>
       <div className={styles.body}>
         <div className={styles.topRow}>
-          <span className={`${styles.difficulty} ${styles[`difficulty--${variant}`]}`}>
-            {asset.difficulty}
+          <span className={`${styles.level} ${colorCls}`}>
+            {cfg.label}
           </span>
           <span className={styles.time}>{asset.estimatedMinutes} min</span>
         </div>

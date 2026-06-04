@@ -35,7 +35,7 @@ export default function AssetPage() {
 
         <header className={styles.assetHeader}>
           <div className={styles.badges}>
-            <span className={styles.difficultyBadge}>{meta.difficulty}</span>
+            <span className={styles.difficultyBadge}>{meta.level ?? meta.difficulty}</span>
             <span className={styles.timeBadge}>{meta.estimatedMinutes} min</span>
           </div>
 
