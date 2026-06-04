@@ -79,10 +79,17 @@ export default function ActivityPanel({
 
   const ActForm = activeActivityId ? config.activityForms?.[activeActivityId] : null
 
+  const titleEyebrow = activity
+    ? (activity.number != null
+        ? `Activity ${activity.number} · ${activity.thinkingMove}`
+        : `${activity.label} · ${activity.thinkingMove}`)
+    : undefined
+
   return (
     <FloatingPanel
       id={`${labId}-activity`}
-      title={activity?.label ?? 'Activity'}
+      title={activity?.title ?? 'Activity'}
+      titleEyebrow={titleEyebrow}
       side="right"
       width={600}
       defaultDockedWidth={config.activityPanel?.defaultDockedWidth ?? 480}
@@ -102,6 +109,7 @@ export default function ActivityPanel({
     >
       {activity && (
         <ActivityModal
+          noHeader
           activityNumber={activity.number ?? null}
           activityLabel={activity.label}
           thinkingMove={activity.thinkingMove ?? ''}

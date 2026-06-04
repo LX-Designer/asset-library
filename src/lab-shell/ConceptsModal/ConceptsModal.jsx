@@ -30,6 +30,7 @@ export default function ConceptsModal({
     <FloatingPanel
       id={`${labId}-concepts`}
       title={concept?.title ?? 'Concept'}
+      titleEyebrow={concept ? `Concept ${conceptIndex + 1} of ${concepts.length}` : undefined}
       side="right"
       width={580}
       defaultHeight={680}
@@ -44,12 +45,6 @@ export default function ConceptsModal({
     >
       {concept && (
         <div className={s.wrap}>
-          {/* Sticky title header — count eyebrow + concept title */}
-          <div className={s.header} key={`h-${activeConceptId}`}>
-            <p className={s.count}>Concept {conceptIndex + 1} of {concepts.length}</p>
-            <h2 className={s.title}>{concept.title}</h2>
-          </div>
-
           <div
             className={`${s.body} ${slideDir ? s[`slide${slideDir.charAt(0).toUpperCase() + slideDir.slice(1)}`] : ''}`}
             key={activeConceptId}
