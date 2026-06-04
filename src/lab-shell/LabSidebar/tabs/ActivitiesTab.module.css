@@ -10,7 +10,7 @@
   font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--lab-ink-light);
+  color: var(--lab-ink-mid);
   margin-bottom: 3px;
 }
 
@@ -31,7 +31,7 @@
 
 .progress {
   font-size: 11px;
-  color: var(--lab-ink-light);
+  color: var(--lab-ink-mid);
   margin-top: 8px;
 }
 
