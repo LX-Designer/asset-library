@@ -37,8 +37,8 @@
 
 .progressFill {
   display: block;
-  height: 3px;
-  background: var(--lab-rule);
+  height: 4px;
+  background: var(--lab-progress-track, var(--lab-rule));
   border-radius: 2px;
   margin-top: 4px;
   overflow: hidden;
@@ -48,7 +48,7 @@
   content: '';
   display: block;
   height: 100%;
-  background: var(--lab-complete);
+  background: var(--lab-progress-fill, var(--lab-complete));
   border-radius: 2px;
   width: var(--progress, 0%);
   transition: width 400ms ease;

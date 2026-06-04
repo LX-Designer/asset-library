@@ -122,9 +122,9 @@ export default {
     },
     header: {
       fpTitle:  'Case support',        // shown in the FloatingPanel PanelHeader
-      eyebrow:  'Investigation Tools', // shown in the ActivitiesTab header
-      title:    'Case support',
-      subtitle: 'Choose a tab to jump through the case file, open tasks, or access economic concepts.',
+      eyebrow:  'Activity Guide',      // shown in the ActivitiesTab header
+      title:    'Market Investigation Dossier',
+      subtitle: '',
     },
   },
 

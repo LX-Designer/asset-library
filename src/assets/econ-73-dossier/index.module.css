@@ -35,6 +35,8 @@
   --lab-ink:            var(--econ-navy);
   --lab-ink-mid:        var(--muted);
   --lab-tab-ink:        #111;           /* sidebar tab labels — neutral black not navy */
+  --lab-progress-track: rgba(16,22,45,0.10);  /* very light tint — fill stands out clearly */
+  --lab-progress-fill:  #10162d;              /* navy fill — high contrast on cream paper */
   --lab-font-serif:     Georgia, 'Times New Roman', serif;
 
   /* Page background — full layered gradient with grid texture and radial red tint.
