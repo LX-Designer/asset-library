@@ -72,11 +72,23 @@
 
 .tag {
   font-size: var(--font-size-xs);
-  color: var(--color-text-tertiary);
-  background: var(--color-bg);
-  border: 1px solid var(--color-border);
+  font-weight: var(--font-weight-medium);
   padding: 2px var(--space-2);
   border-radius: var(--radius-sm);
+}
+
+/* Discipline — solid neutral pill */
+.tagDiscipline {
+  color: var(--color-text-secondary);
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+}
+
+/* Lab type — outlined accent pill */
+.tagLabType {
+  color: var(--color-accent);
+  background: var(--color-accent-subtle);
+  border: 1px solid var(--color-accent-muted);
 }
 
 .footer {

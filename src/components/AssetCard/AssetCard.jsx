@@ -31,9 +31,12 @@ export default function AssetCard({ asset }) {
         <p className={styles.description}>{asset.description}</p>
 
         <div className={styles.tags}>
-          {asset.tags.map(tag => (
-            <span key={tag} className={styles.tag}>{tag}</span>
-          ))}
+          {asset.discipline && (
+            <span className={`${styles.tag} ${styles.tagDiscipline}`}>{asset.discipline}</span>
+          )}
+          {asset.labType && (
+            <span className={`${styles.tag} ${styles.tagLabType}`}>{asset.labType}</span>
+          )}
         </div>
       </div>
 
