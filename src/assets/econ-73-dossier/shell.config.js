@@ -25,7 +25,7 @@ const stagePhase = {
 // Nav tokens are NOT forwarded — the nav bar is not a portal.
 const THEME_VARS = [
   '--lab-bg', '--lab-surface', '--lab-surface-mid',
-  '--lab-ink', '--lab-ink-mid', '--lab-ink-light',
+  '--lab-ink', '--lab-ink-mid', '--lab-ink-light', '--lab-tab-ink',
   '--lab-rule', '--lab-rule-light',
   '--lab-accent', '--lab-accent-hover', '--lab-accent-subtle',
   '--lab-complete', '--lab-complete-subtle', '--lab-complete-muted',
