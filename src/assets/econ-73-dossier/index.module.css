@@ -51,8 +51,8 @@
 
   /* Rule / border warmth — darker navy so tab strip and internal dividers
      read clearly against the warm paper background. */
-  --lab-rule:            rgba(16, 22, 45, 0.55);
-  --lab-rule-light:      rgba(16, 22, 45, 0.28);
+  --lab-rule:            rgba(16, 22, 45, 0.72);
+  --lab-rule-light:      rgba(16, 22, 45, 0.35);
   --lab-surface-mid:     rgba(16, 22, 45, 0.04);
 
   /* FloatingPanel + ActivityModal surfaces — set directly (not through the
