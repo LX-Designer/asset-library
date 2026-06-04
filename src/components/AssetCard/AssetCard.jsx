@@ -2,13 +2,11 @@ import { Link } from 'react-router-dom'
 import styles from './AssetCard.module.css'
 
 const LEVEL_CONFIG = {
-  'lower-primary':    { label: 'Lower Primary',    color: 'green'  },
-  'upper-primary':    { label: 'Upper Primary',    color: 'amber'  },
   'lower-secondary':  { label: 'Lower Secondary',  color: 'teal'   },
   'middle-secondary': { label: 'Middle Secondary', color: 'blue'   },
   'senior-secondary': { label: 'Senior Secondary', color: 'violet' },
-  'undergraduate':    { label: 'Undergraduate',    color: 'rose'   },
-  'postgraduate':     { label: 'Postgraduate',     color: 'slate'  },
+  'undergraduate':    { label: 'Undergraduate',    color: 'amber'  },
+  'postgraduate':     { label: 'Postgraduate',     color: 'rose'   },
 }
 
 export function getLevelLabel(level) {

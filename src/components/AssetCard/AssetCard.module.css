@@ -38,13 +38,11 @@
   border-radius: var(--radius-full);
 }
 
-.level--green  { color: #15803d; background: #dcfce7; }
-.level--amber  { color: #b45309; background: #fef3c7; }
 .level--teal   { color: #0f766e; background: #ccfbf1; }
 .level--blue   { color: #1d4ed8; background: #dbeafe; }
 .level--violet { color: #6d28d9; background: #ede9fe; }
+.level--amber  { color: #b45309; background: #fef3c7; }
 .level--rose   { color: #be123c; background: #ffe4e6; }
-.level--slate  { color: #475569; background: #f1f5f9; }
 
 .time {
   font-size: var(--font-size-xs);
