@@ -1,6 +1,6 @@
 import s from './ConceptsTab.module.css'
 
-export default function ConceptsTab({ concepts, onOpenConcept }) {
+export default function ConceptsTab({ concepts, onOpenConcept, intro }) {
   if (!concepts?.length) return (
     <div className={s.empty}>No concepts configured for this lab.</div>
   )
@@ -8,7 +8,7 @@ export default function ConceptsTab({ concepts, onOpenConcept }) {
   return (
     <div className={s.wrap}>
       <p className={s.intro}>
-        These are analytical tools. Use them as lenses when working through activities.
+        {intro ?? 'These are analytical tools. Use them as lenses when working through activities.'}
       </p>
       <ul className={s.list} role="list">
         {concepts.map(concept => (

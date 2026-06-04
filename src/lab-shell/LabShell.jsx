@@ -254,6 +254,7 @@ export default function LabShell({
           <ConceptsTab
             concepts={config.concepts}
             onOpenConcept={openConcept}
+            intro={config.sidebar?.conceptsIntro}
           />
         )}
         {guideActiveTab === 'notes' && config.features?.notes && (

@@ -126,6 +126,7 @@ export default {
       title:    'Market Investigation Dossier',
       subtitle: '',
     },
+    conceptsIntro: 'These economic concepts are the analytical tools you should apply when completing the activities.',
   },
 
   activityPanel: {
