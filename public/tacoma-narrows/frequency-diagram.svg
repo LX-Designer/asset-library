@@ -21,7 +21,7 @@
   <line x1="560" y1="127" x2="560" y2="133" stroke="#4a4640" stroke-width="1"/>
   <text x="560" y="148" text-anchor="middle" font-size="9" fill="#8a8480">1.0</text>
 
-  <!-- ── MARKERS — all stems equal height; colour carries the hierarchy ── -->
+  <!-- ── MARKERS — equal stem heights; colour carries the hierarchy ── -->
 
   <!-- 0.2 Hz — torsional oscillation at collapse (accent red) -->
   <line x1="160" y1="74" x2="160" y2="128" stroke="#8b1a1a" stroke-width="2"/>
@@ -41,15 +41,14 @@
   <text x="560" y="68" text-anchor="middle" font-size="12" fill="#1a1814" font-weight="600">1.0 Hz</text>
   <text x="560" y="56" text-anchor="middle" font-size="8" fill="#4a4640" letter-spacing="0.1em">VORTEX SHEDDING (42 mph WIND)</text>
 
-  <!-- ── GAP BRACKET: 0.2 → 1.0 Hz ── -->
+  <!-- ── GAP BRACKET: 0.2 → 1.0 Hz — no interpretive label ── -->
   <line x1="160" y1="163" x2="560" y2="163" stroke="#8b1a1a" stroke-width="1.5" stroke-dasharray="5,3"/>
   <line x1="160" y1="158" x2="160" y2="168" stroke="#8b1a1a" stroke-width="1.5"/>
   <line x1="560" y1="158" x2="560" y2="168" stroke="#8b1a1a" stroke-width="1.5"/>
-  <text x="360" y="182" text-anchor="middle" font-size="9" fill="#8b1a1a" letter-spacing="0.1em">5× DIFFERENCE — RESONANCE REQUIRES THESE TO MATCH</text>
 
   <!-- ── CAPTION ── -->
-  <line x1="60" y1="200" x2="660" y2="200" stroke="rgba(26,24,20,0.1)" stroke-width="1"/>
-  <text x="360" y="217" text-anchor="middle" font-size="10" fill="#4a4640">For resonance to explain the torsional collapse, the vortex shedding frequency (1.0 Hz)</text>
-  <text x="360" y="233" text-anchor="middle" font-size="10" fill="#4a4640">must match the torsional oscillation frequency (0.2 Hz). It does not — by a factor of five.</text>
+  <line x1="60" y1="190" x2="660" y2="190" stroke="rgba(26,24,20,0.1)" stroke-width="1"/>
+  <text x="360" y="207" text-anchor="middle" font-size="10" fill="#4a4640">Frequencies recorded on the day of the collapse: torsional oscillation at collapse (0.2 Hz),</text>
+  <text x="360" y="223" text-anchor="middle" font-size="10" fill="#4a4640">natural vertical frequency of the bridge (0.6 Hz), and vortex shedding frequency at 42 mph wind (1.0 Hz).</text>
 
 </svg>
