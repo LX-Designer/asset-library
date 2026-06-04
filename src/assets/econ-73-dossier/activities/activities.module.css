@@ -115,6 +115,11 @@
   margin-top: 0.5rem;
 }
 
+.textarea::placeholder {
+  font-weight: 400;
+  color: var(--muted, #58616f);
+}
+
 .textarea:focus-visible {
   border-color: var(--econ-red, #c9362d);
   outline: 3px solid rgba(199,53,45,0.16);
