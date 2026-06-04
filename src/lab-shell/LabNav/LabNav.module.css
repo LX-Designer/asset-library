@@ -72,7 +72,7 @@
 .btn {
   padding: 5px 12px;
   background: none;
-  border: 1px solid var(--lab-nav-rule, var(--lab-rule));
+  border: 2px solid var(--lab-nav-rule, var(--lab-rule));
   border-radius: var(--lab-chrome-radius, 3px);
   font-size: var(--lab-chrome-label-size, 11px);
   font-weight: 600;
