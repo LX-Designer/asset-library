@@ -42,7 +42,7 @@
   flex: 1;
   font-size: var(--lab-chrome-font-size, 12px);
   font-weight: 500;
-  color: var(--lab-ink-mid);
+  color: var(--lab-ink);
 }
 
 .chips {
