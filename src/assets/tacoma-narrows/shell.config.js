@@ -66,7 +66,6 @@ export default {
   activities: [
     {
       id: 'act-1',
-      number: 1,
       label: 'Task 01',
       title: 'Initial hypothesis',
       thinkingMove: 'Hypothesise',
@@ -78,7 +77,6 @@ export default {
     },
     {
       id: 'act-2',
-      number: 2,
       label: 'Task 02',
       title: 'Frequency analysis',
       thinkingMove: 'Analyse',
@@ -90,7 +88,6 @@ export default {
     },
     {
       id: 'act-3',
-      number: 3,
       label: 'Task 03',
       title: 'Timeline reconstruction',
       thinkingMove: 'Analyse',
@@ -102,7 +99,6 @@ export default {
     },
     {
       id: 'act-4',
-      number: 4,
       label: 'Task 04',
       title: 'Design analysis',
       thinkingMove: 'Diagnose',
@@ -114,7 +110,6 @@ export default {
     },
     {
       id: 'act-5',
-      number: 5,
       label: 'Task 05',
       title: 'Expert evaluation',
       thinkingMove: 'Evaluate',
@@ -126,7 +121,6 @@ export default {
     },
     {
       id: 'act-6',
-      number: 6,
       label: 'Task 06',
       title: 'Tribunal report',
       thinkingMove: 'Synthesise',
