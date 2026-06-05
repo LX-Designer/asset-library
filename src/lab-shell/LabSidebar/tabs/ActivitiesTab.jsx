@@ -58,15 +58,16 @@ export default function ActivitiesTab({
       </div>
 
       <ul className={s.list} role="list">
-        {activities.map((act) => {
-          const status = getActivityStatus(act.id, responses)
+        {activities.map((act, i) => {
+          const status        = getActivityStatus(act.id, responses)
+          const activityLabel = `Activity ${i + 1}`
 
           return (
             <li key={act.id} className={s.item}>
               <button
                 className={s.btn}
                 onClick={() => onOpenActivity(act.id)}
-                aria-label={`${act.title} — ${labels[status] ?? status}`}
+                aria-label={`${activityLabel}: ${act.title} — ${labels[status] ?? status}`}
               >
                 <span
                   className={`${s.dot} ${status === 'complete' ? s.complete : ''} ${status === 'inprogress' ? s.inprogress : ''}`}
@@ -74,9 +75,7 @@ export default function ActivitiesTab({
                 />
 
                 <span className={s.meta}>
-                  {act.group && (
-                    <span className={s.group}>{act.group}</span>
-                  )}
+                  <span className={s.activityLabel}>{activityLabel}</span>
                   <span className={s.actTitle}>{act.title}</span>
                   <span className={`${s.statusText} ${status === 'complete' ? s.complete : ''} ${status === 'inprogress' ? s.inprogress : ''}`}>
                     {labels[status] ?? status}

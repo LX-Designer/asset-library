@@ -120,8 +120,8 @@ export default function ActivityPanel({
           evidenceSections={activity.evidenceSections ?? []}
           conceptLinks={activity.conceptLinks ?? []}
           conceptsLabel={config.conceptsLabel ?? 'Concepts'}
-          prevItem={prevActivity ? { id: prevActivity.id, label: prevActivity.title } : null}
-          nextItem={nextActivity ? { id: nextActivity.id, label: nextActivity.title } : null}
+          prevItem={prevActivity ? { id: prevActivity.id, label: `Activity ${actIndex}` } : null}
+          nextItem={nextActivity ? { id: nextActivity.id, label: `Activity ${actIndex + 2}` } : null}
           onNavigate={onNavigate}
           onScrollTo={onScrollTo}
           onOpenConcept={onOpenConcept}

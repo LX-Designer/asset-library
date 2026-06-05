@@ -126,16 +126,15 @@
   min-width: 0;
 }
 
-/* Group label — optional phase/stage line shown above the activity title */
-.group {
+/* Activity position label — "ACTIVITY 1", "ACTIVITY 2" etc. */
+.activityLabel {
   display: block;
-  font-size: 0.66rem;
-  font-weight: 900;
-  letter-spacing: 0.07em;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: var(--lab-accent);
-  line-height: 1.2;
-  margin-bottom: 0.1rem;
+  color: var(--lab-ink-light);
+  margin-bottom: 1px;
 }
 
 .actTitle {
