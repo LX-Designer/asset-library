@@ -423,6 +423,7 @@ export default function LabShell({
                 scaffold={activity.scaffold ?? null}
                 evidenceSections={activity.evidenceSections ?? []}
                 conceptLinks={activity.conceptLinks ?? []}
+                conceptsLabel={config.conceptsLabel ?? 'Concepts'}
                 prevItem={prevActivity ? { id: prevActivity.id, label: prevActivity.label } : null}
                 nextItem={nextActivity ? { id: nextActivity.id, label: nextActivity.label } : null}
                 onClose={() => setActiveActivityId(null)}

@@ -5,7 +5,7 @@ import Act4 from './activities/Act4.jsx'
 import Act5 from './activities/Act5.jsx'
 import Act6 from './activities/Act6.jsx'
 import Act7 from './activities/Act7.jsx'
-import { VisualProductive, VisualSocialCost, VisualTradeoff, VisualInnovation } from './visuals.jsx'
+import ConceptCard from './ConceptCard.jsx'
 import { conceptTools, activities as actData, relevanceRows } from './data.js'
 
 // ── Stage phase labels ────────────────────────────────────────────────────────
@@ -137,13 +137,8 @@ export default {
 
   activities,
   concepts,
-
-  conceptVisuals: {
-    productive:   VisualProductive,
-    'social-cost': VisualSocialCost,
-    tradeoff:     VisualTradeoff,
-    innovation:   VisualInnovation,
-  },
+  conceptComponent: ConceptCard,
+  conceptsLabel: "Economist's Toolkit",
 
   content: {
     maxWidth: '1100px',

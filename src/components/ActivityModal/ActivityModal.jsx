@@ -38,6 +38,7 @@ export default function ActivityModal({
   scaffold,
   evidenceSections = [],
   conceptLinks = [],
+  conceptsLabel = 'Concepts',
   prevItem,
   nextItem,
   onClose,
@@ -105,7 +106,7 @@ export default function ActivityModal({
 
         {conceptLinks.length > 0 && (
           <div className={s.conceptLinks}>
-            <div className={s.conceptLabel}>Economist's Toolkit</div>
+            <div className={s.conceptLabel}>{conceptsLabel}</div>
             <div className={s.conceptBtns}>
               {conceptLinks.map(({ id, title }) => (
                 <button
