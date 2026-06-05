@@ -7,28 +7,50 @@ import s from './LabGallery.module.css'
  *
  * - Single image: renders like LabFigure (no navigation shown).
  * - Multiple images: prev/next arrows overlaid on the image, dot indicators.
- * - Container is a fixed aspect ratio (default 5:4) so height is stable
+ * - Container uses a fixed aspect ratio (aspectRatio prop) so height is stable
  *   regardless of each image's natural dimensions.
  * - Click any image to open a lightbox. In the lightbox, click to cycle
  *   through three zoom levels (1× → 1.5× → 2× → back) with smooth animation.
  * - Keyboard: ArrowLeft / ArrowRight to navigate, Escape to close.
  *
  * Props:
- *   images:   Array<{ src: string, alt: string, caption?: string }>
- *   maxWidth: string  — CSS max-width for the in-document figure (default '680px')
+ *   images:      Array<{
+ *                  src:          string
+ *                  alt:          string
+ *                  caption?:     string
+ *                  attribution?: string | { credit: string, rights?: string }
+ *                }>
+ *   maxWidth:    string  — CSS max-width for the in-document figure (default '680px')
+ *   aspectRatio: string  — CSS aspect-ratio for the image container (default '5 / 4')
+ *   embedded:    bool    — strip margin/border/radius for use inside a parent
+ *                          container (e.g. a source card). Default false.
  */
 
 const ZOOM_SCALES = [1, 1.5, 2]
 
-export default function LabGallery({ images, maxWidth = '680px' }) {
-  const [activeIdx, setActiveIdx]   = useState(0)
-  const [lightboxOpen, setLightboxOpen] = useState(false)
-  const [zoomLevel, setZoomLevel]   = useState(0)
+function parseAttribution(attribution) {
+  if (!attribution) return { credit: null, rights: null }
+  if (typeof attribution === 'string') return { credit: attribution, rights: null }
+  return { credit: attribution.credit ?? null, rights: attribution.rights ?? null }
+}
+
+export default function LabGallery({
+  images,
+  maxWidth    = '680px',
+  aspectRatio = '5 / 4',
+  embedded    = false,
+}) {
+  const [activeIdx,     setActiveIdx]     = useState(0)
+  const [lightboxOpen,  setLightboxOpen]  = useState(false)
+  const [zoomLevel,     setZoomLevel]     = useState(0)
 
   const current = images[activeIdx]
   const multi   = images.length > 1
   const hasPrev = activeIdx > 0
   const hasNext = activeIdx < images.length - 1
+
+  const { credit, rights } = parseAttribution(current.attribution)
+  const hasFooter = current.caption || credit
 
   const prev = useCallback(() => {
     if (hasPrev) { setActiveIdx(i => i - 1); setZoomLevel(0) }
@@ -38,8 +60,8 @@ export default function LabGallery({ images, maxWidth = '680px' }) {
     if (hasNext) { setActiveIdx(i => i + 1); setZoomLevel(0) }
   }, [hasNext])
 
-  const openLightbox  = ()  => { setLightboxOpen(true);  setZoomLevel(0) }
-  const closeLightbox = ()  => { setLightboxOpen(false); setZoomLevel(0) }
+  const openLightbox  = () => { setLightboxOpen(true);  setZoomLevel(0) }
+  const closeLightbox = () => { setLightboxOpen(false); setZoomLevel(0) }
 
   // Cycle: 1× → 1.5× → 2× → 1×
   const cycleZoom = (e) => {
@@ -74,8 +96,11 @@ export default function LabGallery({ images, maxWidth = '680px' }) {
   return (
     <>
       {/* ── In-document gallery ───────────────────────────────────────────── */}
-      <figure className={s.figure} style={{ maxWidth }}>
-        <div className={s.imageWrap}>
+      <figure
+        className={`${s.figure} ${embedded ? s.embedded : ''}`}
+        style={embedded ? undefined : { maxWidth }}
+      >
+        <div className={s.imageWrap} style={{ aspectRatio }}>
           <img
             src={current.src}
             alt={current.alt}
@@ -116,8 +141,18 @@ export default function LabGallery({ images, maxWidth = '680px' }) {
           )}
         </div>
 
-        {current.caption && (
-          <figcaption className={s.caption}>{current.caption}</figcaption>
+        {/* Footer: caption + attribution */}
+        {hasFooter && (
+          <figcaption className={s.footer}>
+            {current.caption && <span className={s.caption}>{current.caption}</span>}
+            {credit           && <span className={s.credit}>{credit}</span>}
+            {rights           && (
+              <details className={s.rights}>
+                <summary>Source and rights</summary>
+                <p>{rights}</p>
+              </details>
+            )}
+          </figcaption>
         )}
       </figure>
 
@@ -166,7 +201,7 @@ export default function LabGallery({ images, maxWidth = '680px' }) {
             </button>
           )}
 
-          {/* Image — click to cycle zoom, transform stays centred */}
+          {/* Image — click to cycle zoom */}
           <div className={s.lbImageWrap} onClick={e => e.stopPropagation()}>
             <img
               src={current.src}
@@ -178,11 +213,16 @@ export default function LabGallery({ images, maxWidth = '680px' }) {
             />
           </div>
 
-          {/* Caption + counter */}
-          <div className={s.lbFooter} onClick={e => e.stopPropagation()}>
-            {current.caption && <p className={s.lbCaption}>{current.caption}</p>}
-            {multi && <span className={s.lbCounter}>{activeIdx + 1} / {images.length}</span>}
-          </div>
+          {/* Footer: caption + credit + counter */}
+          {(current.caption || credit || multi) && (
+            <div className={s.lbFooter} onClick={e => e.stopPropagation()}>
+              <div className={s.lbMeta}>
+                {current.caption && <p className={s.lbCaption}>{current.caption}</p>}
+                {credit          && <p className={s.lbCredit}>{credit}</p>}
+              </div>
+              {multi && <span className={s.lbCounter}>{activeIdx + 1} / {images.length}</span>}
+            </div>
+          )}
         </div>,
         document.body
       )}

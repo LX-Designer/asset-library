@@ -21,12 +21,63 @@
   height: auto;
 }
 
+/* ── Footer strip (caption + attribution) ────────────────────────────────── */
+
+.footer {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 16px 12px;
+  border-top: 1px solid var(--lab-figure-border, rgba(0, 0, 0, 0.12));
+  background: var(--lab-figure-caption-bg, rgba(0, 0, 0, 0.04));
+}
+
 .caption {
-  padding: 12px 16px;
   font-family: var(--lab-font-mono, monospace);
   font-size: 11px;
   line-height: 1.6;
   color: var(--lab-figure-caption-ink, rgba(0, 0, 0, 0.5));
-  border-top: 1px solid var(--lab-figure-border, rgba(0, 0, 0, 0.12));
-  background: var(--lab-figure-caption-bg, rgba(0, 0, 0, 0.04));
+}
+
+/* ── Attribution ─────────────────────────────────────────────────────────── */
+
+.credit {
+  font-family: var(--lab-font-mono, monospace);
+  font-size: 10px;
+  line-height: 1.5;
+  color: var(--lab-figure-caption-ink, rgba(0, 0, 0, 0.4));
+}
+
+.rights {
+  margin-top: 2px;
+}
+
+.rights summary {
+  font-family: var(--lab-font-mono, monospace);
+  font-size: 10px;
+  color: var(--lab-figure-caption-ink, rgba(0, 0, 0, 0.35));
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
+}
+
+.rights summary::before { content: '+ '; }
+.rights[open] summary::before { content: '− '; }
+
+.rights p {
+  margin-top: 4px;
+  font-family: var(--lab-font-mono, monospace);
+  font-size: 10px;
+  line-height: 1.6;
+  color: var(--lab-figure-caption-ink, rgba(0, 0, 0, 0.35));
+}
+
+/* ── Embedded variant ────────────────────────────────────────────────────── */
+/* Strips the outer frame so the figure sits cleanly inside a parent card.   */
+
+.embedded {
+  margin: 0;
+  border: none;
+  border-radius: 0;
+  background: none;
 }

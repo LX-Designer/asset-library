@@ -1,4 +1,5 @@
 import LabShell from '../../lab-shell/LabShell.jsx'
+import { LabGallery } from '../../lab-shell/index.js'
 import config from './shell.config.js'
 import styles from './index.module.css'
 import s from './FranceRepublic.module.css'
@@ -12,26 +13,30 @@ import {
 } from './data.js'
 
 // ── Visual asset card ─────────────────────────────────────────────────────────
+// Shell-level LabGallery handles the image, lightbox, and source attribution.
+// This wrapper adds the discipline-specific ID badge and evidence note.
 function VisualAssetCard({ va }) {
   return (
     <div className={s.vaCard}>
-      <div className={s.vaImageWrap}>
-        <img src={`/france-republic-1792/${va.filename}`} alt={va.altText} loading="lazy" />
-      </div>
       {va.id === 'VA-005' && (
         <div className={s.vaContentNote}>
           Content note: this image depicts violence. Use it to understand fear and breakdown of authority.
         </div>
       )}
+      <LabGallery
+        images={[{
+          src:         `/france-republic-1792/${va.filename}`,
+          alt:         va.altText,
+          caption:     va.title,
+          attribution: { credit: `${va.creator} · ${va.date}`, rights: va.rights },
+        }]}
+        maxWidth="100%"
+        aspectRatio="4 / 3"
+        embedded
+      />
       <div className={s.vaBody}>
         <div className={s.vaId}>{va.id}</div>
-        <div className={s.vaTitle}>{va.title}</div>
-        <div className={s.vaCreator}>{va.creator} · {va.date}</div>
         <div className={s.vaEvidenceNote}>{va.evidenceNote}</div>
-        <details className={s.vaRightsDetails}>
-          <summary>Source and rights</summary>
-          <p>{va.rights}</p>
-        </details>
       </div>
     </div>
   )

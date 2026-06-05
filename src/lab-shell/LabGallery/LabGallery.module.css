@@ -17,11 +17,21 @@
   background: var(--lab-figure-bg, rgba(0, 0, 0, 0.02));
 }
 
+/* ── Embedded variant ─────────────────────────────────────────────────────── */
+/* Strips the outer frame so the figure sits cleanly inside a parent card.   */
+
+.embedded {
+  margin: 0;
+  border: none;
+  border-radius: 0;
+  background: none;
+}
+
 /* ── Image area — fixed aspect ratio so height is stable between images ───── */
 
 .imageWrap {
   position: relative;
-  aspect-ratio: 5 / 4;   /* matches both Tacoma bridge images (~1.22–1.24 ratio) */
+  /* aspect-ratio applied inline from prop (default '5 / 4') */
   overflow: hidden;
   line-height: 0;
   background: var(--lab-figure-bg, rgba(0, 0, 0, 0.02));
@@ -93,17 +103,55 @@
 .dot:hover  { background: rgba(255, 255, 255, 0.75); }
 .dotActive  { background: rgba(255, 255, 255, 0.95); transform: scale(1.3); }
 
-/* ── Caption strip ────────────────────────────────────────────────────────── */
+/* ── Footer strip (caption + attribution) ────────────────────────────────── */
+
+.footer {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 16px 12px;
+  border-top: 1px solid var(--lab-figure-border, rgba(0, 0, 0, 0.12));
+  background: var(--lab-figure-caption-bg, rgba(0, 0, 0, 0.04));
+}
 
 .caption {
-  display: block;
-  padding: 12px 16px;
   font-family: var(--lab-font-mono, monospace);
   font-size: 11px;
   line-height: 1.6;
   color: var(--lab-figure-caption-ink, rgba(0, 0, 0, 0.5));
-  border-top: 1px solid var(--lab-figure-border, rgba(0, 0, 0, 0.12));
-  background: var(--lab-figure-caption-bg, rgba(0, 0, 0, 0.04));
+}
+
+/* ── Attribution ─────────────────────────────────────────────────────────── */
+
+.credit {
+  font-family: var(--lab-font-mono, monospace);
+  font-size: 10px;
+  line-height: 1.5;
+  color: var(--lab-figure-caption-ink, rgba(0, 0, 0, 0.4));
+}
+
+.rights {
+  margin-top: 2px;
+}
+
+.rights summary {
+  font-family: var(--lab-font-mono, monospace);
+  font-size: 10px;
+  color: var(--lab-figure-caption-ink, rgba(0, 0, 0, 0.35));
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
+}
+
+.rights summary::before { content: '+ '; }
+.rights[open] summary::before { content: '− '; }
+
+.rights p {
+  margin-top: 4px;
+  font-family: var(--lab-font-mono, monospace);
+  font-size: 10px;
+  line-height: 1.6;
+  color: var(--lab-figure-caption-ink, rgba(0, 0, 0, 0.35));
 }
 
 /* ── Lightbox overlay ─────────────────────────────────────────────────────── */
@@ -200,13 +248,6 @@
 
 /* ── Lightbox image ───────────────────────────────────────────────────────── */
 
-/*
-  Fixed viewport-relative bounding box so both images (regardless of their
-  natural pixel dimensions) occupy the same visual space.
-  overflow: hidden clips the image when scaled beyond 1× so it doesn't
-  bleed over the caption or nav arrows — the zoom is centred and the user
-  sees the central portion of the image enlarged.
-*/
 .lbImageWrap {
   width: min(90vw, 1100px);
   height: 70vh;
@@ -226,23 +267,38 @@
   display: block;
 }
 
-/* ── Lightbox footer (caption + counter) ─────────────────────────────────── */
+/* ── Lightbox footer (caption + credit + counter) ────────────────────────── */
 
 .lbFooter {
   display: flex;
-  align-items: baseline;
+  align-items: flex-end;
   gap: 16px;
   padding-top: 14px;
   width: min(90vw, 1100px);
   flex-shrink: 0;
 }
 
-.lbCaption {
+.lbMeta {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.lbCaption {
   font-family: var(--lab-font-mono, monospace);
   font-size: 11px;
   line-height: 1.6;
   color: rgba(255, 255, 255, 0.5);
+  margin: 0;
+}
+
+.lbCredit {
+  font-family: var(--lab-font-mono, monospace);
+  font-size: 10px;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.3);
   margin: 0;
 }
 
