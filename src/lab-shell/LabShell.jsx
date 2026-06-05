@@ -8,7 +8,7 @@ import NotesTab from './LabSidebar/tabs/NotesTab.jsx'
 import ActivityPanel from './ActivityPanel/ActivityPanel.jsx'
 import ConceptsModal from './ConceptsModal/ConceptsModal.jsx'
 import EvidencePanel from './EvidencePanel/EvidencePanel.jsx'
-import ActivityModal from '../components/ActivityModal'
+import ActivityBody from './ActivityPanel/ActivityBody.jsx'
 import SpeechInput from '../components/SpeechInput/SpeechInput.jsx'
 import { useIsDesktop } from './hooks/useIsDesktop.js'
 import s from './LabShell.module.css'
@@ -392,60 +392,32 @@ export default function LabShell({
         />
       )}
 
-      {/* ── Mobile activity modal ── */}
+      {/* ── Mobile activity panel ── */}
       {!isDesktop && activeActivityId && (() => {
-        const activity     = config.activities.find(a => a.id === activeActivityId)
-        const ActForm      = activity ? config.activityForms?.[activeActivityId] : null
-        const actIndex     = activity ? config.activities.indexOf(activity) : -1
-        const prevActivity = actIndex > 0 ? config.activities[actIndex - 1] : null
-        const nextActivity = actIndex < config.activities.length - 1 ? config.activities[actIndex + 1] : null
+        const activity  = config.activities.find(a => a.id === activeActivityId)
+        if (!activity) return null
+        const actIndex    = config.activities.indexOf(activity)
+        const isCompleted = config.getActivityStatus(activeActivityId, responses) === 'complete'
         return (
           <>
             <div
-              style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.48)', zIndex: 50 }}
+              className={s.mobileActivityBackdrop}
               onClick={() => setActiveActivityId(null)}
               aria-hidden="true"
             />
-            <div style={{
-              position: 'fixed', top: 0, right: 0, bottom: 0,
-              width: '100%', maxWidth: 560, zIndex: 51,
-              overflowY: 'auto',
-              background: 'var(--lab-surface)',
-              borderLeft: '1px solid var(--lab-rule)',
-            }}>
-              <ActivityModal
-                activityNumber={actIndex >= 0 ? actIndex + 1 : null}
-                activityLabel={activity.title}
-                thinkingMove={activity.thinkingMove ?? ''}
-                title={activity.title}
-                purpose={activity.purpose ?? ''}
-                prompt={activity.prompt ?? ''}
-                scaffold={activity.scaffold ?? null}
-                evidenceSections={activity.evidenceSections ?? []}
-                conceptLinks={activity.conceptLinks ?? []}
-                conceptsLabel={config.conceptsLabel ?? 'Concepts'}
-                prevItem={prevActivity ? { id: prevActivity.id, label: `Activity ${actIndex}` } : null}
-                nextItem={nextActivity ? { id: nextActivity.id, label: `Activity ${actIndex + 2}` } : null}
-                onClose={() => setActiveActivityId(null)}
+            <div className={s.mobileActivityPanel}>
+              <ActivityBody
+                config={config}
+                activity={activity}
+                actIndex={actIndex}
+                responses={responses}
+                isCompleted={isCompleted}
+                handleSave={handleSave}
                 onNavigate={navigateActivity}
                 onScrollTo={scrollToSection}
                 onOpenConcept={openConcept}
-                onClear={() => {
-                  const keys = activity.clearKeys ?? [activity.id]
-                  keys.forEach(k => handleSave(k, null))
-                }}
-                showHeader
-              >
-                {ActForm && (
-                  <ActForm
-                    initialAnswers={responses[activeActivityId] ?? {}}
-                    isCompleted={config.getActivityStatus(activeActivityId, responses) === 'complete'}
-                    onSubmit={data => handleSave(activeActivityId, data)}
-                    onSave={data => handleSave(activeActivityId, data)}
-                    onClose={() => setActiveActivityId(null)}
-                  />
-                )}
-              </ActivityModal>
+                onClose={() => setActiveActivityId(null)}
+              />
             </div>
           </>
         )
