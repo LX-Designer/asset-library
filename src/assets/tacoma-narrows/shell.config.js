@@ -1,3 +1,4 @@
+import { DEFAULT_THEME_VARS, defaultGetActivityStatus } from '../../lab-shell/defaults.js'
 import Act1 from './activities/Act1.jsx'
 import Act2 from './activities/Act2.jsx'
 import Act3 from './activities/Act3.jsx'
@@ -7,23 +8,10 @@ import Act6 from './activities/Act6.jsx'
 import { SYSTEM_PROMPT as ACT6_SYSTEM_PROMPT } from './feedbackPrompt.js'
 
 // CSS custom properties forwarded through FloatingPanel portals.
-// Includes the full --tn-* set because Act1–6 form components reference
-// those vars directly and need them resolved inside the portal.
+// Spreads the standard shell token set and adds Tacoma-specific palette vars
+// used by Act1–6 form components inside portals.
 const THEME_VARS = [
-  '--lab-bg', '--lab-surface', '--lab-surface-mid',
-  '--lab-ink', '--lab-ink-mid', '--lab-ink-light',
-  '--lab-rule', '--lab-rule-light',
-  '--lab-accent', '--lab-accent-hover', '--lab-accent-subtle',
-  '--lab-complete', '--lab-complete-subtle', '--lab-complete-muted',
-  '--lab-warn', '--lab-warn-subtle', '--lab-warn-muted',
-  '--lab-flag', '--lab-font-serif', '--lab-font-mono', '--lab-nav-height', '--lab-transition',
-  '--fp-bg', '--fp-border', '--fp-ink', '--fp-ink-mid', '--fp-ink-light',
-  '--fp-accent', '--fp-subtle', '--fp-shadow',
-  '--fp-tab-bg', '--fp-tab-border', '--fp-tab-ink',
-  '--fp-radius', '--fp-transition',
-  '--modal-panel-bg', '--modal-border', '--modal-ink', '--modal-ink-mid',
-  '--modal-ink-light', '--modal-accent', '--modal-accent-hover',
-  '--modal-subtle', '--modal-label', '--modal-serif', '--modal-transition',
+  ...DEFAULT_THEME_VARS,
   // Tacoma-specific — used by form components (radio groups, textareas, calc boxes, etc.)
   '--tn-ink', '--tn-ink-mid', '--tn-ink-light',
   '--tn-paper', '--tn-paper-dark', '--tn-paper-darker',
@@ -156,7 +144,5 @@ export default {
     'act-6': Act6,
   },
 
-  getActivityStatus(activityId, responses) {
-    return responses[activityId] != null ? 'complete' : 'not-started'
-  },
+  getActivityStatus: defaultGetActivityStatus,
 }

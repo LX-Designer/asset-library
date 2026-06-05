@@ -13,9 +13,11 @@ import s from './ActivityModal.module.css'
  *   activityLabel    string           — label shown when number is null
  *   thinkingMove     string           — cognitive move label
  *   title            string           — activity h2
- *   purpose          string           — "Why this matters" text
- *   prompt           string           — main activity question
- *   scaffold         string | null    — optional italic hint
+ *   purpose          string           — optional "Why this matters" context block
+ *                                       (omit or leave empty if the form is self-contained)
+ *   prompt           string           — optional task question rendered above the form
+ *                                       (omit if the question lives inside the form component)
+ *   scaffold         string | null    — optional italic hint shown below the prompt
  *   evidenceSections { id, label }[]          — scroll-to section links
  *   conceptLinks     { id, title }[]          — toolkit concept links (opens concept modal)
  *   prevItem         { id, label } | null

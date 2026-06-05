@@ -7,6 +7,7 @@ import Act6 from './activities/Act6.jsx'
 import Act7 from './activities/Act7.jsx'
 import ConceptCard from './ConceptCard.jsx'
 import { conceptTools, activities as actData, relevanceRows } from './data.js'
+import { DEFAULT_THEME_VARS, defaultGetActivityStatus } from '../../lab-shell/defaults.js'
 
 // ── Stage phase labels ────────────────────────────────────────────────────────
 const stagePhase = {
@@ -20,29 +21,10 @@ const stagePhase = {
 }
 
 // ── CSS custom properties forwarded through FloatingPanel portals ─────────────
-// Includes --lab-chrome-* so portals pick up warm paper surface and type scale;
-// includes --econ-* so form components and visuals resolve their palette vars.
-// Nav tokens are NOT forwarded — the nav bar is not a portal.
+// Spreads the standard shell token set and adds the econ-specific palette vars
+// used by form components and visuals inside portals.
 const THEME_VARS = [
-  '--lab-bg', '--lab-surface', '--lab-surface-mid',
-  '--lab-ink', '--lab-ink-mid', '--lab-ink-light', '--lab-tab-ink',
-  '--lab-rule', '--lab-rule-light',
-  '--lab-accent', '--lab-accent-hover', '--lab-accent-subtle',
-  '--lab-complete', '--lab-complete-subtle', '--lab-complete-muted',
-  '--lab-warn', '--lab-warn-subtle', '--lab-warn-muted',
-  '--lab-flag', '--lab-font-serif', '--lab-font-mono', '--lab-nav-height', '--lab-transition',
-  // Chrome register — forward so portals inherit warm paper surface, type scale, and border width
-  '--lab-chrome-surface', '--lab-chrome-font-size', '--lab-chrome-heading-weight',
-  '--lab-chrome-label-size', '--lab-chrome-radius', '--lab-chrome-border-width',
-  // FloatingPanel
-  '--fp-bg', '--fp-border', '--fp-ink', '--fp-ink-mid', '--fp-ink-light',
-  '--fp-accent', '--fp-subtle', '--fp-shadow',
-  '--fp-tab-bg', '--fp-tab-border', '--fp-tab-ink',
-  '--fp-border-width', '--fp-radius', '--fp-transition',
-  // ActivityModal
-  '--modal-panel-bg', '--modal-border', '--modal-ink', '--modal-ink-mid',
-  '--modal-ink-light', '--modal-accent', '--modal-accent-hover',
-  '--modal-subtle', '--modal-label', '--modal-serif', '--modal-heading-weight', '--modal-transition',
+  ...DEFAULT_THEME_VARS,
   // Econ palette — used by form components and visuals inside portals
   '--econ-red', '--econ-red-dark', '--econ-navy', '--econ-paper', '--econ-paper-warm',
   '--econ-mint', '--econ-blue', '--ink', '--muted', '--soft', '--line', '--radius', '--radius-sm',
@@ -74,10 +56,7 @@ const activities = actData.map(a => ({
   thinkingMove: stagePhase[a.id] ?? '',
   // group — phase label shown above the title in the sidebar activity list
   group: a.stage ?? '',
-  purpose: '',
-  // prompt and task are rendered inside ActivityForm (with box styling);
-  // passing empty here prevents ActivityModal duplicating the question above the form.
-  prompt: '',
+  // purpose/prompt/scaffold omitted — all task content lives inside the ActivityForm component
   scaffold: null,
   evidenceSections: a.review.map(r => ({ id: r.target, label: r.label })),
   conceptLinks: (a.tools ?? []).map(toolId => {
@@ -162,8 +141,5 @@ export default {
     'act-7': Act7,
   },
 
-  getActivityStatus(activityId, responses) {
-    const val = responses[activityId]
-    return (typeof val === 'string' && val.trim()) ? 'complete' : 'not-started'
-  },
+  getActivityStatus: defaultGetActivityStatus,
 }
