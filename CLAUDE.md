@@ -71,3 +71,123 @@ Routes under `/dashboard` and `/dashboard/classes/:classId` are protected by `Pr
 ## AI feedback
 
 `/api/ai-feedback.js` is a Vercel serverless proxy to the Gemini 2.0 Flash API. Accepts `{ system, userMessage }`, returns `{ text }`. Requires `GEMINI_API_KEY` in Vercel environment variables. Assets call it via `fetch('/api/ai-feedback', ...)` — they own their own system prompts.
+
+---
+
+## LabShell — building new labs
+
+Most new labs should use LabShell (`src/lab-shell/`). It provides all navigation, panels, response persistence, and completion tracking. The lab author only writes content and config.
+
+### File structure for a LabShell lab
+
+```
+src/assets/[lab-id]/
+  meta.js               ← card metadata (title, level, discipline, labType, etc.)
+  shell.config.js       ← all lab configuration (copy from shell.config.template.js)
+  index.jsx             ← exports the lab component; wires LabShell + content
+  index.module.css      ← lab-specific CSS tokens and theme overrides
+  activities/
+    Act1.jsx            ← one file per activity form component
+    Act2.jsx
+    ...
+  ConceptCard.jsx       ← concept body renderer (only if lab has concepts)
+  ConceptCard.module.css
+```
+
+Images and SVGs go in `public/[lab-id]/` and are referenced as `/[lab-id]/filename`.
+
+### index.jsx pattern
+
+```jsx
+import LabShell from '../../lab-shell/LabShell.jsx'
+import config   from './shell.config.js'
+import styles   from './index.module.css'
+
+function LabContent({ responses, onSave, openActivity, openEvidence, openConcept }) {
+  // All your JSX here — sections, diagrams, evidence cards, etc.
+  // Call openActivity(id), openEvidence(id), openConcept(id) from buttons/links.
+}
+
+export default function MyLab({ onResponse, onComplete, savedResponses, isCompleted, onReset, backHref }) {
+  return (
+    <LabShell config={config} onResponse={onResponse} onComplete={onComplete}
+              savedResponses={savedResponses} isCompleted={isCompleted}
+              onReset={onReset} backHref={backHref} className={styles.labShell}>
+      {({ openActivity, openEvidence, openConcept, responses, onSave, scrollToSection }) => (
+        <LabContent responses={responses} onSave={onSave}
+                    openActivity={openActivity} openEvidence={openEvidence}
+                    openConcept={openConcept} />
+      )}
+    </LabShell>
+  )
+}
+```
+
+### Activity form component pattern
+
+```jsx
+import { useActivityResponse } from '../../lab-shell/index.js'
+import { ActivityTextarea }    from '../../lab-shell/index.js'
+
+export default function Act1({ initialAnswers, isCompleted, onSubmit, onSave, onClose }) {
+  const { draft, saveStatus, handleChange, handleBlur, handleSave } =
+    useActivityResponse(initialAnswers?.response ?? '', val => onSave({ response: val }))
+
+  return (
+    <form onSubmit={e => { e.preventDefault(); onSubmit({ response: draft }) }}>
+      <ActivityTextarea
+        value={draft}
+        onChange={handleChange}
+        onBlur={handleBlur}
+        showWordCount
+        minWords={80}
+        saveStatus={saveStatus}
+      />
+      <button type="submit" disabled={isCompleted}>Submit</button>
+    </form>
+  )
+}
+```
+
+### index.module.css token override pattern
+
+Override `--lab-*` tokens on your root class to theme the entire shell:
+
+```css
+.labShell {
+  /* Surfaces */
+  --lab-bg:      #f5f0e8;
+  --lab-surface: #faf7f2;
+
+  /* Accent colour — drives buttons, badges, active states */
+  --lab-accent:       #b91c1c;
+  --lab-accent-hover: #991b1b;
+  --lab-accent-subtle: #fef2f2;
+
+  /* Progress bar */
+  --lab-progress-fill:  #1e3a5f;
+  --lab-progress-track: rgba(30, 58, 95, 0.12);
+}
+```
+
+All `--lab-*` defaults are in `src/lab-shell/tokens.css`. Override only what differs.
+
+### Shell exports (`src/lab-shell/index.js`)
+
+| Export | Purpose |
+|---|---|
+| `LabShell` | The main shell component |
+| `EvidencePanel` | Floating evidence document panel (if used outside LabShell) |
+| `DEFAULT_THEME_VARS` | Standard CSS var list for `themeVars` in shell.config.js |
+| `defaultGetActivityStatus` | Standard completion check for text-response activities |
+| `useActivityResponse` | Hook: draft state + save-on-blur for activity forms |
+| `useAIFeedback` | Hook: request/loading/error state for AI feedback calls |
+| `useIsDesktop` | Hook: `true` when viewport ≥ 900px |
+| `ActivityTextarea` | Textarea with word count and save status indicator |
+| `AIFeedbackUI` | Feedback display block (loading / text / error states) |
+| `LabFigure` | Single image with optional caption; lazy-loads |
+| `LabGallery` | Multi-image gallery with lightbox and zoom |
+
+### Config template
+
+`src/lab-shell/shell.config.template.js` — fully annotated, copy to your lab folder and fill in. Every field is documented inline with its type, default, and when to use it.
