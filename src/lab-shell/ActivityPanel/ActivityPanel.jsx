@@ -80,12 +80,10 @@ export default function ActivityPanel({
   const ActForm = activeActivityId ? config.activityForms?.[activeActivityId] : null
 
   const totalActivities = config.activities.length
-  const titleEyebrow = activity?.number != null
-    ? `Task ${activity.number} of ${totalActivities}`
+  const titleEyebrow = actIndex >= 0
+    ? `Task ${actIndex + 1} of ${totalActivities}`
     : undefined
-  const panelTitle = activity
-    ? (activity.number != null ? `${activity.number}. ${activity.title}` : activity.title)
-    : 'Activity'
+  const panelTitle = activity?.title ?? 'Activity'
 
   return (
     <FloatingPanel
@@ -122,8 +120,8 @@ export default function ActivityPanel({
           evidenceSections={activity.evidenceSections ?? []}
           conceptLinks={activity.conceptLinks ?? []}
           conceptsLabel={config.conceptsLabel ?? 'Concepts'}
-          prevItem={prevActivity ? { id: prevActivity.id, label: prevActivity.label } : null}
-          nextItem={nextActivity ? { id: nextActivity.id, label: nextActivity.label } : null}
+          prevItem={prevActivity ? { id: prevActivity.id, label: prevActivity.title } : null}
+          nextItem={nextActivity ? { id: nextActivity.id, label: nextActivity.title } : null}
           onNavigate={onNavigate}
           onScrollTo={onScrollTo}
           onOpenConcept={onOpenConcept}

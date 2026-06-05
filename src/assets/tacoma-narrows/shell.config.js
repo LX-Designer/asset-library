@@ -66,7 +66,6 @@ export default {
   activities: [
     {
       id: 'act-1',
-      label: 'Task 01',
       title: 'Initial hypothesis',
       thinkingMove: 'Hypothesise',
       purpose: 'Establish your starting position before examining any evidence. Recording an initial hypothesis lets you track how your thinking changes across the inquiry.',
@@ -77,7 +76,6 @@ export default {
     },
     {
       id: 'act-2',
-      label: 'Task 02',
       title: 'Frequency analysis',
       thinkingMove: 'Analyse',
       purpose: 'Evaluate a specific quantitative claim using evidence from the data tables. The resonance explanation stands or falls on whether the frequencies match.',
@@ -88,7 +86,6 @@ export default {
     },
     {
       id: 'act-3',
-      label: 'Task 03',
       title: 'Timeline reconstruction',
       thinkingMove: 'Analyse',
       purpose: 'Identify the two distinct phases of bridge behaviour and consider whether a single explanation can account for both.',
@@ -99,7 +96,6 @@ export default {
     },
     {
       id: 'act-4',
-      label: 'Task 04',
       title: 'Design analysis',
       thinkingMove: 'Diagnose',
       purpose: 'Trace how a specific engineering decision — the solid plate girder — created the aerodynamic conditions that led to collapse.',
@@ -110,7 +106,6 @@ export default {
     },
     {
       id: 'act-5',
-      label: 'Task 05',
       title: 'Expert evaluation',
       thinkingMove: 'Evaluate',
       purpose: 'Weigh two competing expert accounts using the evidence in the case file. One is correct; the other relies on a claim the data directly contradicts.',
@@ -121,7 +116,6 @@ export default {
     },
     {
       id: 'act-6',
-      label: 'Task 06',
       title: 'Tribunal report',
       thinkingMove: 'Synthesise',
       purpose: 'Bring together your analysis into a structured written finding for the inquiry tribunal. Aim for approximately 200 words.',

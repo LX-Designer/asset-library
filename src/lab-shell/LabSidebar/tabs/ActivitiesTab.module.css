@@ -120,48 +120,14 @@
   border-color: var(--lab-warn);
 }
 
-/* ── Status indicator — numbered square badge (when activity.number is set) ── */
-.badge {
-  width: 1.75rem;
-  height: 1.75rem;
-  min-width: 1.75rem;
-  flex-shrink: 0;
-  border-radius: var(--lab-chrome-radius, 2px);
-  background: var(--lab-accent-hover, var(--lab-accent));
-  border: 1.5px solid var(--lab-accent-hover, var(--lab-accent));
-  color: #ffffff;
-  display: grid;
-  place-items: center;
-  font-weight: 900;
-  font-size: 0.86rem;
-  line-height: 1;
-  margin-top: 0.1rem;
-  transition: background var(--lab-transition), border-color var(--lab-transition);
-}
-
-.badgeComplete {
-  background: var(--lab-complete);
-  border-color: var(--lab-complete);
-}
-
 /* ── Text columns ─────────────────────────────────────────────────────────── */
 .meta {
   flex: 1;
   min-width: 0;
 }
 
-.label {
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--lab-ink-light);
-  margin-bottom: 1px;
-  display: block;
-}
-
-/* Stage label — shown when act.stageLabel is set (e.g. "Stage 1 · Build...") */
-.stageLabel {
+/* Group label — optional phase/stage line shown above the activity title */
+.group {
   display: block;
   font-size: 0.66rem;
   font-weight: 900;

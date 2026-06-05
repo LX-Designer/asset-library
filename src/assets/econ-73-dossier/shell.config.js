@@ -69,13 +69,11 @@ const concepts = conceptTools.map(t => ({
 // all student response data across the migration.
 const activities = actData.map(a => ({
   id: `act-${a.id}`,
-  number: parseInt(a.id),
-  label: `Task ${a.id.padStart(2, '0')}`,
   title: a.title,
-  // thinkingMove — brief phrase shown in the activity panel header subtitle
+  // thinkingMove — cognitive move label used in mobile activity header subtitle
   thinkingMove: stagePhase[a.id] ?? '',
-  // stageLabel — full stage string shown in the sidebar activity list
-  stageLabel: a.stage ?? '',
+  // group — phase label shown above the title in the sidebar activity list
+  group: a.stage ?? '',
   purpose: '',
   // prompt and task are rendered inside ActivityForm (with box styling);
   // passing empty here prevents ActivityModal duplicating the question above the form.

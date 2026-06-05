@@ -59,39 +59,23 @@ export default function ActivitiesTab({
 
       <ul className={s.list} role="list">
         {activities.map((act) => {
-          const status   = getActivityStatus(act.id, responses)
-          const hasbadge = act.number != null
+          const status = getActivityStatus(act.id, responses)
 
           return (
             <li key={act.id} className={s.item}>
               <button
                 className={s.btn}
                 onClick={() => onOpenActivity(act.id)}
-                aria-label={`${act.label}: ${act.title} — ${labels[status] ?? status}`}
+                aria-label={`${act.title} — ${labels[status] ?? status}`}
               >
-                {/* Status indicator — numbered square badge OR circular dot */}
-                {hasbadge ? (
-                  <span
-                    className={`${s.badge} ${status === 'complete' ? s.badgeComplete : ''}`}
-                    aria-hidden="true"
-                  >
-                    {act.number}
-                  </span>
-                ) : (
-                  <span
-                    className={`${s.dot} ${status === 'complete' ? s.complete : ''} ${status === 'inprogress' ? s.inprogress : ''}`}
-                    aria-hidden="true"
-                  />
-                )}
+                <span
+                  className={`${s.dot} ${status === 'complete' ? s.complete : ''} ${status === 'inprogress' ? s.inprogress : ''}`}
+                  aria-hidden="true"
+                />
 
                 <span className={s.meta}>
-                  {/* Stage label (e.g. "Stage 1 · Build the evidence base") */}
-                  {act.stageLabel && (
-                    <span className={s.stageLabel}>{act.stageLabel}</span>
-                  )}
-                  {/* Fallback label for labs without badges or stage labels */}
-                  {!hasbadge && !act.stageLabel && (
-                    <span className={s.label}>{act.label}</span>
+                  {act.group && (
+                    <span className={s.group}>{act.group}</span>
                   )}
                   <span className={s.actTitle}>{act.title}</span>
                   <span className={`${s.statusText} ${status === 'complete' ? s.complete : ''} ${status === 'inprogress' ? s.inprogress : ''}`}>

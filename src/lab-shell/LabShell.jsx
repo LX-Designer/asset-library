@@ -394,9 +394,9 @@ export default function LabShell({
 
       {/* ── Mobile activity modal ── */}
       {!isDesktop && activeActivityId && (() => {
-        const activity = config.activities.find(a => a.id === activeActivityId)
-        const ActForm  = activity ? config.activityForms?.[activeActivityId] : null
-        const actIndex = activity ? config.activities.indexOf(activity) : -1
+        const activity     = config.activities.find(a => a.id === activeActivityId)
+        const ActForm      = activity ? config.activityForms?.[activeActivityId] : null
+        const actIndex     = activity ? config.activities.indexOf(activity) : -1
         const prevActivity = actIndex > 0 ? config.activities[actIndex - 1] : null
         const nextActivity = actIndex < config.activities.length - 1 ? config.activities[actIndex + 1] : null
         return (
@@ -414,8 +414,8 @@ export default function LabShell({
               borderLeft: '1px solid var(--lab-rule)',
             }}>
               <ActivityModal
-                activityNumber={activity.number ?? null}
-                activityLabel={activity.label}
+                activityNumber={actIndex >= 0 ? actIndex + 1 : null}
+                activityLabel={activity.title}
                 thinkingMove={activity.thinkingMove ?? ''}
                 title={activity.title}
                 purpose={activity.purpose ?? ''}
@@ -424,8 +424,8 @@ export default function LabShell({
                 evidenceSections={activity.evidenceSections ?? []}
                 conceptLinks={activity.conceptLinks ?? []}
                 conceptsLabel={config.conceptsLabel ?? 'Concepts'}
-                prevItem={prevActivity ? { id: prevActivity.id, label: prevActivity.label } : null}
-                nextItem={nextActivity ? { id: nextActivity.id, label: nextActivity.label } : null}
+                prevItem={prevActivity ? { id: prevActivity.id, label: prevActivity.title } : null}
+                nextItem={nextActivity ? { id: nextActivity.id, label: nextActivity.title } : null}
                 onClose={() => setActiveActivityId(null)}
                 onNavigate={navigateActivity}
                 onScrollTo={scrollToSection}
