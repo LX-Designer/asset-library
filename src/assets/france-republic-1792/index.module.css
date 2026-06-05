@@ -1,0 +1,67 @@
+@import url('https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap');
+
+/* ── France lab theme tokens ──────────────────────────────────────────────────
+   Applied on .labShell (the LabShell root class passed via className prop).
+   Defines --lab-* tokens (consumed by shell chrome) and --fr-* aliases
+   (consumed by dossier content and activity form components).
+   ─────────────────────────────────────────────────────────────────────────── */
+.labShell {
+  /* ── lab-* surface tokens (shell chrome uses these) */
+  --lab-bg:              #F5F0E8;
+  --lab-surface:         #FDFAF5;
+  --lab-surface-mid:     #EDE8DC;
+
+  /* ── lab-* text tokens */
+  --lab-ink:             #1C1917;
+  --lab-ink-mid:         #44403C;
+  --lab-ink-light:       #78716C;
+  --lab-tab-ink:         #44403C;
+
+  /* ── lab-* border tokens */
+  --lab-rule:            #D6D0C4;
+  --lab-rule-light:      #E8E2D8;
+
+  /* ── lab-* accent (slate-grey) */
+  --lab-accent:          #374151;
+  --lab-accent-hover:    #1F2937;
+  --lab-accent-subtle:   #F1F5F9;
+
+  /* ── lab-* status */
+  --lab-complete:        #2D6A4F;
+  --lab-complete-subtle: #F0FAF4;
+  --lab-complete-muted:  #6EE7B7;
+  --lab-warn:            #92400E;
+  --lab-warn-subtle:     #FFFBEB;
+
+  /* ── lab-* typography */
+  --lab-font-serif:      'Libre Baskerville', Georgia, 'Times New Roman', serif;
+  --lab-font-sans:       'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+
+  /* ── Chrome register — parchment panels */
+  --lab-chrome-surface:  #EDE8DC;
+
+  /* ── fr-* aliases — referenced by dossier content and form components */
+  --fr-parchment:        #F5F0E8;
+  --fr-parchment-mid:    #EDE8DC;
+  --fr-paper:            #FDFAF5;
+  --fr-paper-raised:     #FFFFFF;
+  --fr-ink:              #1C1917;
+  --fr-ink-mid:          #44403C;
+  --fr-ink-light:        #78716C;
+  --fr-rule:             #D6D0C4;
+  --fr-rule-light:       #E8E2D8;
+  --fr-accent:           #374151;
+  --fr-accent-hover:     #1F2937;
+  --fr-accent-subtle:    #F1F5F9;
+  --fr-seal:             #6B4226;
+  --fr-seal-subtle:      #FBF4EF;
+  --fr-seal-muted:       #C8A07A;
+  --fr-complete:         #2D6A4F;
+  --fr-complete-subtle:  #F0FAF4;
+  --fr-complete-muted:   #6EE7B7;
+  --fr-inprogress:       #92400E;
+  --fr-inprogress-subtle: #FFFBEB;
+  --fr-serif:            'Libre Baskerville', Georgia, 'Times New Roman', serif;
+  --fr-sans:             'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --fr-transition:       160ms ease;
+}
