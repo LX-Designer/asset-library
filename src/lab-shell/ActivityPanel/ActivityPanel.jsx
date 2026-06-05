@@ -81,7 +81,7 @@ export default function ActivityPanel({
 
   const totalActivities = config.activities.length
   const titleEyebrow = actIndex >= 0
-    ? `Task ${actIndex + 1} of ${totalActivities}`
+    ? `Activity ${actIndex + 1} of ${totalActivities}`
     : undefined
   const panelTitle = activity?.title ?? 'Activity'
 
