@@ -9,6 +9,7 @@ export default function ConceptsModal({
   onNavigateConcept,
   onClose,
   triggerOpen,
+  triggerClose,
   themeVars,
 }) {
   const [slideDir, setSlideDir] = useState(null)
@@ -40,8 +41,10 @@ export default function ConceptsModal({
       modalFirst
       floatOnly
       noTab
-      accentHeader
+      accentHeader={!config.sidebar?.fpDarkHeader}
+      darkHeader={config.sidebar?.fpDarkHeader ?? false}
       triggerOpen={triggerOpen}
+      triggerClose={triggerClose}
       onClose={onClose}
       themeVars={themeVars}
     >

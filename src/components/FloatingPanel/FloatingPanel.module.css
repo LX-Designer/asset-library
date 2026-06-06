@@ -4,6 +4,7 @@
  * Theme via CSS custom properties on any ancestor:
  *
  * --fp-bg              panel background          #ffffff
+ * --fp-header-bg       header bar background     (falls back to --fp-bg)
  * --fp-border          border colour             #e5e7eb
  * --fp-border-width    border width              1px
  * --fp-ink             primary text              #111827
@@ -95,7 +96,7 @@
   height: auto;
   flex-shrink: 0;
   border-bottom: var(--fp-border-width, 1px) solid var(--fp-border, #e5e7eb);
-  background: var(--fp-bg, #ffffff);
+  background: var(--fp-header-bg, var(--fp-bg, #ffffff));
   cursor: grab;
   user-select: none;
 }
@@ -170,6 +171,41 @@
 .headerAccent .hBtnClose:hover {
   background: rgba(255, 255, 255, 0.15);
   border-color: rgba(255, 255, 255, 0.3);
+  color: #ffffff;
+}
+
+/* Dark header — chrome-dark surface with cream text/icons.
+   Applied via darkHeader prop on FloatingPanel.
+   Background is set by --fp-header-bg (see TacomaNarrows.module.css for example).
+   Text uses --fp-tab-ink so header and tab strip share the same ink palette.
+   Border-bottom is transparent — the strong bg contrast with the tab strip below
+   provides a natural visual separator without needing an explicit line. */
+.headerDark {
+  border-bottom-color: transparent;
+}
+
+.headerDark .headerEyebrow {
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.headerDark .headerTitle,
+.headerDark .headerTitleLarge {
+  color: rgba(255, 255, 255, 0.88);
+}
+
+.headerDark .hBtn {
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.headerDark .hBtn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.22);
+  color: #ffffff;
+}
+
+.headerDark .hBtnClose:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.22);
   color: #ffffff;
 }
 
@@ -308,7 +344,10 @@
 /* ── Floating panel ──────────────────────────────────────────────────────── */
 .floatingPanel {
   background: var(--fp-bg, #ffffff);
-  border: var(--fp-border-width, 1px) solid var(--fp-border, #e5e7eb);
+  /* --fp-float-border overrides the entire border shorthand for floating panels only.
+     Set to 'none' to remove the outer edge (shadow then provides the depth).
+     Falls back to the standard border using --fp-border-width and --fp-border. */
+  border: var(--fp-float-border, var(--fp-border-width, 1px) solid var(--fp-border, #e5e7eb));
   border-radius: var(--fp-radius, 6px);
   box-shadow: var(--fp-shadow, 0 4px 24px rgba(0,0,0,0.14));
   /* react-rnd injects display:inline-block via inline style — override */

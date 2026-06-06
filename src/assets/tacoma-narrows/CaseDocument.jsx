@@ -1,6 +1,9 @@
 import styles from './TacomaNarrows.module.css'
 import LabFigure from '../../lab-shell/LabFigure/LabFigure.jsx'
-import LabGallery from '../../lab-shell/LabGallery/LabGallery.jsx'
+
+const bridgePhoto     = '/tacoma-narrows/tacoma-narrow-bridge.jpg'
+const girderDiagram   = '/tacoma-narrows/girder-comparison.svg'
+const frequencyDiagram = '/tacoma-narrows/frequency-diagram.svg'
 
 function Trigger({ num, label, sub, done, openActivity }) {
   return (
@@ -70,7 +73,7 @@ export default function CaseDocument({ openActivity, responses }) {
           <div className={styles.beforeContent}>
             <div className={styles.beforeGrid}>
               <div className={styles.beforeCard}>
-                <span className={styles.beforeCardTitle}>Assumed prior knowledge</span>
+                <span className={styles.beforeCardTitle}>Physics Toolkit — available during inquiry</span>
                 <ul className={styles.beforeList}>
                   <li>Oscillation and frequency (Hz)</li>
                   <li>Basic concept of resonance</li>
@@ -83,7 +86,7 @@ export default function CaseDocument({ openActivity, responses }) {
               <div className={styles.beforeCard}>
                 <span className={styles.beforeCardTitle}>You will learn to</span>
                 <ul className={styles.beforeList}>
-                  <li>Distinguish resonance from aeroelastic flutter as failure mechanisms</li>
+                  <li>Evaluate competing physical explanations for structural failure using primary evidence</li>
                   <li>Use frequency data to evaluate competing physical explanations</li>
                   <li>Identify limitations in an engineering model</li>
                   <li>Analyse how a design decision changes structural behaviour</li>
@@ -111,23 +114,17 @@ export default function CaseDocument({ openActivity, responses }) {
 
           <p>The collapse was filmed by University of Washington engineer F.B. Farquharson, who had been stationed at the bridge as part of an ongoing investigation into its unusual behaviour. His footage — still widely circulated today — shows the bridge twisting violently along its length, one side of the roadway rising while the other falls, before sections of the deck tear themselves apart.</p>
 
+          <figure className={styles.diagram}>
+            <img src={bridgePhoto} alt="The Tacoma Narrows Bridge oscillating in the wind, 1940." />
+            <figcaption className={styles.diagramCaption}>
+              Tacoma Narrows Bridge, 1940. Library of Congress / Wikimedia Commons. Public domain.
+            </figcaption>
+          </figure>
+
           <div className={`${styles.callout} ${styles.calloutDanger}`}>
             <span className={styles.calloutLabel}>⚠ Note for tribunal</span>
             The bridge was closed to vehicle traffic before it collapsed. The only confirmed casualty was a three-legged cocker spaniel named Tubby, left in a vehicle by the last driver to attempt to cross. No human lives were lost.
           </div>
-
-          <LabGallery images={[
-            {
-              src: '/tacoma-narrows/tacoma-narrow-bridge.jpg',
-              alt: 'The Tacoma Narrows Bridge oscillating violently before collapse, 7 November 1940',
-              caption: 'The Tacoma Narrows Bridge mid-oscillation on the morning of 7 November 1940. The roadway deck is visibly twisted — one side elevated, the other depressed.',
-            },
-            {
-              src: '/tacoma-narrows/tacoma-narrows-bridge-collapse.jpg',
-              alt: 'The central span of the Tacoma Narrows Bridge breaking apart and falling into Puget Sound, 7 November 1940',
-              caption: 'The central span breaks free from its suspender cables and falls 190 feet into Puget Sound at 11:10 a.m. The bridge had been open to traffic for 128 days.',
-            },
-          ]} />
 
           <p>The collapse shocked the engineering world. Tacoma Narrows was not an experimental structure — it had been reviewed by eminent engineers and approved by federal funding authorities. It was the third-longest suspension bridge in the world. Its collapse represented not merely a structural failure, but a failure of the profession's models and assumptions.</p>
         </section>
@@ -178,11 +175,9 @@ export default function CaseDocument({ openActivity, responses }) {
             </tbody>
           </table>
 
-          <LabFigure
-            src="/tacoma-narrows/girder-comparison.svg"
-            alt="Cross-section comparison: 7.6m open-lattice truss (original design) versus 2.4m solid plate girder (built)"
-            caption="Cross-section comparison of the two stiffening girder designs. The open-lattice truss (left) allows wind to pass through; the solid plate girder (right) acts as an aerodynamic surface, generating lift and drag forces the original model did not account for."
-          />
+          <figure className={styles.diagram}>
+            <img src={girderDiagram} alt="Cross-section comparison: open-lattice truss (original design, 7.6 m deep) versus solid plate girder (as built, 2.4 m deep), with wind flow shown in each case." />
+          </figure>
 
           <div className={styles.callout}>
             <span className={styles.calloutLabel}>Design note</span>
@@ -256,16 +251,9 @@ export default function CaseDocument({ openActivity, responses }) {
             </tbody>
           </table>
 
-          <LabFigure
-            src="/tacoma-narrows/frequency-diagram.svg"
-            alt="Diagram showing the three key frequencies: natural vertical frequency 0.6 Hz, vortex shedding frequency 1.0 Hz, and torsional collapse frequency 0.2 Hz"
-            caption="The three critical frequencies. A resonance explanation requires the vortex shedding frequency to match the oscillation frequency at collapse. The data shows they do not."
-          />
-
-          <div className={`${styles.callout} ${styles.calloutDanger}`}>
-            <span className={styles.calloutLabel}>Data anomaly — flag for tribunal</span>
-            Note the discrepancy between the vortex shedding frequency (1.0 Hz) and the torsional oscillation frequency (0.2 Hz) recorded at the time of collapse. These values are not equal. Any complete explanation of the failure mechanism must account for this discrepancy.
-          </div>
+          <figure className={styles.diagram}>
+            <img src={frequencyDiagram} alt="Frequency diagram showing three values on a horizontal axis: torsional oscillation at collapse (0.2 Hz), natural vertical frequency (0.6 Hz), and vortex shedding frequency at 42 mph wind (1.0 Hz)." />
+          </figure>
         </section>
 
         {/* ── ACTIVITY 2 & 3 TRIGGERS ── */}
@@ -296,7 +284,7 @@ export default function CaseDocument({ openActivity, responses }) {
 
           <div className={styles.callout}>
             <span className={styles.calloutLabel}>Tribunal context</span>
-            The assessment above is technically accurate within its stated assumptions — it correctly applies the deflection theory for static wind loads. The question for this tribunal is not whether the calculation was wrong, but whether the model used was complete.
+            The assessment above is technically accurate within its stated assumptions — it correctly applies the deflection theory for static wind loads.
           </div>
         </section>
 
@@ -319,9 +307,7 @@ export default function CaseDocument({ openActivity, responses }) {
             <div className={styles.witnessName}>Dr. Heinrich Brandt</div>
             <div className={styles.witnessRole}>Professor of Structural Mechanics, Institute of Technology</div>
             <div className={styles.witnessText}>
-              <p>"The collapse of the Tacoma Narrows Bridge is, at its core, a classic case of mechanical resonance. Wind flowing past any blunt structure generates alternating pressure vortices — a well-understood phenomenon. These vortices create a periodic oscillating force. When the frequency of this forcing approaches the natural frequency of the structure, energy accumulates in the system and amplitude grows without bound.</p>
-              <p>The bridge had a natural frequency of approximately 0.6 Hz. In the conditions recorded on 7 November 1940, the vortex shedding would have produced a forcing function in a similar range. The vertical oscillations seen in the early morning hours are precisely what resonance predicts: steady accumulation of energy, growing amplitude.</p>
-              <p>The subsequent torsional motion was a consequence of this resonant buildup reaching the torsional mode of the structure. The fundamental cause remains resonance. This bridge failed for the same reason a wine glass shatters when a singer hits the right note. The engineers simply did not account for the dynamic loading imposed by wind-induced resonance."</p>
+              <p>"The collapse of the Tacoma Narrows Bridge is, at its core, a classic case of mechanical resonance. Wind flowing past the bridge generated alternating pressure vortices at a frequency that, in the conditions recorded on 7 November 1940, was close to the bridge's natural frequency. The vertical oscillations observed in the morning hours are consistent with resonant energy build-up. The subsequent torsional motion was a consequence of this resonant excitation reaching the torsional mode of the structure. The fundamental cause remains resonance throughout. The engineers simply did not account for the dynamic loading imposed by wind-induced resonance."</p>
             </div>
           </div>
 
@@ -330,9 +316,8 @@ export default function CaseDocument({ openActivity, responses }) {
             <div className={styles.witnessName}>Dr. Amara Osei-Mensah</div>
             <div className={styles.witnessRole}>Specialist in Aeroelastic Systems, National Research Laboratory</div>
             <div className={styles.witnessText}>
-              <p>"With respect to my colleague, the resonance explanation is demonstrably incomplete — and the data in this case file is sufficient to show why. For resonance to occur, the external forcing frequency must match or closely approach the natural frequency of the system being excited. The torsional mode of the Tacoma Narrows Bridge oscillated at 0.2 Hz at the time of collapse. The calculated vortex shedding frequency at 42 mph wind speed is approximately 1.0 Hz. These frequencies do not match. The resonance model cannot explain the torsional collapse.</p>
-              <p>What actually occurred is a phenomenon called aeroelastic flutter. When the bridge began to twist — triggered by the asymmetric loading from the slipped stay cable — the angle of the solid plate girder relative to the wind changed. This changed the aerodynamic forces acting on the girder. Critically, the changed aerodynamic forces acted in the same direction as the twist, amplifying it further. More twist produced more aerodynamic force. More force produced more twist. The system entered a self-reinforcing feedback loop — what engineers now call negative damping.</p>
-              <p>This is qualitatively different from resonance. In resonance, an external force drives a system at its natural frequency. In flutter, the structure itself generates the forces that destroy it. The wind supplies energy; the motion of the structure decides how that energy is applied. No external periodic forcing is required — or present."</p>
+              <p>"With respect to my colleague, the resonance explanation is demonstrably incomplete — and the data in this case file is sufficient to show why. The torsional mode of the Tacoma Narrows Bridge oscillated at 0.2 Hz at the time of collapse. The calculated vortex shedding frequency at 42 mph wind speed is approximately 1.0 Hz. These figures are not equal. The resonance model cannot explain the torsional collapse.</p>
+              <p>What actually occurred is a phenomenon called aeroelastic flutter. The collapse-phase motion was triggered by an asymmetric loading condition — a midspan stay cable that slipped at approximately 10:00. Once torsional oscillation began, the aerodynamic properties of the solid plate girder produced forces that amplified rather than opposed the motion. The structure's own movement, not an external periodic force, drove the collapse."</p>
             </div>
           </div>
           <LabFigure
@@ -349,23 +334,33 @@ export default function CaseDocument({ openActivity, responses }) {
 
         {/* ── § 06  POST-COLLAPSE ── */}
         <section id="tn-investigation" className={styles.section}>
-          <div className={styles.sectionHeader}>
-            <span className={styles.sectionCode}>§ 06</span>
-            <h2 className={styles.sectionTitle}>Post-Collapse Investigation</h2>
-          </div>
+          {!responses['act-6'] ? (
+            <div className={styles.callout}>
+              <span className={styles.calloutLabel}>Restricted</span>
+              <p>Post-collapse investigation findings are restricted until you have submitted your tribunal report. The inquiry tribunal's process requires that you reach your own determination before examining the historical record.</p>
+              <p style={{ marginTop: '10px', opacity: 0.7 }}>Complete Activity 6 to unlock this section.</p>
+            </div>
+          ) : (
+            <>
+              <div className={styles.sectionHeader}>
+                <span className={styles.sectionCode}>§ 06</span>
+                <h2 className={styles.sectionTitle}>Post-Collapse Investigation</h2>
+              </div>
 
-          <p>In March 1941, the Carmody Board — a panel of senior engineers convened by the Federal Works Agency — published its findings. Three conclusions stood out:</p>
+              <p>In March 1941, the Carmody Board — a panel of senior engineers convened by the Federal Works Agency — published its findings. Three conclusions stood out:</p>
 
-          <p><strong>1.</strong> The principal cause of failure was the bridge's extreme flexibility, resulting from its shallow and narrow design.</p>
-          <p><strong>2.</strong> The solid plate girder and deck section acted aerodynamically — generating lift and drag forces that the original model had not accounted for.</p>
-          <p><strong>3.</strong> Aerodynamic forces on large flexible structures were poorly understood. Wind tunnel testing of dynamic models should be required for all future long-span bridge designs.</p>
+              <p><strong>1.</strong> The principal cause of failure was the bridge's extreme flexibility, resulting from its shallow and narrow design.</p>
+              <p><strong>2.</strong> The solid plate girder and deck section acted aerodynamically — generating lift and drag forces that the original model had not accounted for.</p>
+              <p><strong>3.</strong> Aerodynamic forces on large flexible structures were poorly understood. Wind tunnel testing of dynamic models should be required for all future long-span bridge designs.</p>
 
-          <div className={styles.callout}>
-            <span className={styles.calloutLabel}>Historical note</span>
-            The Carmody Board declined to assign individual blame. Leon Moisseiff — whose career was effectively ended by the collapse — was exonerated. The board concluded that the entire engineering profession had operated at the limits of available knowledge. The science of aeroelasticity, as applied to large structures, was born in the aftermath of this failure. The replacement bridge, opened in 1950, was built with open-lattice trusses and has stood without incident ever since.
-          </div>
+              <div className={styles.callout}>
+                <span className={styles.calloutLabel}>Historical note</span>
+                The Carmody Board declined to assign individual blame. Leon Moisseiff — whose career was effectively ended by the collapse — was exonerated. The board concluded that the entire engineering profession had operated at the limits of available knowledge. The science of aeroelasticity, as applied to large structures, was born in the aftermath of this failure. The replacement bridge, opened in 1950, was built with open-lattice trusses and has stood without incident ever since.
+              </div>
 
-          <p>It later emerged that the PWA field engineer, David L. Glenn, had formally objected to the design and refused to sign off on the bridge before opening. He was overruled by federal officials. He was dismissed from his post approximately two weeks later.</p>
+              <p>It later emerged that the PWA field engineer, David L. Glenn, had formally objected to the design and refused to sign off on the bridge before opening. He was overruled by federal officials. He was dismissed from his post approximately two weeks later.</p>
+            </>
+          )}
         </section>
 
         {/* ── ACTIVITY 6 TRIGGER ── */}

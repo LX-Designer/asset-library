@@ -54,8 +54,9 @@ export default function LabShell({
   const [guideOpen, setGuideOpen] = useState(false)  // mobile drawer
 
   // ── Concepts modal state ────────────────────────────────────────────────────
-  const [activeConceptId, setActiveConceptId] = useState(null)
-  const [conceptTrigger, setConceptTrigger]   = useState(0)
+  const [activeConceptId, setActiveConceptId]     = useState(null)
+  const [conceptTrigger, setConceptTrigger]       = useState(0)
+  const [conceptCloseTrigger, setConceptCloseTrigger] = useState(0)
 
   // ── Evidence panel state ─────────────────────────────────────────────────────
   const [activeEvidenceId, setActiveEvidenceId] = useState(null)
@@ -157,9 +158,22 @@ export default function LabShell({
   }, [])
 
   const handleScrollToEvidence = useCallback((sectionId) => {
-    scrollToSection(sectionId)
+    const panelAlreadyDocked = activityDockedWidth > 0
     if (isDesktop) setActivityDockTrigger(t => t + 1)
-  }, [scrollToSection, isDesktop])
+
+    if (panelAlreadyDocked) {
+      // Panel was already docked — no layout transition fires, so one
+      // animation frame is enough for React to commit before measuring.
+      requestAnimationFrame(() => scrollToSection(sectionId))
+    } else {
+      // Panel is floating and will now dock. Docking triggers a CSS transition
+      // on padding-right (duration: --lab-transition ≈ 160ms) plus an instant
+      // guide-sidebar grid collapse. Wait until both have settled so the
+      // scroll target is measured against the final layout, not a mid-
+      // transition state that shifts the section position.
+      setTimeout(() => scrollToSection(sectionId), 200)
+    }
+  }, [scrollToSection, isDesktop, activityDockedWidth])
 
   // ── Guide docked-change handler ─────────────────────────────────────────────
   const handleGuideDockedChange = useCallback((docked) => {
@@ -181,6 +195,7 @@ export default function LabShell({
   // ── Explore / Work mode ─────────────────────────────────────────────────────
   const handleExplore = useCallback(() => {
     setActivityCloseTrigger(t => t + 1)
+    setConceptCloseTrigger(t => t + 1)
     setGuideActiveTab('activities')
     setGuideDockTrigger(t => t + 1)
   }, [])
@@ -196,6 +211,7 @@ export default function LabShell({
     if (!target) return
     lastActivityRef.current = target
     setActiveActivityId(target)
+    setConceptCloseTrigger(t => t + 1)
     setActivityDockTrigger(t => t + 1)
   }, [config, responses])
 
@@ -432,6 +448,7 @@ export default function LabShell({
           onNavigateConcept={navigateConcept}
           onClose={() => setActiveConceptId(null)}
           triggerOpen={conceptTrigger}
+          triggerClose={conceptCloseTrigger}
           themeVars={themeVars}
         />
       )}

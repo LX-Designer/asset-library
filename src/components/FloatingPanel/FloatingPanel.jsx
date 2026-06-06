@@ -40,7 +40,7 @@ const IconExpand = () => (
   </svg>
 )
 
-function PanelHeader({ title, titleEyebrow, state, onTransition, onModalFirstPopOut, sidebarOnly, modalFirst, floatOnly, accentHeader }) {
+function PanelHeader({ title, titleEyebrow, state, onTransition, onModalFirstPopOut, sidebarOnly, modalFirst, floatOnly, accentHeader, darkHeader }) {
   const isDocked    = state === 'docked'
   const isFloating  = state === 'floating'
   const isMinimised = state === 'minimised'
@@ -50,6 +50,7 @@ function PanelHeader({ title, titleEyebrow, state, onTransition, onModalFirstPop
     s.header,
     sidebarOnly ? s.headerStatic : '',
     accentHeader ? s.headerAccent : '',
+    darkHeader   ? s.headerDark   : '',
   ].filter(Boolean).join(' ')
   return (
     <div className={headerClass}>
@@ -150,6 +151,7 @@ export default function FloatingPanel({
   tabAlign = 'center',
   modalFirst = false,
   accentHeader = false,
+  darkHeader = false,
   titleEyebrow,
   themeVars = [],
   scrollTopKey,
@@ -204,7 +206,7 @@ export default function FloatingPanel({
     if (!anchorRef.current) return
     const cs = getComputedStyle(anchorRef.current)
     const varNames = [
-      '--fp-bg', '--fp-border', '--fp-ink', '--fp-ink-mid', '--fp-ink-light',
+      '--fp-bg', '--fp-header-bg', '--fp-float-border', '--fp-border', '--fp-ink', '--fp-ink-mid', '--fp-ink-light',
       '--fp-accent', '--fp-subtle', '--fp-shadow', '--fp-tab-bg', '--fp-tab-border',
       '--fp-tab-ink', '--fp-radius', '--fp-transition',
       // Asset-specific vars forwarded via the themeVars prop.
@@ -390,7 +392,7 @@ export default function FloatingPanel({
       : { width: dockedWidth }
     const panel = (
       <div className={`${s.dockedPanel} ${s[side]}`} style={dockedStyle}>
-        {!noHeader && <PanelHeader title={title} titleEyebrow={titleEyebrow} state={panelState} onTransition={transition} onModalFirstPopOut={handleModalFirstPopOut} sidebarOnly={sidebarOnly} modalFirst={modalFirst} floatOnly={floatOnly} accentHeader={accentHeader} />}
+        {!noHeader && <PanelHeader title={title} titleEyebrow={titleEyebrow} state={panelState} onTransition={transition} onModalFirstPopOut={handleModalFirstPopOut} sidebarOnly={sidebarOnly} modalFirst={modalFirst} floatOnly={floatOnly} accentHeader={accentHeader} darkHeader={darkHeader} />}
         <div className={s.panelBody} ref={panelBodyRef}>{children}</div>
         <div className={`${s.resizeHandle} ${s[side]}`} onMouseDown={handleDockedResize} />
       </div>
@@ -458,7 +460,7 @@ export default function FloatingPanel({
                 if (!modalFirst) save(id, { size: sz, pos: newPos })
               }}
             >
-              {!noHeader && <PanelHeader title={title} titleEyebrow={titleEyebrow} state={panelState} onTransition={transition} onModalFirstPopOut={handleModalFirstPopOut} sidebarOnly={sidebarOnly} modalFirst={modalFirst} floatOnly={floatOnly} accentHeader={accentHeader} />}
+              {!noHeader && <PanelHeader title={title} titleEyebrow={titleEyebrow} state={panelState} onTransition={transition} onModalFirstPopOut={handleModalFirstPopOut} sidebarOnly={sidebarOnly} modalFirst={modalFirst} floatOnly={floatOnly} accentHeader={accentHeader} darkHeader={darkHeader} />}
               {!isMinimised && <div className={s.panelBody} ref={panelBodyRef}>{children}</div>}
             </Rnd>
           </div>,

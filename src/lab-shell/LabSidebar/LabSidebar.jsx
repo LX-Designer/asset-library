@@ -67,6 +67,7 @@ export default function LabSidebar({
       modalFirst
       noTab
       accentHeader={config.sidebar?.fpAccentHeader ?? false}
+      darkHeader={config.sidebar?.fpDarkHeader ?? false}
       topOffset="var(--lab-nav-height)"
       triggerDock={triggerDock}
       triggerClose={triggerClose}

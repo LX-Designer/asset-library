@@ -49,17 +49,32 @@
   --lab-nav-height:      44px;
   --lab-transition:      160ms ease;
 
-  /* FloatingPanel aliases */
-  --fp-bg:           var(--lab-surface);
-  --fp-border:       var(--lab-rule);
-  --fp-ink:          var(--lab-ink);
-  --fp-ink-mid:      var(--lab-ink-mid);
-  --fp-ink-light:    var(--lab-ink-light);
-  --fp-accent:       var(--lab-accent);
-  --fp-subtle:       rgba(245,240,232,0.06);
-  --fp-tab-bg:       var(--lab-surface);
-  --fp-tab-border:   var(--lab-rule);
-  --fp-tab-ink:      var(--lab-ink-mid);
+  /* Nav bar — explicit black with cream text and cream-palette buttons */
+  --lab-nav-surface:         var(--tn-ink);
+  --lab-nav-ink:             var(--tn-paper);
+  --lab-nav-ink-mid:         rgba(245,240,232,0.75);
+  --lab-nav-ink-light:       rgba(245,240,232,0.45);
+  --lab-nav-rule:            rgba(245,240,232,0.3);
+  --lab-nav-border-bottom:   1px solid rgba(245,240,232,0.08);
+  --lab-nav-btn-hover-bg:    rgba(245,240,232,0.1);
+  --lab-nav-btn-active-bg:   var(--tn-paper);
+  --lab-nav-btn-active-text: var(--tn-ink);
+
+  /* FloatingPanel body — cream surface with dark ink (matches ActivityModal body) */
+  --fp-bg:           var(--tn-paper);
+  --fp-border:       var(--tn-border);
+  --fp-ink:          var(--tn-ink);
+  --fp-ink-mid:      var(--tn-ink-mid);
+  --fp-ink-light:    var(--tn-ink-light);
+  --fp-accent:       var(--tn-accent);
+  --fp-subtle:       var(--tn-paper-dark);
+  /* FloatingPanel header — dark (the "ACTIVITY GUIDE" bar) */
+  --fp-header-bg:    var(--tn-ink);
+  /* Tab strip — cream, matching panel body; active tab merges seamlessly */
+  --fp-tab-bg:       var(--tn-paper);
+  --fp-tab-border:   var(--tn-border);
+  --fp-tab-ink:      var(--tn-ink);
+  --fp-float-border: none;
   --fp-radius:       4px;
   --fp-transition:   var(--lab-transition);
   --fp-shadow:       0 4px 24px rgba(0,0,0,0.32);
@@ -82,6 +97,7 @@
   --lab-figure-bg:          var(--tn-paper-dark);
   --lab-figure-caption-bg:  var(--tn-paper-darker);
   --lab-figure-caption-ink: var(--tn-ink-mid);
+
 }
 
 /* ── DOCUMENT HEADER ─────────────────────────────────────────────────────── */
@@ -664,6 +680,19 @@
   position: absolute;
   left: 0;
   color: var(--tn-ink-light);
+}
+
+/* ── DIAGRAM FIGURES ─────────────────────────────────────────────────────── */
+
+.diagram { width: 100%; margin: 24px 0; display: block; }
+.diagram img, .diagram svg { width: 100%; height: auto; display: block; }
+.diagramCaption {
+  font-family: var(--tn-mono);
+  font-size: 10px;
+  color: var(--tn-ink-light);
+  letter-spacing: 0.06em;
+  margin-top: 8px;
+  text-align: center;
 }
 
 /* ── RESPONSIVE ──────────────────────────────────────────────────────────── */

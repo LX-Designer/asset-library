@@ -7,11 +7,11 @@
 
 .intro {
   font-size: 11px;
-  color: var(--lab-ink-light);
+  color: var(--fp-ink-light, var(--lab-ink-light));
   padding: 12px 14px 10px;
   margin: 0;
   line-height: 1.5;
-  border-bottom: 1px solid var(--lab-rule-light);
+  border-bottom: 1px solid var(--fp-border, var(--lab-rule-light));
   flex-shrink: 0;
 }
 
@@ -25,9 +25,9 @@
   resize: none;
   font-size: 12.5px;
   font-family: var(--lab-font-sans, inherit);
-  color: var(--lab-ink);
+  color: var(--fp-ink, var(--lab-ink));
   line-height: 1.6;
   outline: none;
 }
 
-.textarea::placeholder { color: var(--lab-ink-light); }
+.textarea::placeholder { color: var(--fp-ink-light, var(--lab-ink-light)); }

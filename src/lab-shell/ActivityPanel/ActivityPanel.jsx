@@ -51,6 +51,7 @@ export default function ActivityPanel({
       modalFirst
       noTab
       accentHeader={accentHeader}
+      darkHeader={config.activityPanel?.fpDarkHeader ?? false}
       themeVars={themeVars}
     >
       {activity && (
