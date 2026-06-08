@@ -74,7 +74,6 @@
   --fp-tab-bg:       var(--tn-paper);
   --fp-tab-border:   var(--tn-border);
   --fp-tab-ink:      var(--tn-ink);
-  --fp-float-border: none;
   --fp-radius:       4px;
   --fp-transition:   var(--lab-transition);
   --fp-shadow:       0 4px 24px rgba(0,0,0,0.32);

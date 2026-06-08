@@ -1,0 +1,1221 @@
+/* ── Global Warming Lab content styles ────────────────────────────────────────
+   Design tokens are defined in index.module.css on .labShell.
+   Layout (nav, sidebar, activity panel) is owned by LabShell.
+   ─────────────────────────────────────────────────────────────────────────── */
+
+/* ── Root ─────────────────────────────────────────────────────────────────── */
+.lab {
+  width: 100%;
+  min-width: 0;
+  font-family: var(--gw-sans);
+  color: var(--gw-ink);
+}
+
+/* ── Sections ─────────────────────────────────────────────────────────────── */
+.section {
+  padding: 48px 40px;
+  border-bottom: 1px solid var(--gw-rule-light);
+}
+
+.section:last-child {
+  border-bottom: none;
+}
+
+.sectionLabel {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gw-accent-mid);
+  margin-bottom: 8px;
+}
+
+.sectionTitle {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--gw-ink);
+  line-height: 1.25;
+  margin-bottom: 12px;
+  letter-spacing: -0.01em;
+}
+
+.sectionIntro {
+  font-size: 15px;
+  color: var(--gw-ink-mid);
+  line-height: 1.75;
+  margin-bottom: 28px;
+  max-width: 700px;
+}
+
+.sectionBody {
+  font-size: 15px;
+  line-height: 1.75;
+  color: var(--gw-ink);
+  /* No max-width here — prose paragraphs are constrained individually below.
+     Grids, tables, and comparison frameworks use the full section width. */
+}
+
+.sectionBody > p {
+  max-width: 700px;
+  margin-bottom: 16px;
+}
+
+.sectionBody p {
+  margin-bottom: 16px;
+}
+
+.sectionBody strong {
+  font-weight: 600;
+  color: var(--gw-ink);
+}
+
+.subHeading {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--gw-ink-mid);
+  margin: 28px 0 12px;
+  max-width: 700px;
+}
+
+/* ── Hero / Inquiry brief ─────────────────────────────────────────────────── */
+.hero {
+  background: var(--gw-surface);
+  padding: 56px 40px 48px;
+  border-bottom: 1px solid var(--gw-rule);
+}
+
+.heroEyebrow {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gw-accent-mid);
+  margin-bottom: 14px;
+}
+
+.heroTitle {
+  font-size: 30px;
+  font-weight: 700;
+  color: var(--gw-ink);
+  line-height: 1.15;
+  margin-bottom: 6px;
+  letter-spacing: -0.02em;
+}
+
+.heroQuestion {
+  font-size: 19px;
+  font-weight: 500;
+  color: var(--gw-accent);
+  line-height: 1.45;
+  margin-bottom: 28px;
+  max-width: 720px;
+  padding: 16px 20px;
+  background: var(--gw-accent-subtle);
+  border-left: 4px solid var(--gw-accent);
+  border-radius: 0 4px 4px 0;
+}
+
+.heroContext {
+  font-size: 15px;
+  line-height: 1.75;
+  color: var(--gw-ink-mid);
+  max-width: 680px;
+  margin-bottom: 24px;
+}
+
+.heroRole {
+  background: var(--gw-surface-mid);
+  border: 1px solid var(--gw-rule);
+  border-radius: 6px;
+  padding: 16px 20px;
+  font-size: 14px;
+  line-height: 1.65;
+  color: var(--gw-ink-mid);
+  margin-bottom: 24px;
+  max-width: 680px;
+}
+
+.heroRoleLabel {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gw-accent);
+  margin-bottom: 6px;
+}
+
+.heroMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  font-size: 13px;
+  color: var(--gw-ink-light);
+}
+
+.heroMetaItem strong {
+  color: var(--gw-ink-mid);
+  font-weight: 600;
+}
+
+/* ── Hero two-column layout (attribution problem + role) ──────────────────── */
+/* Desktop: side-by-side so "here's the problem / here's your task" reads as
+   a brief. Collapses to single column at ≤600px. */
+.heroCols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  align-items: stretch;
+  margin-bottom: 24px;
+}
+
+/* Inside the two-column grid, reset margins and max-widths that only
+   make sense when these elements appear in the normal prose flow. */
+.heroCols > .callout {
+  max-width: none;
+  margin: 0;
+}
+
+.heroCols > .heroScenario {
+  max-width: none;
+  margin: 0;
+}
+
+/* ── Inquiry connection callout ───────────────────────────────────────────── */
+.inquiryCallout {
+  background: var(--gw-accent-subtle);
+  border-left: 3px solid var(--gw-accent);
+  padding: 14px 18px;
+  border-radius: 0 4px 4px 0;
+  font-size: 14px;
+  line-height: 1.65;
+  color: var(--gw-ink-mid);
+  margin-top: 20px;
+  max-width: 700px;
+}
+
+.inquiryCalloutLabel {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gw-accent);
+  margin-bottom: 6px;
+}
+
+/* ── Misconception / epistemic warning ────────────────────────────────────── */
+.warningNote {
+  background: var(--gw-warn-subtle);
+  border-left: 3px solid var(--gw-warn-border);
+  padding: 12px 16px;
+  border-radius: 0 4px 4px 0;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--gw-ink-mid);
+  margin-top: 16px;
+  max-width: 700px;
+}
+
+.warningNoteLabel {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gw-warn);
+  margin-bottom: 4px;
+}
+
+/* ── Evidence cards ───────────────────────────────────────────────────────── */
+.ecGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 8px;
+  /* No max-width — cards use the full section width for readability.
+     These are dense dossier entries, not a comparison grid. */
+}
+
+.ecCard {
+  background: var(--gw-surface);
+  border: 1px solid var(--gw-rule);
+  border-left: 4px solid var(--gw-accent-mid);
+  border-radius: 0 6px 6px 0;
+  overflow: hidden;
+}
+
+.ecCard[data-type="proxy"] { border-left-color: var(--gw-proxy); }
+.ecCard[data-type="instrumental"] { border-left-color: var(--gw-instrumental); }
+.ecCard[data-type="physical"] { border-left-color: var(--gw-physical); }
+.ecCard[data-type="synthesis"] { border-left-color: var(--gw-synthesis); }
+
+.ecHeader {
+  padding: 12px 16px 10px;
+  border-bottom: 1px solid var(--gw-rule-light);
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.ecType {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 3px;
+  background: var(--gw-surface-mid);
+  color: var(--gw-ink-mid);
+  white-space: nowrap;
+}
+
+.ecCard[data-type="proxy"] .ecType {
+  background: var(--gw-proxy-subtle);
+  color: var(--gw-proxy);
+}
+.ecCard[data-type="instrumental"] .ecType {
+  background: var(--gw-instrumental-subtle);
+  color: var(--gw-instrumental);
+}
+.ecCard[data-type="synthesis"] .ecType {
+  background: var(--gw-synthesis-subtle);
+  color: var(--gw-synthesis);
+}
+
+.ecTitle {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--gw-ink);
+  line-height: 1.35;
+}
+
+.ecTimescale {
+  font-size: 11px;
+  color: var(--gw-ink-light);
+  font-style: italic;
+  margin-left: auto;
+  white-space: nowrap;
+}
+
+.ecBody {
+  padding: 14px 16px;
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--gw-ink);
+}
+
+/* expandable "What this does NOT tell you" */
+.ecExpand {
+  border-top: 1px dashed var(--gw-rule);
+}
+
+.ecExpand summary {
+  padding: 10px 16px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--gw-ink-light);
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  user-select: none;
+  transition: color var(--gw-transition);
+}
+
+.ecExpand summary::-webkit-details-marker { display: none; }
+
+.ecExpand summary::before {
+  content: '▸';
+  font-size: 10px;
+  transition: transform var(--gw-transition);
+}
+
+.ecExpand[open] summary::before {
+  transform: rotate(90deg);
+}
+
+.ecExpand summary:hover { color: var(--gw-ink-mid); }
+
+.ecExpandContent {
+  padding: 12px 16px 14px;
+  background: var(--gw-surface-mid);
+  font-size: 13px;
+  line-height: 1.65;
+  color: var(--gw-ink-mid);
+}
+
+.ecInquiry {
+  padding: 10px 16px;
+  background: var(--gw-accent-subtle);
+  border-top: 1px solid var(--gw-rule-light);
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--gw-ink-mid);
+}
+
+.ecInquiryLabel {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gw-accent);
+  margin-bottom: 4px;
+}
+
+/* ── Chronology table ─────────────────────────────────────────────────────── */
+.chronoTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13.5px;
+  min-width: 600px;
+}
+
+.chronoTable th {
+  text-align: left;
+  padding: 10px 14px;
+  background: var(--gw-surface-mid);
+  color: var(--gw-ink-mid);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border-bottom: 2px solid var(--gw-rule);
+}
+
+.chronoTable td {
+  padding: 12px 14px;
+  vertical-align: top;
+  border-bottom: 1px solid var(--gw-rule-light);
+  line-height: 1.6;
+  color: var(--gw-ink);
+}
+
+.chronoTable tr:last-child td { border-bottom: none; }
+
+.chronoTable tr:nth-child(even) td {
+  background: #FAFBFC;
+}
+
+.chronoDate {
+  font-weight: 600;
+  font-size: 12px;
+  white-space: nowrap;
+  color: var(--gw-accent);
+  width: 160px;
+  min-width: 160px;
+}
+
+.chronoSig {
+  color: var(--gw-ink-mid);
+  font-size: 13px;
+}
+
+/* ── GHG table ────────────────────────────────────────────────────────────── */
+.ghgTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  margin-top: 8px;
+  min-width: 560px;
+}
+
+.ghgTable th {
+  text-align: left;
+  padding: 9px 12px;
+  background: var(--gw-accent);
+  color: #FFFFFF;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.ghgTable td {
+  padding: 11px 12px;
+  vertical-align: top;
+  border-bottom: 1px solid var(--gw-rule-light);
+  line-height: 1.5;
+  color: var(--gw-ink);
+}
+
+.ghgTable tr:last-child td { border-bottom: none; }
+
+.ghgTable tr:nth-child(even) td {
+  background: var(--gw-surface-mid);
+}
+
+.ghgGas {
+  font-weight: 600;
+  color: var(--gw-ink);
+}
+
+.ghgGwp {
+  font-weight: 600;
+  color: var(--gw-accent);
+}
+
+/* ── Comparison framework scaffold ────────────────────────────────────────── */
+.compSection {
+  margin-top: 20px;
+  border: 1px solid var(--gw-rule);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.compHeader {
+  background: var(--gw-surface-mid);
+  padding: 12px 16px;
+  display: grid;
+  grid-template-columns: 180px 1fr 1fr;
+  gap: 12px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--gw-ink-mid);
+  border-bottom: 1px solid var(--gw-rule);
+}
+
+.compRow {
+  padding: 14px 16px;
+  display: grid;
+  grid-template-columns: 180px 1fr 1fr;
+  gap: 12px;
+  border-bottom: 1px solid var(--gw-rule-light);
+  font-size: 13.5px;
+}
+
+.compRow:last-child { border-bottom: none; }
+
+.compCriterion {
+  font-weight: 600;
+  color: var(--gw-ink);
+  line-height: 1.4;
+}
+
+.compCriterionQ {
+  font-size: 11px;
+  color: var(--gw-ink-light);
+  margin-top: 3px;
+  font-style: italic;
+}
+
+.compBlank {
+  background: var(--gw-surface-mid);
+  border: 1px dashed var(--gw-rule);
+  border-radius: 4px;
+  min-height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  color: var(--gw-ink-light);
+  font-style: italic;
+  padding: 8px 10px;
+  text-align: center;
+  line-height: 1.5;
+}
+
+/* ── Comparison column colour coding ─────────────────────────────────────── */
+/* Warm amber tint = natural factors; cool navy tint = anthropogenic.
+   Tints are intentionally neutral — neither column signals "right" or "wrong"
+   before students have done the comparison (Activity 5). */
+
+/* Row-level tint — very subtle, just enough to separate the columns */
+.compColNatural { background: rgba(251, 191, 36, 0.06); }
+.compColAnthro  { background: rgba(30, 58, 95, 0.05); }
+
+/* Header-level tint — more prominent, sets the column identity */
+.compHeader > .compColNatural {
+  background: rgba(251, 191, 36, 0.18);
+  color: #92400E;
+}
+.compHeader > .compColAnthro {
+  background: rgba(30, 58, 95, 0.10);
+  color: var(--gw-accent);
+}
+
+/* ── Glossary ─────────────────────────────────────────────────────────────── */
+.glossaryGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.glossaryItem {
+  border: 1px solid var(--gw-rule);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.glossaryItem summary {
+  padding: 11px 14px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--gw-ink);
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  user-select: none;
+  transition: background var(--gw-transition);
+}
+
+.glossaryItem summary::-webkit-details-marker { display: none; }
+
+.glossaryItem summary::before {
+  content: '+';
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--gw-accent);
+  width: 16px;
+  text-align: center;
+  flex-shrink: 0;
+  transition: transform var(--gw-transition);
+}
+
+.glossaryItem[open] summary::before {
+  content: '−';
+}
+
+.glossaryItem summary:hover { background: var(--gw-surface-mid); }
+
+.glossaryItem[open] summary {
+  background: var(--gw-accent-subtle);
+  border-bottom: 1px solid var(--gw-rule-light);
+}
+
+.glossaryDef {
+  padding: 12px 14px;
+  font-size: 13.5px;
+  line-height: 1.65;
+  color: var(--gw-ink-mid);
+}
+
+.glossaryExample {
+  font-size: 12px;
+  color: var(--gw-ink-light);
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--gw-rule-light);
+  font-style: italic;
+}
+
+/* ── Activity form shared styles ─────────────────────────────────────────── */
+.actInstruction {
+  background: var(--gw-surface-mid);
+  border: 1px solid var(--gw-rule);
+  border-radius: 5px;
+  padding: 14px 18px;
+  font-size: 14px;
+  line-height: 1.65;
+  color: var(--gw-ink-mid);
+  margin-bottom: 18px;
+}
+
+.actInstructionLabel {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gw-accent);
+  margin-bottom: 6px;
+}
+
+.actLabel {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--gw-ink-mid);
+  margin-bottom: 6px;
+  margin-top: 16px;
+}
+
+.actTextarea {
+  width: 100%;
+  border: 1px solid var(--gw-rule);
+  border-radius: 5px;
+  padding: 12px 14px;
+  font-family: var(--gw-sans);
+  font-size: 14px;
+  line-height: 1.65;
+  background: var(--gw-surface);
+  color: var(--gw-ink);
+  resize: vertical;
+  min-height: 96px;
+  box-sizing: border-box;
+  transition: border-color var(--gw-transition), box-shadow var(--gw-transition);
+}
+
+.actTextarea:focus {
+  outline: none;
+  border-color: var(--gw-accent);
+  box-shadow: 0 0 0 3px rgba(30, 58, 95, 0.12);
+}
+
+.actTextarea:disabled {
+  background: var(--gw-surface-mid);
+  color: var(--gw-ink-light);
+  cursor: not-allowed;
+}
+
+.actTextareaLarge {
+  min-height: 140px;
+}
+
+.actSectionDivider {
+  border: none;
+  border-top: 1px solid var(--gw-rule-light);
+  margin: 20px 0;
+}
+
+.actSectionHead {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--gw-ink);
+  letter-spacing: 0.04em;
+  margin-bottom: 4px;
+  margin-top: 20px;
+}
+
+.actSectionDesc {
+  font-size: 13px;
+  color: var(--gw-ink-light);
+  line-height: 1.55;
+  margin-bottom: 8px;
+}
+
+/* Save status */
+.saveStatus {
+  font-size: 11px;
+  color: var(--gw-ink-light);
+  font-style: italic;
+}
+
+.saveStatusSaved { color: var(--lab-complete); font-style: normal; font-weight: 500; }
+.saveStatusUnsaved { color: var(--gw-warn); }
+
+/* Buttons */
+.actActions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--gw-rule-light);
+  flex-wrap: wrap;
+}
+
+.btn {
+  font-family: var(--gw-sans);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  padding: 9px 18px;
+  border-radius: 5px;
+  cursor: pointer;
+  border: 1px solid var(--gw-rule);
+  background: none;
+  color: var(--gw-ink-mid);
+  transition: background var(--gw-transition), border-color var(--gw-transition);
+}
+
+.btn:hover { background: var(--gw-surface-mid); border-color: var(--gw-ink-light); }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.btnPrimary {
+  background: var(--gw-accent);
+  color: #FFFFFF;
+  border-color: var(--gw-accent);
+}
+
+.btnPrimary:hover { background: var(--gw-accent-hover); border-color: var(--gw-accent-hover); }
+.btnPrimary:disabled { opacity: 0.5; cursor: not-allowed; background: var(--gw-accent); }
+
+.btnGhost {
+  background: none;
+  border: none;
+  color: var(--gw-ink-light);
+  font-size: 12px;
+  cursor: pointer;
+  padding: 6px 8px;
+  text-decoration: underline;
+}
+
+.btnGhost:hover { color: var(--gw-ink-mid); }
+
+/* ── Activity 3 — factor sections ────────────────────────────────────────── */
+.factorGroup {
+  border: 1px solid var(--gw-rule);
+  border-radius: 6px;
+  overflow: hidden;
+  margin-top: 14px;
+}
+
+.factorGroupHeader {
+  background: var(--gw-surface-mid);
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--gw-rule-light);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.factorGroupTitle {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--gw-ink);
+}
+
+.factorGroupHint {
+  font-size: 11px;
+  color: var(--gw-ink-light);
+}
+
+.factorGroupBody {
+  padding: 12px 14px;
+}
+
+/* ── Activity 4 — GHG compact table ─────────────────────────────────────── */
+.ghgRef {
+  background: var(--gw-surface-mid);
+  border: 1px solid var(--gw-rule);
+  border-radius: 5px;
+  padding: 12px;
+  margin-bottom: 14px;
+  overflow-x: auto;
+}
+
+.ghgRefTitle {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gw-accent-mid);
+  margin-bottom: 8px;
+}
+
+/* ── Synthesis activity ───────────────────────────────────────────────────── */
+.synthPrev {
+  margin-bottom: 16px;
+}
+
+.synthPrevTitle {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gw-ink-mid);
+  margin-bottom: 8px;
+}
+
+.prevResponseGroup {
+  border: 1px solid var(--gw-rule);
+  border-radius: 5px;
+  overflow: hidden;
+  margin-bottom: 6px;
+}
+
+.prevResponseLabel {
+  background: var(--gw-surface-mid);
+  padding: 7px 12px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--gw-ink-mid);
+  border-bottom: 1px solid var(--gw-rule-light);
+}
+
+.prevResponseText {
+  padding: 10px 12px;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--gw-ink);
+  max-height: 100px;
+  overflow-y: auto;
+}
+
+.prevResponseEmpty {
+  font-style: italic;
+  color: var(--gw-ink-light);
+}
+
+.starterSection {
+  margin-top: 14px;
+  margin-bottom: 14px;
+}
+
+.starterTitle {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gw-ink-mid);
+  margin-bottom: 8px;
+}
+
+.starterChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.starterChip {
+  font-family: var(--gw-sans);
+  font-size: 12px;
+  color: var(--gw-accent);
+  border: 1px solid var(--gw-accent-subtle);
+  background: var(--gw-accent-subtle);
+  border-radius: 4px;
+  padding: 5px 10px;
+  cursor: pointer;
+  text-align: left;
+  line-height: 1.4;
+  transition: background var(--gw-transition), border-color var(--gw-transition);
+}
+
+.starterChip:hover {
+  background: var(--gw-accent);
+  color: #FFFFFF;
+  border-color: var(--gw-accent);
+}
+
+.starterChip:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.successCriteria {
+  background: var(--gw-surface-mid);
+  border: 1px solid var(--gw-rule);
+  border-radius: 5px;
+  padding: 12px 14px;
+  margin-top: 14px;
+}
+
+.successCriteriaTitle {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gw-ink-mid);
+  margin-bottom: 8px;
+}
+
+.criteriaList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.criteriaList li {
+  font-size: 13px;
+  color: var(--gw-ink-mid);
+  padding: 4px 0;
+  display: flex;
+  gap: 8px;
+  line-height: 1.5;
+}
+
+.criteriaList li::before {
+  content: '—';
+  color: var(--gw-ink-light);
+  flex-shrink: 0;
+}
+
+.wordCount {
+  font-size: 11px;
+  color: var(--gw-ink-light);
+  text-align: right;
+  margin-top: 4px;
+}
+
+.wordCountOk { color: var(--lab-complete); }
+
+.copySuccess {
+  font-size: 11px;
+  color: var(--lab-complete);
+  margin-left: 4px;
+}
+
+/* ── Reflection activity ──────────────────────────────────────────────────── */
+.reflectStep {
+  background: var(--gw-accent-subtle);
+  border: 1px solid var(--gw-rule);
+  border-left: 3px solid var(--gw-accent);
+  border-radius: 0 5px 5px 0;
+  padding: 14px 16px;
+  margin-bottom: 14px;
+}
+
+.reflectStepLabel {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gw-accent);
+  margin-bottom: 6px;
+}
+
+.reflectPrompt {
+  font-size: 14px;
+  line-height: 1.65;
+  color: var(--gw-ink);
+  font-weight: 500;
+}
+
+.reflectNav {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--gw-rule-light);
+}
+
+.reflectProgress {
+  font-size: 11px;
+  color: var(--gw-ink-light);
+  flex: 1;
+}
+
+.reflectDone {
+  background: var(--gw-accent-subtle);
+  border: 1px solid var(--gw-accent-mid);
+  border-radius: 5px;
+  padding: 12px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--gw-accent);
+  text-align: center;
+  margin-top: 12px;
+}
+
+/* ── Responsive ───────────────────────────────────────────────────────────── */
+@media (max-width: 600px) {
+  .section { padding: 32px 20px; }
+  .hero { padding: 36px 20px 28px; }
+  .heroTitle { font-size: 24px; }
+  .heroQuestion { font-size: 16px; }
+  .heroCols { grid-template-columns: 1fr; gap: 12px; }
+  .compRow { grid-template-columns: 1fr; }
+  .compHeader { grid-template-columns: 1fr; }
+  .glossaryGrid { grid-template-columns: 1fr; }
+}
+
+/* ── Section-specific colours ─────────────────────────────────────────────── */
+.accentCallout {
+  background: var(--gw-accent-subtle);
+  border-left: 4px solid var(--gw-accent);
+  padding: 14px 18px;
+  border-radius: 0 5px 5px 0;
+  font-size: 14.5px;
+  line-height: 1.7;
+  color: var(--gw-ink);
+  font-weight: 500;
+  margin: 16px 0;
+  max-width: 700px;
+}
+
+.dataNote {
+  background: var(--gw-surface-mid);
+  border: 1px solid var(--gw-rule);
+  border-radius: 5px;
+  padding: 12px 16px;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--gw-ink-mid);
+  margin-top: 16px;
+  max-width: 700px;
+}
+
+.dataNoteBold {
+  font-weight: 700;
+  color: var(--gw-ink);
+}
+
+.sourceQuote {
+  border-left: 3px solid var(--gw-synthesis);
+  background: var(--gw-synthesis-subtle);
+  padding: 14px 18px;
+  border-radius: 0 5px 5px 0;
+  margin: 20px 0;
+  max-width: 700px;
+}
+
+.sourceQuoteText {
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--gw-ink);
+  font-style: italic;
+}
+
+.sourceQuoteAttrib {
+  font-size: 12px;
+  color: var(--gw-ink-light);
+  margin-top: 8px;
+  font-style: normal;
+}
+
+/* Open the synthesis section */
+.synthOpenBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--gw-accent);
+  color: #FFFFFF;
+  border: none;
+  border-radius: 5px;
+  padding: 11px 22px;
+  font-family: var(--gw-sans);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background var(--gw-transition);
+  margin-top: 16px;
+}
+
+.synthOpenBtn:hover { background: var(--gw-accent-hover); }
+
+/* ── Missing utility classes ─────────────────────────────────────────────── */
+
+/* General callout (inquiry-style) */
+.callout {
+  background: var(--gw-accent-subtle);
+  border-left: 3px solid var(--gw-accent);
+  padding: 14px 18px;
+  border-radius: 0 4px 4px 0;
+  font-size: 14px;
+  line-height: 1.65;
+  color: var(--gw-ink-mid);
+  margin: 16px 0;
+  max-width: 700px;
+}
+
+.callout strong { color: var(--gw-ink); font-weight: 600; }
+
+/* Warning variant — applied alongside .callout */
+.calloutWarn {
+  background: var(--gw-warn-subtle);
+  border-left-color: var(--gw-warn-border);
+  border-left-width: 4px;
+}
+
+/* Eyebrow label injected by Callout component for type="warn" */
+.calloutWarnLabel {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gw-warn);
+  margin-bottom: 6px;
+}
+
+/* Hero scenario block (alias of heroRole) */
+.heroScenario {
+  background: var(--gw-surface-mid);
+  border: 1px solid var(--gw-rule);
+  border-radius: 6px;
+  padding: 16px 20px;
+  font-size: 14px;
+  line-height: 1.65;
+  color: var(--gw-ink-mid);
+  margin-bottom: 24px;
+  max-width: 680px;
+}
+
+.heroScenarioLabel {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gw-accent);
+  margin-bottom: 6px;
+}
+
+/* Evidence card ID badge */
+.ecId {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gw-accent-mid);
+  background: var(--gw-accent-subtle);
+  border-radius: 3px;
+  padding: 2px 6px;
+  flex-shrink: 0;
+}
+
+/* Shows text block (inside ecCard, outside header) */
+.ecShows {
+  padding: 12px 16px;
+  font-size: 13.5px;
+  line-height: 1.7;
+  color: var(--gw-ink);
+  border-top: 1px solid var(--gw-rule-light);
+}
+
+/* Alias for ecExpandContent */
+.ecExpandBody {
+  padding: 12px 16px 14px;
+  background: var(--gw-surface-mid);
+  font-size: 13px;
+  line-height: 1.65;
+  color: var(--gw-ink-mid);
+}
+
+/* Styled evidence list */
+.evidenceList {
+  padding-left: 22px;
+  margin: 12px 0 16px;
+  line-height: 1.8;
+  max-width: 700px;
+}
+
+.evidenceList li { margin-bottom: 8px; }
+
+/* Comparison criterion sub-question */
+.compQuestion {
+  font-size: 11px;
+  color: var(--gw-ink-light);
+  margin-top: 3px;
+  font-style: italic;
+  line-height: 1.45;
+}
+
+/* Comparison grid cells */
+.compCell {
+  font-size: 13.5px;
+  line-height: 1.65;
+  color: var(--gw-ink);
+}
+
+.compHint {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--gw-ink-mid);
+}
+
+/* Chronology table content */
+.chronoEvent {
+  font-size: 13.5px;
+  font-weight: 500;
+  line-height: 1.55;
+  color: var(--gw-ink);
+  margin-bottom: 3px;
+}
+
+.chronoInquiry {
+  font-size: 11.5px;
+  font-style: italic;
+  color: var(--gw-accent-mid);
+  margin-top: 4px;
+}
+
+/* Glossary term (targets summary text — extra specificity if needed) */
+.glossaryTerm {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--gw-ink);
+}

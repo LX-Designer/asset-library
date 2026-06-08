@@ -87,6 +87,7 @@
   --fp-border-width:     var(--lab-chrome-border-width, 1px);
   --fp-radius:           var(--lab-chrome-radius, 4px);
   --fp-transition:       var(--lab-transition);
+  --fp-float-border:     none;          /* floating panels rely on shadow for depth */
 
   /* ── ActivityModal namespace aliases ───────────────────────────────────── */
   --modal-panel-bg:      var(--lab-chrome-surface, var(--lab-surface));
@@ -97,7 +98,7 @@
   --modal-accent:        var(--lab-accent);
   --modal-accent-hover:  var(--lab-accent-hover);
   --modal-subtle:        var(--lab-bg);
-  --modal-label:         var(--lab-warn);
+  --modal-label:         var(--lab-accent);
   --modal-serif:         var(--lab-font-serif);
   --modal-heading-weight: var(--lab-chrome-heading-weight, 700);
   --modal-transition:    var(--lab-transition);

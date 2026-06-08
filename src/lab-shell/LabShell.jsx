@@ -433,6 +433,7 @@ export default function LabShell({
                 onScrollTo={scrollToSection}
                 onOpenConcept={openConcept}
                 onClose={() => setActiveActivityId(null)}
+                darkHeader={config.activityPanel?.fpDarkHeader ?? false}
               />
             </div>
           </>

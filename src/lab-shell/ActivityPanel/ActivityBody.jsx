@@ -27,6 +27,7 @@ export default function ActivityBody({
   onOpenConcept,
   onClose,
   noHeader = false,
+  darkHeader = false,
 }) {
   const [clearKey, setClearKey] = useState(0)
 
@@ -76,6 +77,7 @@ export default function ActivityBody({
   return (
     <ActivityModal
       noHeader={noHeader}
+      darkHeader={darkHeader}
       activityNumber={actIndex + 1}
       activityLabel={`Activity ${actIndex + 1}`}
       thinkingMove={activity.thinkingMove ?? ''}

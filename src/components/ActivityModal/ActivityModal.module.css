@@ -83,6 +83,38 @@
   color: var(--modal-ink, #111827);
 }
 
+/* ── Dark header variant ─────────────────────────────────────────────────── */
+/* Applied when darkHeader={true} — matches FloatingPanel's headerDark mode.
+   Background uses --fp-header-bg (same token FloatingPanel uses) so both
+   desktop and mobile activity panels render an identical dark header.
+   Border is transparent — the colour contrast with the body provides the
+   visual break without a visible line. */
+.headerDark {
+  background: var(--fp-header-bg, var(--lab-accent, #374151));
+  border-bottom: none;
+}
+
+.headerDark .subtitle {
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.headerDark .title {
+  /* Use the lab's sans-serif in dark-header mode — this is chrome, not body copy */
+  font-family: var(--lab-font-sans, var(--fp-tab-ink, sans-serif));
+  color: rgba(255, 255, 255, 0.88);
+}
+
+.headerDark .closeBtn {
+  border-color: rgba(255, 255, 255, 0.22);
+  color: rgba(255, 255, 255, 0.60);
+}
+
+.headerDark .closeBtn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.35);
+  color: #ffffff;
+}
+
 .closeBtn:focus-visible {
   outline: 2px solid var(--modal-accent, #374151);
   outline-offset: 2px;

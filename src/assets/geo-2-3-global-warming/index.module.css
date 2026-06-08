@@ -1,0 +1,97 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* ── Global Warming Lab theme tokens ──────────────────────────────────────────
+   Applied on .labShell (the LabShell root class passed via className prop).
+   Defines --lab-* tokens (consumed by shell chrome) and --gw-* aliases
+   (consumed by content and activity form components).
+   ─────────────────────────────────────────────────────────────────────────── */
+.labShell {
+  /* ── Surfaces */
+  --lab-bg:              #F7F8FA;
+  --lab-surface:         #FFFFFF;
+  --lab-surface-mid:     #F0F2F5;
+
+  /* ── Text */
+  --lab-ink:             #0F172A;
+  --lab-ink-mid:         #374151;
+  --lab-ink-light:       #6B7280;
+  --lab-tab-ink:         #374151;
+
+  /* ── Borders */
+  --lab-rule:            #E2E8F0;
+  --lab-rule-light:      #F1F5F9;
+
+  /* ── Accent — deep navy, scientific authority */
+  --lab-accent:          #1E3A5F;
+  --lab-accent-hover:    #152D4A;
+  --lab-accent-subtle:   #EBF1F9;
+
+  /* ── Status */
+  --lab-complete:        #15803D;
+  --lab-complete-subtle: #F0FAF4;
+  --lab-complete-muted:  #86EFAC;
+  --lab-warn:            #92400E;
+  --lab-warn-subtle:     #FFFBEB;
+
+  /* ── Typography — clean sans-serif, technical feel */
+  --lab-font-sans:       'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --lab-font-serif:      'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --lab-font-mono:       'Courier New', monospace;
+
+  /* ── Chrome surface */
+  --lab-chrome-surface:  #F0F2F5;
+
+  /* ── gw-* aliases — consumed by content and form components */
+  --gw-bg:               #F7F8FA;
+  --gw-surface:          #FFFFFF;
+  --gw-surface-mid:      #F0F2F5;
+
+  --gw-ink:              #0F172A;
+  --gw-ink-mid:          #374151;
+  --gw-ink-light:        #6B7280;
+
+  --gw-rule:             #E2E8F0;
+  --gw-rule-light:       #F1F5F9;
+
+  --gw-accent:           #1E3A5F;
+  --gw-accent-hover:     #152D4A;
+  --gw-accent-subtle:    #EBF1F9;
+  --gw-accent-mid:       #2B5078;
+
+  /* Evidence type colours */
+  --gw-proxy:            #065F46;
+  --gw-proxy-subtle:     #ECFDF5;
+  --gw-instrumental:     #1E3A5F;
+  --gw-instrumental-subtle: #EBF1F9;
+  --gw-physical:         #374151;
+  --gw-physical-subtle:  #F3F4F6;
+  --gw-synthesis:        #7C2D12;
+  --gw-synthesis-subtle: #FEF3C7;
+
+  /* Inquiry callout */
+  --gw-inquiry:          #1E3A5F;
+  --gw-inquiry-subtle:   #EBF1F9;
+
+  /* Warning / misconception */
+  --gw-warn:             #92400E;
+  --gw-warn-subtle:      #FFFBEB;
+  --gw-warn-border:      #FCD34D;
+
+  --gw-sans:             'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --gw-mono:             'Courier New', monospace;
+  --gw-transition:       150ms ease;
+
+  /* ── Panel header background (consumed by darkHeader mode in FloatingPanel) ─ */
+  --fp-header-bg:             #1E3A5F;
+
+  /* ── Navigation bar — dark navy surface with inverted text ───────────────── */
+  --lab-nav-surface:          #1E3A5F;
+  --lab-nav-ink:              #FFFFFF;
+  --lab-nav-ink-mid:          rgba(255, 255, 255, 0.85);
+  --lab-nav-ink-light:        rgba(255, 255, 255, 0.52);
+  --lab-nav-rule:             rgba(255, 255, 255, 0.22);
+  --lab-nav-border-bottom:    1px solid rgba(0, 0, 0, 0.22);
+  --lab-nav-btn-hover-bg:     rgba(255, 255, 255, 0.1);
+  --lab-nav-btn-active-bg:    rgba(255, 255, 255, 0.18);
+  --lab-nav-btn-active-text:  #FFFFFF;
+}

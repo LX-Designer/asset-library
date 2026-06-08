@@ -49,6 +49,7 @@ export default function ActivityModal({
   onOpenConcept,
   onClear,
   noHeader = false,
+  darkHeader = false,
   children,
 }) {
   const [showClearConfirm, setShowClearConfirm] = useState(false)
@@ -66,7 +67,7 @@ export default function ActivityModal({
   return (
     <div className={s.panel}>
       {!noHeader && (
-        <div className={s.header}>
+        <div className={`${s.header}${darkHeader ? ` ${s.headerDark}` : ''}`}>
           <div className={s.subtitle}>{subtitle}</div>
           <h2 id="activity-modal-title" className={s.title}>{title}</h2>
           {onClose && (
