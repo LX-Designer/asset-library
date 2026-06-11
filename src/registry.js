@@ -3,6 +3,7 @@ import econ73Meta             from './assets/econ-73-efficiency/meta.js'
 import econDossierMeta        from './assets/econ-73-dossier/meta.js'
 import franceRepublic1792Meta from './assets/france-republic-1792/meta.js'
 import globalWarmingMeta      from './assets/geo-2-3-global-warming/meta.js'
+import metacognitionSDLMeta   from './assets/metacognition-sdl/meta.js'
 
 /**
  * Central registry of all learning assets.
@@ -14,6 +15,7 @@ export const assetRegistry = [
   econDossierMeta,
   franceRepublic1792Meta,
   globalWarmingMeta,
+  metacognitionSDLMeta,
 ]
 
 export function getAssetMeta(id) {
