@@ -2,11 +2,12 @@ import { Link } from 'react-router-dom'
 import styles from './AssetCard.module.css'
 
 const LEVEL_CONFIG = {
-  'lower-secondary':  { label: 'Lower Secondary',  color: 'teal'   },
-  'middle-secondary': { label: 'Middle Secondary', color: 'blue'   },
-  'senior-secondary': { label: 'Senior Secondary', color: 'violet' },
-  'undergraduate':    { label: 'Undergraduate',    color: 'amber'  },
-  'postgraduate':     { label: 'Postgraduate',     color: 'rose'   },
+  'lower-secondary':    { label: 'Lower Secondary',       color: 'teal'   },
+  'middle-secondary':   { label: 'Middle Secondary',      color: 'blue'   },
+  'senior-secondary':   { label: 'Senior Secondary',      color: 'violet' },
+  'undergraduate':      { label: 'Undergraduate',         color: 'amber'  },
+  'postgraduate':       { label: 'Postgraduate',          color: 'rose'   },
+  'professional':       { label: 'Professional Development', color: 'forest' },
 }
 
 export default function AssetCard({ asset }) {
