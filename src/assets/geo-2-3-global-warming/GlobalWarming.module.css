@@ -107,7 +107,6 @@
   color: var(--gw-accent);
   line-height: 1.45;
   margin-bottom: 28px;
-  max-width: 720px;
   padding: 16px 20px;
   background: var(--gw-accent-subtle);
   border-left: 4px solid var(--gw-accent);

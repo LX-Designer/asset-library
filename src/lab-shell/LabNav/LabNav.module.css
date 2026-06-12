@@ -24,15 +24,14 @@
   color: var(--lab-nav-ink-light, var(--lab-ink-light));
   text-decoration: none;
   white-space: nowrap;
-  flex-shrink: 0;
+  flex: 1;
   transition: color var(--lab-transition);
 }
 
 .back:hover { color: var(--lab-nav-ink, var(--lab-ink)); }
 
 .backPlaceholder {
-  width: 56px;
-  flex-shrink: 0;
+  flex: 1;
 }
 
 .centre {
@@ -65,8 +64,9 @@
 .actions {
   display: flex;
   align-items: center;
+  justify-content: flex-end;
   gap: 6px;
-  flex-shrink: 0;
+  flex: 1;
 }
 
 .btn {
