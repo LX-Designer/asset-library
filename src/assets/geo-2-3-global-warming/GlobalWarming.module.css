@@ -74,7 +74,6 @@
   text-transform: uppercase;
   color: var(--gw-ink-mid);
   margin: 28px 0 12px;
-  max-width: 700px;
 }
 
 /* ── Hero / Inquiry brief ─────────────────────────────────────────────────── */
@@ -190,7 +189,6 @@
   line-height: 1.65;
   color: var(--gw-ink-mid);
   margin-top: 20px;
-  max-width: 700px;
 }
 
 .inquiryCalloutLabel {
@@ -212,7 +210,6 @@
   line-height: 1.6;
   color: var(--gw-ink-mid);
   margin-top: 16px;
-  max-width: 700px;
 }
 
 .warningNoteLabel {
@@ -1077,7 +1074,6 @@
   color: var(--gw-ink);
   font-weight: 500;
   margin: 16px 0;
-  max-width: 700px;
 }
 
 .dataNote {
@@ -1089,7 +1085,6 @@
   line-height: 1.6;
   color: var(--gw-ink-mid);
   margin-top: 16px;
-  max-width: 700px;
 }
 
 .dataNoteBold {
@@ -1103,7 +1098,6 @@
   padding: 14px 18px;
   border-radius: 0 5px 5px 0;
   margin: 20px 0;
-  max-width: 700px;
 }
 
 .sourceQuoteText {
@@ -1152,7 +1146,6 @@
   line-height: 1.65;
   color: var(--gw-ink-mid);
   margin: 16px 0;
-  max-width: 700px;
 }
 
 .callout strong { color: var(--gw-ink); font-weight: 600; }
