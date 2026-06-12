@@ -173,7 +173,7 @@ export default {
   conceptsLabel: 'Physics Toolkit',
 
   content: {
-    maxWidth: '1100px',
+    maxWidth: '960px',
   },
 
   features: {
