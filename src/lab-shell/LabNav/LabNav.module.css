@@ -150,21 +150,81 @@
   font-weight: 600;
 }
 
-/* ── Section select (mobile only) ────────────────────────────────────────── */
-.sectionSelect {
+/* ── Section nav — mobile custom dropdown ─────────────────────────────────── */
+.mobileNav {
   display: none;
-  width: 100%;
-  max-width: 220px;
-  padding: 4px 8px;
-  font-size: 13px;
+  position: relative;
+}
+
+.mobileTrigger {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  background: none;
   border: none;
-  background: transparent;
+  font-size: 13px;
+  font-weight: 600;
   color: var(--lab-nav-ink, var(--lab-ink));
   cursor: pointer;
-  outline: none;
+  white-space: nowrap;
+  font-family: inherit;
+}
+
+.chevron {
+  color: var(--lab-nav-ink-light, var(--lab-ink-light));
+  transition: transform 200ms ease;
+  flex-shrink: 0;
+}
+
+.chevronOpen {
+  transform: rotate(180deg);
+}
+
+.mobileMenu {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--lab-surface, #ffffff);
+  border: 1px solid var(--lab-rule);
+  border-radius: 6px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+  min-width: 180px;
+  z-index: 100;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.mobileMenuItem {
+  padding: 10px 16px;
+  background: none;
+  border: none;
+  text-align: left;
+  font-size: 13px;
+  font-family: inherit;
+  color: var(--lab-ink-mid);
+  cursor: pointer;
+  transition: background var(--lab-transition), color var(--lab-transition);
+}
+
+.mobileMenuItem:hover {
+  background: var(--lab-surface-mid);
+  color: var(--lab-ink);
+}
+
+.mobileMenuItemActive {
+  color: var(--lab-accent);
+  font-weight: 600;
 }
 
 @media (max-width: 899px) {
-  .sectionLinks  { display: none; }
-  .sectionSelect { display: block; }
+  .sectionLinks    { display: none; }
+  .mobileNav       { display: block; }
+  /* On mobile, let back/actions use natural size — centre fills the gap */
+  .back            { flex: 0 0 auto; }
+  .backPlaceholder { flex: 0 0 56px; }
+  .centre          { flex: 1; overflow: visible; }
+  .actions         { flex: 0 0 auto; }
 }

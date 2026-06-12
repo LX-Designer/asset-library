@@ -1,3 +1,4 @@
+import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import s from './LabNav.module.css'
 
@@ -12,6 +13,22 @@ export default function LabNav({
   onSectionClick,
 }) {
   const sections = config.nav?.sections ?? []
+  const [mobileOpen, setMobileOpen] = useState(false)
+  const mobileRef = useRef(null)
+
+  useEffect(() => {
+    if (!mobileOpen) return
+    function onOutside(e) {
+      if (mobileRef.current && !mobileRef.current.contains(e.target)) setMobileOpen(false)
+    }
+    document.addEventListener('mousedown', onOutside)
+    return () => document.removeEventListener('mousedown', onOutside)
+  }, [mobileOpen])
+
+  // Close mobile menu when active section changes
+  useEffect(() => { setMobileOpen(false) }, [activeSection])
+
+  const activeLabel = sections.find(sec => sec.id === activeSection)?.label ?? sections[0]?.label ?? ''
 
   return (
     <nav className={s.nav} aria-label="Lab navigation">
@@ -43,17 +60,40 @@ export default function LabNav({
                   </button>
                 ))}
               </div>
-              {/* Mobile: select dropdown */}
-              <select
-                className={s.sectionSelect}
-                value={activeSection ?? ''}
-                onChange={e => onSectionClick?.(e.target.value)}
-                aria-label="Jump to section"
-              >
-                {sections.map(({ id, label }) => (
-                  <option key={id} value={id}>{label}</option>
-                ))}
-              </select>
+
+              {/* Mobile: custom dropdown */}
+              <div className={s.mobileNav} ref={mobileRef}>
+                <button
+                  className={s.mobileTrigger}
+                  onClick={() => setMobileOpen(o => !o)}
+                  aria-expanded={mobileOpen}
+                  aria-haspopup="listbox"
+                  aria-label="Jump to section"
+                >
+                  <span>{activeLabel}</span>
+                  <svg
+                    className={`${s.chevron} ${mobileOpen ? s.chevronOpen : ''}`}
+                    width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true"
+                  >
+                    <path d="M2 4L6 8L10 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </button>
+                {mobileOpen && (
+                  <div className={s.mobileMenu} role="listbox">
+                    {sections.map(({ id, label }) => (
+                      <button
+                        key={id}
+                        role="option"
+                        aria-selected={activeSection === id}
+                        className={`${s.mobileMenuItem} ${activeSection === id ? s.mobileMenuItemActive : ''}`}
+                        onClick={() => onSectionClick?.(id)}
+                      >
+                        {label}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
             </>
           ) : (
             <>
