@@ -540,7 +540,6 @@ export default function MetacognitionSDL({ onResponse, onComplete, savedResponse
       <nav className={s.topbar}>
         <div className={s.navLeft}>
           <a href={backHref ?? '/'} className={s.navBack}>← Labs</a>
-          <span className={s.navTitle}>Metacognition &amp; SDL</span>
         </div>
         <div className={s.navCenter}>
           {NAV_SECTIONS.map(sec => (
