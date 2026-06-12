@@ -72,7 +72,7 @@ export default function EvidenceCardOverlay({ cards, activeId, onNavigate, onClo
           )}
 
           {card.notProve && (
-            <details className={s.notProve}>
+            <details key={card.id} className={s.notProve}>
               <summary>What this does NOT prove</summary>
               <p className={s.notProveText}>{card.notProve}</p>
             </details>
