@@ -13,6 +13,98 @@ function saveCheckpoints(cp) {
   try { localStorage.setItem(CHECKPOINTS_KEY, JSON.stringify(cp)) } catch {}
 }
 
+function EvidenceCard({ item, selected, tag, onTagChange }) {
+  const [open, setOpen] = useState(false)
+
+  function toggle() { setOpen(o => !o) }
+
+  return (
+    <article
+      id={item.id}
+      className={`evidence-card${open ? ' open' : ''}`}
+      onClick={toggle}
+      role="button"
+      aria-expanded={open}
+      tabIndex={0}
+      onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle() } }}
+    >
+      <div className="evidence-header">
+        <div className="evidence-title">{item.title}</div>
+        <span className={`expand-btn${open ? ' open' : ''}`} aria-hidden="true" />
+      </div>
+      {!open && selected && <span className={`tag-badge ${tag.className}`}>{tag.label}</span>}
+      {open && (
+        <>
+          <p>{item.text}</p>
+          <div className="tracker-row" onClick={e => e.stopPropagation()}>
+            <label htmlFor={`tag-${item.id}`}>What does this evidence suggest?</label>
+            <select
+              id={`tag-${item.id}`}
+              value={selected}
+              onChange={e => onTagChange(item.id, e.target.value)}
+            >
+              {tagOptions.map(opt => (
+                <option key={opt.value} value={opt.value}>{opt.label}</option>
+              ))}
+            </select>
+            {selected && <span className={`tag-badge ${tag.className}`}>{tag.label}</span>}
+          </div>
+        </>
+      )}
+    </article>
+  )
+}
+
+const policyOptions = [
+  {
+    title: 'Option A: No new intervention',
+    description: 'Let firms continue competing and innovating. This may protect dynamic efficiency, but external costs may remain unpriced.',
+    tradeoffs: ['Low regulation', 'Low risk to innovation', 'High risk that external costs remain'],
+  },
+  {
+    title: 'Option B: Parking zones and safety rules',
+    description: 'Require geofenced parking, speed limits in crowded areas, and clearer safety messaging. This targets external costs without banning scooters.',
+    tradeoffs: ['Targeted regulation', 'Some convenience cost', 'Possible safety benefit'],
+  },
+  {
+    title: 'Option C: Per-ride levy',
+    description: 'Add a small charge to each ride to fund pavement repair, safety enforcement, and public-space management. Prices would move closer to social cost.',
+    tradeoffs: ['Creates a price signal', 'May reduce demand', 'Funds public costs'],
+  },
+  {
+    title: 'Option D: Firm permits and fleet caps',
+    description: 'Limit the number of operators or scooters allowed in the city. This could reduce clutter, but it might weaken competition and reduce availability.',
+    tradeoffs: ['Stricter control', 'Risk of weaker competition', 'Possible clutter reduction', 'Concentration risk: fewer permitted operators may acquire monopoly power — connect to your market concentration evidence'],
+  },
+]
+
+function PolicyCard({ title, description, tradeoffs }) {
+  const [open, setOpen] = useState(false)
+  function toggle() { setOpen(o => !o) }
+  return (
+    <article
+      className="policy-card"
+      onClick={toggle}
+      role="button"
+      aria-expanded={open}
+      tabIndex={0}
+      onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle() } }}
+    >
+      <h3>{title}</h3>
+      <p>{description}</p>
+      {open && (
+        <ul className="tradeoff-list">
+          {tradeoffs.map((t, i) => <li key={i}>{t}</li>)}
+        </ul>
+      )}
+      <span className="tradeoffs-pill" aria-hidden="true">
+        {open ? 'Hide trade-offs' : 'Trade-offs'}
+        <span className={`expand-btn${open ? ' open' : ''}`} aria-hidden="true" />
+      </span>
+    </article>
+  )
+}
+
 // ── Dossier content ───────────────────────────────────────────────────────────
 // Rendered as children of LabShell. Manages only checkpoint state (localStorage)
 // — all response state is owned by the shell and passed down via render props.
@@ -155,13 +247,13 @@ function DossierContent({ responses, onSave, openActivity }) {
             <p className="lead">
               The main page is the <strong>Market Case File</strong>: it contains the scooter market, data, stakeholders, policy options, and evidence. The economics theory sits separately in the <strong>Economist's Toolkit</strong>. Use the economic concepts contained within to analyse the case and support your recommendations.
             </p>
-            <div className="stage-map" aria-label="Investigation stages">
-              <article className="stage-card"><span className="stage-label">Stage 1</span><h3>Build the evidence base</h3><p>Identify the evidence that suggests the market may be working efficiently or failing. Tag the evidence cards accordingly to support your claims.</p></article>
-              <article className="stage-card"><span className="stage-label">Stage 2</span><h3>Test the efficiency claim</h3><p>Use the concepts of productive, allocative, and dynamic efficiency to decide if the market appears efficient.</p></article>
-              <article className="stage-card"><span className="stage-label">Stage 3</span><h3>Test for possible market failure</h3><p>Examine whether the market creates inefficient resource allocation, then identify the strongest possible causes.</p></article>
-              <article className="stage-card"><span className="stage-label">Stage 4</span><h3>Weigh policy trade-offs</h3><p>Use the concepts of Pareto optimality and dynamic efficiency to judge whether intervention could improve outcomes, and if so, who will win and who may lose.</p></article>
-              <article className="stage-card"><span className="stage-label">Stage 5</span><h3>Make and reflect on your judgement</h3><p>Write a recommendation, then reflect on how the evidence and concepts shaped your reasoning.</p></article>
-            </div>
+            <ol className="stage-steps" aria-label="Investigation stages">
+              <li className="stage-step"><div className="step-num" aria-hidden="true">1</div><div className="step-body"><h3>Build the evidence base</h3><p>Identify the evidence that suggests the market may be working efficiently or failing. Tag the evidence cards accordingly to support your claims.</p></div></li>
+              <li className="stage-step"><div className="step-num" aria-hidden="true">2</div><div className="step-body"><h3>Test the efficiency claim</h3><p>Use the concepts of productive, allocative, and dynamic efficiency to decide if the market appears efficient.</p></div></li>
+              <li className="stage-step"><div className="step-num" aria-hidden="true">3</div><div className="step-body"><h3>Test for possible market failure</h3><p>Examine whether the market creates inefficient resource allocation, then identify the strongest possible causes.</p></div></li>
+              <li className="stage-step"><div className="step-num" aria-hidden="true">4</div><div className="step-body"><h3>Weigh policy trade-offs</h3><p>Use the concepts of Pareto optimality and dynamic efficiency to judge whether intervention could improve outcomes, and if so, who will win and who may lose.</p></div></li>
+              <li className="stage-step"><div className="step-num" aria-hidden="true">5</div><div className="step-body"><h3>Make and reflect on your judgement</h3><p>Write a recommendation, then reflect on how the evidence and concepts shaped your reasoning.</p></div></li>
+            </ol>
             <div className="callout">
               <strong>Tip:</strong> Use the <strong>Activities</strong> and <strong>Concepts</strong> tabs in the guide panel to open tasks or access the Economist's Toolkit without losing your place in the case file.
             </div>
@@ -172,29 +264,13 @@ function DossierContent({ responses, onSave, openActivity }) {
             <div className="section-kicker">Market data file</div>
             <h2>Data snapshot: what is happening in the market?</h2>
             <p className="lead">These figures are fictional, but they give you enough case evidence to test different efficiency claims. The data is deliberately mixed: some evidence suggests the market is working well, while other evidence points to possible market failure.</p>
-            <div className="metric-row">
-              <article className="metric-card">
-                <span className="concept-label">Demand growth</span>
-                <div className="metric-value">26,000</div>
-                <p>Daily scooter trips, up from 8,000 two years ago.</p>
-              </article>
-              <article className="metric-card">
-                <span className="concept-label">Average price</span>
-                <div className="metric-value">$4.20</div>
-                <p>Average scooter trip price, compared with about $14 for a short taxi trip.</p>
-              </article>
-              <article className="metric-card">
-                <span className="concept-label">Council cost</span>
-                <div className="metric-value">$1.2m</div>
-                <p>Estimated annual public cost for scooter clearing, pavement repair, and safety management. Note: Visual 2 uses a separate per-ride estimate of social cost, calculated differently.</p>
-              </article>
-            </div>
-            <div className="visual-grid three">
-              {/* Visual 1 */}
-              <article className="visual-card">
-                <span className="figure-label">Demand visual</span>
-                <h3>Visual 1: daily scooter trips, Year 1 to Year 3</h3>
-                <p className="figure-context">Daily rides rose from <strong>8,000</strong> to <strong>26,000</strong> over two years. Rapid growth may signal consumer value — but consider whether it also amplifies external costs and pressure on public space.</p>
+            <div className="data-grid">
+
+              {/* Panel 1: Demand growth */}
+              <article className="data-panel">
+                <span className="data-kicker">Demand growth</span>
+                <div className="data-headline">26,000</div>
+                <p className="data-headline-sub">Daily scooter trips in Year 3, up from <strong>8,000</strong> two years earlier — a 225% increase. Average trip price is <strong>$4.20</strong>, compared with about $14 for a short taxi trip.</p>
                 <div className="svg-wrap" role="img" aria-label="Line chart: daily scooter trips rising from 8,000 in Year 1 to 26,000 in Year 3.">
                   <svg viewBox="0 0 360 210" aria-hidden="true">
                     <line x1="54" y1="158" x2="320" y2="158" stroke="#94a3b8" strokeWidth="2"/>
@@ -220,13 +296,16 @@ function DossierContent({ responses, onSave, openActivity }) {
                     <text className="data-note" x="116" y="200">Two-year growth in usage</text>
                   </svg>
                 </div>
-                <p className="visual-caption">Growth could suggest consumer value and market efficiency, but high usage can also amplify external costs.</p>
+                <div className="data-lens">
+                  <strong>Economic lens:</strong> Does rapid growth signal consumer value and productive efficiency, or does it amplify unpriced external costs and pressure on public space?
+                </div>
               </article>
-              {/* Visual 2 */}
-              <article className="visual-card">
-                <span className="figure-label">Cost visual</span>
-                <h3>Visual 2: private price vs estimated social cost</h3>
-                <p className="figure-context">This compares what riders pay with an estimate of the wider cost once external costs are included.</p>
+
+              {/* Panel 2: Price vs social cost */}
+              <article className="data-panel">
+                <span className="data-kicker">Price vs social cost</span>
+                <div className="data-headline">$4.20 <span className="data-headline-vs">vs $5.30</span></div>
+                <p className="data-headline-sub">Riders pay <strong>$4.20</strong> per trip. The estimated social cost — including pavement damage, safety enforcement, and hospital treatment — is <strong>$5.30</strong>. That is a gap of $1.10 per ride.</p>
                 <div className="cost-gap" aria-label="Comparison: private scooter price $4.20, estimated social cost $5.30.">
                   <div className="cost-line">
                     <strong>Private price paid by rider</strong>
@@ -242,27 +321,37 @@ function DossierContent({ responses, onSave, openActivity }) {
                     <span className="legend-item">Total estimated social cost: <strong>$5.30</strong></span>
                   </div>
                 </div>
-                <p className="visual-caption">This gap is a clue for allocative efficiency: if social cost is higher than private price, the market may overprovide rides.</p>
+                <div className="data-lens">
+                  <strong>Economic lens:</strong> If price falls below social marginal cost, the market may be overproviding rides. Does this gap point to allocative inefficiency?
+                </div>
               </article>
-              {/* Visual 3 */}
-              <article className="visual-card">
-                <span className="figure-label">Market structure visual</span>
-                <h3>Visual 3: scooter rental market share</h3>
-                <p className="figure-context">The red section shows the share of scooter rentals controlled by the two largest firms.</p>
-                <div className="donut-wrap" role="img" aria-label="Donut chart: top two firms control 82% of rentals.">
-                  <div className="donut">
-                    <div className="donut-inner">82%<br/></div>
+
+              {/* Panel 3: Market structure — full width */}
+              <article className="data-panel data-panel-full">
+                <span className="data-kicker">Market structure</span>
+                <div className="data-panel-split">
+                  <div className="data-panel-split-text">
+                    <div className="data-headline">82%</div>
+                    <p className="data-headline-sub">Top two firms control 82% of scooter rentals. Smaller providers struggle to access popular parking and charging locations. The city also spends an estimated <strong>$1.2m per year</strong> on scooter clearing, pavement repair, and safety enforcement — costs not priced into each ride.</p>
                   </div>
-                  <div>
-                    <p className="donut-explainer">Two firms control <strong>82%</strong> of scooter rentals. Smaller providers struggle to access popular parking and charging locations.</p>
-                    <div className="donut-legend" aria-hidden="true">
-                      <span className="legend-item"><span className="legend-swatch red"></span>Top two firms: 82%</span>
-                      <span className="legend-item"><span className="legend-swatch other"></span>Other firms: 18%</span>
+                  <div className="donut-wrap" role="img" aria-label="Donut chart: top two firms control 82% of rentals.">
+                    <div className="donut">
+                      <div className="donut-inner">82%<br/></div>
+                    </div>
+                    <div>
+                      <p className="donut-explainer">Two firms control <strong>82%</strong> of scooter rentals. Smaller providers struggle to access popular parking and charging locations.</p>
+                      <div className="donut-legend" aria-hidden="true">
+                        <span className="legend-item"><span className="legend-swatch red"></span>Top two firms: 82%</span>
+                        <span className="legend-item"><span className="legend-swatch other"></span>Other firms: 18%</span>
+                      </div>
                     </div>
                   </div>
                 </div>
-                <p className="visual-caption">Concentration does not prove monopoly power, but it raises questions about competition, pricing, and access to prime locations.</p>
+                <div className="data-lens">
+                  <strong>Economic lens:</strong> Does concentration weaken price competition and reduce dynamic efficiency? Does the $1.2m public cost represent an unpriced negative externality — a sign of market failure?
+                </div>
               </article>
+
             </div>
           </section>
 
@@ -285,26 +374,9 @@ function DossierContent({ responses, onSave, openActivity }) {
             <h2>Possible city responses</h2>
             <p className="lead">The city is not deciding between perfect market freedom and total control. It can choose light-touch, targeted, or stricter interventions. Each option creates trade-offs.</p>
             <div className="policy-grid">
-              <article className="policy-card">
-                <h3>Option A: No new intervention</h3>
-                <p>Let firms continue competing and innovating. This may protect dynamic efficiency, but external costs may remain unpriced.</p>
-                <ul className="tradeoff-list"><li>Low regulation</li><li>Low risk to innovation</li><li>High risk that external costs remain</li></ul>
-              </article>
-              <article className="policy-card">
-                <h3>Option B: Parking zones and safety rules</h3>
-                <p>Require geofenced parking, speed limits in crowded areas, and clearer safety messaging. This targets external costs without banning scooters.</p>
-                <ul className="tradeoff-list"><li>Targeted regulation</li><li>Some convenience cost</li><li>Possible safety benefit</li></ul>
-              </article>
-              <article className="policy-card">
-                <h3>Option C: Per-ride levy</h3>
-                <p>Add a small charge to each ride to fund pavement repair, safety enforcement, and public-space management. Prices would move closer to social cost.</p>
-                <ul className="tradeoff-list"><li>Creates a price signal</li><li>May reduce demand</li><li>Funds public costs</li></ul>
-              </article>
-              <article className="policy-card">
-                <h3>Option D: Firm permits and fleet caps</h3>
-                <p>Limit the number of operators or scooters allowed in the city. This could reduce clutter, but it might weaken competition and reduce availability.</p>
-                <ul className="tradeoff-list"><li>Stricter control</li><li>Risk of weaker competition</li><li>Possible clutter reduction</li><li>Concentration risk: fewer permitted operators may acquire monopoly power — connect to your market concentration evidence</li></ul>
-              </article>
+              {policyOptions.map((opt, i) => (
+                <PolicyCard key={i} {...opt} />
+              ))}
             </div>
           </section>
 
@@ -318,25 +390,13 @@ function DossierContent({ responses, onSave, openActivity }) {
                 const selected = evidenceTags[item.id] || ''
                 const tag = getTagMeta(selected)
                 return (
-                  <article key={item.id} id={item.id} className="evidence-card">
-                    <div className="evidence-header">
-                      <div className="evidence-title">{item.title}</div>
-                    </div>
-                    <p>{item.text}</p>
-                    <div className="tracker-row">
-                      <label htmlFor={`tag-${item.id}`}>What does this evidence suggest?</label>
-                      <select
-                        id={`tag-${item.id}`}
-                        value={selected}
-                        onChange={e => handleTagChange(item.id, e.target.value)}
-                      >
-                        {tagOptions.map(opt => (
-                          <option key={opt.value} value={opt.value}>{opt.label}</option>
-                        ))}
-                      </select>
-                      {selected && <span className={`tag-badge ${tag.className}`}>{tag.label}</span>}
-                    </div>
-                  </article>
+                  <EvidenceCard
+                    key={item.id}
+                    item={item}
+                    selected={selected}
+                    tag={tag}
+                    onTagChange={handleTagChange}
+                  />
                 )
               })}
             </div>
