@@ -603,24 +603,24 @@ export default function MetacognitionSDL({ onResponse, onComplete, savedResponse
               <div className={s.statHeading}>What the research says.</div>
               <div className={s.statRow}>
                 <div className={s.statCard}>
-                  <span className={s.statEyebrow}>Learning gains</span>
+                  <span className={s.statEyebrow}>Teaching impact</span>
                   <span className={s.statNum}><Counter target={7} /></span>
-                  <span className={s.statLbl}>months of extra learning progress per year (EEF, 2021)</span>
+                  <span className={s.statLbl}>months of extra progress per year when metacognitive strategies are explicitly taught (EEF, 2021)</span>
                 </div>
                 <div className={s.statCard}>
-                  <span className={s.statEyebrow}>Predictive power</span>
+                  <span className={s.statEyebrow}>Predicts achievement</span>
                   <span className={s.statNum}><Counter target={17} suffix="%" /></span>
-                  <span className={s.statLbl}>of learning variance uniquely predicted by metacognition (Veenman, 2006)</span>
+                  <span className={s.statLbl}>of student learning outcomes explained by metacognitive skill — more than IQ alone (Veenman, 2006)</span>
                 </div>
                 <div className={s.statCard}>
                   <span className={s.statEyebrow}>Evidence base</span>
                   <span className={s.statNum}><Counter target={355} /></span>
-                  <span className={s.statLbl}>studies reviewed in the EEF evidence base</span>
+                  <span className={s.statLbl}>studies reviewed — effective across literacy, maths, and science (EEF, 2021)</span>
                 </div>
                 <div className={s.statCard}>
-                  <span className={s.statEyebrow}>vs. IQ alone</span>
+                  <span className={s.statEyebrow}>Outperforms IQ</span>
                   <span className={s.statNum}><Counter target={10} suffix="%" /></span>
-                  <span className={s.statLbl}>of variance explained by intelligence alone — below metacognition's 17%</span>
+                  <span className={s.statLbl}>of outcomes predicted by IQ alone — and unlike IQ, metacognitive skill can be taught</span>
                 </div>
               </div>
             </div>
