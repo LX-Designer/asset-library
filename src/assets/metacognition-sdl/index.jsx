@@ -154,8 +154,8 @@ function SDLCycle() {
 
 // ── Stages ────────────────────────────────────────────────────────────────────
 function Stages() {
-  const [open, setOpen] = useState(null)
-  const toggle = i => setOpen(cur => cur === i ? null : i)
+  const [open, setOpen] = useState([])
+  const toggle = i => setOpen(cur => cur.includes(i) ? cur.filter(x => x !== i) : [...cur, i])
   const stages = [
     { title: 'Activate & Name', sub: 'Making thinking visible ↓', body: <>Introduce metacognitive vocabulary; surface implicit thinking habits; make learning processes visible and discussable. Most learners have metacognitive activity but lack the language to reflect on it deliberately.<div className={s.stageTools}><strong>Practical tools</strong>Concept mapping of "how I learn" · Pre-task think-alouds · Explicit labelling of strategies in class discussion</div></> },
     { title: 'Model', sub: 'Showing thinking in action ↓', body: <>Educator narrates metacognitive processes during authentic tasks. Error-making, confusion, and self-correction are made explicit. A model who proceeds smoothly to a perfect solution teaches little about the regulatory processes learning actually requires.<div className={s.stageTools}><strong>Practical tools</strong>Live think-alouds · Annotated worked examples with metacognitive commentary · Modelling planning and monitoring with shared texts</div></> },
@@ -166,7 +166,7 @@ function Stages() {
   return (
     <div className={s.stages}>
       {stages.map((st, i) => (
-        <div key={i} className={`${s.stage} ${open === i ? s.active : ''}`} onClick={() => toggle(i)}>
+        <div key={i} className={`${s.stage} ${open.includes(i) ? s.active : ''}`} onClick={() => toggle(i)}>
           <div className={s.stageHead}>
             <div className={s.stageNum}>{i + 1}</div>
             <div className={s.stageTitle}>{st.title}</div>
@@ -181,12 +181,13 @@ function Stages() {
 
 // ── Accordion ─────────────────────────────────────────────────────────────────
 function Accordion({ items }) {
-  const [open, setOpen] = useState(null)
+  const [open, setOpen] = useState([])
+  const toggle = i => setOpen(cur => cur.includes(i) ? cur.filter(x => x !== i) : [...cur, i])
   return (
     <div className={s.accordion}>
       {items.map((item, i) => (
-        <div key={i} className={`${s.accItem} ${open === i ? s.open : ''}`}>
-          <button className={s.accHead} onClick={() => setOpen(cur => cur === i ? null : i)}>
+        <div key={i} className={`${s.accItem} ${open.includes(i) ? s.open : ''}`}>
+          <button className={s.accHead} onClick={() => toggle(i)}>
             {item.title} <span className={s.accArrow}>▼</span>
           </button>
           <div className={s.accBody}>{item.body}</div>
@@ -198,8 +199,8 @@ function Accordion({ items }) {
 
 // ── Pillars ───────────────────────────────────────────────────────────────────
 function Pillars() {
-  const [open, setOpen] = useState(null)
-  const toggle = i => setOpen(cur => cur === i ? null : i)
+  const [open, setOpen] = useState([])
+  const toggle = i => setOpen(cur => cur.includes(i) ? cur.filter(x => x !== i) : [...cur, i])
   const pillars = [
     { color: '#1F4E79', icon: '🧩', num: 'Pillar 1', title: 'Metacognitive Knowledge', body: 'The "Knowing" dimension. Stored beliefs about oneself, tasks, and strategies — enabling accurate self-appraisal before beginning any learning episode.', detail: <><strong>Components:</strong> Declarative, Procedural, Conditional.<br /><br /><strong>SDL function:</strong> Enables accurate diagnosis of learning needs, realistic goal-setting, and informed strategy selection in the planning phase.<br /><br /><strong>Critical point:</strong> Conditional knowledge — knowing when and why a strategy is appropriate — is the most neglected dimension in instruction and the most important for flexible, transferable learning.</> },
     { color: '#2E75B6', icon: '📡', num: 'Pillar 2', title: 'Metacognitive Monitoring', body: 'The "Awareness" dimension. Real-time checking of comprehension and progress against learning goals throughout execution.', detail: <><strong>Processes:</strong> Comprehension monitoring, feeling-of-knowing judgements, progress tracking, detection of strategy failure.<br /><br /><strong>SDL function:</strong> Closes the feedback loop that makes SDL adaptive. Without monitoring, learners continue unproductive approaches because they receive no internal signal that something is wrong.<br /><br /><strong>Key finding:</strong> Online monitoring (r = .53) is twice as predictive as self-reported metacognitive awareness (r = .23).</> },
@@ -208,7 +209,7 @@ function Pillars() {
   return (
     <div className={s.pillars}>
       {pillars.map((p, i) => (
-        <div key={i} className={`${s.pillar} ${open === i ? s.active : ''}`} onClick={() => toggle(i)}>
+        <div key={i} className={`${s.pillar} ${open.includes(i) ? s.active : ''}`} onClick={() => toggle(i)}>
           <div className={s.pillarHead} style={{ background: p.color }}>
             <div className={s.phIcon}>{p.icon}</div>
             <div className={s.phNum}>{p.num}</div>
