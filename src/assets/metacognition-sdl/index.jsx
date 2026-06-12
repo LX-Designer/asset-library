@@ -21,7 +21,10 @@ const NAV_SECTIONS = [
 const NUM_STEPS = 7
 
 function navTo(id) {
-  document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  const el = document.getElementById(id)
+  if (!el) return
+  const navH = document.querySelector('nav')?.offsetHeight ?? 48
+  window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - navH - 16, behavior: 'smooth' })
 }
 
 // ── Chart ─────────────────────────────────────────────────────────────────────
