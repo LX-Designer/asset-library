@@ -290,9 +290,10 @@ function SynthesisSection({ baseline, actionPlan, isComplete, onStartJourney }) 
                 <h4>📋 Your Action Plan</h4>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 8, fontSize: 13 }}>
                   <div><span style={{ opacity: .7 }}>Pillar focus: </span><strong>{actionPlan.pillar}</strong></div>
-                  <div><span style={{ opacity: .7 }}>Next stage: </span><strong>{actionPlan.stage}</strong></div>
+                  <div><span style={{ opacity: .7 }}>Current practice: </span><strong>{actionPlan.practice}</strong></div>
+                  <div><span style={{ opacity: .7 }}>Next stage to develop: </span><strong>{actionPlan.stage}</strong></div>
                   <div><span style={{ opacity: .7 }}>Technique to trial: </span><strong>{actionPlan.technique}</strong></div>
-                  <div><span style={{ opacity: .7 }}>Barrier: </span>{actionPlan.barrier}</div>
+                  <div><span style={{ opacity: .7 }}>Anticipated barrier: </span>{actionPlan.barrier}</div>
                   <div><span style={{ opacity: .7 }}>Success indicator: </span>{actionPlan.success}</div>
                 </div>
               </div>
@@ -323,8 +324,13 @@ export default function MetacognitionSDL({ onResponse, onComplete, savedResponse
     () => Array.from({ length: NUM_STEPS }, (_, i) => savedResponses[`activity-${i}`] ? i : null).filter(i => i !== null),
     [savedResponses]
   )
-  const baseline    = useMemo(() => savedResponses['baseline']?.values ?? [], [savedResponses])
-  const actionPlan  = useMemo(() => savedResponses['action-plan'] ?? {}, [savedResponses])
+  const baseline    = useMemo(() => savedResponses['activity-0']?.values ?? [], [savedResponses])
+  const actionPlan  = useMemo(() => {
+    const resp = savedResponses['activity-6']
+    if (!resp) return {}
+    const { done, ...fields } = resp
+    return fields
+  }, [savedResponses])
   const isJourneyComplete = Object.keys(actionPlan).length > 0
 
   // UI state
