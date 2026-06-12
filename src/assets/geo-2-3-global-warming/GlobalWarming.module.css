@@ -226,7 +226,71 @@
   margin-bottom: 4px;
 }
 
-/* ── Evidence cards ───────────────────────────────────────────────────────── */
+/* ── Evidence reference list (replaces inline card grids) ────────────────── */
+.ecRefs {
+  margin: 16px 0;
+  border: 1px solid var(--gw-rule);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.ecRefsLabel {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gw-ink-light);
+  padding: 8px 14px;
+  background: var(--gw-surface-mid);
+  border-bottom: 1px solid var(--gw-rule);
+}
+
+.ecRef {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 14px;
+  background: none;
+  border: none;
+  border-bottom: 1px solid var(--gw-rule-light);
+  text-align: left;
+  cursor: pointer;
+  font-family: var(--gw-sans);
+  transition: background var(--gw-transition);
+}
+
+.ecRef:last-child { border-bottom: none; }
+.ecRef:hover { background: var(--gw-accent-subtle); }
+
+.ecRefId {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gw-accent-mid);
+  background: var(--gw-accent-subtle);
+  padding: 2px 6px;
+  border-radius: 3px;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.ecRefTitle {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--gw-ink);
+  flex: 1;
+  line-height: 1.35;
+}
+
+.ecRefArrow {
+  font-size: 12px;
+  color: var(--gw-ink-light);
+  flex-shrink: 0;
+}
+
+/* ── Evidence cards (legacy — kept for reference) ─────────────────────────── */
 .ecGrid {
   display: flex;
   flex-direction: column;

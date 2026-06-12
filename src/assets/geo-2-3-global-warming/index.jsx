@@ -11,45 +11,19 @@ import {
   COMPARISON_CRITERIA,
 } from './data.js'
 
-// ── Evidence type key (for data-type attribute + colour coding) ───────────────
-function getEcType(type) {
-  const t = (type ?? '').toLowerCase()
-  if (t.startsWith('proxy'))       return 'proxy'
-  if (t.startsWith('instrumental') || t.includes('monitoring') || t.includes('instrumental and')) return 'instrumental'
-  if (t.includes('synthesis') || t.includes('methodology') || t.includes('inventory') || t.includes('comparative') || t.startsWith('statistical') || t.startsWith('scientific')) return 'synthesis'
-  return 'physical'
-}
-
-// ── Evidence card ─────────────────────────────────────────────────────────────
-function EvidenceCard({ card }) {
-  const ecType = getEcType(card.type)
+// ── Evidence reference list (replaces inline card grids) ─────────────────────
+function EvidenceRefs({ cards, onOpen }) {
+  if (!cards.length) return null
   return (
-    <div className={s.ecCard} data-type={ecType}>
-      <div className={s.ecHeader}>
-        <span className={s.ecId}>{card.id.toUpperCase()}</span>
-        <span className={s.ecType}>{card.type}</span>
-        {card.timescale && <span className={s.ecTimescale}>{card.timescale}</span>}
-      </div>
-      <div className={s.ecBody}>
-        <div className={s.ecTitle}>{card.title}</div>
-        {card.shows && (
-          <p style={{ marginTop: 8, marginBottom: 0 }}>
-            <strong>What this shows:</strong> {card.shows}
-          </p>
-        )}
-      </div>
-      {card.notProve && (
-        <details className={s.ecExpand}>
-          <summary>What this does NOT prove</summary>
-          <div className={s.ecExpandBody}>{card.notProve}</div>
-        </details>
-      )}
-      {card.inquiry && (
-        <div className={s.ecInquiry}>
-          <div className={s.ecInquiryLabel}>Inquiry link</div>
-          {card.inquiry}
-        </div>
-      )}
+    <div className={s.ecRefs}>
+      <div className={s.ecRefsLabel}>Evidence in this section</div>
+      {cards.map(card => (
+        <button key={card.id} className={s.ecRef} onClick={() => onOpen(card.id)}>
+          <span className={s.ecRefId}>{card.id.toUpperCase()}</span>
+          <span className={s.ecRefTitle}>{card.title}</span>
+          <span className={s.ecRefArrow}>→</span>
+        </button>
+      ))}
     </div>
   )
 }
@@ -111,7 +85,7 @@ function GHGTable() {
 }
 
 // ── Lab content ───────────────────────────────────────────────────────────────
-function LabContent({ responses }) {
+function LabContent({ responses, openEvidenceCard }) {
   const proxyCards        = EVIDENCE_CARDS.filter(c => c.section === 's-proxy')
   const instrumentalCards = EVIDENCE_CARDS.filter(c => c.section === 's-instrumental')
   const greenhouseCards   = EVIDENCE_CARDS.filter(c => c.section === 's-greenhouse')
@@ -203,9 +177,7 @@ function LabContent({ responses }) {
           <strong>Read carefully:</strong> Each card below specifies what the evidence shows <em>and</em> what it does not prove. The distinction between detection and attribution applies to each piece of evidence individually. Practise applying it before Activity 2.
         </Callout>
 
-        <div className={s.ecGrid}>
-          {proxyCards.map(card => <EvidenceCard key={card.id} card={card} />)}
-        </div>
+        <EvidenceRefs cards={proxyCards} onOpen={openEvidenceCard} />
 
         <Callout>
           <strong>→ Activity 2:</strong> Review the full evidence archive (proxy and instrumental sections). For each major piece of evidence, note what it shows and — critically — what it does not prove on its own.
@@ -226,9 +198,7 @@ function LabContent({ responses }) {
           A key feature of the detection case is that warming shows up across entirely independent physical systems. Sea level rise, Arctic ice loss, and glacier retreat are driven by different physical mechanisms. The fact that all three are changing in directions consistent with warming — and at rates that have accelerated since the mid-20th century — provides a much stronger signal than any single dataset alone. This convergence across independent lines of evidence is the scientific basis for high confidence in the detection of warming.
         </p>
 
-        <div className={s.ecGrid}>
-          {instrumentalCards.map(card => <EvidenceCard key={card.id} card={card} />)}
-        </div>
+        <EvidenceRefs cards={instrumentalCards} onOpen={openEvidenceCard} />
 
         <Callout>
           <strong>→ Activity 2:</strong> Add these physical observations to your evidence assessment. Note the distinction: physical observations confirm that warming is happening across multiple independent systems, but they still do not, by themselves, identify the cause.
@@ -303,9 +273,7 @@ function LabContent({ responses }) {
         </p>
         <GHGTable />
 
-        <div className={s.ecGrid}>
-          {greenhouseCards.map(card => <EvidenceCard key={card.id} card={card} />)}
-        </div>
+        <EvidenceRefs cards={greenhouseCards} onOpen={openEvidenceCard} />
 
         <Callout>
           <strong>→ Activity 4:</strong> Use this section to analyse the GHG mechanism in detail. Activity 4 asks you to explain why CO₂ dominates forcing despite methane's higher GWP, and to trace the full causal chain from human activity to surface warming — including the GHG fingerprint.
@@ -343,9 +311,7 @@ function LabContent({ responses }) {
           ENSO drives significant year-to-year temperature variability. El Niño events (warm phase) redistribute heat from the Pacific Ocean to the atmosphere, temporarily raising global mean surface temperature by 0.1–0.2°C. La Niña events (cool phase) have the opposite effect. ENSO explains much of the variability around the long-term trend — but it does not explain the trend itself, because ENSO is a redistribution of existing heat, not a source of additional energy to the system.
         </p>
 
-        <div className={s.ecGrid}>
-          {naturalCards.map(card => <EvidenceCard key={card.id} card={card} />)}
-        </div>
+        <EvidenceRefs cards={naturalCards} onOpen={openEvidenceCard} />
 
         <Callout type="warn">
           <strong>The post-1950 divergence — the decisive test:</strong> If natural factors were the dominant cause of recent warming, we would expect solar irradiance to have increased alongside temperature. The satellite record shows it has not. This divergence — temperature rising while solar output is flat — is the single most important piece of evidence for testing the natural-cause hypothesis.
@@ -394,9 +360,7 @@ function LabContent({ responses }) {
           IPCC AR6 (2021) concluded: "It is <em>unequivocal</em> that human influence has warmed the atmosphere, ocean and land." Total anthropogenic radiative forcing is estimated at approximately <strong>+2.7 W/m²</strong> since 1750, compared to approximately +0.05 W/m² from solar forcing — a ratio of approximately 54:1.
         </p>
 
-        <div className={s.ecGrid}>
-          {anthropoCards.map(card => <EvidenceCard key={card.id} card={card} />)}
-        </div>
+        <EvidenceRefs cards={anthropoCards} onOpen={openEvidenceCard} />
 
         <Callout>
           <strong>→ Activity 4:</strong> Use this section to build the positive anthropogenic case. Focus on the mechanism and the fingerprint — these are what make the attribution argument intellectually defensible rather than merely correlational.
@@ -439,9 +403,7 @@ function LabContent({ responses }) {
           ))}
         </div>
 
-        <div className={s.ecGrid}>
-          {comparisonCards.map(card => <EvidenceCard key={card.id} card={card} />)}
-        </div>
+        <EvidenceRefs cards={comparisonCards} onOpen={openEvidenceCard} />
 
         <Callout>
           <strong>→ Activity 5:</strong> Work through all three criteria, then write your attribution verdict. Which explanation fits the evidence better — and why? Pay specific attention to the post-1950 divergence as the critical test.
@@ -489,8 +451,8 @@ export default function GlobalWarmingLab({
       backHref={backHref}
       className={styles.labShell}
     >
-      {({ responses }) => (
-        <LabContent responses={responses} />
+      {({ responses, openEvidenceCard }) => (
+        <LabContent responses={responses} openEvidenceCard={openEvidenceCard} />
       )}
     </LabShell>
   )

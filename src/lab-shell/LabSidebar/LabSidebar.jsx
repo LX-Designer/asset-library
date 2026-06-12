@@ -5,6 +5,7 @@ export const TAB_LABELS = {
   activities: 'Activities',
   concepts:   'Toolkit',
   notes:      'Notes',
+  evidence:   'Evidence',
 }
 
 export default function LabSidebar({

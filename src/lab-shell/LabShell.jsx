@@ -62,6 +62,10 @@ export default function LabShell({
   const [activeEvidenceId, setActiveEvidenceId] = useState(null)
   const [evidenceTrigger, setEvidenceTrigger]   = useState(0)
 
+  // ── Evidence card overlay state (lab-provided component via config) ──────────
+  const [activeCardId, setActiveCardId] = useState(null)
+  const openEvidenceCard = useCallback((id) => setActiveCardId(id), [])
+
   // ── Section nav active tracking ─────────────────────────────────────────────
   const [activeSection, setActiveSection] = useState(
     config.nav?.sections?.[0]?.id ?? null
@@ -279,6 +283,15 @@ export default function LabShell({
             onSave={val => handleSave('lab-notes', val)}
           />
         )}
+        {config.customTabs?.[guideActiveTab] && (() => {
+          const TabComponent = config.customTabs[guideActiveTab]
+          return (
+            <TabComponent
+              evidenceCards={config.evidenceCards ?? []}
+              onOpenCard={openEvidenceCard}
+            />
+          )
+        })()}
       </>
     )
   }
@@ -366,7 +379,7 @@ export default function LabShell({
           className={s.content}
           style={{ maxWidth: config.content?.maxWidth ?? '960px' }}
         >
-          {typeof children === 'function' ? children({ openEvidence, openActivity, openConcept, responses, scrollToSection, onSave: handleSave }) : children}
+          {typeof children === 'function' ? children({ openEvidence, openActivity, openConcept, openEvidenceCard, responses, scrollToSection, onSave: handleSave }) : children}
         </div>
       </div>
 
@@ -468,6 +481,19 @@ export default function LabShell({
           themeVars={themeVars}
         />
       )}
+
+      {/* ── Evidence card overlay (lab-provided component via config.cardOverlayComponent) ── */}
+      {config.cardOverlayComponent && activeCardId && (() => {
+        const Overlay = config.cardOverlayComponent
+        return (
+          <Overlay
+            cards={config.evidenceCards ?? []}
+            activeId={activeCardId}
+            onNavigate={setActiveCardId}
+            onClose={() => setActiveCardId(null)}
+          />
+        )
+      })()}
 
       {/* ── Voice to text ── */}
       {config.features?.voiceToText && <SpeechInput />}

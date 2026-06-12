@@ -1,4 +1,7 @@
 import { DEFAULT_THEME_VARS } from '../../lab-shell/defaults.js'
+import EvidenceArchiveTab  from './EvidenceArchiveTab.jsx'
+import EvidenceCardOverlay from './EvidenceCardOverlay.jsx'
+import { EVIDENCE_CARDS }  from './data.js'
 import Act1          from './activities/Act1.jsx'
 import Act2          from './activities/Act2.jsx'
 import Act3          from './activities/Act3.jsx'
@@ -104,7 +107,7 @@ export default {
     defaultDockedWidth: 260,
     maxDockedWidth:     360,
     defaultTab:         'activities',
-    tabs:               ['activities', 'notes'],
+    tabs:               ['activities', 'notes', 'evidence'],
     fpAccentHeader:     false,
     fpDarkHeader:       true,
     accentHeader:       false,
@@ -233,6 +236,13 @@ export default {
     notes:       true,
     voiceToText: false,
   },
+
+  customTabs: {
+    evidence: EvidenceArchiveTab,
+  },
+
+  evidenceCards: EVIDENCE_CARDS,
+  cardOverlayComponent: EvidenceCardOverlay,
 
   themeVars: THEME_VARS,
   getActivityStatus,
