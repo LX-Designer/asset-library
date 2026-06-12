@@ -617,11 +617,6 @@ export default function MetacognitionSDL({ onResponse, onComplete, savedResponse
                   <span className={s.statNum}><Counter target={355} /></span>
                   <span className={s.statLbl}>studies reviewed — effective across literacy, maths, and science (EEF, 2021)</span>
                 </div>
-                <div className={s.statCard}>
-                  <span className={s.statEyebrow}>Outperforms IQ</span>
-                  <span className={s.statNum}><Counter target={10} suffix="%" /></span>
-                  <span className={s.statLbl}>of outcomes predicted by IQ alone — and unlike IQ, metacognitive skill can be taught</span>
-                </div>
               </div>
             </div>
           </div>
