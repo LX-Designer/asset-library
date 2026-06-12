@@ -223,7 +223,7 @@
 .subheading { font-size: 14px; color: var(--navy); font-weight: 700; margin-bottom: 12px; margin-top: 20px; }
 
 /* ── CARDS ────────────────────────────────────────────────────────────── */
-.cardGrid { display: grid; gap: 14px; align-items: start; }
+.cardGrid { display: grid; gap: 14px; }
 .cardGrid.cols2 { grid-template-columns: repeat(auto-fit, minmax(240px,1fr)); }
 .cardGrid.cols3 { grid-template-columns: repeat(auto-fit, minmax(200px,1fr)); }
 .cardGrid.cols4 { grid-template-columns: repeat(auto-fit, minmax(180px,1fr)); }

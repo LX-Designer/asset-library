@@ -154,7 +154,7 @@ function SDLCycle() {
 
 // ── Stages ────────────────────────────────────────────────────────────────────
 function Stages() {
-  const [open, setOpen] = useState(0)
+  const [open, setOpen] = useState(null)
   const toggle = i => setOpen(cur => cur === i ? null : i)
   const stages = [
     { title: 'Activate & Name', sub: 'Making thinking visible ↓', body: <>Introduce metacognitive vocabulary; surface implicit thinking habits; make learning processes visible and discussable. Most learners have metacognitive activity but lack the language to reflect on it deliberately.<div className={s.stageTools}><strong>Practical tools</strong>Concept mapping of "how I learn" · Pre-task think-alouds · Explicit labelling of strategies in class discussion</div></> },
@@ -181,7 +181,7 @@ function Stages() {
 
 // ── Accordion ─────────────────────────────────────────────────────────────────
 function Accordion({ items }) {
-  const [open, setOpen] = useState(0)
+  const [open, setOpen] = useState(null)
   return (
     <div className={s.accordion}>
       {items.map((item, i) => (
@@ -198,7 +198,7 @@ function Accordion({ items }) {
 
 // ── Pillars ───────────────────────────────────────────────────────────────────
 function Pillars() {
-  const [open, setOpen] = useState(0)
+  const [open, setOpen] = useState(null)
   const toggle = i => setOpen(cur => cur === i ? null : i)
   const pillars = [
     { color: '#1F4E79', icon: '🧩', num: 'Pillar 1', title: 'Metacognitive Knowledge', body: 'The "Knowing" dimension. Stored beliefs about oneself, tasks, and strategies — enabling accurate self-appraisal before beginning any learning episode.', detail: <><strong>Components:</strong> Declarative, Procedural, Conditional.<br /><br /><strong>SDL function:</strong> Enables accurate diagnosis of learning needs, realistic goal-setting, and informed strategy selection in the planning phase.<br /><br /><strong>Critical point:</strong> Conditional knowledge — knowing when and why a strategy is appropriate — is the most neglected dimension in instruction and the most important for flexible, transferable learning.</> },
