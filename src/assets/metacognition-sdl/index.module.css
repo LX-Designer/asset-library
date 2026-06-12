@@ -801,16 +801,20 @@
 
 /* ── PRINT ────────────────────────────────────────────────────────────── */
 @media print {
-  .topbar, .journeyBar, .welcomeModal, .activityModal,
-  .howToUseSection, .overviewSection, .metacognitionSection,
-  .sdlSection, .evidenceSection, .frameworkSection,
-  .cultivatingSection, .implicationsSection, .referencesSection,
-  .divider, .synHiddenMsg, .synExportBtns { display: none !important; }
+  /* Hide chrome and all page sections */
+  .topbar, .journeyBar, .welcomeModal, .activityModal { display: none !important; }
+  .page > * { display: none !important; }
+
+  /* Show only the synthesis section */
+  .synthesis { display: block !important; background: #fff !important; padding: 0 !important; }
+  .printHeader { display: block !important; }
+
+  /* Hide UI-only elements within synthesis */
+  .synHiddenMsg, .synExportBtns, .synResetRow { display: none !important; }
 
   body { background: #fff !important; }
-  .page { max-width: 100%; padding: 0; }
-  .synthesis { display: block !important; }
-  .printHeader { display: block !important; }
+  .page { padding: 0; max-width: 100%; }
+
   .synCard {
     background: var(--pale) !important;
     border: 1px solid var(--border) !important;

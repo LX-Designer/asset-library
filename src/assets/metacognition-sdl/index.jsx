@@ -302,7 +302,7 @@ function SynthesisSection({ baseline, actionPlan, isComplete, onStartJourney }) 
           <div className={s.synMetaNote}>
             <strong>Notice:</strong> The journey you just completed modelled the five-stage instructional approach described in this review. It activated your prior knowledge (Step 0), built concepts progressively (Steps 1–3), applied them to scenarios (Steps 4–5), and synthesised into personal action (Step 6). This is what it feels like to learn metacognitively — and it is what you can create for your own learners.
           </div>
-          <p style={{ marginTop: 20, textAlign: 'center' }}>
+          <p className={s.synResetRow} style={{ marginTop: 20, textAlign: 'center' }}>
             <button onClick={() => window.location.reload()} style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,.45)', fontSize: 12, cursor: 'pointer', textDecoration: 'underline' }}>
               Reset progress and start again
             </button>
