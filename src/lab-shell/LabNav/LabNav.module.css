@@ -24,25 +24,34 @@
   color: var(--lab-nav-ink-light, var(--lab-ink-light));
   text-decoration: none;
   white-space: nowrap;
-  flex: 1;
+  flex-shrink: 0;
   transition: color var(--lab-transition);
 }
 
 .back:hover { color: var(--lab-nav-ink, var(--lab-ink)); }
 
 .backPlaceholder {
-  flex: 1;
+  width: 56px;
+  flex-shrink: 0;
 }
 
+/* Centre is absolutely positioned so it's truly centred relative to the
+   full nav width without stealing flex space from the section links. */
 .centre {
-  flex: 1;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  overflow: hidden;
-  min-width: 0;
+  /* Pass pointer events through to back/actions beneath */
+  pointer-events: none;
 }
+
+.centre > * { pointer-events: auto; }
 
 .title {
   font-size: var(--lab-chrome-font-size, 12px);
@@ -64,9 +73,9 @@
 .actions {
   display: flex;
   align-items: center;
-  justify-content: flex-end;
   gap: 6px;
-  flex: 1;
+  flex-shrink: 0;
+  margin-left: auto;
 }
 
 .btn {
@@ -114,7 +123,8 @@
   overflow-x: auto;
   scrollbar-width: none;
   -ms-overflow-style: none;
-  width: 100%;
+  /* Inset from edges so links don't visually overlap back/actions */
+  max-width: calc(100vw - 220px);
   justify-content: center;
 }
 
@@ -220,11 +230,14 @@
 }
 
 @media (max-width: 899px) {
-  .sectionLinks    { display: none; }
-  .mobileNav       { display: block; }
-  /* On mobile, let back/actions use natural size — centre fills the gap */
-  .back            { flex: 0 0 auto; }
-  .backPlaceholder { flex: 0 0 56px; }
-  .centre          { flex: 1; overflow: visible; }
-  .actions         { flex: 0 0 auto; }
+  .sectionLinks { display: none; }
+  .mobileNav    { display: block; }
+  /* On mobile, centre returns to normal flex flow so it can hold the dropdown */
+  .centre {
+    position: static;
+    flex: 1;
+    overflow: visible;
+    pointer-events: auto;
+  }
+  .actions { margin-left: 0; }
 }
