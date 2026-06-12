@@ -174,13 +174,11 @@
 }
 .statSection { margin-top: 20px; }
 .statHeading {
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  color: rgba(255,255,255,.6);
+  font-size: 17px;
+  font-weight: 700;
+  color: rgba(255,255,255,.9);
   text-align: center;
-  margin-bottom: 12px;
-  text-transform: uppercase;
+  margin-bottom: 16px;
 }
 .statRow { display: flex; gap: 12px; flex-wrap: wrap; }
 .statCard {
