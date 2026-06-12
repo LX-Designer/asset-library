@@ -373,7 +373,7 @@ export default function MetacognitionSDL({ onResponse, onComplete, savedResponse
   }
 
   function stepSection(i) {
-    const map = ['overview', 'metacognition', 'metacognition', 'sdl', 'evidence', 'cultivating', 'synthesis']
+    const map = ['overview', 'metacognition', 'browns-distinction', 'sdl', 'evidence', 'cultivating', 'synthesis']
     return map[i] ?? 'overview'
   }
 
@@ -636,7 +636,7 @@ export default function MetacognitionSDL({ onResponse, onComplete, savedResponse
             <ExpandCard tag="Component 4" icon="🔧" title="Metacognitive Actions" body="Deliberate steps taken in response to metacognitive experiences." detail="The adaptive moves made when monitoring signals something is wrong — re-reading, seeking help, switching strategy, breaking a task into smaller units. Without this component, metacognitive awareness has no practical consequence." />
           </div>
           <div style={{ height: 20 }} />
-          <h3 className={s.subheading}>Brown's Distinction: Knowledge vs Regulation (1987)</h3>
+          <h3 id="browns-distinction" className={s.subheading}>Brown's Distinction: Knowledge vs Regulation (1987)</h3>
           <TabGroup tabs={metaTabs} />
         </section>
 
