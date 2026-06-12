@@ -595,11 +595,30 @@ export default function MetacognitionSDL({ onResponse, onComplete, savedResponse
             <div className={s.heroAbstract}>
               This review examines how metacognition — thinking about one's own thinking — functions as the cognitive engine of self-directed learning. Drawing on Flavell (1979), Brown (1987), Zimmerman (2002), Pintrich (2000, 2004), and Garrison (1997), it proposes a three-pillar integrative framework and a five-stage instructional model for cultivating metacognitive skills in learners.
             </div>
-            <div className={s.statRow}>
-              <div className={s.statCard}><span className={s.statNum}><Counter target={7} /></span><span className={s.statLbl}>months extra progress per year (EEF, 2021)</span></div>
-              <div className={s.statCard}><span className={s.statNum}><Counter target={17} suffix="%" /></span><span className={s.statLbl}>of learning variance explained by metacognition (Veenman, 2006)</span></div>
-              <div className={s.statCard}><span className={s.statNum}><Counter target={355} /></span><span className={s.statLbl}>studies in EEF evidence base</span></div>
-              <div className={s.statCard}><span className={s.statNum}><Counter target={10} suffix="%" /></span><span className={s.statLbl}>explained by intelligence alone — less than metacognition</span></div>
+            <div className={s.statSection}>
+              <div className={s.statHeading}>Why does it matter? The research is unambiguous.</div>
+              <div className={s.statRow}>
+                <div className={s.statCard}>
+                  <span className={s.statEyebrow}>Impact on learning</span>
+                  <span className={s.statNum}><Counter target={7} /></span>
+                  <span className={s.statLbl}>months extra progress per year (EEF, 2021)</span>
+                </div>
+                <div className={s.statCard}>
+                  <span className={s.statEyebrow}>Predictive power</span>
+                  <span className={s.statNum}><Counter target={17} suffix="%" /></span>
+                  <span className={s.statLbl}>of learning variance explained by metacognition (Veenman, 2006)</span>
+                </div>
+                <div className={s.statCard}>
+                  <span className={s.statEyebrow}>Evidence base</span>
+                  <span className={s.statNum}><Counter target={355} /></span>
+                  <span className={s.statLbl}>studies in EEF evidence base</span>
+                </div>
+                <div className={s.statCard}>
+                  <span className={s.statEyebrow}>vs. Intelligence</span>
+                  <span className={s.statNum}><Counter target={10} suffix="%" /></span>
+                  <span className={s.statLbl}>explained by intelligence alone — less than metacognition</span>
+                </div>
+              </div>
             </div>
           </div>
         </section>
