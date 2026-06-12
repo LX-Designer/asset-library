@@ -31,10 +31,26 @@
   padding: 0 16px;
   display: flex;
   align-items: center;
-  gap: 4px;
-  flex-wrap: wrap;
   box-shadow: 0 2px 8px rgba(0,0,0,.25);
 }
+.navLeft {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+  z-index: 1;
+}
+.navCenter {
+  position: absolute;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  overflow: hidden;
+}
+.navCenter > * { pointer-events: auto; }
 .navBack {
   color: rgba(255,255,255,.65);
   font-size: 12px;
@@ -673,8 +689,10 @@
 
 /* ── RESPONSIVE: MOBILE ───────────────────────────────────────────────── */
 @media (max-width: 600px) {
-  .topbar { flex-wrap: nowrap; overflow-x: auto; overflow-y: hidden; -webkit-overflow-scrolling: touch; padding: 0 10px; gap: 0; scrollbar-width: none; }
+  .topbar { overflow-x: auto; overflow-y: hidden; -webkit-overflow-scrolling: touch; padding: 0 10px; scrollbar-width: none; }
   .topbar::-webkit-scrollbar { display: none; }
+  .navLeft { flex-shrink: 0; }
+  .navCenter { position: static; pointer-events: auto; overflow: visible; flex-wrap: nowrap; }
   .navTitle { font-size: 12px; padding: 10px 6px 10px 0; margin-right: 4px; }
   .navBtn { padding: 10px 9px; font-size: 11.5px; flex-shrink: 0; }
 

@@ -538,17 +538,21 @@ export default function MetacognitionSDL({ onResponse, onComplete, savedResponse
 
       {/* TOP NAV */}
       <nav className={s.topbar}>
-        <a href={backHref ?? '/'} className={s.navBack}>← Labs</a>
-        <span className={s.navTitle}>Metacognition &amp; SDL</span>
-        {NAV_SECTIONS.map(sec => (
-          <button
-            key={sec.id}
-            className={`${s.navBtn} ${activeSection === sec.id ? s.active : ''}`}
-            onClick={() => navTo(sec.id)}
-          >
-            {sec.label}
-          </button>
-        ))}
+        <div className={s.navLeft}>
+          <a href={backHref ?? '/'} className={s.navBack}>← Labs</a>
+          <span className={s.navTitle}>Metacognition &amp; SDL</span>
+        </div>
+        <div className={s.navCenter}>
+          {NAV_SECTIONS.map(sec => (
+            <button
+              key={sec.id}
+              className={`${s.navBtn} ${activeSection === sec.id ? s.active : ''}`}
+              onClick={() => navTo(sec.id)}
+            >
+              {sec.label}
+            </button>
+          ))}
+        </div>
       </nav>
 
       <div className={s.page}>
