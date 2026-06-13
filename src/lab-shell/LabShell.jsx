@@ -200,8 +200,9 @@ export default function LabShell({
   const handleExplore = useCallback(() => {
     setActivityCloseTrigger(t => t + 1)
     setConceptCloseTrigger(t => t + 1)
-    setGuideActiveTab('activities')
-    setGuideDockTrigger(t => t + 1)
+    setGuideCloseTrigger(t => t + 1)
+    setActiveEvidenceId(null)
+    setActiveCardId(null)
   }, [])
 
   // Work mode: lowest in-progress activity has priority, then lowest not-started.
@@ -242,7 +243,7 @@ export default function LabShell({
   const completedCount = requiredActs.filter(a => config.getActivityStatus(a.id, responses) === 'complete').length
   const totalCount     = requiredActs.length
 
-  const isExploreActive = guideDesktopOpen && activityDockedWidth === 0
+  const isExploreActive = !guideDesktopOpen && !guideIsFloating && activityDockedWidth === 0
   const isWorkActive    = activityDockedWidth > 0
 
   const tabs     = config.sidebar.tabs ?? ['activities']

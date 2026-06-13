@@ -75,7 +75,7 @@ export default {
     showWorkExplore: true,
     sections: [
       { id: 'case-overview',       label: 'Case' },
-      { id: 'how-to-investigate',  label: 'Investigate' },
+      { id: 'how-to-investigate',  label: 'Guide' },
       { id: 'market-data',         label: 'Data' },
       { id: 'stakeholders',        label: 'Stakeholders' },
       { id: 'policy-options',      label: 'Policy' },

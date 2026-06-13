@@ -41,7 +41,7 @@ function EvidenceCard({ item, selected, tag, onTagChange }) {
             <select
               id={`tag-${item.id}`}
               value={selected}
-              onChange={e => onTagChange(item.id, e.target.value)}
+              onChange={e => { onTagChange(item.id, e.target.value); setOpen(false) }}
             >
               {tagOptions.map(opt => (
                 <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -59,22 +59,38 @@ const policyOptions = [
   {
     title: 'Option A: No new intervention',
     description: 'Let firms continue competing and innovating. This may protect dynamic efficiency, but external costs may remain unpriced.',
-    tradeoffs: ['Low regulation', 'Low risk to innovation', 'High risk that external costs remain'],
+    tradeoffs: [
+      'Preserves market incentives for innovation and competition',
+      'External costs remain unpriced — riders do not pay the full social cost',
+      'No revenue generated to offset public costs such as accidents and pavement damage',
+    ],
   },
   {
     title: 'Option B: Parking zones and safety rules',
     description: 'Require geofenced parking, speed limits in crowded areas, and clearer safety messaging. This targets external costs without banning scooters.',
-    tradeoffs: ['Targeted regulation', 'Some convenience cost', 'Possible safety benefit'],
+    tradeoffs: [
+      'Reduces the most visible externalities without restricting market entry or access',
+      'Does not close the gap between private price and social cost',
+      'Enforcement adds administrative cost with uncertain compliance',
+    ],
   },
   {
     title: 'Option C: Per-ride levy',
     description: 'Add a small charge to each ride to fund pavement repair, safety enforcement, and public-space management. Prices would move closer to social cost.',
-    tradeoffs: ['Creates a price signal', 'May reduce demand', 'Funds public costs'],
+    tradeoffs: [
+      'Brings private price closer to social cost — directly addresses the core market failure',
+      'Generates revenue that can fund public cost recovery',
+      'May reduce access for price-sensitive users who benefit most from low-cost transport',
+    ],
   },
   {
     title: 'Option D: Firm permits and fleet caps',
     description: 'Limit the number of operators or scooters allowed in the city. This could reduce clutter, but it might weaken competition and reduce availability.',
-    tradeoffs: ['Stricter control', 'Risk of weaker competition', 'Possible clutter reduction', 'Concentration risk: fewer permitted operators may acquire monopoly power — connect to your market concentration evidence'],
+    tradeoffs: [
+      'May reduce pavement clutter and improve public space management',
+      'Fewer permitted operators weakens competition, potentially raising prices and reducing innovation',
+      'Concentration risk: limited permits may entrench market power among remaining firms',
+    ],
   },
 ]
 
@@ -93,12 +109,15 @@ function PolicyCard({ title, description, tradeoffs }) {
       <h3>{title}</h3>
       <p>{description}</p>
       {open && (
-        <ul className="tradeoff-list">
-          {tradeoffs.map((t, i) => <li key={i}>{t}</li>)}
-        </ul>
+        <>
+          <p className="tradeoff-heading">Benefits and costs</p>
+          <ul className="tradeoff-list">
+            {tradeoffs.map((t, i) => <li key={i}>{t}</li>)}
+          </ul>
+        </>
       )}
       <span className="tradeoffs-pill" aria-hidden="true">
-        {open ? 'Hide trade-offs' : 'Trade-offs'}
+        {open ? 'Hide benefits and costs' : 'Benefits and costs'}
         <span className={`expand-btn${open ? ' open' : ''}`} aria-hidden="true" />
       </span>
     </article>
@@ -212,8 +231,52 @@ function DossierContent({ responses, onSave, openActivity }) {
           <div className="hero-content">
             <span className="eyebrow">Policy briefing file</span>
             <h1 id="hero-title">When is a market working efficiently, and when does it fail?</h1>
-            <p>You are an economic adviser reviewing the market for electric scooters in a growing city. Use the case file as your evidence base, open the Economist's Toolkit when you need to check and apply economic concepts, and make a recommendation to the city government about how to deal with the growing use of electric scooters.</p>
+            <div className="hero-brief">
+              <span className="hero-brief-label">Your brief</span>
+              <p>You are an economic adviser reviewing the market for electric scooters in a growing city. Use the case file as your evidence base, open the Economist's Toolkit when you need to check and apply economic concepts, and make a recommendation to the city government about how to deal with the growing use of electric scooters.</p>
+            </div>
           </div>
+          <svg className="hero-skyline" viewBox="0 0 1200 200" preserveAspectRatio="none" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+            {/* Background city layer — semi-transparent, creates depth */}
+            <path fill="rgba(16,22,45,0.32)" d="M 0 200 L 0 148 L 45 148 L 45 130 L 90 130 L 90 108 L 115 108 L 115 90 L 145 90 L 145 108 L 185 108 L 185 128 L 225 128 L 225 105 L 268 105 L 268 138 L 298 138 L 298 55 L 310 55 L 310 43 L 330 43 L 330 55 L 340 55 L 340 95 L 380 95 L 380 122 L 415 122 L 415 92 L 460 92 L 460 68 L 492 68 L 492 28 L 498 28 L 498 18 L 512 18 L 512 28 L 520 28 L 520 52 L 555 52 L 555 35 L 560 35 L 560 28 L 585 28 L 585 35 L 592 35 L 592 62 L 630 62 L 630 48 L 702 48 L 702 15 L 715 15 L 715 8 L 725 8 L 725 15 L 732 15 L 732 48 L 758 48 L 758 70 L 810 70 L 810 62 L 858 62 L 858 92 L 905 92 L 905 115 L 955 115 L 955 95 L 998 95 L 998 118 L 1045 118 L 1045 135 L 1088 135 L 1088 115 L 1132 115 L 1132 138 L 1178 138 L 1178 150 L 1200 150 L 1200 200 Z" />
+            {/* Foreground city silhouette */}
+            <path fill="#10162d" d="M 0 200 L 0 163 L 72 163 L 72 145 L 122 145 L 122 127 L 132 127 L 132 113 L 148 113 L 148 127 L 160 127 L 160 145 L 200 145 L 200 122 L 252 122 L 252 155 L 282 155 L 282 73 L 287 73 L 287 59 L 310 59 L 310 73 L 315 73 L 315 107 L 362 107 L 362 138 L 402 138 L 402 110 L 448 110 L 448 87 L 477 87 L 477 47 L 480 47 L 480 39 L 502 39 L 502 47 L 505 47 L 505 74 L 537 74 L 537 52 L 542 52 L 542 43 L 568 43 L 568 52 L 572 52 L 572 80 L 613 80 L 613 63 L 683 63 L 683 31 L 687 31 L 687 19 L 695 19 L 695 31 L 699 31 L 699 63 L 708 63 L 708 87 L 753 87 L 753 113 L 796 113 L 796 80 L 848 80 L 848 111 L 893 111 L 893 132 L 942 132 L 942 112 L 982 112 L 982 135 L 1027 135 L 1027 150 L 1072 150 L 1072 130 L 1116 130 L 1116 152 L 1162 152 L 1162 165 L 1200 165 L 1200 200 Z" />
+            {/* Antenna on tallest building */}
+            <line x1="691" y1="5" x2="691" y2="19" stroke="#10162d" strokeWidth="2"/>
+            <circle cx="691" cy="5" r="2" fill="#10162d"/>
+            {/* Windows — glass reflection style */}
+            <g fill="rgba(255,255,255,0.13)">
+              {/* Tallest building */}
+              <rect x="684" y="22" width="4" height="4"/><rect x="691" y="22" width="4" height="4"/>
+              <rect x="684" y="29" width="4" height="4"/><rect x="691" y="29" width="4" height="4"/>
+              <rect x="684" y="36" width="4" height="4"/><rect x="691" y="36" width="4" height="4"/>
+              <rect x="684" y="43" width="4" height="4"/><rect x="691" y="43" width="4" height="4"/>
+              <rect x="684" y="50" width="4" height="4"/><rect x="691" y="50" width="4" height="4"/>
+              <rect x="684" y="57" width="4" height="4"/><rect x="691" y="57" width="4" height="4"/>
+              {/* Left skyscraper cluster */}
+              <rect x="482" y="42" width="5" height="4"/><rect x="490" y="42" width="5" height="4"/><rect x="498" y="42" width="5" height="4"/>
+              <rect x="482" y="49" width="5" height="4"/><rect x="490" y="49" width="5" height="4"/><rect x="498" y="49" width="5" height="4"/>
+              <rect x="482" y="56" width="5" height="4"/><rect x="490" y="56" width="5" height="4"/><rect x="498" y="56" width="5" height="4"/>
+              <rect x="482" y="63" width="5" height="4"/><rect x="490" y="63" width="5" height="4"/><rect x="498" y="63" width="5" height="4"/>
+              {/* Second skyscraper */}
+              <rect x="544" y="46" width="6" height="4"/><rect x="553" y="46" width="6" height="4"/><rect x="562" y="46" width="5" height="4"/>
+              <rect x="544" y="53" width="6" height="4"/><rect x="553" y="53" width="6" height="4"/><rect x="562" y="53" width="5" height="4"/>
+              <rect x="544" y="60" width="6" height="4"/><rect x="553" y="60" width="6" height="4"/><rect x="562" y="60" width="5" height="4"/>
+              <rect x="544" y="67" width="6" height="4"/><rect x="553" y="67" width="6" height="4"/><rect x="562" y="67" width="5" height="4"/>
+              {/* Left tower */}
+              <rect x="289" y="62" width="6" height="4"/><rect x="300" y="62" width="6" height="4"/>
+              <rect x="289" y="69" width="6" height="4"/><rect x="300" y="69" width="6" height="4"/>
+              <rect x="289" y="76" width="6" height="4"/><rect x="300" y="76" width="6" height="4"/>
+              <rect x="289" y="83" width="6" height="4"/><rect x="300" y="83" width="6" height="4"/>
+              <rect x="289" y="90" width="6" height="4"/><rect x="300" y="90" width="6" height="4"/>
+              <rect x="289" y="97" width="6" height="4"/><rect x="300" y="97" width="6" height="4"/>
+              {/* Right tower */}
+              <rect x="800" y="83" width="8" height="4"/><rect x="813" y="83" width="8" height="4"/><rect x="826" y="83" width="8" height="4"/>
+              <rect x="800" y="90" width="8" height="4"/><rect x="813" y="90" width="8" height="4"/><rect x="826" y="90" width="8" height="4"/>
+              <rect x="800" y="97" width="8" height="4"/><rect x="813" y="97" width="8" height="4"/><rect x="826" y="97" width="8" height="4"/>
+              <rect x="800" y="104" width="8" height="4"/><rect x="813" y="104" width="8" height="4"/><rect x="826" y="104" width="8" height="4"/>
+            </g>
+          </svg>
         </section>
 
         <main id="main">
@@ -242,10 +305,10 @@ function DossierContent({ responses, onSave, openActivity }) {
 
           {/* How to investigate */}
           <section id="how-to-investigate" className="dossier-section">
-            <div className="section-kicker">How to use this investigation</div>
-            <h2>Case file first. Concepts when you need them.</h2>
+            <div className="section-kicker">Case file guide</div>
+            <h2>How to use this investigation</h2>
             <p className="lead">
-              The main page is the <strong>Market Case File</strong>: it contains the scooter market, data, stakeholders, policy options, and evidence. The economics theory sits separately in the <strong>Economist's Toolkit</strong>. Use the economic concepts contained within to analyse the case and support your recommendations.
+              The main page is the <strong>Market Case File</strong>: it contains information about the scooter market, data, stakeholders, policy options, and evidence. The economics theory sits separately in the <strong>Economist's Toolkit</strong>. Use the economic concepts contained within to analyse the case and support your recommendations.
             </p>
             <ol className="stage-steps" aria-label="Investigation stages">
               <li className="stage-step"><div className="step-num" aria-hidden="true">1</div><div className="step-body"><h3>Build the evidence base</h3><p>Identify the evidence that suggests the market may be working efficiently or failing. Tag the evidence cards accordingly to support your claims.</p></div></li>
@@ -255,7 +318,7 @@ function DossierContent({ responses, onSave, openActivity }) {
               <li className="stage-step"><div className="step-num" aria-hidden="true">5</div><div className="step-body"><h3>Make and reflect on your judgement</h3><p>Write a recommendation, then reflect on how the evidence and concepts shaped your reasoning.</p></div></li>
             </ol>
             <div className="callout">
-              <strong>Tip:</strong> Use the <strong>Activities</strong> and <strong>Concepts</strong> tabs in the guide panel to open tasks or access the Economist's Toolkit without losing your place in the case file.
+              <strong>Tip:</strong> Use the <strong>Activities</strong> and <strong>Toolkit</strong> tabs in the guide panel to open tasks or access the Economist's Toolkit without losing your place in the case file.
             </div>
           </section>
 
@@ -263,7 +326,7 @@ function DossierContent({ responses, onSave, openActivity }) {
           <section id="market-data" className="dossier-section">
             <div className="section-kicker">Market data file</div>
             <h2>Data snapshot: what is happening in the market?</h2>
-            <p className="lead">These figures are fictional, but they give you enough case evidence to test different efficiency claims. The data is deliberately mixed: some evidence suggests the market is working well, while other evidence points to possible market failure.</p>
+            <p className="lead">These figures provide case evidence to test different efficiency claims. The data is mixed: some evidence suggests the market is working well, while other evidence points to possible market failure.</p>
             <div className="data-grid">
 
               {/* Panel 1: Demand growth */}
@@ -372,7 +435,7 @@ function DossierContent({ responses, onSave, openActivity }) {
           <section id="policy-options" className="dossier-section">
             <div className="section-kicker">Policy options file</div>
             <h2>Possible city responses</h2>
-            <p className="lead">The city is not deciding between perfect market freedom and total control. It can choose light-touch, targeted, or stricter interventions. Each option creates trade-offs.</p>
+            <p className="lead">The city is not deciding between perfect market freedom and total control. It can choose light-touch, targeted, or stricter interventions. Each option has its own benefits and costs.</p>
             <div className="policy-grid">
               {policyOptions.map((opt, i) => (
                 <PolicyCard key={i} {...opt} />
@@ -383,8 +446,8 @@ function DossierContent({ responses, onSave, openActivity }) {
           {/* Evidence board */}
           <section id="evidence" className="dossier-section">
             <div className="section-kicker">Evidence file</div>
-            <h2>Evidence cards</h2>
-            <p className="lead">Tag each evidence card according to what it suggests for your investigation. You can change your tags later as your judgement develops. Your tags feed into the final recommendation.</p>
+            <h2>Examine the case evidence</h2>
+            <p className="lead">Each card contains a finding from the Metroville scooter market — a data point, a claim, or a stakeholder observation. Read each one and decide what it suggests: does it point toward a market working efficiently, a market failing, or something more mixed? This classification is the foundation of your economic argument.</p>
             <div className="evidence-grid" aria-live="polite">
               {evidenceItems.map(item => {
                 const selected = evidenceTags[item.id] || ''

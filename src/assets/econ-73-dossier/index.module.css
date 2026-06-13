@@ -168,24 +168,9 @@
     linear-gradient(115deg, rgba(199, 225, 218, 0.98) 0 62%, rgba(185, 213, 207, 0.96) 62% 100%),
     #c7e1da;
 }
-.root :global(.hero::before) {
-  content: "MARKET FILE";
-  position: absolute; top: 1.25rem; right: 1.25rem;
-  background: var(--econ-red); border: 2px solid var(--econ-red-dark);
-  box-shadow: 4px 4px 0 rgba(16, 22, 45, 0.18);
-  color: white; font-weight: 950; letter-spacing: 0.08em;
-  padding: 0.45rem 0.7rem; font-size: 0.78rem; z-index: 1;
-}
-.root :global(.hero::after) {
-  content: "";
-  position: absolute; right: 0; bottom: 0; left: 0;
-  height: 170px; pointer-events: none;
-  background:
-    radial-gradient(circle at 14% 23%, rgba(255,255,255,0.08) 0 8px, transparent 9px),
-    radial-gradient(circle at 39% 27%, rgba(255,255,255,0.08) 0 7px, transparent 8px),
-    radial-gradient(circle at 66% 20%, rgba(255,255,255,0.08) 0 9px, transparent 10px),
-    linear-gradient(90deg, transparent 0 5%, var(--econ-navy) 5% 11%, transparent 11% 14%, var(--econ-navy) 14% 20%, transparent 20% 26%, var(--econ-navy) 26% 33%, transparent 33% 41%, var(--econ-navy) 41% 46%, transparent 46% 52%, var(--econ-navy) 52% 59%, transparent 59% 65%, var(--econ-navy) 65% 73%, transparent 73% 80%, var(--econ-navy) 80% 85%, transparent 85% 100%),
-    linear-gradient(0deg, var(--econ-navy) 0 56%, transparent 56% 100%);
+.root :global(.hero-skyline) {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  width: 100%; height: 190px; display: block; pointer-events: none;
 }
 .root :global(.hero-content) {
   position: relative; z-index: 1;
@@ -217,6 +202,27 @@
   color: rgba(16, 22, 45, 0.88);
   font-weight: 680;
   margin: 0;
+}
+.root :global(.hero-brief) {
+  margin-top: 1.1rem;
+  border-left: 5px solid var(--econ-red);
+  background: rgba(201, 54, 45, 0.06);
+  padding: 0.75rem 0.9rem;
+}
+.root :global(.hero-brief-label) {
+  display: block;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--econ-red-dark);
+  margin-bottom: 0.4rem;
+}
+.root :global(.hero-brief p) {
+  margin: 0;
+  font-size: clamp(1rem, 1.55vw, 1.18rem);
+  color: rgba(16, 22, 45, 0.88);
+  font-weight: 680;
 }
 
 /* ---------- 7. Dossier sections ---------- */
@@ -476,10 +482,15 @@
 }
 .root :global(.tradeoffs-pill .expand-btn),
 .root :global(.tradeoffs-pill .expand-btn.open) { margin-top: 0; }
+.root :global(.tradeoff-heading) {
+  margin: 0 0 0.3rem;
+  font-size: 0.7rem; font-weight: 800;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--econ-red-dark);
+}
 .root :global(.tradeoff-list) {
-  margin: 0.15rem 0 0; padding-left: 1.1rem;
+  margin: 0; padding-left: 1.1rem;
   color: var(--muted); font-size: 0.9rem;
-  border-top: 1.5px solid rgba(16,22,45,0.32); padding-top: 0.65rem;
   user-select: text;
 }
 
@@ -625,8 +636,7 @@
     padding-bottom: calc(6rem + env(safe-area-inset-bottom));
   }
   .root :global(.hero) { min-height: auto !important; }
-  .root :global(.hero::before),
-  .root :global(.hero::after) { display: none; }
+  .root :global(.hero-skyline) { display: none; }
   .root :global(.hero-content) { width: min(100%, 760px); margin: 0; padding: 0.9rem 0.82rem; border-left-width: 6px; }
   .root :global(.visual-grid.three),
   .root :global(.metric-row),
