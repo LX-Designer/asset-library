@@ -72,11 +72,11 @@ export default function Act4({ initialAnswers, onSubmit, onSave }) {
       {/* ── Part B: Causal chain ── */}
       <div className={s.actInstruction}>
         <div className={s.actInstructionLabel}>Part B — Causal chain</div>
-        Starting from a specific human activity (e.g. burning fossil fuels), trace the mechanism step by step through to observed surface warming. Include the enhanced greenhouse effect and explain how the GHG fingerprint (tropospheric warming + stratospheric cooling) distinguishes this from solar forcing.
+        Starting from a specific human activity (e.g. burning fossil fuels), trace the mechanism step by step through to observed surface warming. Include the enhanced greenhouse effect and explain what the atmospheric temperature fingerprint evidence adds to the argument.
       </div>
 
       <div className={s.actSectionDesc}>
-        Suggested structure: Human activity → atmospheric change (concentration rises) → physical effect (enhanced greenhouse effect) → energy imbalance → surface warming → fingerprint evidence.
+        Suggested structure: (1) What does the evidence show about the physical mechanism? (2) What does the fingerprint evidence add? (3) How does this help distinguish between competing explanations?
       </div>
 
       <label className={s.actLabel} htmlFor="act4-partb">
@@ -88,7 +88,7 @@ export default function Act4({ initialAnswers, onSubmit, onSave }) {
         value={partB}
         onChange={e => { setPartB(e.target.value); setSubmitLocked(false) }}
         onBlur={handleBlur}
-        placeholder="Starting from [specific human activity]… this leads to [atmospheric change]… which causes [physical effect]… The GHG fingerprint (tropospheric warming + stratospheric cooling) is significant because…"
+        placeholder="Describe what you found in the atmospheric temperature evidence and what it tells you about which forcing mechanism is operating. Aim for 2–3 sentences."
         rows={7}
       />
 

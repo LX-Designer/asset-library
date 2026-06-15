@@ -128,34 +128,21 @@ function LabContent({ responses, openEvidenceCard }) {
       <Section
         id="s-anomaly"
         label="Evidence section 1"
-        title="The temperature record — what does the anomaly show?"
-        intro="Before investigating causes, we need to describe what is actually happening to global temperature. The word 'anomaly' has a precise meaning here: it is the difference between the observed temperature and a long-run average (the baseline period 1850–1900 is used as the pre-industrial reference)."
+        title="The temperature record — the anomaly dataset"
+        intro="The global temperature record is the starting point for the attribution question. Before examining it, it helps to understand what the dataset is and how it is constructed."
       >
-        <h3 className={s.subHeading}>Reading the global temperature anomaly</h3>
         <p>
-          The HadCRUT5 (Hadley Centre / Climatic Research Unit) and NASA GISTEMP datasets are the two most widely cited global surface temperature records. Both combine ocean and land-surface measurements from a network of weather stations, ocean buoys, and ships going back to the 1850s. Independent research groups using different methodologies produce consistent results — this agreement across independent datasets is an important piece of evidence in itself.
+          The temperature record used most commonly as the starting point for the attribution question is the HadCRUT5 dataset, produced jointly by the UK Met Office Hadley Centre and the Climatic Research Unit at the University of East Anglia. It combines land surface air temperature measurements from a network of weather stations with sea surface temperature measurements from ships and buoys, extending back to 1850.
         </p>
         <p>
-          Key pattern in the record:
+          Temperature is expressed as an <strong>anomaly</strong> — not the absolute temperature, but the departure from a baseline average. The baseline used is 1850–1900, representing the pre-industrial period before significant fossil fuel combustion. A positive anomaly means warmer than the baseline average; a negative anomaly means cooler. This approach is used because comparing absolute temperatures across thousands of measurement stations is difficult; comparing how much each station has warmed or cooled relative to its own average is more robust.
         </p>
-        <ul className={s.evidenceList}>
-          <li><strong>1850–1940:</strong> approximately +0.2–0.3°C above baseline with significant year-to-year variability.</li>
-          <li><strong>1940–1970:</strong> a period of relatively stable or slightly cooling temperatures, partly attributed to industrial aerosol emissions masking warming.</li>
-          <li><strong>1970–present:</strong> a steep, sustained acceleration. By 2021, the global mean surface temperature was approximately <strong>+1.1–1.2°C</strong> above the 1850–1900 pre-industrial average (IPCC AR6, 2021).</li>
-          <li><strong>Each of the last four decades</strong> has been successively warmer than any decade since 1850.</li>
-        </ul>
-
-        <Callout type="warn">
-          <strong>Detection vs. attribution:</strong> The temperature record tells us <em>that</em> warming is occurring. It does not tell us <em>why</em>. Detecting a signal in the climate record is a different intellectual step from attributing it to a cause. The rest of this lab builds the evidence needed for that attribution argument.
-        </Callout>
-
-        <h3 className={s.subHeading}>What the anomaly does and does not show</h3>
         <p>
-          The temperature record shows a clear upward trend that is very unlikely to be explained by measurement error or station siting issues alone — independent research teams using different methodologies (satellite data, ocean heat content, glacier mass balance) converge on the same signal. What the record does not show, by itself, is mechanism. A trend does not prove a cause. Natural factors — solar variability, volcanic activity, ocean circulation changes — can and do drive temperature changes. The task of this inquiry is to assess whether they can account for the magnitude and timing of the post-1950 warming.
+          The record covers approximately 170 years of continuous measurement across a global network. It is one of several independent global temperature datasets; others include GISTEMP (NASA) and ERA5 (ECMWF). Independent teams, using different methodologies and data sources, produce records that are consistent with each other within known uncertainty ranges.
         </p>
 
         <Callout>
-          <strong>→ Activity 1:</strong> Examine the temperature record and write a precise description of what it shows. What specific features would need to be explained by any causal hypothesis?
+          <strong>→ Activity 1:</strong> Examine the temperature record and write a precise description of what you observe. What pattern do you see? When does something appear to change?
         </Callout>
       </Section>
 
@@ -293,32 +280,43 @@ function LabContent({ responses, openEvidenceCard }) {
           <strong>Take this evidence seriously:</strong> Natural factors do influence climate. The question is whether they can explain the magnitude, timing, and pattern of post-1950 warming. Do not dismiss this evidence — the attribution argument is stronger if it engages with the strongest version of the natural-cause hypothesis.
         </Callout>
 
-        <h3 className={s.subHeading}>Solar irradiance variability</h3>
+        <h3 className={s.subHeading}>Solar irradiance</h3>
         <p>
-          The sun is the primary energy source for Earth's climate system. Small variations in solar output (total solar irradiance, TSI) occur on approximately 11-year cycles (the Schwabe cycle) and longer-period variations. Solar variability has been measured directly by satellites since 1978 and reconstructed for earlier periods using sunspot records and cosmogenic isotopes (¹⁰Be, ¹⁴C). The IPCC AR6 estimates that solar forcing since 1750 is approximately <strong>+0.05 W/m²</strong> — very small compared to anthropogenic forcing.
+          If changes in the Sun's energy output are responsible for recent warming, we would expect to find that the Sun has been getting brighter. Scientists have been measuring total solar irradiance (TSI) directly using satellites since 1978, providing a continuous and precise record.
         </p>
         <p>
-          The critical observation for attribution: satellite measurements show that solar irradiance has been <em>flat or slightly declining</em> since approximately 1980, while global mean surface temperature has continued to rise sharply. This post-1950 divergence is one of the most important pieces of evidence in the attribution case.
+          The record clearly shows the 11-year solar cycle — periods of higher and lower solar activity driven by sunspot patterns. Within each cycle, total solar irradiance varies by approximately 0.1%.
+        </p>
+        <p>
+          Beyond the 11-year cycle, the record shows the level of solar output at successive cycle peaks and troughs. The IPCC AR6 estimates solar radiative forcing since 1750 at approximately +0.05 W/m².
         </p>
 
         <h3 className={s.subHeading}>Volcanic eruptions</h3>
         <p>
-          Major volcanic eruptions inject sulphur dioxide (SO₂) into the stratosphere, where it converts to sulphate aerosols that reflect incoming solar radiation. This produces a detectable cooling signal in the temperature record, typically lasting 1–3 years. The 1991 eruption of Mt Pinatubo produced a cooling of approximately 0.5°C globally. However, volcanic forcing is episodic and short-lived — it cannot explain the sustained, multi-decadal warming trend.
+          When a large volcano erupts explosively, it can blast sulphur dioxide into the stratosphere, where it reacts with water to form sulphate aerosol droplets. These droplets scatter incoming solar radiation, reducing the amount that reaches the surface.
+        </p>
+        <p>
+          The 1991 eruption of Mt Pinatubo (Philippines) is the best-documented modern example. Following the eruption, global mean surface temperature fell by approximately 0.5°C. This cooling persisted for approximately 2 years, then temperature recovered toward the pre-eruption level.
+        </p>
+        <p>
+          Volcanic CO₂ is also released during eruptions. Estimates of total volcanic CO₂ output are approximately 0.3–0.4 billion tonnes per year globally. Human CO₂ emissions in 2022 were approximately 37 billion tonnes.
         </p>
 
-        <h3 className={s.subHeading}>El Niño–Southern Oscillation (ENSO)</h3>
+        <h3 className={s.subHeading}>ENSO</h3>
         <p>
-          ENSO drives significant year-to-year temperature variability. El Niño events (warm phase) redistribute heat from the Pacific Ocean to the atmosphere, temporarily raising global mean surface temperature by 0.1–0.2°C. La Niña events (cool phase) have the opposite effect. ENSO explains much of the variability around the long-term trend — but it does not explain the trend itself, because ENSO is a redistribution of existing heat, not a source of additional energy to the system.
+          El Niño–Southern Oscillation (ENSO) is a recurring climate pattern driven by interactions between tropical Pacific sea-surface temperatures and atmospheric circulation. During El Niño, unusually warm sea-surface temperatures in the central and eastern tropical Pacific shift weather patterns globally and raise global mean surface temperature by approximately 0.1–0.2°C. During La Niña, the opposite pattern produces temporary cooling.
+        </p>
+        <p>
+          The record warm years in the global temperature record — 1998, 2016, 2023 — all coincide with strong El Niño events. Climate scientists can statistically remove the ENSO signal from the temperature record to isolate the underlying trend.
+        </p>
+        <p>
+          ENSO operates on interannual timescales — El Niño events typically develop over months and fade within 1–2 years. The ENSO index oscillates between positive (El Niño) and negative (La Niña) phases without a consistent long-term trend in one direction.
         </p>
 
         <EvidenceRefs cards={naturalCards} onOpen={openEvidenceCard} />
 
-        <Callout type="warn">
-          <strong>The post-1950 divergence — the decisive test:</strong> If natural factors were the dominant cause of recent warming, we would expect solar irradiance to have increased alongside temperature. The satellite record shows it has not. This divergence — temperature rising while solar output is flat — is the single most important piece of evidence for testing the natural-cause hypothesis.
-        </Callout>
-
         <Callout>
-          <strong>→ Activity 3:</strong> Evaluate each natural factor (solar, volcanic, ENSO) in turn. For each one, assess: is the mechanism capable of producing sustained warming? Does the timing match post-1950 observations? Is the magnitude sufficient?
+          <strong>→ Activity 3:</strong> Examine each natural factor in turn. For each one, consider: is there a physical mechanism that could produce sustained warming? Does the timing of this factor's changes match the warming pattern? Is the magnitude of its effect large enough to matter?
         </Callout>
       </Section>
 
@@ -346,18 +344,15 @@ function LabContent({ responses, openEvidenceCard }) {
           Deforestation and urban expansion alter surface albedo (the proportion of incoming solar radiation that is reflected). Forests are darker than grassland or cropland and absorb more solar radiation. Replacing forest with lighter surfaces produces a small local cooling effect — but this is far outweighed by the warming from the CO₂ released during deforestation. Net, land-use change is a warming influence.
         </p>
 
-        <h3 className={s.subHeading}>The GHG fingerprint — distinguishing anthropogenic from solar forcing</h3>
+        <h3 className={s.subHeading}>Atmospheric fingerprints</h3>
         <p>
-          The most scientifically compelling evidence for anthropogenic attribution is the GHG <em>fingerprint</em>: the characteristic spatial pattern of warming that distinguishes enhanced greenhouse forcing from solar forcing.
+          Climate scientists look for <strong>fingerprints</strong> — physical patterns that different forcing mechanisms would be expected to produce in different parts of the climate system. The idea is that if two explanations (e.g. solar forcing vs. GHG forcing) both predict warming near the surface, but predict different patterns in other parts of the system, those differences can be used to test which explanation is operating.
         </p>
-        <ul className={s.evidenceList}>
-          <li><strong>Tropospheric warming + stratospheric cooling:</strong> GHG forcing warms the lower atmosphere (troposphere) while simultaneously cooling the upper atmosphere (stratosphere) — because GHGs trap heat in the troposphere and reduce radiation reaching the stratosphere. Solar forcing, in contrast, would warm both layers. Satellites measuring stratospheric temperatures show cooling consistent with GHG forcing, not solar forcing.</li>
-          <li><strong>Polar amplification:</strong> GHG warming is amplified at the poles due to ice-albedo feedback. Arctic warming has been approximately 3–4× faster than the global average — consistent with GHG mechanism, not solar forcing.</li>
-          <li><strong>Night-time warming faster than daytime:</strong> Under solar forcing, daytime warming should dominate. GHG forcing retains heat at night as well, producing a pattern of faster minimum temperature rise — which is observed.</li>
-        </ul>
-
         <p>
-          IPCC AR6 (2021) concluded: "It is <em>unequivocal</em> that human influence has warmed the atmosphere, ocean and land." Total anthropogenic radiative forcing is estimated at approximately <strong>+2.7 W/m²</strong> since 1750, compared to approximately +0.05 W/m² from solar forcing — a ratio of approximately 54:1.
+          Radiosonde balloons have been measuring temperatures at various altitudes since the mid-20th century. The <strong>troposphere</strong> (0–approximately 12 km) is where weather occurs and where surface heat exchange takes place. The <strong>stratosphere</strong> (approximately 12–50 km) contains the ozone layer. Satellite microwave sounding instruments have been monitoring atmospheric temperatures in both layers since 1979.
+        </p>
+        <p>
+          Additional fingerprints observed in the record include: <strong>polar amplification</strong> (the Arctic is warming significantly faster than the global average); and <strong>diurnal warming asymmetry</strong> (whether daytime highs and night-time lows are warming at the same rate or at different rates).
         </p>
 
         <EvidenceRefs cards={anthropoCards} onOpen={openEvidenceCard} />
@@ -378,7 +373,7 @@ function LabContent({ responses, openEvidenceCard }) {
       >
         <h3 className={s.subHeading}>The three attribution criteria</h3>
         <p>
-          Use the three criteria below to assess both natural and anthropogenic factors. Apply each criterion to the evidence from Sections 5 and 6. The post-1950 divergence (solar irradiance flat while temperatures rise sharply) is the decisive test for the timing criterion.
+          Use the three criteria below to compare natural and anthropogenic factors. For each criterion, consider how each set of factors performs against the evidence from sections S5, S6, and S7. Complete this framework in Activity 5.
         </p>
 
         <div className={s.compSection}>
@@ -393,12 +388,8 @@ function LabContent({ responses, openEvidenceCard }) {
                 <strong>{c.criterion}</strong>
                 <div className={s.compQuestion}>{c.question}</div>
               </div>
-              <div className={`${s.compCell} ${s.compColNatural}`}>
-                <div className={s.compHint}>{c.natural}</div>
-              </div>
-              <div className={`${s.compCell} ${s.compColAnthro}`}>
-                <div className={s.compHint}>{c.anthropogenic}</div>
-              </div>
+              <div className={`${s.compCell} ${s.compColNatural}`} />
+              <div className={`${s.compCell} ${s.compColAnthro}`} />
             </div>
           ))}
         </div>

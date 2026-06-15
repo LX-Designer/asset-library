@@ -1,7 +1,8 @@
 // ── Evidence Cards ────────────────────────────────────────────────────────────
 // Each card: id, section (which content section it appears in), type label,
-// title, timescale, shows (learner-facing text), notProve (expandable caveat),
-// inquiry (connection to the central question).
+// title, timescale, observable (learner-facing observational text), notProve
+// (expandable caveat), question (open inquiry question), limitation (what it
+// does not prove by itself — per CEP v2).
 
 export const EVIDENCE_CARDS = [
 
@@ -12,9 +13,10 @@ export const EVIDENCE_CARDS = [
     type: 'Proxy — ice core',
     title: 'Antarctic Ice Core — CO₂ and Temperature over 800,000 Years',
     timescale: '800,000 years before present to ~1800 CE',
-    shows: `Scientists have drilled ice cores from Antarctica that preserve tiny air bubbles from the ancient atmosphere. By analysing these bubbles, they can measure the actual concentration of CO₂ in the atmosphere as far back as 800,000 years. The results show that CO₂ concentration and temperature rose and fell together through eight ice ages and warm periods. During ice ages, CO₂ dropped to around 180 ppm; during warm interglacials, it rose to around 280 ppm. Today's concentration is over 420 ppm — higher than at any point in this 800,000-year record. When you look at this evidence, ask yourself: what does the CO₂–temperature correlation tell you, and what does it not tell you?`,
+    observable: `Scientists have drilled ice cores from Antarctica that preserve tiny air bubbles from the ancient atmosphere. By analysing these bubbles, they can measure the actual concentration of CO₂ in the atmosphere as far back as 800,000 years. The results show that CO₂ concentration and temperature rose and fell together through eight ice ages and warm periods. During ice ages, CO₂ dropped to around 180 ppm; during warm interglacials, it rose to around 280 ppm. Today's concentration is over 420 ppm — higher than at any point in this 800,000-year record. When you look at this evidence, ask yourself: what does the CO₂–temperature correlation tell you, and what does it not tell you?`,
     notProve: `It does not prove that CO₂ caused temperature changes in the glacial cycles — in those cycles, temperature often changed slightly before CO₂ did, driven by orbital forcing. It also does not directly prove that the current CO₂ increase is anthropogenic. It establishes correlation and extraordinary context, not modern attribution.`,
-    inquiry: `This matters because it allows us to compare the current CO₂ concentration against a much longer baseline. If current levels are genuinely unprecedented — not just in the 150-year instrumental record but across 800,000 years of ice core data — that is significant evidence that something unusual is happening. It also establishes that CO₂ and temperature have been coupled throughout Earth's recent geological past.`,
+    question: `What does it mean that current CO₂ is above the range of this 800,000-year record — and what does that comparison add to what the 150-year instrumental record shows?`,
+    limitation: `The ice core record shows correlation between CO₂ and temperature across glacial cycles. It does not establish that CO₂ drove those changes — in glacial cycles, orbital forcing initiated temperature shifts and CO₂ partly responded to them, as well as amplifying them. It does not show that the current CO₂ increase is caused by human activity, and it does not specify what temperature response will follow from the current concentration.`,
   },
   {
     id: 'ec-2',
@@ -22,9 +24,10 @@ export const EVIDENCE_CARDS = [
     type: 'Proxy — dendrochronology',
     title: 'Tree Ring Records — Temperature of the Last 2,000 Years',
     timescale: 'Approximately 1 CE to present; PAGES 2k Consortium',
-    shows: `Trees grow a new ring of wood each year. In a warm, wet year, the ring is wide; in a cold or dry year, it is narrow. By studying living trees and preserved ancient timber, scientists can reconstruct temperature conditions year by year going back over a thousand years. When researchers combine tree ring data with other natural records (corals, lake sediments, ice cores), a clear picture emerges: the warming of the 20th and 21st centuries is exceptional compared to anything in the past 2,000 years. The Medieval Warm Period and the Little Ice Age were real regional events, but neither matches the speed or scale of modern warming at a global level.`,
+    observable: `Annual temperature reconstructions for the past 2,000 years derived from tree rings and other proxies show multi-decadal periods of warmer and cooler conditions — including the Medieval Climate Anomaly and the Little Ice Age — as regional and sometimes hemispheric signals. Reconstruction uncertainty ranges are wider than for the instrumental record.`,
     notProve: `Tree ring data have known limitations: the "divergence problem" means some modern tree rings do not track thermometer records as expected since approximately 1960, introducing uncertainty in recent calibration. Regional patterns (e.g. the Medieval Warm Period) may not represent global conditions. Tree rings also cannot provide direct atmospheric gas measurements.`,
-    inquiry: `This matters because it allows us to contextualise recent warming not just against the 150-year instrumental record, but against 2,000 years of natural climate variability. If recent warming is exceptional in this longer context, it suggests something beyond normal variation is operating.`,
+    question: `How does the temperature of the past 2,000 years — including the Medieval Climate Anomaly — compare to what is happening now? What does this context add to what the instrumental record shows?`,
+    limitation: `Regional multi-proxy reconstructions may not reflect global conditions. The "divergence problem" — in which some tree ring records since approximately 1960 do not track thermometer temperatures as expected — introduces uncertainty in recent calibration.`,
   },
   {
     id: 'ec-3',
@@ -32,9 +35,9 @@ export const EVIDENCE_CARDS = [
     type: 'Proxy — fossil / geological',
     title: 'Fossil Evidence and Long-Term Climate History',
     timescale: 'Up to 100 million years before present',
-    shows: `Before ice cores and tree rings, scientists rely on fossils — the preserved remains and chemical signatures of ancient life — to understand past climates. Microscopic marine organisms called foraminifera preserve oxygen isotopes in their shells that record the temperature of the water they lived in. Fossil pollen tells us what plants grew in a region (and therefore what the climate was like). These records extend climate knowledge back tens of millions of years. Around 50–55 million years ago, CO₂ concentrations may have been several times higher than today, and there were no permanent ice caps at the poles. The Cambridge syllabus notes that you need an outline understanding of climate change over the last 100 million years — this evidence is where that understanding starts.`,
+    observable: `Before ice cores and tree rings, scientists rely on fossils — the preserved remains and chemical signatures of ancient life — to understand past climates. Microscopic marine organisms called foraminifera preserve oxygen isotopes in their shells that record the temperature of the water they lived in. Fossil pollen tells us what plants grew in a region (and therefore what the climate was like). These records extend climate knowledge back tens of millions of years. Around 50–55 million years ago, CO₂ concentrations may have been several times higher than today, and there were no permanent ice caps at the poles. The Cambridge syllabus notes that you need an outline understanding of climate change over the last 100 million years — this evidence is where that understanding starts.`,
     notProve: `Long-term geological proxies have significant uncertainty ranges. They do not allow precise year-by-year reconstruction. They tell us about broad climate states, not the specific mechanisms operating today.`,
-    inquiry: `This matters because it establishes that CO₂ and temperature have been coupled throughout Earth's very long history. The current trajectory of CO₂ increase — if sustained — could push the atmosphere toward states not seen since before the evolution of modern ecosystems.`,
+    question: `This matters because it establishes that CO₂ and temperature have been coupled throughout Earth's very long history. The current trajectory of CO₂ increase — if sustained — could push the atmosphere toward states not seen since before the evolution of modern ecosystems.`,
   },
 
   // ── Section: Instrumental and Physical Evidence ──
@@ -44,9 +47,9 @@ export const EVIDENCE_CARDS = [
     type: 'Physical observation — instrumental',
     title: 'Global Sea-Level Rise',
     timescale: 'Tide gauge records from late 19th century; satellite altimetry from 1993',
-    shows: `Sea level is rising. Tide gauges — instruments attached to coastal structures — have been recording sea level in various locations since the late 19th century. Satellites have been measuring global sea level continuously since 1993. Together, these records show that global mean sea level has risen approximately 20 cm since 1900, and the rate is accelerating — approximately 3.7 mm/year since 1993, compared to 1.5 mm/year over the 20th century as a whole. The rise is driven by two processes: warmer water expands (thermal expansion), and melting glaciers and ice sheets add water to the ocean. Ask yourself: does sea-level rise tell us why the ocean is warming?`,
+    observable: `Sea level is rising. Tide gauges — instruments attached to coastal structures — have been recording sea level in various locations since the late 19th century. Satellites have been measuring global sea level continuously since 1993. Together, these records show that global mean sea level has risen approximately 20 cm since 1900, and the rate is accelerating — approximately 3.7 mm/year since 1993, compared to 1.5 mm/year over the 20th century as a whole. The rise is driven by two processes: warmer water expands (thermal expansion), and melting glaciers and ice sheets add water to the ocean. Ask yourself: does sea-level rise tell us why the ocean is warming?`,
     notProve: `Sea-level rise is a consequence of warming, not an independent cause. It confirms and corroborates the temperature signal but does not by itself identify the cause of warming. Regional sea-level change varies significantly from the global mean due to local land movement, ocean current changes, and gravitational effects of melting ice sheets.`,
-    inquiry: `This matters because physical observations provide independent corroboration of the temperature record. If temperature records showed warming but sea level showed no change, we would have reason to question the temperature data. The fact that multiple independent physical systems respond consistently strengthens the detection case.`,
+    question: `This matters because physical observations provide independent corroboration of the temperature record. If temperature records showed warming but sea level showed no change, we would have reason to question the temperature data. The fact that multiple independent physical systems respond consistently strengthens the detection case.`,
   },
   {
     id: 'ec-5',
@@ -54,9 +57,9 @@ export const EVIDENCE_CARDS = [
     type: 'Physical observation — satellite',
     title: 'Arctic Sea-Ice Extent (1979–present)',
     timescale: 'September minimum sea-ice extent, 1979–present; NSIDC',
-    shows: `Every year, sea ice in the Arctic expands through winter and melts back through summer. The minimum — reached in September — is the key measurement. Since satellites began monitoring in 1979, Arctic September sea-ice extent has shrunk by approximately 13% per decade. Some of the oldest, thickest ice has declined even faster. The Arctic is warming about 3–4 times faster than the rest of the planet — a pattern called Arctic amplification. Part of the reason is a feedback loop: as sea ice melts, it exposes darker ocean water, which absorbs more solar energy than the reflective ice did, causing more warming, causing more melting. This is the ice-albedo feedback — a process that amplifies warming rather than causing it. Ask yourself: is this a cause of warming, or a consequence of it — or both?`,
+    observable: `Every year, sea ice in the Arctic expands through winter and melts back through summer. The minimum — reached in September — is the key measurement. Since satellites began monitoring in 1979, Arctic September sea-ice extent has shrunk by approximately 13% per decade. Some of the oldest, thickest ice has declined even faster. The Arctic is warming about 3–4 times faster than the rest of the planet — a pattern called Arctic amplification. Part of the reason is a feedback loop: as sea ice melts, it exposes darker ocean water, which absorbs more solar energy than the reflective ice did, causing more warming, causing more melting. This is the ice-albedo feedback — a process that amplifies warming rather than causing it. Ask yourself: is this a cause of warming, or a consequence of it — or both?`,
     notProve: `Arctic sea-ice loss is a consequence and amplifier of warming, not its direct cause. The ice-albedo feedback amplifies warming once it begins but does not initiate it. Antarctic sea ice shows a more complex pattern.`,
-    inquiry: `This matters because the Arctic is one of the most dramatic physical signals of warming. The ice-albedo feedback it creates is also an example of how warming can trigger amplifying responses within the climate system — a positive feedback that is relevant to understanding the pace of future change.`,
+    question: `This matters because the Arctic is one of the most dramatic physical signals of warming. The ice-albedo feedback it creates is also an example of how warming can trigger amplifying responses within the climate system — a positive feedback that is relevant to understanding the pace of future change.`,
   },
   {
     id: 'ec-6',
@@ -64,9 +67,9 @@ export const EVIDENCE_CARDS = [
     type: 'Physical observation — satellite / ground-based',
     title: 'Glacial and Ice Sheet Mass Loss',
     timescale: 'WGMS glacier records; GRACE satellite gravimetry 2002–present',
-    shows: `The world's glaciers are melting. Monitoring programmes tracking glaciers from the Alps to the Himalayas to Patagonia show that nearly all are losing ice — a pattern that has been consistent and accelerating since at least the mid-20th century. Globally, glaciers lost an average of approximately 267 billion tonnes of ice per year between 2000 and 2019. Satellites measuring tiny changes in Earth's gravitational field show that the Greenland and Antarctic ice sheets are also losing mass at accelerating rates. This matters not just because of sea-level rise, but because of what the global coherence of the signal tells us: this is not a local phenomenon. It is a worldwide response to warming. As you consider this evidence, ask: does it tell you why the world is warming, or only that it is?`,
+    observable: `The world's glaciers are melting. Monitoring programmes tracking glaciers from the Alps to the Himalayas to Patagonia show that nearly all are losing ice — a pattern that has been consistent and accelerating since at least the mid-20th century. Globally, glaciers lost an average of approximately 267 billion tonnes of ice per year between 2000 and 2019. Satellites measuring tiny changes in Earth's gravitational field show that the Greenland and Antarctic ice sheets are also losing mass at accelerating rates. This matters not just because of sea-level rise, but because of what the global coherence of the signal tells us: this is not a local phenomenon. It is a worldwide response to warming. As you consider this evidence, ask: does it tell you why the world is warming, or only that it is?`,
     notProve: `Individual glaciers can advance or retreat for local reasons (changes in precipitation, topography). Glacial retreat does not directly indicate the cause of warming — only that warming is occurring.`,
-    inquiry: `This matters because the global coherence of glacial retreat — across essentially all regions — is consistent only with a global temperature increase. It strengthens confidence that the temperature record is real and not an artefact of local measurement conditions.`,
+    question: `This matters because the global coherence of glacial retreat — across essentially all regions — is consistent only with a global temperature increase. It strengthens confidence that the temperature record is real and not an artefact of local measurement conditions.`,
   },
 
   // ── Section: Greenhouse Gases ──
@@ -76,9 +79,9 @@ export const EVIDENCE_CARDS = [
     type: 'Instrumental — continuous atmospheric measurement',
     title: 'CO₂ Concentration — The Keeling Curve',
     timescale: 'Mauna Loa Observatory, Hawaii; continuous measurement since 1958',
-    shows: `Since 1958, scientists at the Mauna Loa Observatory in Hawaii have been measuring the concentration of CO₂ in the atmosphere every day. The resulting record — called the Keeling Curve after its originator, Charles Keeling — is one of the most important scientific datasets in existence. It shows an unambiguous, continuous rise in CO₂ from approximately 315 ppm in 1958 to over 425 ppm in 2024, superimposed on a seasonal cycle that rises in winter and falls in summer as Northern Hemisphere plants absorb and release CO₂. The Keeling Curve tells us CO₂ is rising relentlessly. But on its own, does it tell you that humans are responsible? What additional evidence would you need to confirm the source?`,
+    observable: `Since 1958, scientists at the Mauna Loa Observatory in Hawaii have been measuring the concentration of CO₂ in the atmosphere every day. The resulting record — called the Keeling Curve after its originator, Charles Keeling — is one of the most important scientific datasets in existence. It shows an unambiguous, continuous rise in CO₂ from approximately 315 ppm in 1958 to over 425 ppm in 2024, superimposed on a seasonal cycle that rises in winter and falls in summer as Northern Hemisphere plants absorb and release CO₂. The Keeling Curve tells us CO₂ is rising relentlessly. But on its own, does it tell you that humans are responsible? What additional evidence would you need to confirm the source?`,
     notProve: `The Keeling Curve shows CO₂ is rising but does not by itself prove this is due to human activity. Additional isotopic analysis (the ratio of carbon-13 to carbon-12 in atmospheric CO₂ is declining — consistent with fossil fuel combustion) provides the human-origin fingerprint.`,
-    inquiry: `This matters because it provides the most direct, continuous measurement of the key variable in the anthropogenic attribution argument. The rate of rise (~2–3 ppm/year recently) is far faster than any natural process in the ice core record.`,
+    question: `This matters because it provides the most direct, continuous measurement of the key variable in the anthropogenic attribution argument. The rate of rise (~2–3 ppm/year recently) is far faster than any natural process in the ice core record.`,
   },
   {
     id: 'ec-8',
@@ -86,9 +89,9 @@ export const EVIDENCE_CARDS = [
     type: 'Instrumental and proxy',
     title: 'Methane and Nitrous Oxide Concentrations',
     timescale: 'Pre-industrial baseline from ice cores; instrumental record from late 20th century; NOAA / WMO',
-    shows: `CO₂ gets most of the attention in climate discussions — but it is not the only greenhouse gas humans are adding to the atmosphere. Methane (CH₄) has increased from about 722 parts per billion (ppb) before industrialisation to about 1,920 ppb today — nearly three times higher. Nitrous oxide (N₂O) has risen from about 270 ppb to about 336 ppb. Both levels are unprecedented in the ice core record. This matters because methane, despite its lower concentration, traps about 28–30 times more heat than CO₂ per molecule over 100 years — and about 84 times more over 20 years. When you combine all greenhouse gases using CO₂ equivalence, the total warming effect is larger than CO₂ alone would suggest.`,
+    observable: `CO₂ gets most of the attention in climate discussions — but it is not the only greenhouse gas humans are adding to the atmosphere. Methane (CH₄) has increased from about 722 parts per billion (ppb) before industrialisation to about 1,920 ppb today — nearly three times higher. Nitrous oxide (N₂O) has risen from about 270 ppb to about 336 ppb. Both levels are unprecedented in the ice core record. This matters because methane, despite its lower concentration, traps about 28–30 times more heat than CO₂ per molecule over 100 years — and about 84 times more over 20 years. When you combine all greenhouse gases using CO₂ equivalence, the total warming effect is larger than CO₂ alone would suggest.`,
     notProve: `Concentration increases show human activity is altering the atmosphere; they do not by themselves establish the magnitude of the resulting warming (that requires radiative forcing calculations).`,
-    inquiry: `This matters because it shows that the attribution argument is not simply about CO₂. Methane and N₂O — driven primarily by agriculture, livestock, and landfill — are significant contributors to total anthropogenic forcing. Focusing on CO₂ alone understates the full picture.`,
+    question: `This matters because it shows that the attribution argument is not simply about CO₂. Methane and N₂O — driven primarily by agriculture, livestock, and landfill — are significant contributors to total anthropogenic forcing. Focusing on CO₂ alone understates the full picture.`,
   },
   {
     id: 'ec-9',
@@ -96,9 +99,10 @@ export const EVIDENCE_CARDS = [
     type: 'Scientific data — comparative',
     title: 'GHG Comparison Table — GWP, Longevity, and CO₂ Equivalence',
     timescale: 'Based on IPCC AR6 (2021) values',
-    shows: `Not all greenhouse gases are equal. The table below compares the four main categories by the properties that matter for attribution: GWP₁₀₀ (warming impact relative to CO₂ over 100 years), atmospheric lifetime, current concentration relative to pre-industrial, and primary human sources.`,
+    observable: `Not all greenhouse gases are equal. The table below compares the four main categories by the properties that matter for attribution: GWP₁₀₀ (warming impact relative to CO₂ over 100 years), atmospheric lifetime, current concentration relative to pre-industrial, and primary human sources.`,
     notProve: `GWP is a simplification; it does not capture all the complexity of how gases interact in the atmosphere or with carbon cycle feedbacks. The choice of time horizon (20 vs. 100 years) significantly affects how gases are ranked.`,
-    inquiry: `This matters because it shows why CO₂ dominates total forcing despite not having the highest GWP per molecule: it is emitted in vastly larger quantities and persists in the atmosphere for centuries to millennia. CO₂ equivalence allows all gases to be added together on a single scale.`,
+    question: `Methane has a GWP₁₀₀ of approximately 28–30 — far higher than CO₂'s value of 1. Why, then, does CO₂ dominate total radiative forcing? What properties of the two gases explain this?`,
+    limitation: `GWP is a simplification; the 100-year time horizon is a policy choice that affects relative rankings. The table shows per-molecule properties, not total contributions — those depend on how much of each gas is emitted and how long it persists.`,
   },
 
   // ── Section: Natural Factors ──
@@ -108,9 +112,10 @@ export const EVIDENCE_CARDS = [
     type: 'Instrumental — satellite measurement',
     title: 'Solar Irradiance Record (1978–present)',
     timescale: 'Total Solar Irradiance measured by satellite since 1978; ACRIM, VIRGO, and other instruments',
-    shows: `If the Sun is getting brighter, it would make sense for the Earth to get warmer. Scientists have been measuring the Sun's energy output directly from satellites since 1978. The record shows the 11-year solar cycle clearly — but no significant upward trend. Since approximately 1980, the period during which global warming has accelerated most rapidly, solar output has been relatively flat or slightly declining. This is one of the most important pieces of evidence in the attribution argument: the Sun cannot be the primary driver of post-1980 warming, because its output has not been rising during this period. Solar activity did contribute to warming in the early 20th century, but it cannot close the gap between natural explanations and the observed warming since 1980.`,
+    observable: `The 11-year solar cycle in total solar irradiance is clearly visible in the satellite record. Over the full satellite record (1978–present), the level of solar output at successive cycle peaks and troughs can be compared.`,
     notProve: `The satellite record only covers approximately 45 years. Longer solar reconstructions (from sunspot records and cosmogenic isotopes) extend the picture but with greater uncertainty. Solar activity may have contributed to the earlier warming from 1900 to 1950.`,
-    inquiry: `This matters because it directly tests the solar forcing hypothesis. If solar output has been stable or declining since 1980 while temperatures have continued to rise sharply, solar forcing cannot be the primary driver of recent warming. The post-1950/1980 divergence is the critical test.`,
+    question: `Looking at the satellite record of solar output from 1978 to the present — what pattern do you see, and what does that tell you when you compare it to what has been happening to global temperature over the same period?`,
+    limitation: `The satellite record covers approximately 45 years. Longer solar reconstructions from sunspot observations and cosmogenic isotopes extend the picture back centuries but with greater uncertainty. Solar activity did increase during the early 20th century (1900–1950).`,
   },
   {
     id: 'ec-12',
@@ -118,9 +123,10 @@ export const EVIDENCE_CARDS = [
     type: 'Observational / historical',
     title: 'Volcanic Forcing and Its Limits',
     timescale: 'Historical record of major eruptions; Mt Pinatubo 1991; Mt Tambora 1815',
-    shows: `Volcanoes are powerful — but do they cause global warming? The answer, perhaps surprisingly, is: not in the way you might expect. When a large volcano erupts, it blasts sulphur dioxide into the upper atmosphere, where it forms tiny droplets that act as a sunshade, reflecting sunlight away from Earth. The result is short-term cooling. After Mt Pinatubo erupted in the Philippines in June 1991, global temperatures fell by about 0.5°C and stayed below the pre-eruption trend for nearly two years — then recovered. Volcanic CO₂ emissions are real, but small: about 100 times less per year than human emissions. So volcanoes create temporary dips in the temperature record, not sustained trends. In fact, years of low volcanic activity can appear slightly warmer than expected — removing the sunshade allows more solar energy in. Does this change how you read the temperature anomaly record?`,
+    observable: `When a large volcano erupts, it blasts sulphur dioxide into the upper atmosphere, where it forms tiny droplets that act as a partial sunshade, reflecting sunlight away from Earth. The result is short-term cooling. After Mt Pinatubo erupted in the Philippines in June 1991, global temperatures fell by about 0.5°C and stayed below the pre-eruption trend for nearly two years — then recovered. Volcanic CO₂ emissions are real, but small: about 100 times less per year than human emissions. In years of low volcanic activity, the absence of aerosol cooling can make the temperature record appear slightly warmer.`,
     notProve: `Extremely large eruptions (super-volcanic events) could have more significant long-term effects, but none has occurred in the instrumental period or in the recent Holocene. Volcanic CO₂ is a minor component of the carbon cycle and cannot explain long-term warming trends.`,
-    inquiry: `This matters because it rules out a common misconception — that volcanoes drive long-term warming. The evidence shows the opposite: they produce short-term cooling. Volcanic events create noise in the temperature record but cannot explain a sustained multi-decade warming trend.`,
+    question: `Volcanic eruptions do affect global temperature — but in what direction, and for how long? What does the pattern of the Pinatubo effect tell you about whether volcanism could explain a sustained multi-decade trend?`,
+    limitation: `Extremely large volcanic events (super-volcanic) could have more significant long-term effects, but none has occurred in the instrumental period. Volcanic CO₂ is a minor component of the current carbon cycle — approximately 100 times less than current human annual emissions.`,
   },
   {
     id: 'ec-13',
@@ -128,9 +134,10 @@ export const EVIDENCE_CARDS = [
     type: 'Observational / meteorological',
     title: 'ENSO — Natural Variability, Not a Trend',
     timescale: 'El Niño–Southern Oscillation; major events 1982–83, 1997–98, 2015–16, 2023–24',
-    shows: `Every few years, the tropical Pacific Ocean warms unusually — a phenomenon called El Niño. This shifts weather patterns globally and temporarily raises the world's average temperature by about 0.1–0.2°C. The record warm years of 1998, 2016, and 2023 all coincided with strong El Niño events. So is El Niño responsible for global warming? The short answer is no — but the reasoning matters. ENSO oscillates: El Niño years are followed by La Niña years, which temporarily cool the global average. Over time, the warm and cool events roughly cancel out. Scientists can statistically remove ENSO's contribution from the temperature record — and the underlying warming trend is still there. ENSO affects year-to-year variability; it does not explain a trend that has continued for over 70 years.`,
+    observable: `El Niño events temporarily raise global mean surface temperature by approximately 0.1–0.2°C. La Niña events temporarily lower it. The record warm years in the instrumental record coincide with strong El Niño events. Scientists can statistically isolate the ENSO contribution from the temperature record. The ENSO index oscillates between positive and negative phases.`,
     notProve: `Individual El Niño events do not cause the long-term warming trend; they amplify it temporarily. The trend exists independently of ENSO. Pointing to an El Niño year as evidence of warming is imprecise; the trend after ENSO effects are removed is more informative.`,
-    inquiry: `This matters because ENSO is the primary driver of year-to-year variability in global temperature records. Understanding its role — real but oscillating — is essential to distinguishing natural variability from the forced warming trend. ENSO cannot drive a multi-decade trend.`,
+    question: `El Niño events raise global temperatures in the years they occur. What happens to the temperature record when ENSO effects are removed — and what does that tell you about whether ENSO could explain a multi-decade trend?`,
+    limitation: `ENSO produces year-to-year variability in global temperature. It does not by itself create a directional long-term trend, because warm and cool phases offset each other over time. Whether ENSO can explain a trend that has continued for over 70 years requires assessing what the temperature record looks like after ENSO effects are removed.`,
   },
 
   // ── Section: Anthropogenic Factors ──
@@ -140,9 +147,10 @@ export const EVIDENCE_CARDS = [
     type: 'Observational — atmospheric temperature records',
     title: 'Tropospheric Warming and Stratospheric Cooling — The GHG Fingerprint',
     timescale: 'Radiosonde data from mid-20th century; satellite microwave sounding from 1979',
-    shows: `Here is a question climate scientists ask: if the Earth is warming because of the Sun, where would you expect the atmosphere to warm? From the top down — because more solar energy would be reaching the planet from above. But if the Earth is warming because of greenhouse gases trapping heat near the surface, where would you expect the warming? Near the surface and in the lower atmosphere (troposphere) — while the upper atmosphere (stratosphere) actually cools, because less heat is escaping upward. Observations show exactly this second pattern: the troposphere is warming, and the stratosphere is cooling simultaneously. Scientists call this a "fingerprint" — a pattern that distinguishes GHG forcing from solar forcing. This is one of the strongest pieces of physical evidence that greenhouse gases, not the Sun, are the primary driver of recent warming.`,
+    observable: `Here is a question climate scientists ask: if the Earth is warming because of the Sun, where would you expect the atmosphere to warm? From the top down — because more solar energy would be reaching the planet from above. But if the Earth is warming because of greenhouse gases trapping heat near the surface, where would you expect the warming? Near the surface and in the lower atmosphere (troposphere) — while the upper atmosphere (stratosphere) actually cools, because less heat is escaping upward. Observations show exactly this second pattern: the troposphere is warming, and the stratosphere is cooling simultaneously. Scientists call this a "fingerprint" — a pattern that distinguishes GHG forcing from solar forcing.`,
     notProve: `Stratospheric cooling also has partial contributions from ozone depletion (reducing ozone's absorption of UV). Separating GHG-cooling from ozone-cooling requires modelling. But the combined stratospheric cooling + tropospheric warming pattern is robustly inconsistent with solar forcing as the dominant cause.`,
-    inquiry: `This matters because it provides a physical test that goes beyond correlation. The GHG fingerprint — tropospheric warming + stratospheric cooling — is exactly what the GHG mechanism predicts and precisely what solar forcing would not produce. It allows scientists to distinguish the source of warming at a mechanistic level.`,
+    question: `The troposphere is warming and the stratosphere is cooling simultaneously. Different forcing mechanisms — solar and greenhouse gas — would be expected to produce different patterns in these two layers. Which pattern does each mechanism predict, and which pattern does the evidence show?`,
+    limitation: `Stratospheric cooling also has a partial contribution from ozone depletion, which reduces the ozone layer's absorption of UV radiation. Separating the GHG contribution from the ozone contribution to stratospheric cooling requires modelling.`,
   },
   {
     id: 'ec-15',
@@ -150,9 +158,9 @@ export const EVIDENCE_CARDS = [
     type: 'Statistical / inventory data',
     title: 'Human CO₂ Emissions by Sector',
     timescale: 'Global Carbon Project; approximately 2022 figures',
-    shows: `Human activities released approximately 37 billion tonnes of CO₂ into the atmosphere in 2022. Of this, roughly half was absorbed by forests and oceans — but the other half stayed in the atmosphere, adding to the rising Keeling Curve. The largest sources are: energy production (burning coal, gas, and oil for electricity and heat), transport (cars, ships, planes), heavy industry (cement and steel manufacturing), and deforestation. Compare this to volcanic CO₂ emissions of approximately 0.3–0.4 billion tonnes per year. Human emissions are approximately 100 times larger than the volcanic contribution. When you look at these numbers alongside the Keeling Curve, you have both the source and the measurement. What you still need is the mechanism connecting higher CO₂ to higher temperatures.`,
+    observable: `Human activities released approximately 37 billion tonnes of CO₂ into the atmosphere in 2022. Of this, roughly half was absorbed by forests and oceans — but the other half stayed in the atmosphere, adding to the rising Keeling Curve. The largest sources are: energy production (burning coal, gas, and oil for electricity and heat), transport (cars, ships, planes), heavy industry (cement and steel manufacturing), and deforestation. Compare this to volcanic CO₂ emissions of approximately 0.3–0.4 billion tonnes per year. Human emissions are approximately 100 times larger than the volcanic contribution. When you look at these numbers alongside the Keeling Curve, you have both the source and the measurement. What you still need is the mechanism connecting higher CO₂ to higher temperatures.`,
     notProve: `Emissions data alone do not establish the warming effect — that requires the GHG mechanism and forcing estimates. They establish the source of the rising concentration, not its consequence.`,
-    inquiry: `This matters because it establishes the scale of human CO₂ addition relative to natural processes. The approximately 50% airborne fraction confirms that the atmosphere is accumulating CO₂ faster than natural sinks can absorb it — which is why concentration rises continuously in the Keeling Curve.`,
+    question: `This matters because it establishes the scale of human CO₂ addition relative to natural processes. The approximately 50% airborne fraction confirms that the atmosphere is accumulating CO₂ faster than natural sinks can absorb it — which is why concentration rises continuously in the Keeling Curve.`,
   },
   {
     id: 'ec-16',
@@ -160,9 +168,9 @@ export const EVIDENCE_CARDS = [
     type: 'Scientific data / observational',
     title: 'Albedo Change and Land Use',
     timescale: 'IPCC AR6; satellite observations of land surface reflectivity',
-    shows: `When sunlight hits a white or pale surface — fresh snow, ice, desert sand, light-coloured rooftops — most of it is reflected back into space. When it hits a dark surface — ocean water, dark soil, tarmac, a dark forest canopy — most of it is absorbed. This property is called albedo. Human activities change surface albedo in various ways: cutting down dark forests and replacing them with lighter cropland can actually cool the local climate (by reflecting more sunlight), while covering land with dark roads and buildings creates "urban heat islands" — cities that are measurably warmer than surrounding countryside. Soot from burning fossil fuels and biomass settles on Arctic snow and ice, darkening it and accelerating melting. These albedo effects are real — but overall, they are smaller in magnitude than the warming effect of greenhouse gases. Does this change your picture of the total human impact on the climate?`,
+    observable: `When sunlight hits a white or pale surface — fresh snow, ice, desert sand, light-coloured rooftops — most of it is reflected back into space. When it hits a dark surface — ocean water, dark soil, tarmac, a dark forest canopy — most of it is absorbed. This property is called albedo. Human activities change surface albedo in various ways: cutting down dark forests and replacing them with lighter cropland can actually cool the local climate (by reflecting more sunlight), while covering land with dark roads and buildings creates "urban heat islands" — cities that are measurably warmer than surrounding countryside. Soot from burning fossil fuels and biomass settles on Arctic snow and ice, darkening it and accelerating melting. These albedo effects are real — but overall, they are smaller in magnitude than the warming effect of greenhouse gases. Does this change your picture of the total human impact on the climate?`,
     notProve: `Global albedo estimates carry significant uncertainty. The net global albedo effect of land-use change is a slight cooling (~−0.15 W/m²), but with large regional variation. Albedo changes are not the dominant anthropogenic forcing mechanism — they modify the GHG signal.`,
-    inquiry: `This matters because it shows that human impacts on climate are not reducible to greenhouse gases alone. Albedo effects are real and measurable. But understanding that the net anthropogenic forcing is still strongly positive — even accounting for some albedo cooling — strengthens the attribution argument.`,
+    question: `This matters because it shows that human impacts on climate are not reducible to greenhouse gases alone. Albedo effects are real and measurable. But understanding that the net anthropogenic forcing is still strongly positive — even accounting for some albedo cooling — strengthens the attribution argument.`,
   },
 
   // ── Section: Comparison Framework ──
@@ -172,9 +180,10 @@ export const EVIDENCE_CARDS = [
     type: 'Scientific synthesis — radiative forcing',
     title: 'Total Anthropogenic vs. Natural Radiative Forcing',
     timescale: 'IPCC AR6 (2021); forcing values relative to 1750 baseline',
-    shows: `Scientists can estimate the warming effect (radiative forcing) of each factor in the climate system — how much extra energy, in watts per square metre (W/m²), each factor adds to or removes from the Earth's energy balance. According to the IPCC's most recent assessment (AR6, 2021), the total warming effect from human activities since 1750 is approximately +2.7 W/m². The warming effect from changes in natural factors (mainly solar output) over the same period is approximately +0.05 W/m². In other words, for every 1 unit of warming effect from natural factors, human activities have contributed approximately 54 units. This is a striking quantitative comparison — but remember: quantitative estimates carry uncertainty. Does the size of the uncertainty range change the qualitative conclusion?`,
+    observable: `Scientists can estimate the warming effect (radiative forcing) of each factor in the climate system — how much extra energy, in watts per square metre (W/m²), each factor adds to or removes from the Earth's energy balance. According to the IPCC's most recent assessment (AR6, 2021), the total warming effect from human activities since 1750 is approximately +2.7 W/m². The warming effect from changes in natural factors (mainly solar output) over the same period is approximately +0.05 W/m². These estimates are derived from atmospheric measurements, satellite data, and climate modelling, and they carry uncertainty ranges. Does the size of the uncertainty range change the qualitative conclusion?`,
     notProve: `Radiative forcing estimates involve modelling and carry uncertainty ranges. The anthropogenic best estimate ranges from approximately +2.0 to +3.5 W/m². However, the magnitude of the difference between anthropogenic and natural forcing is so large that uncertainty in the estimates does not change the qualitative conclusion.`,
-    inquiry: `This matters because it provides the quantitative comparison that the attribution argument requires. When you place natural and anthropogenic forcing side-by-side on the same scale, the relative magnitude is decisive — not just directionally, but by a factor of ~54.`,
+    question: `Both estimates are expressed in the same unit. What do the numbers tell you about the relative scale of natural and anthropogenic forcing — and does the uncertainty range change the comparison?`,
+    limitation: `Radiative forcing estimates involve modelling assumptions and carry uncertainty. The anthropogenic range reflects this uncertainty. Whether the uncertainty range changes the qualitative conclusion from the comparison is itself a question worth thinking through.`,
   },
   {
     id: 'ec-17',
@@ -182,9 +191,10 @@ export const EVIDENCE_CARDS = [
     type: 'Scientific methodology — attribution analysis',
     title: 'Detection and Attribution Studies',
     timescale: 'IPCC AR6, 2021; decades of attribution science since the 1990s–2000s',
-    shows: `How do scientists actually conclude that human activity is the main cause of warming — rather than just noticing that CO₂ and temperature are both going up? The answer lies in a method called detection and attribution. Scientists use computer models of the entire climate system to run experiments. In one experiment, the model includes only natural forcings (changes in the Sun and volcanic activity). In another, it includes both natural and human-caused forcings (greenhouse gases, aerosols, land use). When you compare the model outputs to the actual temperature record, the result is striking: natural-only models cannot reproduce the warming pattern observed since approximately 1960. Models that include human forcings can. This is not correlation — it is a formal test of whether the observed change is consistent with each explanation. The IPCC AR6 (2021) concluded, based on this and many other lines of evidence: "It is unequivocal that human influence has warmed the atmosphere, ocean and land."`,
+    observable: `How do scientists move from observing that CO₂ and temperature are both rising to assessing whether one is causing the other? Simple correlation is not attribution. The method used is called detection and attribution. Scientists use computer models of the entire climate system to run controlled experiments. In one experiment, the model includes only natural forcings (changes in the Sun and volcanic activity). In another, it includes both natural and human-caused forcings (greenhouse gases, aerosols, land use). The outputs of each set of model runs are then compared to the actual temperature record. The IPCC AR6 (2021) states: "It is unequivocal that human influence has warmed the atmosphere, ocean and land."`,
     notProve: `Models are not perfect representations of the climate system. Attribution studies cannot assign 100% certainty. The IPCC expresses high confidence but not absolute certainty. Quantifying the precise contribution of individual forcing factors still carries uncertainty.`,
-    inquiry: `This matters because it shows that the scientific conclusion about attribution is not based on simple correlation. Detection and attribution is a formal, model-based method that separates natural from anthropogenic signals. Understanding this method is essential to understanding why the IPCC's attribution statement is so strong.`,
+    question: `What is the difference between observing that CO₂ and temperature are both rising (correlation) and the detection and attribution method described here? What does the comparison between natural-only and combined model runs actually test?`,
+    limitation: `Models are simplified representations of the climate system and are not perfect. Attribution studies cannot assign absolute certainty. The method tests consistency between observations and model experiments — it does not provide a direct measurement of causation.`,
   },
 ]
 
@@ -219,7 +229,7 @@ export const CHRONOLOGY = [
     date: '1815',
     event: 'Eruption of Mt Tambora (Indonesia): largest volcanic eruption in recorded history; "Year Without a Summer" in 1816; temporary global cooling',
     significance: 'Demonstrates the real but short-term cooling effect of volcanic forcing',
-    inquiry: 'Shows volcanic events create noise in the temperature record but not long-term trends',
+    inquiry: 'What does the temperature pattern after this eruption tell you about the nature of volcanic climate effects?',
   },
   {
     date: '1850',
@@ -231,7 +241,7 @@ export const CHRONOLOGY = [
     date: '1850–1950',
     event: 'Gradual warming of approximately +0.3°C; both solar activity increase and rising CO₂ contribute',
     significance: 'Period in which both natural and anthropogenic factors contributed — natural factors can partially account for early warming',
-    inquiry: 'Important: the argument is about what happened after 1950, not whether early warming had natural components',
+    inquiry: 'Which factors were operating during this period, and how does this period compare to what follows after 1950?',
   },
   {
     date: '1958',
@@ -243,7 +253,7 @@ export const CHRONOLOGY = [
     date: 'c.1950–1975',
     event: 'Post-WWII industrialisation; rapid rise in GHG emissions; warming acceleration begins',
     significance: 'The "elbow" in the temperature anomaly curve — the point at which anthropogenic forcing becomes dominant',
-    inquiry: 'This is the critical feature: any attribution argument must explain why warming accelerated at this point',
+    inquiry: 'What changed at this point that might help explain any change in the temperature record here?',
   },
   {
     date: '1991',
@@ -255,7 +265,7 @@ export const CHRONOLOGY = [
     date: '1980–present',
     event: 'Solar irradiance stable or slightly declining while temperatures rise sharply; approximately +0.2°C per decade',
     significance: 'The post-1980 divergence is the core evidence against solar forcing as the primary driver of recent warming',
-    inquiry: 'This is the most important single piece of evidence for attribution: the Sun cannot explain what is happening',
+    inquiry: 'What does the relationship between solar output and temperature in this period tell you?',
   },
   {
     date: '2016',
@@ -267,7 +277,7 @@ export const CHRONOLOGY = [
     date: '2021',
     event: 'IPCC Sixth Assessment Report (AR6): "It is unequivocal that human influence has warmed the atmosphere, ocean and land"',
     significance: 'Strongest scientific attribution statement to date; based on detection and attribution methods that formally separate natural from anthropogenic signals',
-    inquiry: 'The scientific consensus conclusion — but learners should understand how scientists arrived at it, not just that they did',
+    inquiry: 'What methods and lines of evidence led scientists to this conclusion?',
   },
 ]
 
@@ -374,24 +384,18 @@ export const GLOSSARY = [
 ]
 
 
-// ── Comparison framework factors (for S8 reference) ──────────────────────────
+// ── Comparison framework criteria (for S8 reference) ─────────────────────────
 export const COMPARISON_CRITERIA = [
   {
     criterion: 'Mechanism',
-    question: 'Does this factor produce sustained warming? What is the physical mechanism?',
-    natural: 'Solar irradiance increases surface energy input; volcanic sulphate aerosols reduce it (cooling); ENSO redistributes heat temporarily.',
-    anthropogenic: 'Enhanced greenhouse effect reduces outgoing longwave radiation, creating a positive energy imbalance; albedo changes modify surface energy balance.',
+    question: 'Does this factor produce sustained warming? What is the physical mechanism by which it operates?',
   },
   {
     criterion: 'Timing',
-    question: 'Does the timing of this factor match the post-1950 warming acceleration?',
-    natural: 'Solar output has been flat or declining since ~1980; volcanic events produce short-term dips followed by recovery; ENSO oscillates without trend.',
-    anthropogenic: 'GHG concentrations have risen continuously since ~1750 and accelerated post-WWII; the timing matches the warming acceleration.',
+    question: 'Does the timing and pattern of this factor match the post-1950 warming acceleration?',
   },
   {
     criterion: 'Magnitude',
-    question: 'Is the effect large enough to explain the observed forcing (+~2.7 W/m² anthropogenic vs. +~0.05 W/m² natural since 1750)?',
-    natural: 'Natural forcing ~+0.05 W/m² (solar) since 1750; volcanic forcing episodic and cooling; ENSO effect ~0.1–0.2°C per event.',
-    anthropogenic: 'Total anthropogenic forcing ~+2.7 W/m²; approximately 54× the natural forcing estimate over the same period.',
+    question: 'Is the effect large enough to account for the observed warming? How does each factor\'s forcing compare in scale?',
   },
 ]

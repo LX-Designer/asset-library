@@ -64,10 +64,10 @@ export default function EvidenceCardOverlay({ cards, activeId, onNavigate, onClo
           {card.timescale && <div className={s.cardTimescale}>{card.timescale}</div>}
           <h2 className={s.cardTitle}>{card.title}</h2>
 
-          {card.shows && (
+          {card.observable && (
             <div className={s.showsBlock}>
-              <div className={s.blockLabel}>What this shows</div>
-              <p className={s.blockText}>{card.shows}</p>
+              <div className={s.blockLabel}>What this evidence shows</div>
+              <p className={s.blockText}>{card.observable}</p>
             </div>
           )}
 
@@ -78,13 +78,20 @@ export default function EvidenceCardOverlay({ cards, activeId, onNavigate, onClo
             </details>
           )}
 
-          {card.inquiry && (
+          {card.limitation && (
+            <details className={s.notProve}>
+              <summary>What this evidence does not prove by itself</summary>
+              <p className={s.notProveText}>{card.limitation}</p>
+            </details>
+          )}
+
+          {card.question && (
             <div
               className={s.inquiryBlock}
               style={{ borderLeft: `3px solid ${meta.color}`, background: meta.bg }}
             >
-              <div className={s.blockLabel} style={{ color: meta.color }}>Inquiry link</div>
-              <p className={s.inquiryText}>{card.inquiry}</p>
+              <div className={s.blockLabel} style={{ color: meta.color }}>Question this raises</div>
+              <p className={s.inquiryText}>{card.question}</p>
             </div>
           )}
         </div>

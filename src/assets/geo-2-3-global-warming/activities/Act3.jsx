@@ -6,17 +6,17 @@ const FACTORS = [
   {
     key: 'solar',
     title: 'Solar output changes',
-    hint: 'Mechanism: how would increased solar irradiance warm the Earth? Timing: has solar irradiance been increasing over the post-1950 period? Magnitude: is the solar forcing (IPCC: ~+0.05 W/m² since 1750) sufficient to explain observed warming?',
+    hint: 'What does the satellite record of solar irradiance show over the period when temperature has risen most sharply? Look at EC-11 and the solar section of S6.',
   },
   {
     key: 'volcanic',
     title: 'Volcanic eruptions',
-    hint: 'Mechanism: what do sulphate aerosols do to incoming solar radiation? Timing: do volcanic events produce sustained warming or short-term effects? The Pinatubo example (1991) is key here.',
+    hint: 'Volcanic eruptions affect temperature — but in what direction, and for how long? Look at EC-12 and the volcanic section of S6.',
   },
   {
     key: 'enso',
     title: 'ENSO (El Niño–Southern Oscillation)',
-    hint: 'Mechanism: how does El Niño temporarily raise global temperatures? Timing and trend: does ENSO produce a sustained warming trend, or does it oscillate? What happens when ENSO effects are statistically removed from the temperature record?',
+    hint: 'El Niño raises global temperature in the years it occurs. What kind of record would ENSO leave in the long-term temperature data — and what would that look like compared to what we observe?',
   },
 ]
 

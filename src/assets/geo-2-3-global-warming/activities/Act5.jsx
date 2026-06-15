@@ -19,9 +19,9 @@ const CRITERIA = [
   {
     key: 'magnitude',
     label: 'Magnitude',
-    question: 'Is the effect large enough? Natural: ~+0.05 W/m² vs. anthropogenic: ~+2.7 W/m² since 1750.',
-    naturalHint: 'IPCC estimates solar forcing at ~+0.05 W/m² since 1750',
-    anthropoHint: 'IPCC estimates total anthropogenic forcing at ~+2.7 W/m² — approximately 54× natural',
+    question: 'How large is the estimated forcing for this set of factors, and how does it compare to the other explanation? Use EC-10 to find the values.',
+    naturalHint: 'What does EC-10 say about the estimated forcing from natural factors since 1750?',
+    anthropoHint: 'What does EC-10 say about total estimated anthropogenic forcing since 1750?',
   },
 ]
 
@@ -75,7 +75,7 @@ export default function Act5({ initialAnswers, onSubmit, onSave }) {
         value={comparison}
         onChange={e => { setComparison(e.target.value); setSubmitLocked(false) }}
         onBlur={handleBlur}
-        placeholder={"Mechanism: Natural factors produce… whereas anthropogenic GHG forcing produces…\n\nTiming: The post-1950 divergence shows… Solar irradiance since ~1980 has… while temperatures…\n\nMagnitude: Natural forcing (~+0.05 W/m²) compares to anthropogenic forcing (~+2.7 W/m²) in this way…"}
+        placeholder="Compare natural and anthropogenic factors across each criterion. For each criterion, assess how well each set of factors fits the evidence. Aim for 2–3 sentences per criterion."
         rows={9}
       />
 
@@ -96,7 +96,7 @@ export default function Act5({ initialAnswers, onSubmit, onSave }) {
         value={verdict}
         onChange={e => { setVerdict(e.target.value); setSubmitLocked(false) }}
         onBlur={handleBlur}
-        placeholder="Natural factors can account for… but cannot explain… because… The anthropogenic explanation fits better because… The post-1950 divergence specifically shows… My overall attribution verdict is…"
+        placeholder="State your overall verdict: which explanation fits the evidence better, and why? Draw on your comparison above."
         rows={7}
       />
 
