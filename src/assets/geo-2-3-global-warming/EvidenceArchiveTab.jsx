@@ -22,7 +22,7 @@ export default function EvidenceArchiveTab({ evidenceCards, onOpenCard }) {
         if (!cards.length) return null
         return (
           <details key={section.id} className={s.group} open>
-            <summary className={s.groupLabel}>
+            <summary className={s.groupLabel} style={{ background: `${section.color}12` }}>
               <span className={s.dot} style={{ background: section.color }} />
               <span style={{ color: section.color }}>{section.label}</span>
               <span className={s.count}>{cards.length}</span>

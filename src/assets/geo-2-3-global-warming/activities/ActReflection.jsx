@@ -119,11 +119,6 @@ export default function ActReflection({ initialAnswers, isCompleted, onSubmit, o
 
   return (
     <form onSubmit={handleSubmit}>
-      <div className={s.actInstruction}>
-        <div className={s.actInstructionLabel}>Reflection</div>
-        These six prompts ask you to reflect on what you thought before the inquiry, what the evidence showed you, and where uncertainty remains. Each prompt has its own response field.
-      </div>
-
       <div className={s.reflectStep}>
         <div className={s.reflectStepLabel}>Prompt {current.n} of {PROMPTS.length}</div>
         <div className={s.reflectPrompt}>{current.text}</div>

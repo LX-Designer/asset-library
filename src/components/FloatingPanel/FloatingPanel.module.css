@@ -367,6 +367,9 @@
 
 .floatingPanel .header:active { cursor: grabbing; }
 
+.floatingPanel .headerStatic,
+.floatingPanel .headerStatic:active { cursor: default; }
+
 .floatingPanel.minimised {
   border-radius: var(--fp-radius, 6px);
 }

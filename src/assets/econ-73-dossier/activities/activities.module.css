@@ -233,6 +233,55 @@
   font-size: 0.92rem;
 }
 
+/* ── Collapsible scaffolding ─────────────────────────────────────────────────── */
+
+.scaffoldDetails {
+  border: 1.5px solid rgba(16, 22, 45, 0.16);
+  border-left: 5px solid #9cc9bf;
+  background: rgba(156, 201, 191, 0.08);
+  margin-bottom: 0.85rem;
+  overflow: hidden;
+}
+
+.scaffoldSummary {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.65rem 0.9rem;
+  cursor: pointer;
+  font-weight: 850;
+  font-size: 0.88rem;
+  font: inherit;
+  font-weight: 850;
+  font-size: 0.88rem;
+  color: var(--econ-navy, #10162d);
+}
+
+.scaffoldSummary::-webkit-details-marker { display: none; }
+
+.scaffoldSummary::before {
+  content: "›";
+  color: var(--econ-navy, #10162d);
+  font-weight: 950;
+  font-size: 1.1rem;
+  transition: transform 0.16s ease;
+  line-height: 1;
+}
+
+.scaffoldDetails[open] .scaffoldSummary {
+  border-bottom: 1px solid rgba(16, 22, 45, 0.12);
+}
+
+.scaffoldDetails[open] .scaffoldSummary::before {
+  transform: rotate(90deg);
+}
+
+.scaffoldContent {
+  padding: 0.85rem 0.9rem 0.1rem;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .compareBox summary::before { transition: none; }
+  .compareBox summary::before,
+  .scaffoldSummary::before { transition: none; }
 }

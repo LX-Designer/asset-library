@@ -37,7 +37,7 @@ export default function ActivityPanel({
       title={panelTitle}
       titleEyebrow={titleEyebrow}
       side="right"
-      width={600}
+      width={1080}
       defaultDockedWidth={config.activityPanel?.defaultDockedWidth ?? 480}
       defaultHeight={700}
       initialState="closed"
@@ -49,6 +49,7 @@ export default function ActivityPanel({
       onClose={onClose}
       onDockedChange={onDockedChange}
       modalFirst
+      disableDragging
       noTab
       accentHeader={accentHeader}
       darkHeader={config.activityPanel?.fpDarkHeader ?? false}

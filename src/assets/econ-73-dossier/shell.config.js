@@ -52,11 +52,10 @@ const concepts = conceptTools.map(t => ({
 const activities = actData.map(a => ({
   id: `act-${a.id}`,
   title: a.title,
-  // thinkingMove — cognitive move label used in mobile activity header subtitle
   thinkingMove: stagePhase[a.id] ?? '',
-  // group — phase label shown above the title in the sidebar activity list
   group: a.stage ?? '',
-  // purpose/prompt/scaffold omitted — all task content lives inside the ActivityForm component
+  prompt: a.prompt ?? '',
+  task: a.task ?? '',
   scaffold: null,
   evidenceSections: a.review.map(r => ({ id: r.target, label: r.label })),
   conceptLinks: (a.tools ?? []).map(toolId => {

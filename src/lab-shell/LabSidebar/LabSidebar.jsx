@@ -65,7 +65,7 @@ export default function LabSidebar({
       maxDockedWidth={config.sidebar.maxDockedWidth ?? 360}
       defaultHeight={700}
       initialState="closed"
-      modalFirst
+      sidebarOnly
       noTab
       accentHeader={config.sidebar?.fpAccentHeader ?? false}
       darkHeader={config.sidebar?.fpDarkHeader ?? false}

@@ -40,7 +40,7 @@ const IconExpand = () => (
   </svg>
 )
 
-function PanelHeader({ title, titleEyebrow, state, onTransition, onModalFirstPopOut, sidebarOnly, modalFirst, floatOnly, accentHeader, darkHeader }) {
+function PanelHeader({ title, titleEyebrow, state, onTransition, onModalFirstPopOut, sidebarOnly, modalFirst, floatOnly, accentHeader, darkHeader, disableDragging }) {
   const isDocked    = state === 'docked'
   const isFloating  = state === 'floating'
   const isMinimised = state === 'minimised'
@@ -48,7 +48,7 @@ function PanelHeader({ title, titleEyebrow, state, onTransition, onModalFirstPop
   const showNav = !sidebarOnly && !modalFirst
   const headerClass = [
     s.header,
-    sidebarOnly ? s.headerStatic : '',
+    sidebarOnly || disableDragging ? s.headerStatic : '',
     accentHeader ? s.headerAccent : '',
     darkHeader   ? s.headerDark   : '',
   ].filter(Boolean).join(' ')
@@ -148,6 +148,7 @@ export default function FloatingPanel({
   noHeader = false,
   sidebarOnly = false,
   floatOnly = false,
+  disableDragging = false,
   tabAlign = 'center',
   modalFirst = false,
   accentHeader = false,
@@ -392,7 +393,7 @@ export default function FloatingPanel({
       : { width: dockedWidth }
     const panel = (
       <div className={`${s.dockedPanel} ${s[side]}`} style={dockedStyle}>
-        {!noHeader && <PanelHeader title={title} titleEyebrow={titleEyebrow} state={panelState} onTransition={transition} onModalFirstPopOut={handleModalFirstPopOut} sidebarOnly={sidebarOnly} modalFirst={modalFirst} floatOnly={floatOnly} accentHeader={accentHeader} darkHeader={darkHeader} />}
+        {!noHeader && <PanelHeader title={title} titleEyebrow={titleEyebrow} state={panelState} onTransition={transition} onModalFirstPopOut={handleModalFirstPopOut} sidebarOnly={sidebarOnly} modalFirst={modalFirst} floatOnly={floatOnly} accentHeader={accentHeader} darkHeader={darkHeader} disableDragging={disableDragging} />}
         <div className={s.panelBody} ref={panelBodyRef}>{children}</div>
         <div className={`${s.resizeHandle} ${s[side]}`} onMouseDown={handleDockedResize} />
       </div>
@@ -428,9 +429,10 @@ export default function FloatingPanel({
         {side === 'left' && <div style={{ width: 0, flexShrink: 0, overflow: 'hidden' }} />}
         {createPortal(
           <div style={viewportWrapper}>
-            {/* Dim overlay — shown while panel is in its initial centred (modal-first) state.
-                pointerEvents:auto blocks background interaction while overlay is visible. */}
-            {showOverlay && (
+            {/* Dim overlay — shown whenever a modalFirst panel is floating.
+                pointerEvents:auto blocks background interaction.
+                Clicking outside closes the panel. */}
+            {modalFirst && isFloating && (
               <div
                 className={s.overlay}
                 style={{ pointerEvents: 'auto' }}
@@ -444,7 +446,8 @@ export default function FloatingPanel({
               size={rndSize}
               minWidth={220}
               minHeight={isMinimised ? 44 : 180}
-              dragHandleClassName={noHeader ? undefined : s.header}
+              dragHandleClassName={noHeader || disableDragging ? undefined : s.header}
+              disableDragging={disableDragging}
               enableResizing={!isMinimised}
               bounds="parent"
               onDragStart={showOverlay ? () => setShowOverlay(false) : undefined}
@@ -460,7 +463,7 @@ export default function FloatingPanel({
                 if (!modalFirst) save(id, { size: sz, pos: newPos })
               }}
             >
-              {!noHeader && <PanelHeader title={title} titleEyebrow={titleEyebrow} state={panelState} onTransition={transition} onModalFirstPopOut={handleModalFirstPopOut} sidebarOnly={sidebarOnly} modalFirst={modalFirst} floatOnly={floatOnly} accentHeader={accentHeader} darkHeader={darkHeader} />}
+              {!noHeader && <PanelHeader title={title} titleEyebrow={titleEyebrow} state={panelState} onTransition={transition} onModalFirstPopOut={handleModalFirstPopOut} sidebarOnly={sidebarOnly} modalFirst={modalFirst} floatOnly={floatOnly} accentHeader={accentHeader} darkHeader={darkHeader} disableDragging={disableDragging} />}
               {!isMinimised && <div className={s.panelBody} ref={panelBodyRef}>{children}</div>}
             </Rnd>
           </div>,
