@@ -7,7 +7,7 @@ import Act6 from './activities/Act6.jsx'
 import Act7 from './activities/Act7.jsx'
 import ConceptCard from './ConceptCard.jsx'
 import { conceptTools, activities as actData, relevanceRows } from './data.js'
-import { DEFAULT_THEME_VARS, defaultGetActivityStatus } from '../../lab-shell/defaults.js'
+import { DEFAULT_THEME_VARS, defaultGetActivityStatus, defaultGetResponseExcerpt } from '../../lab-shell/defaults.js'
 
 // ── Stage phase labels ────────────────────────────────────────────────────────
 const stagePhase = {
@@ -91,11 +91,6 @@ export default {
     tabs: ['activities', 'concepts'],
     accentHeader: false,   // ActivitiesTab header stays cream — only the FP PanelHeader is red
     fpAccentHeader: true,  // FloatingPanel PanelHeader: red with standard dock/close controls
-    statusLabels: {
-      complete:      'Response saved',
-      'not-started': 'Not yet saved',
-      inprogress:    'In progress',
-    },
     header: {
       fpTitle:  'Case support',        // shown in the FloatingPanel PanelHeader
       eyebrow:  'Activity Guide',      // shown in the ActivitiesTab header
@@ -140,5 +135,6 @@ export default {
     'act-7': Act7,
   },
 
-  getActivityStatus: defaultGetActivityStatus,
+  getActivityStatus:    defaultGetActivityStatus,
+  getResponseExcerpt:  defaultGetResponseExcerpt,
 }

@@ -4,7 +4,6 @@ import LabNav from './LabNav/LabNav.jsx'
 import LabSidebar, { TAB_LABELS } from './LabSidebar/LabSidebar.jsx'
 import ActivitiesTab from './LabSidebar/tabs/ActivitiesTab.jsx'
 import ConceptsTab from './LabSidebar/tabs/ConceptsTab.jsx'
-import NotesTab from './LabSidebar/tabs/NotesTab.jsx'
 import ActivityPanel from './ActivityPanel/ActivityPanel.jsx'
 import ConceptsModal from './ConceptsModal/ConceptsModal.jsx'
 import EvidencePanel from './EvidencePanel/EvidencePanel.jsx'
@@ -70,9 +69,6 @@ export default function LabShell({
   const [activeSection, setActiveSection] = useState(
     config.nav?.sections?.[0]?.id ?? null
   )
-
-  // ── Notes ───────────────────────────────────────────────────────────────────
-  const notesValue = typeof responses['lab-notes'] === 'string' ? responses['lab-notes'] : ''
 
   // ── Misc ────────────────────────────────────────────────────────────────────
   const isDesktop       = useIsDesktop()
@@ -258,6 +254,7 @@ export default function LabShell({
             activities={config.activities}
             responses={responses}
             getActivityStatus={config.getActivityStatus}
+            getResponseExcerpt={config.getResponseExcerpt}
             completedCount={completedCount}
             totalCount={totalCount}
             labTitle={config.nav?.title}
@@ -276,12 +273,6 @@ export default function LabShell({
             concepts={config.concepts}
             onOpenConcept={openConcept}
             intro={config.sidebar?.conceptsIntro}
-          />
-        )}
-        {guideActiveTab === 'notes' && config.features?.notes && (
-          <NotesTab
-            value={notesValue}
-            onSave={val => handleSave('lab-notes', val)}
           />
         )}
         {config.customTabs?.[guideActiveTab] && (() => {

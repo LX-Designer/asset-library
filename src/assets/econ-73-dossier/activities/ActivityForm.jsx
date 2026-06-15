@@ -2,23 +2,26 @@ import { useState, useRef } from 'react'
 import s from './activities.module.css'
 import StarterChips from '../../../lab-shell/StarterChips/StarterChips.jsx'
 
-export default function ActivityForm({ activity, guidance, initialAnswers, isCompleted, onSubmit }) {
-  const initial = typeof initialAnswers === 'string' ? initialAnswers : ''
-  const [text, setText] = useState(initial)
-  const [savedStatus, setSavedStatus] = useState(isCompleted ? 'Response saved' : '')
-  const timerRef  = useRef(null)
-  const textRef   = useRef(null)
+export default function ActivityForm({ activity, guidance, initialAnswers, onSubmit, onSave }) {
+  // Responses are stored as { response, _submitted } objects; older rows are
+  // plain strings, so accept both shapes when restoring the saved draft.
+  const initial = typeof initialAnswers === 'string' ? initialAnswers : (initialAnswers?.response ?? '')
+  const [text, setText]                 = useState(initial)
+  const [submitLocked, setSubmitLocked] = useState(!!initialAnswers?._submitted)
+  const textRef = useRef(null)
 
   const appendStarter = (starter) => {
     setText(prev => prev ? `${prev}\n\n${starter}` : starter)
+    setSubmitLocked(false)
     setTimeout(() => textRef.current?.focus(), 50)
   }
 
-  function handleSave() {
-    onSubmit(text)
-    if (timerRef.current) clearTimeout(timerRef.current)
-    setSavedStatus('Saved ✓')
-    timerRef.current = setTimeout(() => setSavedStatus(''), 2000)
+  const ready = text.trim().length > 0
+
+  function handleSubmit() {
+    if (!ready) return
+    onSubmit({ response: text.trim() })
+    setSubmitLocked(true)
   }
 
   const hasScaffolding = activity.responseGuide || activity.miniExample || activity.answerFrame || activity.rankingFrame
@@ -62,7 +65,7 @@ export default function ActivityForm({ activity, guidance, initialAnswers, isCom
         </details>
       )}
 
-      <StarterChips starters={activity.sentenceStarters ?? []} onInsert={appendStarter} disabled={isCompleted} />
+      <StarterChips starters={activity.sentenceStarters ?? []} onInsert={appendStarter} />
 
       <label style={{ display: 'block', fontWeight: 750, fontSize: '0.92rem', color: 'var(--econ-navy, #10162d)' }}>
         Your response
@@ -70,17 +73,15 @@ export default function ActivityForm({ activity, guidance, initialAnswers, isCom
           ref={textRef}
           className={s.textarea}
           value={text}
-          onChange={e => setText(e.target.value)}
+          onChange={e => { setText(e.target.value); setSubmitLocked(false) }}
+          onBlur={() => onSave?.({ response: text.trim() })}
         />
       </label>
 
       <div className={s.actions}>
-        <button className={s.saveBtn} type="button" onClick={handleSave}>
-          Save response
+        <button className={s.saveBtn} type="button" onClick={handleSubmit} disabled={!ready || submitLocked}>
+          {submitLocked ? 'Submitted ✓' : 'Submit'}
         </button>
-        {savedStatus && (
-          <span className={s.savedStatus} role="status" aria-live="polite">{savedStatus}</span>
-        )}
       </div>
 
       {guidance && (

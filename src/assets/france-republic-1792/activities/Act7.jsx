@@ -2,12 +2,6 @@ import { useState, useRef } from 'react'
 import s from '../FranceRepublic.module.css'
 import StarterChips from '../../../lab-shell/StarterChips/StarterChips.jsx'
 
-const SaveStatus = ({ status }) => (
-  <span className={`${s.saveStatus} ${status === 'saved' ? s.saved : status === 'unsaved' ? s.unsaved : ''}`}>
-    {status === 'saved' ? 'Saved' : status === 'unsaved' ? 'Unsaved changes' : 'Not started'}
-  </span>
-)
-
 const WAR_FACTORS = [
   'War with Austria declared (April 1792)',
   'Early military defeats and invasion fear',
@@ -19,20 +13,19 @@ const WAR_FACTORS = [
   'September Massacres — breakdown of authority',
 ]
 
-export default function Act7({ initialAnswers, isCompleted, onSubmit, onSave, sentenceStarters = [] }) {
+export default function Act7({ initialAnswers, onSubmit, onSave, sentenceStarters = [] }) {
   const [factors,    setFactors]    = useState(initialAnswers?.factors   ?? [])
   const [response,   setResponse]   = useState(initialAnswers?.response  ?? '')
-  const [saveStatus, setSaveStatus] = useState(
-    (initialAnswers?.response?.trim()) ? 'saved' : 'not-started'
-  )
+  const [submitLocked, setSubmitLocked] = useState(!!initialAnswers?._submitted)
   const textRef = useRef(null)
 
   const state = () => ({ factors, response })
+  const ready = factors.length >= 3 && response.trim().length > 0
 
   const appendStarter = (starter) => {
     const next = response ? `${response}\n\n${starter}` : starter
     setResponse(next)
-    setSaveStatus('unsaved')
+    setSubmitLocked(false)
     onSave({ ...state(), response: next })
     setTimeout(() => textRef.current?.focus(), 50)
   }
@@ -40,19 +33,15 @@ export default function Act7({ initialAnswers, isCompleted, onSubmit, onSave, se
   const toggleFactor = (f) => {
     const next = factors.includes(f) ? factors.filter(x => x !== f) : [...factors, f]
     setFactors(next)
+    setSubmitLocked(false)
     onSave({ response, factors: next })
-    setSaveStatus('unsaved')
-  }
-
-  const handleBlur = () => {
-    onSave(state())
-    setSaveStatus('saved')
   }
 
   const handleSubmit = (e) => {
     e.preventDefault()
+    if (!ready) return
     onSubmit(state())
-    setSaveStatus('saved')
+    setSubmitLocked(true)
   }
 
   return (
@@ -66,7 +55,6 @@ export default function Act7({ initialAnswers, isCompleted, onSubmit, onSave, se
             className={`${s.tagBtn} ${factors.includes(f) ? s.tagSelected : ''}`}
             onClick={() => toggleFactor(f)}
             aria-pressed={factors.includes(f)}
-            disabled={isCompleted}
           >
             {f}
           </button>
@@ -74,20 +62,18 @@ export default function Act7({ initialAnswers, isCompleted, onSubmit, onSave, se
       </div>
       <div className={s.responseField}>
         <label className={s.responseFieldLabel}>My explanation of war and radicalisation</label>
-        <StarterChips starters={sentenceStarters} onInsert={appendStarter} disabled={isCompleted} />
+        <StarterChips starters={sentenceStarters} onInsert={appendStarter} />
         <textarea
           ref={textRef}
           className={s.responseTextarea}
           value={response}
-          onChange={e => { setResponse(e.target.value); setSaveStatus('unsaved') }}
-          onBlur={handleBlur}
-          disabled={isCompleted}
+          onChange={e => { setResponse(e.target.value); setSubmitLocked(false) }}
+          onBlur={() => onSave(state())}
         />
       </div>
       <div className={s.saveRow}>
-        <SaveStatus status={saveStatus} />
-        <button type="submit" className={s.saveBtn} disabled={isCompleted || factors.length < 3}>
-          {factors.length < 3 ? `Select ${3 - factors.length} more factor${factors.length === 2 ? '' : 's'}` : 'Save response'}
+        <button type="submit" className={s.saveBtn} disabled={!ready || submitLocked}>
+          {submitLocked ? 'Submitted ✓' : 'Submit'}
         </button>
       </div>
     </form>

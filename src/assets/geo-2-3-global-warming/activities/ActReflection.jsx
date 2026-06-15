@@ -41,7 +41,7 @@ function getInitialStep(initialAnswers) {
   return PROMPTS.length - 1
 }
 
-export default function ActReflection({ initialAnswers, isCompleted, onSubmit, onSave }) {
+export default function ActReflection({ initialAnswers, onSubmit, onSave }) {
   const [fields, setFields] = useState({
     r1: initialAnswers?.r1 ?? '',
     r2: initialAnswers?.r2 ?? '',
@@ -51,9 +51,7 @@ export default function ActReflection({ initialAnswers, isCompleted, onSubmit, o
     r6: initialAnswers?.r6 ?? '',
   })
   const [step, setStep] = useState(getInitialStep(initialAnswers))
-  const [saveStatus, setSaveStatus] = useState(
-    Object.values(initialAnswers ?? {}).some(v => typeof v === 'string' && v.trim()) ? 'saved' : 'not-started'
-  )
+  const [submitLocked, setSubmitLocked] = useState(!!initialAnswers?._submitted)
 
   const state = () => fields
   const current = PROMPTS[step]
@@ -62,33 +60,25 @@ export default function ActReflection({ initialAnswers, isCompleted, onSubmit, o
 
   const handleChange = (key, val) => {
     setFields(prev => ({ ...prev, [key]: val }))
-    setSaveStatus('unsaved')
+    setSubmitLocked(false)
   }
 
-  const handleBlur = () => {
-    onSave(state())
-    setSaveStatus('saved')
-  }
+  const handleBlur = () => onSave(state())
 
   const handleNext = () => {
     onSave(state())
-    setSaveStatus('saved')
     if (step < PROMPTS.length - 1) setStep(s => s + 1)
   }
 
   const handleSubmit = (e) => {
     e.preventDefault()
     onSubmit(state())
-    setSaveStatus('saved')
+    setSubmitLocked(true)
   }
 
   if (allDone && step === PROMPTS.length - 1) {
     return (
       <form onSubmit={handleSubmit}>
-        <div className={s.reflectDone}>
-          All six reflection prompts completed. Your responses are saved.
-        </div>
-
         {PROMPTS.map(p => (
           <div key={p.key}>
             <div className={s.actSectionHead}>Prompt {p.n} of 6</div>
@@ -98,7 +88,6 @@ export default function ActReflection({ initialAnswers, isCompleted, onSubmit, o
               value={fields[p.key]}
               onChange={e => handleChange(p.key, e.target.value)}
               onBlur={handleBlur}
-              disabled={isCompleted}
               rows={3}
               aria-label={`Reflection prompt ${p.n}`}
             />
@@ -106,11 +95,8 @@ export default function ActReflection({ initialAnswers, isCompleted, onSubmit, o
         ))}
 
         <div className={s.actActions}>
-          <span className={`${s.saveStatus} ${saveStatus === 'saved' ? s.saveStatusSaved : saveStatus === 'unsaved' ? s.saveStatusUnsaved : ''}`}>
-            {saveStatus === 'saved' ? 'Saved' : saveStatus === 'unsaved' ? 'Unsaved changes' : ''}
-          </span>
-          <button type="submit" className={`${s.btn} ${s.btnPrimary}`} disabled={isCompleted}>
-            Save reflection →
+          <button type="submit" className={`${s.btn} ${s.btnPrimary}`} disabled={submitLocked}>
+            {submitLocked ? 'Submitted ✓' : 'Submit reflection'}
           </button>
         </div>
       </form>
@@ -134,7 +120,6 @@ export default function ActReflection({ initialAnswers, isCompleted, onSubmit, o
         onChange={e => handleChange(current.key, e.target.value)}
         onBlur={handleBlur}
         placeholder="Your response…"
-        disabled={isCompleted}
         rows={6}
       />
 
@@ -142,15 +127,12 @@ export default function ActReflection({ initialAnswers, isCompleted, onSubmit, o
         <span className={s.reflectProgress}>
           {PROMPTS.filter(p => fields[p.key]?.trim()).length} of {PROMPTS.length} prompts answered
         </span>
-        <span className={`${s.saveStatus} ${saveStatus === 'saved' ? s.saveStatusSaved : saveStatus === 'unsaved' ? s.saveStatusUnsaved : ''}`}>
-          {saveStatus === 'saved' ? 'Saved' : saveStatus === 'unsaved' ? 'Unsaved' : ''}
-        </span>
         {!isLast ? (
           <button
             type="button"
             className={`${s.btn} ${s.btnPrimary}`}
             onClick={handleNext}
-            disabled={isCompleted || !fields[current.key]?.trim()}
+            disabled={!fields[current.key]?.trim()}
           >
             Next prompt →
           </button>
@@ -158,9 +140,9 @@ export default function ActReflection({ initialAnswers, isCompleted, onSubmit, o
           <button
             type="submit"
             className={`${s.btn} ${s.btnPrimary}`}
-            disabled={isCompleted || !fields[current.key]?.trim()}
+            disabled={!fields[current.key]?.trim() || submitLocked}
           >
-            Complete reflection →
+            {submitLocked ? 'Submitted ✓' : 'Submit reflection'}
           </button>
         )}
       </div>

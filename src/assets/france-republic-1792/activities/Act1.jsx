@@ -2,12 +2,6 @@ import { useState, useRef } from 'react'
 import s from '../FranceRepublic.module.css'
 import StarterChips from '../../../lab-shell/StarterChips/StarterChips.jsx'
 
-const SaveStatus = ({ status }) => (
-  <span className={`${s.saveStatus} ${status === 'saved' ? s.saved : status === 'unsaved' ? s.unsaved : ''}`}>
-    {status === 'saved' ? 'Saved' : status === 'unsaved' ? 'Unsaved changes' : 'Not started'}
-  </span>
-)
-
 const DEVELOPMENTS = [
   { id: 'd1', text: 'Estates-General opens and sovereignty is contested (May 1789)' },
   { id: 'd2', text: 'Declaration of the Rights of Man establishes new standards (August 1789)' },
@@ -21,20 +15,19 @@ const DEVELOPMENTS = [
   { id: 'd10', text: 'Brunswick Manifesto — counter-revolutionary threat strengthens radical pressure (July 1792)' },
 ]
 
-export default function Act1({ initialAnswers, isCompleted, onSubmit, onSave, sentenceStarters = [] }) {
+export default function Act1({ initialAnswers, onSubmit, onSave, sentenceStarters = [] }) {
   const [selections, setSelections] = useState(initialAnswers?.selections ?? [])
   const [response,   setResponse]   = useState(initialAnswers?.response   ?? '')
-  const [saveStatus, setSaveStatus] = useState(
-    (initialAnswers?.response?.trim()) ? 'saved' : 'not-started'
-  )
+  const [submitLocked, setSubmitLocked] = useState(!!initialAnswers?._submitted)
   const textRef = useRef(null)
 
   const state = () => ({ selections, response })
+  const ready = selections.length >= 3 && response.trim().length > 0
 
   const appendStarter = (starter) => {
     const next = response ? `${response}\n\n${starter}` : starter
     setResponse(next)
-    setSaveStatus('unsaved')
+    setSubmitLocked(false)
     onSave({ ...state(), response: next })
     setTimeout(() => textRef.current?.focus(), 50)
   }
@@ -42,19 +35,15 @@ export default function Act1({ initialAnswers, isCompleted, onSubmit, onSave, se
   const toggleItem = (id) => {
     const next = selections.includes(id) ? selections.filter(x => x !== id) : [...selections, id]
     setSelections(next)
+    setSubmitLocked(false)
     onSave({ response, selections: next })
-    setSaveStatus('unsaved')
-  }
-
-  const handleBlur = () => {
-    onSave(state())
-    setSaveStatus('saved')
   }
 
   const handleSubmit = (e) => {
     e.preventDefault()
+    if (!ready) return
     onSubmit(state())
-    setSaveStatus('saved')
+    setSubmitLocked(true)
   }
 
   return (
@@ -67,7 +56,6 @@ export default function Act1({ initialAnswers, isCompleted, onSubmit, onSave, se
               type="checkbox"
               checked={selections.includes(d.id)}
               onChange={() => toggleItem(d.id)}
-              disabled={isCompleted}
             />
             <span className={s.checkItemText}>{d.text}</span>
           </label>
@@ -75,20 +63,18 @@ export default function Act1({ initialAnswers, isCompleted, onSubmit, onSave, se
       </div>
       <div className={s.responseField}>
         <label className={s.responseFieldLabel}>My explanation — what changed and why it mattered</label>
-        <StarterChips starters={sentenceStarters} onInsert={appendStarter} disabled={isCompleted} />
+        <StarterChips starters={sentenceStarters} onInsert={appendStarter} />
         <textarea
           ref={textRef}
           className={s.responseTextarea}
           value={response}
-          onChange={e => { setResponse(e.target.value); setSaveStatus('unsaved') }}
-          onBlur={handleBlur}
-          disabled={isCompleted}
+          onChange={e => { setResponse(e.target.value); setSubmitLocked(false) }}
+          onBlur={() => onSave(state())}
         />
       </div>
       <div className={s.saveRow}>
-        <SaveStatus status={saveStatus} />
-        <button type="submit" className={s.saveBtn} disabled={isCompleted || selections.length < 3}>
-          {selections.length < 3 ? `Select ${3 - selections.length} more` : 'Save response'}
+        <button type="submit" className={s.saveBtn} disabled={!ready || submitLocked}>
+          {submitLocked ? 'Submitted ✓' : 'Submit'}
         </button>
       </div>
     </form>

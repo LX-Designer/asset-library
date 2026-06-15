@@ -2,12 +2,6 @@ import { useState, useRef } from 'react'
 import s from '../FranceRepublic.module.css'
 import StarterChips from '../../../lab-shell/StarterChips/StarterChips.jsx'
 
-const SaveStatus = ({ status }) => (
-  <span className={`${s.saveStatus} ${status === 'saved' ? s.saved : status === 'unsaved' ? s.unsaved : ''}`}>
-    {status === 'saved' ? 'Saved' : status === 'unsaved' ? 'Unsaved changes' : 'Not started'}
-  </span>
-)
-
 const GROUPS = ['Jacobins', 'Feuillants', 'Girondins']
 const COLS   = ['Aims', 'Attitude to monarchy', 'Social / political base', 'Key significance']
 
@@ -18,20 +12,23 @@ function initTable(saved) {
   return t
 }
 
-export default function Act3({ initialAnswers, isCompleted, onSubmit, onSave, sentenceStarters = [] }) {
+function tableHasContent(table) {
+  return GROUPS.some(g => COLS.some(c => (table[g]?.[c] ?? '').trim()))
+}
+
+export default function Act3({ initialAnswers, onSubmit, onSave, sentenceStarters = [] }) {
   const [table,      setTable]      = useState(() => initTable(initialAnswers?.table))
   const [response,   setResponse]   = useState(initialAnswers?.response ?? '')
-  const [saveStatus, setSaveStatus] = useState(
-    (initialAnswers?.response?.trim()) ? 'saved' : 'not-started'
-  )
+  const [submitLocked, setSubmitLocked] = useState(!!initialAnswers?._submitted)
   const textRef = useRef(null)
 
   const state = () => ({ table, response })
+  const ready = tableHasContent(table) && response.trim().length > 0
 
   const appendStarter = (starter) => {
     const next = response ? `${response}\n\n${starter}` : starter
     setResponse(next)
-    setSaveStatus('unsaved')
+    setSubmitLocked(false)
     onSave({ ...state(), response: next })
     setTimeout(() => textRef.current?.focus(), 50)
   }
@@ -39,19 +36,14 @@ export default function Act3({ initialAnswers, isCompleted, onSubmit, onSave, se
   const updateCell = (group, col, value) => {
     const next = { ...table, [group]: { ...table[group], [col]: value } }
     setTable(next)
-    onSave({ response, table: next })
-    setSaveStatus('unsaved')
-  }
-
-  const handleBlur = () => {
-    onSave(state())
-    setSaveStatus('saved')
+    setSubmitLocked(false)
   }
 
   const handleSubmit = (e) => {
     e.preventDefault()
+    if (!ready) return
     onSubmit(state())
-    setSaveStatus('saved')
+    setSubmitLocked(true)
   }
 
   return (
@@ -75,10 +67,9 @@ export default function Act3({ initialAnswers, isCompleted, onSubmit, onSave, se
                       className={s.comparisonCell}
                       value={table[g]?.[c] ?? ''}
                       onChange={e => updateCell(g, c, e.target.value)}
-                      onBlur={handleBlur}
+                      onBlur={() => onSave(state())}
                       aria-label={`${g} — ${c}`}
                       rows={3}
-                      disabled={isCompleted}
                     />
                   </td>
                 ))}
@@ -89,20 +80,18 @@ export default function Act3({ initialAnswers, isCompleted, onSubmit, onSave, se
       </div>
       <div className={s.responseField}>
         <label className={s.responseFieldLabel}>My group comparison and judgement</label>
-        <StarterChips starters={sentenceStarters} onInsert={appendStarter} disabled={isCompleted} />
+        <StarterChips starters={sentenceStarters} onInsert={appendStarter} />
         <textarea
           ref={textRef}
           className={s.responseTextarea}
           value={response}
-          onChange={e => { setResponse(e.target.value); setSaveStatus('unsaved') }}
-          onBlur={handleBlur}
-          disabled={isCompleted}
+          onChange={e => { setResponse(e.target.value); setSubmitLocked(false) }}
+          onBlur={() => onSave(state())}
         />
       </div>
       <div className={s.saveRow}>
-        <SaveStatus status={saveStatus} />
-        <button type="submit" className={s.saveBtn} disabled={isCompleted}>
-          Save response
+        <button type="submit" className={s.saveBtn} disabled={!ready || submitLocked}>
+          {submitLocked ? 'Submitted ✓' : 'Submit'}
         </button>
       </div>
     </form>

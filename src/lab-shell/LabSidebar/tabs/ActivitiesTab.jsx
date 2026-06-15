@@ -12,6 +12,7 @@ export default function ActivitiesTab({
   activities,
   responses,
   getActivityStatus,
+  getResponseExcerpt,
   completedCount,
   totalCount,
   labTitle,
@@ -26,10 +27,20 @@ export default function ActivitiesTab({
   onReset,
 }) {
   const [confirmReset, setConfirmReset] = useState(false)
+  const [expandedIds, setExpandedIds]   = useState(new Set())
   const footerRef = useRef(null)
   const progressPct = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0
 
   const labels = { ...DEFAULT_STATUS_LABELS, ...statusLabels }
+
+  const toggleExpand = (id) => {
+    setExpandedIds(prev => {
+      const next = new Set(prev)
+      if (next.has(id)) next.delete(id)
+      else next.add(id)
+      return next
+    })
+  }
 
   useEffect(() => {
     if (confirmReset) {
@@ -61,6 +72,9 @@ export default function ActivitiesTab({
         {activities.map((act, i) => {
           const status        = getActivityStatus(act.id, responses)
           const activityLabel = `Activity ${i + 1}`
+          const excerpt       = getResponseExcerpt?.(act.id, responses) ?? null
+          const hasExcerpt    = !!excerpt && status !== 'not-started'
+          const isExpanded    = expandedIds.has(act.id)
 
           return (
             <li key={act.id} className={s.item}>
@@ -77,13 +91,27 @@ export default function ActivitiesTab({
                 <span className={s.meta}>
                   <span className={s.activityLabel}>{activityLabel}</span>
                   <span className={s.actTitle}>{act.title}</span>
-                  <span className={`${s.statusText} ${status === 'complete' ? s.complete : ''} ${status === 'inprogress' ? s.inprogress : ''}`}>
+                  <span className={`${s.statusText} ${status === 'complete' ? s.complete : status === 'inprogress' ? s.inprogress : ''}`}>
                     {labels[status] ?? status}
                   </span>
                 </span>
 
                 <span className={s.chevron} aria-hidden="true">›</span>
               </button>
+
+              {hasExcerpt && (
+                <button
+                  className={s.excerptRow}
+                  onClick={() => toggleExpand(act.id)}
+                  aria-expanded={isExpanded}
+                  aria-label={isExpanded ? 'Show less' : 'Show more'}
+                >
+                  <span className={`${s.excerptText} ${isExpanded ? s.excerptExpanded : ''}`}>
+                    {excerpt}
+                  </span>
+                  <span className={`${s.excerptChevron} ${isExpanded ? s.excerptChevronUp : ''}`} aria-hidden="true">›</span>
+                </button>
+              )}
             </li>
           )
         })}

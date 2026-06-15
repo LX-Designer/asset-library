@@ -204,7 +204,8 @@ function DossierContent({ responses, onSave, openActivity }) {
           ['act-4', 'Activity 4 — Policy trade-offs'],
           ['act-5', 'Activity 5 — Dynamic efficiency'],
         ].map(([id, label]) => {
-          const text = (responses[id] || '').trim()
+          const raw = responses[id]
+          const text = (typeof raw === 'string' ? raw : raw?.response ?? '').trim()
           return (
             <article key={id} className="synthesis-card">
               <h3>{label}</h3>

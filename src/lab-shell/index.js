@@ -7,7 +7,7 @@ export { useActivityResponse } from './hooks/useActivityResponse.js'
 export { useIsDesktop }        from './hooks/useIsDesktop.js'
 
 // Config helpers
-export { DEFAULT_THEME_VARS, defaultGetActivityStatus } from './defaults.js'
+export { DEFAULT_THEME_VARS, defaultGetActivityStatus, defaultGetResponseExcerpt } from './defaults.js'
 
 // UI atoms
 export { default as ActivityTextarea } from './ActivityTextarea/ActivityTextarea.jsx'

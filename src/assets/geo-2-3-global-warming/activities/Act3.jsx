@@ -20,19 +20,18 @@ const FACTORS = [
   },
 ]
 
-export default function Act3({ initialAnswers, isCompleted, onSubmit, onSave, sentenceStarters = [] }) {
+export default function Act3({ initialAnswers, onSubmit, onSave, sentenceStarters = [] }) {
   const [fields, setFields] = useState({
     solar:    initialAnswers?.solar    ?? '',
     volcanic: initialAnswers?.volcanic ?? '',
     enso:     initialAnswers?.enso     ?? '',
     overall:  initialAnswers?.overall  ?? '',
   })
-  const [saveStatus, setSaveStatus] = useState(
-    Object.values(initialAnswers ?? {}).some(v => typeof v === 'string' && v.trim()) ? 'saved' : 'not-started'
-  )
+  const [submitLocked, setSubmitLocked] = useState(!!initialAnswers?._submitted)
   const lastFocusedKey = useRef('overall')
 
   const state = () => fields
+  const ready = FACTORS.every(f => fields[f.key]?.trim()) && fields.overall?.trim()
 
   const appendStarter = (starter) => {
     const key = lastFocusedKey.current
@@ -42,35 +41,26 @@ export default function Act3({ initialAnswers, isCompleted, onSubmit, onSave, se
       onSave(updated)
       return updated
     })
-    setSaveStatus('unsaved')
+    setSubmitLocked(false)
   }
 
   const handleChange = (key, value) => {
     setFields(prev => ({ ...prev, [key]: value }))
-    setSaveStatus('unsaved')
+    setSubmitLocked(false)
   }
 
-  const handleBlur = () => {
-    onSave(state())
-    setSaveStatus('saved')
-  }
-
-  const handleSave = () => {
-    onSave(state())
-    setSaveStatus('saved')
-  }
+  const handleBlur = () => onSave(state())
 
   const handleSubmit = (e) => {
     e.preventDefault()
+    if (!ready) return
     onSubmit(state())
-    setSaveStatus('saved')
+    setSubmitLocked(true)
   }
-
-  const hasAll = FACTORS.every(f => fields[f.key]?.trim()) && fields.overall?.trim()
 
   return (
     <form onSubmit={handleSubmit}>
-      <StarterChips starters={sentenceStarters} onInsert={appendStarter} disabled={isCompleted} />
+      <StarterChips starters={sentenceStarters} onInsert={appendStarter} />
 
       {FACTORS.map(factor => (
         <div key={factor.key} className={s.factorGroup}>
@@ -85,7 +75,6 @@ export default function Act3({ initialAnswers, isCompleted, onSubmit, onSave, se
               onChange={e => handleChange(factor.key, e.target.value)}
               onFocus={() => { lastFocusedKey.current = factor.key }}
               onBlur={handleBlur}
-              disabled={isCompleted}
               rows={4}
               aria-label={factor.title}
             />
@@ -105,20 +94,13 @@ export default function Act3({ initialAnswers, isCompleted, onSubmit, onSave, se
         onChange={e => handleChange('overall', e.target.value)}
         onFocus={() => { lastFocusedKey.current = 'overall' }}
         onBlur={handleBlur}
-        disabled={isCompleted}
         rows={5}
         aria-label="Overall verdict on natural factors"
       />
 
       <div className={s.actActions}>
-        <span className={`${s.saveStatus} ${saveStatus === 'saved' ? s.saveStatusSaved : saveStatus === 'unsaved' ? s.saveStatusUnsaved : ''}`}>
-          {saveStatus === 'saved' ? 'Saved' : saveStatus === 'unsaved' ? 'Unsaved changes' : ''}
-        </span>
-        <button type="button" className={s.btn} onClick={handleSave} disabled={isCompleted}>
-          Save
-        </button>
-        <button type="submit" className={`${s.btn} ${s.btnPrimary}`} disabled={isCompleted || !hasAll}>
-          {hasAll ? 'Record natural factors evaluation →' : 'Complete all fields first'}
+        <button type="submit" className={`${s.btn} ${s.btnPrimary}`} disabled={!ready || submitLocked}>
+          {submitLocked ? 'Submitted ✓' : 'Submit'}
         </button>
       </div>
     </form>

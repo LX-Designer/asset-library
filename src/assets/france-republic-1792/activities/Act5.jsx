@@ -3,28 +3,22 @@ import s from '../FranceRepublic.module.css'
 import { REFORMS } from '../data.js'
 import StarterChips from '../../../lab-shell/StarterChips/StarterChips.jsx'
 
-const SaveStatus = ({ status }) => (
-  <span className={`${s.saveStatus} ${status === 'saved' ? s.saved : status === 'unsaved' ? s.unsaved : ''}`}>
-    {status === 'saved' ? 'Saved' : status === 'unsaved' ? 'Unsaved changes' : 'Not started'}
-  </span>
-)
-
 const CAT_LABELS = { S: 'Stabilised', D: 'Destabilised', B: 'Both' }
 
-export default function Act5({ initialAnswers, isCompleted, onSubmit, onSave, sentenceStarters = [] }) {
+export default function Act5({ initialAnswers, onSubmit, onSave, sentenceStarters = [] }) {
   const [categories, setCategories] = useState(initialAnswers?.categories ?? {})
   const [response,   setResponse]   = useState(initialAnswers?.response   ?? '')
-  const [saveStatus, setSaveStatus] = useState(
-    (initialAnswers?.response?.trim()) ? 'saved' : 'not-started'
-  )
+  const [submitLocked, setSubmitLocked] = useState(!!initialAnswers?._submitted)
   const textRef = useRef(null)
 
   const state = () => ({ categories, response })
+  const categorisedCount = Object.keys(categories).length
+  const ready = categorisedCount >= 3 && response.trim().length > 0
 
   const appendStarter = (starter) => {
     const next = response ? `${response}\n\n${starter}` : starter
     setResponse(next)
-    setSaveStatus('unsaved')
+    setSubmitLocked(false)
     onSave({ ...state(), response: next })
     setTimeout(() => textRef.current?.focus(), 50)
   }
@@ -32,22 +26,16 @@ export default function Act5({ initialAnswers, isCompleted, onSubmit, onSave, se
   const setCategory = (reformId, cat) => {
     const next = { ...categories, [reformId]: cat }
     setCategories(next)
+    setSubmitLocked(false)
     onSave({ response, categories: next })
-    setSaveStatus('unsaved')
-  }
-
-  const handleBlur = () => {
-    onSave(state())
-    setSaveStatus('saved')
   }
 
   const handleSubmit = (e) => {
     e.preventDefault()
+    if (!ready) return
     onSubmit(state())
-    setSaveStatus('saved')
+    setSubmitLocked(true)
   }
-
-  const categorisedCount = Object.keys(categories).length
 
   return (
     <form onSubmit={handleSubmit}>
@@ -69,7 +57,6 @@ export default function Act5({ initialAnswers, isCompleted, onSubmit, onSave, se
                   className={`${s.reformSortBtn} ${s[cat.toLowerCase()]} ${categories[r.id] === cat ? s.active : ''}`}
                   onClick={() => setCategory(r.id, cat)}
                   aria-pressed={categories[r.id] === cat}
-                  disabled={isCompleted}
                 >
                   {CAT_LABELS[cat]}
                 </button>
@@ -80,20 +67,18 @@ export default function Act5({ initialAnswers, isCompleted, onSubmit, onSave, se
       </div>
       <div className={s.responseField}>
         <label className={s.responseFieldLabel}>My reform judgement</label>
-        <StarterChips starters={sentenceStarters} onInsert={appendStarter} disabled={isCompleted} />
+        <StarterChips starters={sentenceStarters} onInsert={appendStarter} />
         <textarea
           ref={textRef}
           className={s.responseTextarea}
           value={response}
-          onChange={e => { setResponse(e.target.value); setSaveStatus('unsaved') }}
-          onBlur={handleBlur}
-          disabled={isCompleted}
+          onChange={e => { setResponse(e.target.value); setSubmitLocked(false) }}
+          onBlur={() => onSave(state())}
         />
       </div>
       <div className={s.saveRow}>
-        <SaveStatus status={saveStatus} />
-        <button type="submit" className={s.saveBtn} disabled={isCompleted || categorisedCount < 3}>
-          {categorisedCount < 3 ? `Categorise ${3 - categorisedCount} more` : 'Save response'}
+        <button type="submit" className={s.saveBtn} disabled={!ready || submitLocked}>
+          {submitLocked ? 'Submitted ✓' : 'Submit'}
         </button>
       </div>
     </form>

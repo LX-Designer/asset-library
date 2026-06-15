@@ -602,27 +602,6 @@
   flex-wrap: wrap;
 }
 
-.saveStatus {
-  font-size: 11px;
-  color: var(--fr-ink-light);
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
-
-.saveStatus::before {
-  content: '';
-  display: inline-block;
-  width: 6px; height: 6px;
-  border-radius: 50%;
-  background: var(--fr-rule);
-}
-
-.saveStatus.saved::before { background: var(--fr-complete); }
-.saveStatus.saved { color: var(--fr-complete); }
-.saveStatus.unsaved::before { background: var(--fr-inprogress); }
-.saveStatus.unsaved { color: var(--fr-inprogress); }
-
 .saveBtn {
   padding: 6px 14px;
   background: var(--fr-accent);

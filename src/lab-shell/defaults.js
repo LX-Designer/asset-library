@@ -37,22 +37,73 @@ export const DEFAULT_THEME_VARS = [
 ]
 
 /**
+ * defaultGetResponseExcerpt
+ *
+ * Extracts the primary text from a saved activity response for display as an
+ * excerpt in the Activities tab sidebar. Handles the common response shapes:
+ *
+ *   string              → the string itself
+ *   { response: "..." } → val.response  (most activity forms)
+ *   { text: "..." }     → val.text      (init / reflection style forms)
+ *   null / undefined    → null (no excerpt shown)
+ *
+ * Override in shell.config.js with a custom getResponseExcerpt if your lab
+ * stores the primary response text under a different key.
+ */
+export function defaultGetResponseExcerpt(activityId, responses) {
+  const val = responses[activityId]
+  if (!val) return null
+  if (typeof val === 'string') return val.trim() || null
+  if (typeof val === 'object') {
+    const text = val.response ?? val.text ?? null
+    if (typeof text === 'string') return text.trim() || null
+  }
+  return null
+}
+
+// Meta keys stored alongside student content. They do not count as content when
+// deciding between 'not-started' and 'inprogress'.
+//   _submitted → set true by ActivityBody when the student clicks Submit
+//   feedback   → AI feedback text attached after submission
+const META_KEYS = new Set(['_submitted', 'feedback'])
+
+// True if a response object holds any student-entered content (ignoring meta keys).
+function responseHasContent(val) {
+  return Object.keys(val).some((k) => {
+    if (META_KEYS.has(k)) return false
+    const v = val[k]
+    if (v == null) return false
+    if (typeof v === 'string') return v.trim().length > 0
+    if (Array.isArray(v)) return v.length > 0
+    if (typeof v === 'object') return Object.keys(v).length > 0
+    return true
+  })
+}
+
+/**
  * defaultGetActivityStatus
  *
- * Standard completion check for labs where each activity stores a single
- * response value. Handles the common response shapes:
+ * Standard, submit-based status model shared by every LabShell lab:
  *
- *   null / undefined  → 'not-started'
- *   ''  (empty string)→ 'not-started'
- *   non-empty string  → 'complete'
- *   object / array    → 'complete'  (any saved structured response counts)
+ *   no response / empty            → 'not-started'
+ *   content saved, not submitted   → 'inprogress'   (autosaved as the student works)
+ *   response carries _submitted    → 'complete'      (student clicked Submit)
  *
- * Labs with more complex rules (e.g. partial completion, multi-key responses)
- * should override this with their own getActivityStatus in shell.config.js.
+ * The activity form autosaves draft content (producing 'inprogress'), and
+ * ActivityBody stamps `_submitted: true` on the response when the student
+ * submits (producing 'complete'). Plain-string responses written before this
+ * model existed are treated as 'complete' for backward compatibility.
+ *
+ * Because the model is uniform, labs no longer need a custom getActivityStatus
+ * unless they want non-standard behaviour.
  */
 export function defaultGetActivityStatus(activityId, responses) {
   const val = responses[activityId]
   if (val == null) return 'not-started'
   if (typeof val === 'string') return val.trim() ? 'complete' : 'not-started'
-  return 'complete'
+  if (typeof val === 'object') {
+    if (val._submitted) return 'complete'
+    return responseHasContent(val) ? 'inprogress' : 'not-started'
+  }
+  return 'not-started'
 }

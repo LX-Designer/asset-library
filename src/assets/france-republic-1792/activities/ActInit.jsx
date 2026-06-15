@@ -2,60 +2,48 @@ import { useState, useRef } from 'react'
 import s from '../FranceRepublic.module.css'
 import StarterChips from '../../../lab-shell/StarterChips/StarterChips.jsx'
 
-const SaveStatus = ({ status }) => (
-  <span className={`${s.saveStatus} ${status === 'saved' ? s.saved : status === 'unsaved' ? s.unsaved : ''}`}>
-    {status === 'saved' ? 'Saved' : status === 'unsaved' ? 'Unsaved changes' : 'Not started'}
-  </span>
-)
-
-export default function ActInit({ initialAnswers, isCompleted, onSubmit, onSave, sentenceStarters = [] }) {
+export default function ActInit({ initialAnswers, onSubmit, onSave, sentenceStarters = [] }) {
   const [text,       setText]       = useState(initialAnswers?.text       ?? '')
   const [confidence, setConfidence] = useState(initialAnswers?.confidence ?? null)
-  const [saveStatus, setSaveStatus] = useState(
-    (initialAnswers?.text?.trim() || initialAnswers?.confidence != null) ? 'saved' : 'not-started'
-  )
+  const [submitLocked, setSubmitLocked] = useState(!!initialAnswers?._submitted)
   const textRef = useRef(null)
 
   const state = () => ({ text, confidence })
+  const ready = text.trim().length > 0
 
   const appendStarter = (starter) => {
     const next = text ? `${text}\n\n${starter}` : starter
     setText(next)
-    setSaveStatus('unsaved')
+    setSubmitLocked(false)
     onSave({ confidence, text: next })
     setTimeout(() => textRef.current?.focus(), 50)
   }
 
-  const handleTextBlur = () => {
-    onSave({ ...state(), text })
-    setSaveStatus('saved')
-  }
-
   const handleConfidence = (n) => {
     setConfidence(n)
+    setSubmitLocked(false)
     onSave({ text, confidence: n })
-    setSaveStatus('saved')
   }
 
   const handleSubmit = (e) => {
     e.preventDefault()
+    if (!ready) return
     onSubmit(state())
-    setSaveStatus('saved')
+    setSubmitLocked(true)
   }
 
   return (
     <form onSubmit={handleSubmit}>
       <div className={s.responseField}>
         <label className={s.responseFieldLabel}>My starting judgement</label>
-        <StarterChips starters={sentenceStarters} onInsert={appendStarter} disabled={isCompleted} />
+        <StarterChips starters={sentenceStarters} onInsert={appendStarter} />
         <textarea
           ref={textRef}
           className={s.responseTextarea}
           value={text}
-          onChange={e => { setText(e.target.value); setSaveStatus('unsaved') }}
-          onBlur={handleTextBlur}
+          onChange={e => { setText(e.target.value); setSubmitLocked(false) }}
+          onBlur={() => onSave(state())}
           aria-label="Starting judgement"
-          disabled={isCompleted}
         />
       </div>
 
@@ -72,7 +60,6 @@ export default function ActInit({ initialAnswers, isCompleted, onSubmit, onSave,
               onClick={() => handleConfidence(n)}
               aria-pressed={confidence === n}
               aria-label={`Confidence ${n}`}
-              disabled={isCompleted}
             >
               {n}
             </button>
@@ -81,9 +68,8 @@ export default function ActInit({ initialAnswers, isCompleted, onSubmit, onSave,
       </div>
 
       <div className={s.saveRow}>
-        <SaveStatus status={saveStatus} />
-        <button type="submit" className={s.saveBtn} disabled={isCompleted}>
-          Save response
+        <button type="submit" className={s.saveBtn} disabled={!ready || submitLocked}>
+          {submitLocked ? 'Submitted ✓' : 'Submit'}
         </button>
       </div>
     </form>

@@ -1,17 +1,16 @@
 import { useState } from 'react'
 import styles from '../TacomaNarrows.module.css'
 
-export default function Act1({ initialAnswers, isCompleted, onSubmit, onClose }) {
-  const [hypothesis, setHypothesis] = useState(initialAnswers?.hypothesis ?? '')
-  const [error, setError]           = useState('')
+export default function Act1({ initialAnswers, onSubmit, onSave }) {
+  const [hypothesis, setHypothesis]     = useState(initialAnswers?.hypothesis ?? '')
+  const [submitLocked, setSubmitLocked] = useState(!!initialAnswers?._submitted)
+
+  const ready = hypothesis.trim().length > 0
 
   function handleSubmit() {
-    if (hypothesis.trim().length <= 10) {
-      setError('Please write at least a sentence before continuing.')
-      return
-    }
-    setError('')
+    if (!ready) return
     onSubmit({ hypothesis: hypothesis.trim() })
+    setSubmitLocked(true)
   }
 
   return (
@@ -30,15 +29,18 @@ export default function Act1({ initialAnswers, isCompleted, onSubmit, onClose })
         rows={4}
         placeholder="In my view, the bridge collapsed because…"
         value={hypothesis}
-        onChange={e => { setHypothesis(e.target.value); setError('') }}
+        onChange={e => { setHypothesis(e.target.value); setSubmitLocked(false) }}
+        onBlur={() => onSave?.({ hypothesis: hypothesis.trim() })}
       />
 
-      {error && <p style={{ color: 'var(--tn-accent)', fontSize: 13, marginTop: 6 }}>{error}</p>}
-
       <div className={styles.actions}>
-        <button className={styles.btn} onClick={onClose}>Cancel</button>
-        <button className={`${styles.btn} ${styles.btnPrimary}`} onClick={handleSubmit}>
-          Record hypothesis →
+        <button
+          className={`${styles.btn} ${styles.btnPrimary}`}
+          onClick={handleSubmit}
+          type="button"
+          disabled={!ready || submitLocked}
+        >
+          {submitLocked ? 'Submitted ✓' : 'Submit'}
         </button>
       </div>
     </>

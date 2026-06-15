@@ -3,12 +3,6 @@ import s from '../FranceRepublic.module.css'
 import { FranceCtx } from '../FranceContext.js'
 import StarterChips from '../../../lab-shell/StarterChips/StarterChips.jsx'
 
-const SaveStatus = ({ status }) => (
-  <span className={`${s.saveStatus} ${status === 'saved' ? s.saved : status === 'unsaved' ? s.unsaved : ''}`}>
-    {status === 'saved' ? 'Saved' : status === 'unsaved' ? 'Unsaved changes' : 'Not started'}
-  </span>
-)
-
 const EVIDENCE_CHECK_ITEMS = [
   'Revolutionary groups', 'Counter-revolution', 'Reforms', 'Distrust of the King / Varennes',
   'Champ de Mars', 'War and Brunswick Manifesto', 'Popular pressure / Tuileries',
@@ -24,56 +18,56 @@ const PREV_RESPONSES = [
   { label: 'Activity 9 — Ranked causes',            actId: 'act9', key: 'response' },
 ]
 
-export default function ActFinal({ initialAnswers, isCompleted, onSubmit, onSave, sentenceStarters = [] }) {
+export default function ActFinal({ initialAnswers, onSubmit, onSave, sentenceStarters = [] }) {
   const { responses } = useContext(FranceCtx)
 
   const [response,   setResponse]   = useState(initialAnswers?.response   ?? '')
   const [confidence, setConfidence] = useState(initialAnswers?.confidence ?? null)
   const [checklist,  setChecklist]  = useState(initialAnswers?.checklist  ?? [])
-  const [saveStatus, setSaveStatus] = useState(
-    (initialAnswers?.response?.trim()) ? 'saved' : 'not-started'
-  )
+  const [submitLocked, setSubmitLocked] = useState(!!initialAnswers?._submitted)
+  const [everSubmitted, setEverSubmitted] = useState(!!initialAnswers?._submitted || !!initialAnswers?.feedback)
   const [copied, setCopied] = useState(false)
   const textRef = useRef(null)
 
   const state = () => ({ response, confidence, checklist })
+  const ready = response.trim().length > 0
 
   const appendStarter = (starter) => {
     const next = response ? `${response}\n\n${starter}` : starter
     setResponse(next)
+    setSubmitLocked(false)
     onSave({ ...state(), response: next })
-    setSaveStatus('unsaved')
     setTimeout(() => textRef.current?.focus(), 50)
   }
 
   const toggleCheck = (item) => {
     const next = checklist.includes(item) ? checklist.filter(x => x !== item) : [...checklist, item]
     setChecklist(next)
+    setSubmitLocked(false)
     onSave({ ...state(), checklist: next })
   }
 
   const handleConfidence = (n) => {
     setConfidence(n)
+    setSubmitLocked(false)
     onSave({ ...state(), confidence: n })
-    setSaveStatus('unsaved')
-  }
-
-  const handleBlur = () => {
-    onSave(state())
-    setSaveStatus('saved')
   }
 
   // onSubmit triggers AI feedback via ActivityBody (feedback config in shell.config.js)
   const handleSubmit = (e) => {
     e.preventDefault()
+    if (!ready) return
     onSubmit(state())
-    setSaveStatus('saved')
+    setSubmitLocked(true)
+    setEverSubmitted(true)
   }
 
   const handleCopy = async () => {
     try { await navigator.clipboard.writeText(response); setCopied(true); setTimeout(() => setCopied(false), 2000) }
     catch { /* clipboard unavailable */ }
   }
+
+  const label = submitLocked ? 'Submitted ✓' : everSubmitted ? 'Resubmit for feedback' : 'Submit for feedback'
 
   return (
     <form onSubmit={handleSubmit}>
@@ -109,7 +103,6 @@ export default function ActFinal({ initialAnswers, isCompleted, onSubmit, onSave
                 type="checkbox"
                 checked={checklist.includes(item)}
                 onChange={() => toggleCheck(item)}
-                disabled={isCompleted}
               />
               {item}
             </label>
@@ -117,7 +110,7 @@ export default function ActFinal({ initialAnswers, isCompleted, onSubmit, onSave
         </div>
       </div>
 
-      <StarterChips starters={sentenceStarters} onInsert={appendStarter} disabled={isCompleted} />
+      <StarterChips starters={sentenceStarters} onInsert={appendStarter} />
 
       {/* ── Main response ── */}
       <div className={s.responseField}>
@@ -126,10 +119,9 @@ export default function ActFinal({ initialAnswers, isCompleted, onSubmit, onSave
           ref={textRef}
           className={`${s.responseTextarea} ${s.responseLargeTextarea}`}
           value={response}
-          onChange={e => { setResponse(e.target.value); setSaveStatus('unsaved') }}
-          onBlur={handleBlur}
+          onChange={e => { setResponse(e.target.value); setSubmitLocked(false) }}
+          onBlur={() => onSave(state())}
           placeholder="How and why did France become a republic by 1792? Write your developed historical judgement here…"
-          disabled={isCompleted}
         />
       </div>
 
@@ -147,7 +139,6 @@ export default function ActFinal({ initialAnswers, isCompleted, onSubmit, onSave
               onClick={() => handleConfidence(n)}
               aria-pressed={confidence === n}
               aria-label={`Final confidence ${n}`}
-              disabled={isCompleted}
             >
               {n}
             </button>
@@ -156,18 +147,8 @@ export default function ActFinal({ initialAnswers, isCompleted, onSubmit, onSave
       </div>
 
       <div className={s.saveRow}>
-        <SaveStatus status={saveStatus} />
-        <button
-          type="button"
-          className={s.saveBtn}
-          onClick={() => { onSave(state()); setSaveStatus('saved') }}
-          disabled={isCompleted || response.length < 50}
-          style={{ background: 'var(--fr-parchment-mid)', color: 'var(--fr-ink-mid)', border: '1px solid var(--fr-rule)' }}
-        >
-          Save
-        </button>
-        <button type="submit" className={s.saveBtn} disabled={isCompleted || response.length < 50}>
-          {response.length < 50 ? 'Write more first' : 'Submit for feedback'}
+        <button type="submit" className={s.saveBtn} disabled={!ready || submitLocked}>
+          {label}
         </button>
         <button type="button" className={s.copyBtn} onClick={handleCopy} disabled={!response.trim()}>
           Copy {copied && <span className={s.copySuccess}>✓ Copied</span>}

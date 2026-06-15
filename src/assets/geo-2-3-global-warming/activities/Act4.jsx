@@ -2,32 +2,22 @@ import { useState } from 'react'
 import { GHG_TABLE } from '../data.js'
 import s from '../GlobalWarming.module.css'
 
-export default function Act4({ initialAnswers, isCompleted, onSubmit, onSave }) {
+export default function Act4({ initialAnswers, onSubmit, onSave }) {
   const [partA, setPartA] = useState(initialAnswers?.partA ?? '')
   const [partB, setPartB] = useState(initialAnswers?.partB ?? '')
-  const [saveStatus, setSaveStatus] = useState(
-    (initialAnswers?.partA?.trim() || initialAnswers?.partB?.trim()) ? 'saved' : 'not-started'
-  )
+  const [submitLocked, setSubmitLocked] = useState(!!initialAnswers?._submitted)
 
   const state = () => ({ partA, partB })
+  const ready = partA.trim() && partB.trim()
 
-  const handleBlur = () => {
-    onSave(state())
-    setSaveStatus('saved')
-  }
-
-  const handleSave = () => {
-    onSave(state())
-    setSaveStatus('saved')
-  }
+  const handleBlur = () => onSave(state())
 
   const handleSubmit = (e) => {
     e.preventDefault()
+    if (!ready) return
     onSubmit(state())
-    setSaveStatus('saved')
+    setSubmitLocked(true)
   }
-
-  const hasAll = partA.trim() && partB.trim()
 
   return (
     <form onSubmit={handleSubmit}>
@@ -71,10 +61,9 @@ export default function Act4({ initialAnswers, isCompleted, onSubmit, onSave }) 
         id="act4-parta"
         className={s.actTextarea}
         value={partA}
-        onChange={e => { setPartA(e.target.value); setSaveStatus('unsaved') }}
+        onChange={e => { setPartA(e.target.value); setSubmitLocked(false) }}
         onBlur={handleBlur}
         placeholder="CO₂ dominates because… Consider: its atmospheric lifetime means that… and the scale of emissions means…"
-        disabled={isCompleted}
         rows={5}
       />
 
@@ -97,22 +86,15 @@ export default function Act4({ initialAnswers, isCompleted, onSubmit, onSave }) 
         id="act4-partb"
         className={`${s.actTextarea} ${s.actTextareaLarge}`}
         value={partB}
-        onChange={e => { setPartB(e.target.value); setSaveStatus('unsaved') }}
+        onChange={e => { setPartB(e.target.value); setSubmitLocked(false) }}
         onBlur={handleBlur}
         placeholder="Starting from [specific human activity]… this leads to [atmospheric change]… which causes [physical effect]… The GHG fingerprint (tropospheric warming + stratospheric cooling) is significant because…"
-        disabled={isCompleted}
         rows={7}
       />
 
       <div className={s.actActions}>
-        <span className={`${s.saveStatus} ${saveStatus === 'saved' ? s.saveStatusSaved : saveStatus === 'unsaved' ? s.saveStatusUnsaved : ''}`}>
-          {saveStatus === 'saved' ? 'Saved' : saveStatus === 'unsaved' ? 'Unsaved changes' : ''}
-        </span>
-        <button type="button" className={s.btn} onClick={handleSave} disabled={isCompleted}>
-          Save
-        </button>
-        <button type="submit" className={`${s.btn} ${s.btnPrimary}`} disabled={isCompleted || !hasAll}>
-          {hasAll ? 'Record anthropogenic analysis →' : 'Complete both parts first'}
+        <button type="submit" className={`${s.btn} ${s.btnPrimary}`} disabled={!ready || submitLocked}>
+          {submitLocked ? 'Submitted ✓' : 'Submit'}
         </button>
       </div>
     </form>

@@ -45,7 +45,7 @@ export default {
     defaultDockedWidth: 260,
     maxDockedWidth: 380,
     defaultTab: 'activities',
-    tabs: ['activities', 'concepts', 'notes'],
+    tabs: ['activities', 'concepts'],
     conceptsIntro: 'Use these concepts as analytical tools when completing activities. They explain the physics — your job is to apply them to the evidence.',
     fpDarkHeader: true,
   },
@@ -199,7 +199,6 @@ export default {
 
   features: {
     voiceToText: true,
-    notes: true,
   },
 
   // Tacoma has no separate evidence panel — evidence is embedded in the case document
@@ -218,4 +217,12 @@ export default {
   },
 
   getActivityStatus: defaultGetActivityStatus,
+
+  getResponseExcerpt: (id, responses) => {
+    const val = responses[id]
+    if (!val) return null
+    // Act1 uses hypothesis, Act2–5 use response, Act6 uses report
+    const text = val.response ?? val.hypothesis ?? val.report ?? null
+    return typeof text === 'string' ? text.trim() || null : null
+  },
 }

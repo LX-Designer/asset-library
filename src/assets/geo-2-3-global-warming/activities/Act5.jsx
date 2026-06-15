@@ -25,32 +25,22 @@ const CRITERIA = [
   },
 ]
 
-export default function Act5({ initialAnswers, isCompleted, onSubmit, onSave }) {
+export default function Act5({ initialAnswers, onSubmit, onSave }) {
   const [comparison, setComparison] = useState(initialAnswers?.comparison ?? '')
   const [verdict, setVerdict]       = useState(initialAnswers?.verdict    ?? '')
-  const [saveStatus, setSaveStatus] = useState(
-    (initialAnswers?.comparison?.trim() || initialAnswers?.verdict?.trim()) ? 'saved' : 'not-started'
-  )
+  const [submitLocked, setSubmitLocked] = useState(!!initialAnswers?._submitted)
 
   const state = () => ({ comparison, verdict })
+  const ready = comparison.trim() && verdict.trim()
 
-  const handleBlur = () => {
-    onSave(state())
-    setSaveStatus('saved')
-  }
-
-  const handleSave = () => {
-    onSave(state())
-    setSaveStatus('saved')
-  }
+  const handleBlur = () => onSave(state())
 
   const handleSubmit = (e) => {
     e.preventDefault()
+    if (!ready) return
     onSubmit(state())
-    setSaveStatus('saved')
+    setSubmitLocked(true)
   }
-
-  const hasAll = comparison.trim() && verdict.trim()
 
   return (
     <form onSubmit={handleSubmit}>
@@ -83,10 +73,9 @@ export default function Act5({ initialAnswers, isCompleted, onSubmit, onSave }) 
         id="act5-comparison"
         className={`${s.actTextarea} ${s.actTextareaLarge}`}
         value={comparison}
-        onChange={e => { setComparison(e.target.value); setSaveStatus('unsaved') }}
+        onChange={e => { setComparison(e.target.value); setSubmitLocked(false) }}
         onBlur={handleBlur}
         placeholder={"Mechanism: Natural factors produce… whereas anthropogenic GHG forcing produces…\n\nTiming: The post-1950 divergence shows… Solar irradiance since ~1980 has… while temperatures…\n\nMagnitude: Natural forcing (~+0.05 W/m²) compares to anthropogenic forcing (~+2.7 W/m²) in this way…"}
-        disabled={isCompleted}
         rows={9}
       />
 
@@ -105,22 +94,15 @@ export default function Act5({ initialAnswers, isCompleted, onSubmit, onSave }) 
         id="act5-verdict"
         className={`${s.actTextarea} ${s.actTextareaLarge}`}
         value={verdict}
-        onChange={e => { setVerdict(e.target.value); setSaveStatus('unsaved') }}
+        onChange={e => { setVerdict(e.target.value); setSubmitLocked(false) }}
         onBlur={handleBlur}
         placeholder="Natural factors can account for… but cannot explain… because… The anthropogenic explanation fits better because… The post-1950 divergence specifically shows… My overall attribution verdict is…"
-        disabled={isCompleted}
         rows={7}
       />
 
       <div className={s.actActions}>
-        <span className={`${s.saveStatus} ${saveStatus === 'saved' ? s.saveStatusSaved : saveStatus === 'unsaved' ? s.saveStatusUnsaved : ''}`}>
-          {saveStatus === 'saved' ? 'Saved' : saveStatus === 'unsaved' ? 'Unsaved changes' : ''}
-        </span>
-        <button type="button" className={s.btn} onClick={handleSave} disabled={isCompleted}>
-          Save
-        </button>
-        <button type="submit" className={`${s.btn} ${s.btnPrimary}`} disabled={isCompleted || !hasAll}>
-          {hasAll ? 'Record attribution comparison →' : 'Complete both parts first'}
+        <button type="submit" className={`${s.btn} ${s.btnPrimary}`} disabled={!ready || submitLocked}>
+          {submitLocked ? 'Submitted ✓' : 'Submit'}
         </button>
       </div>
     </form>

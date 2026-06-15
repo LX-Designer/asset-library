@@ -747,16 +747,6 @@
   margin-bottom: 8px;
 }
 
-/* Save status */
-.saveStatus {
-  font-size: 11px;
-  color: var(--gw-ink-light);
-  font-style: italic;
-}
-
-.saveStatusSaved { color: var(--lab-complete); font-style: normal; font-weight: 500; }
-.saveStatusUnsaved { color: var(--gw-warn); }
-
 /* Buttons */
 .actActions {
   display: flex;
@@ -982,15 +972,6 @@
   flex-shrink: 0;
 }
 
-.wordCount {
-  font-size: 11px;
-  color: var(--gw-ink-light);
-  text-align: right;
-  margin-top: 4px;
-}
-
-.wordCountOk { color: var(--lab-complete); }
-
 .copySuccess {
   font-size: 11px;
   color: var(--lab-complete);
@@ -1036,18 +1017,6 @@
   font-size: 11px;
   color: var(--gw-ink-light);
   flex: 1;
-}
-
-.reflectDone {
-  background: var(--gw-accent-subtle);
-  border: 1px solid var(--gw-accent-mid);
-  border-radius: 5px;
-  padding: 12px 16px;
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--gw-accent);
-  text-align: center;
-  margin-top: 12px;
 }
 
 /* ── Responsive ───────────────────────────────────────────────────────────── */

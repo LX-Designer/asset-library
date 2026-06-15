@@ -1,4 +1,4 @@
-import { DEFAULT_THEME_VARS } from '../../lab-shell/defaults.js'
+import { DEFAULT_THEME_VARS, defaultGetActivityStatus } from '../../lab-shell/defaults.js'
 import ActInit       from './activities/ActInit.jsx'
 import Act1          from './activities/Act1.jsx'
 import Act2          from './activities/Act2.jsx'
@@ -27,84 +27,6 @@ const THEME_VARS = [
   '--fr-serif', '--fr-sans', '--fr-transition',
 ]
 
-// ── Activity completion status ─────────────────────────────────────────────────
-// Custom logic: activities with multiple response keys use 'inprogress' states.
-// Reads from consolidated response objects (e.g. responses['act1'] = { selections, response }).
-function getActivityStatus(id, responses) {
-  const val = responses[id]
-  if (!val) return 'not-started'
-
-  const has = (key) => {
-    const v = val[key]
-    if (v == null) return false
-    if (typeof v === 'string') return v.trim().length > 0
-    if (Array.isArray(v)) return v.length > 0
-    if (typeof v === 'object') return Object.keys(v).length > 0
-    return v != null
-  }
-  const arr = (key, n) => Array.isArray(val[key]) && val[key].length >= n
-  const obj = (key, n) => typeof val[key] === 'object' && val[key] != null && Object.keys(val[key]).length >= n
-  const str = (key, n = 1) => typeof val[key] === 'string' && val[key].trim().length >= n
-
-  switch (id) {
-    case 'init':
-      if (str('text') || val.confidence != null) return 'complete'
-      return 'not-started'
-    case 'act1':
-      if (arr('selections', 3) && str('response')) return 'complete'
-      if (has('selections') || has('response')) return 'inprogress'
-      return 'not-started'
-    case 'act2':
-      if (has('pathway') && str('response')) return 'complete'
-      if (has('pathway') || has('response')) return 'inprogress'
-      return 'not-started'
-    case 'act3':
-      if (obj('table', 1) && str('response')) return 'complete'
-      if (has('table') || has('response')) return 'inprogress'
-      return 'not-started'
-    case 'act4':
-      if (arr('tags', 2) && str('response')) return 'complete'
-      if (has('tags') || has('response')) return 'inprogress'
-      return 'not-started'
-    case 'act5':
-      if (obj('categories', 3) && str('response')) return 'complete'
-      if (has('categories') || has('response')) return 'inprogress'
-      return 'not-started'
-    case 'act6':
-      if (val.rating != null && str('response')) return 'complete'
-      if (val.rating != null || has('response')) return 'inprogress'
-      return 'not-started'
-    case 'act7':
-      if (arr('factors', 3) && str('response')) return 'complete'
-      if (has('factors') || has('response')) return 'inprogress'
-      return 'not-started'
-    case 'act8': {
-      const c8 = val.classifications
-      const classified = c8 ? Object.keys(c8).filter(k => c8[k]).length : 0
-      if (classified >= 4 && str('response')) return 'complete'
-      if (classified > 0 || has('response')) return 'inprogress'
-      return 'not-started'
-    }
-    case 'act9': {
-      const m = val.matrix
-      const rated = m ? Object.keys(m).filter(k => Object.keys(m[k] ?? {}).length >= 3).length : 0
-      const ranked = Array.isArray(val.ranked) && val.ranked.filter(Boolean).length >= 3
-      if (rated >= 5 && ranked && str('response')) return 'complete'
-      if (rated > 0 || has('ranked') || has('response')) return 'inprogress'
-      return 'not-started'
-    }
-    case 'final':
-      if (str('response', 50)) return 'complete'
-      if (has('response')) return 'inprogress'
-      return 'not-started'
-    case 'reflection':
-      if (str('text')) return 'complete'
-      if (has('text')) return 'inprogress'
-      return 'not-started'
-    default: return 'not-started'
-  }
-}
-
 export default {
 
   labId: 'france-republic-1792',
@@ -132,7 +54,7 @@ export default {
     defaultDockedWidth: 260,
     maxDockedWidth:     360,
     defaultTab:        'activities',
-    tabs:              ['activities', 'notes'],
+    tabs:              ['activities'],
     fpAccentHeader:    false,
     accentHeader:      false,
     header: {
@@ -398,10 +320,17 @@ export default {
   content: { maxWidth: '960px' },
 
   features: {
-    notes:       true,
     voiceToText: false,
   },
 
+  getResponseExcerpt: (id, responses) => {
+    const val = responses[id]
+    if (!val) return null
+    // Most activities use val.response; init and reflection use val.text
+    const text = val.response ?? val.text ?? null
+    return typeof text === 'string' ? text.trim() || null : null
+  },
+
   themeVars:          THEME_VARS,
-  getActivityStatus,
+  getActivityStatus:  defaultGetActivityStatus,
 }

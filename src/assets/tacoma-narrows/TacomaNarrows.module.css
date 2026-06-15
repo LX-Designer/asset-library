@@ -544,16 +544,6 @@
   display: block;
 }
 
-/* ── TRIBUNAL / WORD COUNT ───────────────────────────────────────────────── */
-
-.wordCount {
-  font-family: var(--tn-mono);
-  font-size: 10px;
-  color: var(--tn-ink-light);
-  text-align: right;
-  margin-top: 6px;
-  letter-spacing: 0.06em;
-}
 
 
 /* ── MODAL ACTIONS ───────────────────────────────────────────────────────── */
@@ -588,6 +578,7 @@
   border-color: var(--tn-ink);
 }
 .btnPrimary:hover { background: #2a2620; }
+.btnPrimary:disabled { opacity: 0.5; cursor: not-allowed; }
 
 .btnDanger {
   background: var(--tn-accent);

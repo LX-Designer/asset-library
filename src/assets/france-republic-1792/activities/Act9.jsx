@@ -3,12 +3,6 @@ import s from '../FranceRepublic.module.css'
 import { CAUSE_FACTORS } from '../data.js'
 import StarterChips from '../../../lab-shell/StarterChips/StarterChips.jsx'
 
-const SaveStatus = ({ status }) => (
-  <span className={`${s.saveStatus} ${status === 'saved' ? s.saved : status === 'unsaved' ? s.unsaved : ''}`}>
-    {status === 'saved' ? 'Saved' : status === 'unsaved' ? 'Unsaved changes' : 'Not started'}
-  </span>
-)
-
 const MATRIX_COLS = [
   { key: 'pressure', label: 'Background\npressure' },
   { key: 'trigger',  label: 'Immediate\ntrigger'   },
@@ -17,21 +11,23 @@ const MATRIX_COLS = [
   { key: 'republic', label: 'Made republic\nmore likely'  },
 ]
 
-export default function Act9({ initialAnswers, isCompleted, onSubmit, onSave, sentenceStarters = [] }) {
+export default function Act9({ initialAnswers, onSubmit, onSave, sentenceStarters = [] }) {
   const [matrix,     setMatrix]     = useState(initialAnswers?.matrix   ?? {})
   const [ranked,     setRanked]     = useState(initialAnswers?.ranked   ?? ['', '', ''])
   const [response,   setResponse]   = useState(initialAnswers?.response ?? '')
-  const [saveStatus, setSaveStatus] = useState(
-    (initialAnswers?.response?.trim()) ? 'saved' : 'not-started'
-  )
+  const [submitLocked, setSubmitLocked] = useState(!!initialAnswers?._submitted)
+  const [everSubmitted, setEverSubmitted] = useState(!!initialAnswers?._submitted || !!initialAnswers?.feedback)
   const textRef = useRef(null)
 
   const state = () => ({ matrix, ranked, response })
+  const ratedCount  = Object.keys(matrix).filter(k => Object.keys(matrix[k] ?? {}).length >= 3).length
+  const rankedCount = ranked.filter(Boolean).length
+  const ready = ratedCount >= 5 && rankedCount >= 3 && response.trim().length > 0
 
   const appendStarter = (starter) => {
     const next = response ? `${response}\n\n${starter}` : starter
     setResponse(next)
-    setSaveStatus('unsaved')
+    setSubmitLocked(false)
     onSave({ ...state(), response: next })
     setTimeout(() => textRef.current?.focus(), 50)
   }
@@ -39,29 +35,26 @@ export default function Act9({ initialAnswers, isCompleted, onSubmit, onSave, se
   const setCell = (factorId, col, val) => {
     const next = { ...matrix, [factorId]: { ...(matrix[factorId] ?? {}), [col]: val } }
     setMatrix(next)
+    setSubmitLocked(false)
     onSave({ ranked, response, matrix: next })
-    setSaveStatus('unsaved')
   }
 
   const setRank = (idx, val) => {
     const next = [...ranked]; next[idx] = val; setRanked(next)
+    setSubmitLocked(false)
     onSave({ matrix, response, ranked: next })
-    setSaveStatus('unsaved')
-  }
-
-  const handleBlur = () => {
-    onSave(state())
-    setSaveStatus('saved')
   }
 
   // onSubmit triggers AI feedback via ActivityBody (feedback config is in shell.config.js)
   const handleSubmit = (e) => {
     e.preventDefault()
+    if (!ready) return
     onSubmit(state())
-    setSaveStatus('saved')
+    setSubmitLocked(true)
+    setEverSubmitted(true)
   }
 
-  const ratedCount = Object.keys(matrix).filter(k => Object.keys(matrix[k] ?? {}).length >= 3).length
+  const label = submitLocked ? 'Submitted ✓' : everSubmitted ? 'Resubmit for feedback' : 'Submit for feedback'
 
   return (
     <form onSubmit={handleSubmit}>
@@ -87,7 +80,6 @@ export default function Act9({ initialAnswers, isCompleted, onSubmit, onSave, se
                       value={matrix[cf.id]?.[c.key] ?? ''}
                       onChange={e => setCell(cf.id, c.key, e.target.value)}
                       aria-label={`${cf.factor} — ${c.label}`}
-                      disabled={isCompleted}
                     >
                       <option value="">—</option>
                       <option value="Low">Low</option>
@@ -112,7 +104,6 @@ export default function Act9({ initialAnswers, isCompleted, onSubmit, onSave, se
               className={s.rankSelect}
               value={ranked[i] ?? ''}
               onChange={e => setRank(i, e.target.value)}
-              disabled={isCompleted}
             >
               <option value="">— select a cause —</option>
               {CAUSE_FACTORS.map(cf => (
@@ -131,21 +122,19 @@ export default function Act9({ initialAnswers, isCompleted, onSubmit, onSave, se
 
       <div className={s.responseField}>
         <label className={s.responseFieldLabel}>My ranked cause judgement</label>
-        <StarterChips starters={sentenceStarters} onInsert={appendStarter} disabled={isCompleted} />
+        <StarterChips starters={sentenceStarters} onInsert={appendStarter} />
         <textarea
           ref={textRef}
           className={s.responseTextarea}
           value={response}
-          onChange={e => { setResponse(e.target.value); setSaveStatus('unsaved') }}
-          onBlur={handleBlur}
-          disabled={isCompleted}
+          onChange={e => { setResponse(e.target.value); setSubmitLocked(false) }}
+          onBlur={() => onSave(state())}
         />
       </div>
 
       <div className={s.saveRow}>
-        <SaveStatus status={saveStatus} />
-        <button type="submit" className={s.saveBtn} disabled={isCompleted || ratedCount < 5}>
-          {ratedCount < 5 ? `Rate ${5 - ratedCount} more cause${ratedCount === 4 ? '' : 's'}` : 'Submit for feedback'}
+        <button type="submit" className={s.saveBtn} disabled={!ready || submitLocked}>
+          {label}
         </button>
       </div>
     </form>

@@ -1,4 +1,4 @@
-import { DEFAULT_THEME_VARS } from '../../lab-shell/defaults.js'
+import { DEFAULT_THEME_VARS, defaultGetActivityStatus } from '../../lab-shell/defaults.js'
 import EvidenceArchiveTab  from './EvidenceArchiveTab.jsx'
 import EvidenceCardOverlay from './EvidenceCardOverlay.jsx'
 import { EVIDENCE_CARDS }  from './data.js'
@@ -27,62 +27,6 @@ const THEME_VARS = [
   '--gw-sans', '--gw-mono', '--gw-transition',
 ]
 
-// ── Activity status ───────────────────────────────────────────────────────────
-function getActivityStatus(id, responses) {
-  const val = responses[id]
-  if (!val) return 'not-started'
-
-  const str = (key, n = 1) => typeof val[key] === 'string' && val[key].trim().length >= n
-  const has = (key) => {
-    if (val[key] == null) return false
-    if (typeof val[key] === 'string') return val[key].trim().length > 0
-    return val[key] != null
-  }
-
-  switch (id) {
-    case 'act-1':
-    case 'act-2':
-      if (str('response')) return 'complete'
-      if (has('response')) return 'inprogress'
-      return 'not-started'
-
-    case 'act-3': {
-      const keys = ['solar', 'volcanic', 'enso', 'overall']
-      const hasAll = keys.every(k => str(k))
-      const hasAny = keys.some(k => has(k))
-      if (hasAll) return 'complete'
-      if (hasAny) return 'inprogress'
-      return 'not-started'
-    }
-
-    case 'act-4':
-      if (str('partA') && str('partB')) return 'complete'
-      if (has('partA') || has('partB')) return 'inprogress'
-      return 'not-started'
-
-    case 'act-5':
-      if (str('comparison') && str('verdict')) return 'complete'
-      if (has('comparison') || has('verdict')) return 'inprogress'
-      return 'not-started'
-
-    case 'act-6':
-      if (str('response', 50)) return 'complete'
-      if (has('response')) return 'inprogress'
-      return 'not-started'
-
-    case 'act-7': {
-      const keys = ['r1', 'r2', 'r3', 'r4', 'r5', 'r6']
-      const hasAll = keys.every(k => str(k))
-      const hasAny = keys.some(k => has(k))
-      if (hasAll) return 'complete'
-      if (hasAny) return 'inprogress'
-      return 'not-started'
-    }
-
-    default: return 'not-started'
-  }
-}
-
 export default {
 
   labId: 'geo-2-3-global-warming',
@@ -107,7 +51,7 @@ export default {
     defaultDockedWidth: 260,
     maxDockedWidth:     360,
     defaultTab:         'activities',
-    tabs:               ['activities', 'notes', 'evidence'],
+    tabs:               ['activities', 'evidence'],
     fpAccentHeader:     false,
     fpDarkHeader:       true,
     accentHeader:       false,
@@ -263,7 +207,6 @@ export default {
   content: { maxWidth: '960px' },
 
   features: {
-    notes:       true,
     voiceToText: false,
   },
 
@@ -275,5 +218,13 @@ export default {
   cardOverlayComponent: EvidenceCardOverlay,
 
   themeVars: THEME_VARS,
-  getActivityStatus,
+  getActivityStatus: defaultGetActivityStatus,
+
+  getResponseExcerpt: (id, responses) => {
+    const val = responses[id]
+    if (!val) return null
+    // act-1/2/6 use response; act-3 uses overall; act-4 uses partA; act-5 uses comparison
+    const text = val.response ?? val.overall ?? val.comparison ?? val.partA ?? null
+    return typeof text === 'string' ? text.trim() || null : null
+  },
 }

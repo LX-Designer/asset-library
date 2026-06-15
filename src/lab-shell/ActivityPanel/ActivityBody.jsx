@@ -60,13 +60,34 @@ export default function ActivityBody({
     setClearKey(k => k + 1)
   }, [activity, handleSave, setAiFeedback])
 
+  // Autosave wrapper: persists draft content as the student works, while
+  // preserving the submitted / feedback markers already on the saved response.
+  // This keeps an activity marked Complete in the sidebar while the student
+  // edits a submitted response, until they Submit again (or Clear).
+  const handleAutoSave = useCallback((data) => {
+    const existing = responses[activity.id]
+    if (data && typeof data === 'object' && !Array.isArray(data) &&
+        existing && typeof existing === 'object' && !Array.isArray(existing)) {
+      const preserved = { ...data }
+      if (existing._submitted) preserved._submitted = true
+      if (existing.feedback != null && preserved.feedback == null) preserved.feedback = existing.feedback
+      handleSave(activity.id, preserved)
+    } else {
+      handleSave(activity.id, data)
+    }
+  }, [responses, activity.id, handleSave])
+
   const handleSubmit = useCallback(async (data) => {
-    await handleSave(activity.id, data)
+    // Stamp the response as submitted so the sidebar shows it as Complete.
+    const payload = (data && typeof data === 'object' && !Array.isArray(data))
+      ? { ...data, _submitted: true }
+      : data
+    await handleSave(activity.id, payload)
     if (feedbackConfig) {
       aiRequest(
         feedbackConfig.buildMessage(data),
         async (feedbackText) => {
-          await handleSave(activity.id, { ...data, feedback: feedbackText })
+          await handleSave(activity.id, { ...payload, feedback: feedbackText })
         },
       )
     }
@@ -103,7 +124,7 @@ export default function ActivityBody({
           initialAnswers={responses[activity.id] ?? {}}
           isCompleted={isCompleted}
           onSubmit={handleSubmit}
-          onSave={data => handleSave(activity.id, data)}
+          onSave={handleAutoSave}
           onClose={onClose}
           sentenceStarters={activity.sentenceStarters ?? []}
         />

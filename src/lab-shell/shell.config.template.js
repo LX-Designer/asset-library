@@ -19,7 +19,7 @@
  *   import EvidenceDoc from './EvidenceDoc.jsx'   ← your own evidence renderer
  */
 
-import { DEFAULT_THEME_VARS, defaultGetActivityStatus } from '../../lab-shell/defaults.js'
+import { DEFAULT_THEME_VARS, defaultGetActivityStatus, defaultGetResponseExcerpt } from '../../lab-shell/defaults.js'
 
 // ── Activity form components ──────────────────────────────────────────────────
 // One import per activity. The component receives:
@@ -252,4 +252,16 @@ export default {
   // Override with a custom function if your lab needs 'inprogress' states or
   // checks multiple response keys to determine completion.
   getActivityStatus: defaultGetActivityStatus,
+
+
+  // ── Response excerpt (optional) ───────────────────────────────────────────────
+  // Extracts the primary text from a saved response for the one-line preview
+  // shown in the Activities tab sidebar. The default checks val.response then
+  // val.text, which covers most activity form patterns. Override only if your
+  // lab stores the primary text under a different key.
+  //
+  // getResponseExcerpt: (activityId, responses) => {
+  //   const val = responses[activityId]
+  //   return typeof val?.myKey === 'string' ? val.myKey.trim() || null : null
+  // },
 }
