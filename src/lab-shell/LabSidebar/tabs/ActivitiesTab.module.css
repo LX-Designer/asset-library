@@ -80,6 +80,20 @@
 
 .btn:hover { background: var(--fp-subtle, rgba(0,0,0,0.04)); }
 
+/* ── Active (currently open) item ────────────────────────────────────────── */
+.active {
+  border-left: 2px solid var(--fp-accent, var(--lab-accent));
+}
+
+.active .btn {
+  background: var(--lab-accent-subtle, rgba(37, 99, 235, 0.06));
+  padding-left: 10px; /* compensate for 2px border */
+}
+
+.active .activityLabel {
+  color: var(--fp-accent, var(--lab-accent));
+}
+
 .btn:focus-visible {
   outline: 2px solid var(--fp-accent, var(--lab-accent));
   outline-offset: -2px;

@@ -23,6 +23,7 @@ export default function ActivitiesTab({
   eyebrow,
   sidebarTitle,
   sidebarSubtitle,
+  activeActivityId = null,
   onOpenActivity,
   onReset,
 }) {
@@ -77,7 +78,7 @@ export default function ActivitiesTab({
           const isExpanded    = expandedIds.has(act.id)
 
           return (
-            <li key={act.id} className={s.item}>
+            <li key={act.id} className={`${s.item} ${act.id === activeActivityId ? s.active : ''}`}>
               <button
                 className={s.btn}
                 onClick={() => onOpenActivity(act.id)}

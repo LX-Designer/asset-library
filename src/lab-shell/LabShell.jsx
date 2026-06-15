@@ -264,6 +264,7 @@ export default function LabShell({
             eyebrow={config.sidebar.header?.eyebrow}
             sidebarTitle={config.sidebar.header?.title}
             sidebarSubtitle={config.sidebar.header?.subtitle}
+            activeActivityId={activeActivityId}
             onOpenActivity={openActivity}
             onReset={onReset}
           />
