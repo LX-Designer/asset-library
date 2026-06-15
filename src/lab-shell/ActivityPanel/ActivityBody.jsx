@@ -84,6 +84,7 @@ export default function ActivityBody({
       title={activity.title}
       purpose={activity.purpose ?? ''}
       prompt={activity.prompt ?? ''}
+      task={activity.task ?? ''}
       scaffold={activity.scaffold ?? null}
       evidenceSections={activity.evidenceSections ?? []}
       conceptLinks={activity.conceptLinks ?? []}
@@ -104,6 +105,7 @@ export default function ActivityBody({
           onSubmit={handleSubmit}
           onSave={data => handleSave(activity.id, data)}
           onClose={onClose}
+          sentenceStarters={activity.sentenceStarters ?? []}
         />
       )}
 

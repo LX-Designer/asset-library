@@ -26,6 +26,7 @@
   display: flex;
   flex-direction: column;
   min-height: 100%;
+  container-type: inline-size;
 }
 
 /* ── Header ──────────────────────────────────────────────────────────────── */
@@ -120,40 +121,53 @@
   outline-offset: 2px;
 }
 
-/* ── Body ────────────────────────────────────────────────────────────────── */
+/* ── Body + columns ──────────────────────────────────────────────────────── */
 .body {
   flex: 1;
-  padding: 20px 24px;
-  overflow-y: auto;
   min-height: 0;
+  overflow-y: auto;
   background: var(--modal-panel-bg, transparent);
-  /* Standard scrollbar (Firefox, Chrome 121+) */
   scrollbar-width: thin;
   scrollbar-color: var(--modal-border, #e5e7eb) transparent;
 }
 
-/* Webkit scrollbar (Chrome/Edge/Safari) */
-.body::-webkit-scrollbar {
-  width: 5px;
-}
+.body::-webkit-scrollbar { width: 5px; }
+.body::-webkit-scrollbar-track { background: transparent; }
+.body::-webkit-scrollbar-thumb { background: var(--modal-border, #e5e7eb); border-radius: 3px; }
+.body::-webkit-scrollbar-thumb:hover { background: var(--modal-ink-light, #9ca3af); }
 
-.body::-webkit-scrollbar-track {
-  background: transparent;
-}
+/* Single-column: both cols stack, padding on each */
+.leftCol  { padding: 20px 24px 8px; }
+.rightCol { padding: 8px 24px 20px; }
 
-.body::-webkit-scrollbar-thumb {
-  background: var(--modal-border, #e5e7eb);
-  border-radius: 3px;
-}
-
-.body::-webkit-scrollbar-thumb:hover {
-  background: var(--modal-ink-light, #9ca3af);
+/* Two-column: triggered by container query on .panel */
+@container (min-width: 560px) {
+  .body {
+    display: flex;
+    overflow: hidden;
+  }
+  .leftCol {
+    flex: 0 0 44%;
+    padding: 24px;
+    overflow-y: auto;
+    border-right: 1px solid var(--modal-border, #e5e7eb);
+    scrollbar-width: thin;
+    scrollbar-color: var(--modal-border, #e5e7eb) transparent;
+  }
+  .rightCol {
+    flex: 1;
+    padding: 24px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--modal-border, #e5e7eb) transparent;
+  }
 }
 
 /* Purpose / why it matters */
 .purpose {
   background: var(--modal-subtle, #f3f4f6);
-  border-radius: 3px;
+  border: 1px solid var(--modal-border, #e5e7eb);
+  border-radius: 5px;
   padding: 8px 12px;
   margin-bottom: 16px;
   font-size: 12px;
@@ -173,11 +187,32 @@
 
 /* Prompt */
 .prompt {
-  font-family: var(--modal-serif, Georgia, 'Times New Roman', serif);
-  font-size: 15px;
-  line-height: 1.7;
+  font-size: 14px;
+  line-height: 1.65;
   color: var(--modal-ink, #111827);
   margin: 0 0 16px;
+}
+
+/* Task instruction block */
+.task {
+  background: var(--modal-subtle, #f3f4f6);
+  border: 1px solid var(--modal-border, #e5e7eb);
+  border-radius: 5px;
+  padding: 14px 18px;
+  font-size: 14px;
+  line-height: 1.65;
+  color: var(--modal-ink-mid, #4b5563);
+  margin-bottom: 18px;
+}
+
+.taskLabel {
+  display: block;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--modal-accent, #374151);
+  margin-bottom: 6px;
 }
 
 /* Scaffold hint */

@@ -1,13 +1,23 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import s from '../GlobalWarming.module.css'
+import StarterChips from '../../../lab-shell/StarterChips/StarterChips.jsx'
 
-export default function Act1({ initialAnswers, isCompleted, onSubmit, onSave }) {
+export default function Act1({ initialAnswers, isCompleted, onSubmit, onSave, sentenceStarters = [] }) {
   const [response, setResponse] = useState(initialAnswers?.response ?? '')
   const [saveStatus, setSaveStatus] = useState(
     initialAnswers?.response?.trim() ? 'saved' : 'not-started'
   )
+  const textRef = useRef(null)
 
   const state = () => ({ response })
+
+  const appendStarter = (starter) => {
+    const next = response ? `${response}\n\n${starter}` : starter
+    setResponse(next)
+    setSaveStatus('unsaved')
+    onSave({ response: next })
+    setTimeout(() => textRef.current?.focus(), 50)
+  }
 
   const handleBlur = () => {
     onSave(state())
@@ -32,21 +42,19 @@ export default function Act1({ initialAnswers, isCompleted, onSubmit, onSave }) 
 
   return (
     <form onSubmit={handleSubmit}>
-      <div className={s.actInstruction}>
-        <div className={s.actInstructionLabel}>Your task</div>
-        Look at the temperature anomaly record in The Anomaly section. In your own words: what pattern do you see? When does something unusual appear to happen? Write 3–6 sentences describing what you observe — without yet explaining it. Then ask yourself: is this within the range of normal climate variability, or does it suggest something else is happening? How would you even begin to investigate that question?
-      </div>
-
       <label className={s.actLabel} htmlFor="act1-response">
         Describe what you observe — and the question it raises for you
       </label>
+
+      <StarterChips starters={sentenceStarters} onInsert={appendStarter} disabled={isCompleted} />
+
       <textarea
         id="act1-response"
+        ref={textRef}
         className={s.actTextarea}
         value={response}
         onChange={handleChange}
         onBlur={handleBlur}
-        placeholder="The temperature record shows… Something unusual happens around… This raises the question of whether…"
         disabled={isCompleted}
         rows={6}
       />

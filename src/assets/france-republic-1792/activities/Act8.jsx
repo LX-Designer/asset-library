@@ -1,6 +1,7 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import s from '../FranceRepublic.module.css'
 import { TURNING_POINTS } from '../data.js'
+import StarterChips from '../../../lab-shell/StarterChips/StarterChips.jsx'
 
 const SaveStatus = ({ status }) => (
   <span className={`${s.saveStatus} ${status === 'saved' ? s.saved : status === 'unsaved' ? s.unsaved : ''}`}>
@@ -10,14 +11,23 @@ const SaveStatus = ({ status }) => (
 
 const TP_TYPES = ['Trigger', 'Accelerator', 'Symptom', 'Legitimacy turning point', 'Decisive break']
 
-export default function Act8({ initialAnswers, isCompleted, onSubmit, onSave }) {
+export default function Act8({ initialAnswers, isCompleted, onSubmit, onSave, sentenceStarters = [] }) {
   const [classifications, setClassifications] = useState(initialAnswers?.classifications ?? {})
   const [response,        setResponse]        = useState(initialAnswers?.response        ?? '')
   const [saveStatus,      setSaveStatus]      = useState(
     (initialAnswers?.response?.trim()) ? 'saved' : 'not-started'
   )
+  const textRef = useRef(null)
 
   const state = () => ({ classifications, response })
+
+  const appendStarter = (starter) => {
+    const next = response ? `${response}\n\n${starter}` : starter
+    setResponse(next)
+    setSaveStatus('unsaved')
+    onSave({ ...state(), response: next })
+    setTimeout(() => textRef.current?.focus(), 50)
+  }
 
   const setClass = (id, val) => {
     const next = { ...classifications, [id]: val }
@@ -73,12 +83,13 @@ export default function Act8({ initialAnswers, isCompleted, onSubmit, onSave }) 
       </div>
       <div className={s.responseField}>
         <label className={s.responseFieldLabel}>My turning-point judgement</label>
+        <StarterChips starters={sentenceStarters} onInsert={appendStarter} disabled={isCompleted} />
         <textarea
+          ref={textRef}
           className={s.responseTextarea}
           value={response}
           onChange={e => { setResponse(e.target.value); setSaveStatus('unsaved') }}
           onBlur={handleBlur}
-          placeholder="Was there one decisive turning point, or did monarchy collapse through accumulated pressures? Justify your classifications…"
           disabled={isCompleted}
         />
       </div>

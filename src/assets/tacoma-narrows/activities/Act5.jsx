@@ -1,5 +1,6 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import styles from '../TacomaNarrows.module.css'
+import StarterChips from '../../../lab-shell/StarterChips/StarterChips.jsx'
 
 function wordCount(text) {
   return text.trim().split(/\s+/).filter(w => w.length > 0).length
@@ -11,11 +12,18 @@ function wordCountLabel(n) {
   return `${n} words ✓`
 }
 
-export default function Act5({ initialAnswers, isCompleted, onSubmit, onClose }) {
+export default function Act5({ initialAnswers, isCompleted, onSubmit, onClose, sentenceStarters = [] }) {
   const [response, setResponse] = useState(initialAnswers?.response ?? '')
   const [error, setError]       = useState('')
+  const textRef = useRef(null)
 
   const wc = wordCount(response)
+
+  const appendStarter = (starter) => {
+    setResponse(prev => prev ? `${prev}\n\n${starter}` : starter)
+    setError('')
+    setTimeout(() => textRef.current?.focus(), 50)
+  }
 
   function handleSubmit() {
     if (response.trim().length < 20) {
@@ -28,7 +36,9 @@ export default function Act5({ initialAnswers, isCompleted, onSubmit, onClose })
 
   return (
     <>
+      <StarterChips starters={sentenceStarters} onInsert={appendStarter} disabled={isCompleted} />
       <textarea
+        ref={textRef}
         className={`${styles.textarea} ${styles.textareaLg}`}
         rows={8}
         value={response}

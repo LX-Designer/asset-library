@@ -1,17 +1,18 @@
 import { useState, useRef } from 'react'
 import s from './activities.module.css'
+import StarterChips from '../../../lab-shell/StarterChips/StarterChips.jsx'
 
-/**
- * Shared activity form for the Market Investigation Dossier.
- *
- * Receives the full activity data object and compare guidance, plus the
- * standard shell form props (initialAnswers, isCompleted, onSubmit, onSave).
- */
 export default function ActivityForm({ activity, guidance, initialAnswers, isCompleted, onSubmit }) {
   const initial = typeof initialAnswers === 'string' ? initialAnswers : ''
   const [text, setText] = useState(initial)
   const [savedStatus, setSavedStatus] = useState(isCompleted ? 'Response saved' : '')
-  const timerRef = useRef(null)
+  const timerRef  = useRef(null)
+  const textRef   = useRef(null)
+
+  const appendStarter = (starter) => {
+    setText(prev => prev ? `${prev}\n\n${starter}` : starter)
+    setTimeout(() => textRef.current?.focus(), 50)
+  }
 
   function handleSave() {
     onSubmit(text)
@@ -20,66 +21,54 @@ export default function ActivityForm({ activity, guidance, initialAnswers, isCom
     timerRef.current = setTimeout(() => setSavedStatus(''), 2000)
   }
 
+  const hasScaffolding = activity.responseGuide || activity.miniExample || activity.answerFrame || activity.rankingFrame
+
   return (
     <div>
-      {/* Problem box — the main investigative question */}
-      {activity.prompt && (
-        <div className={s.problemBox}>
-          <span className={s.boxLabel}>Problem</span>
-          <p className={s.boxText}>{activity.prompt}</p>
-        </div>
+      {hasScaffolding && (
+        <details className={s.scaffoldDetails}>
+          <summary className={s.scaffoldSummary}>Need help?</summary>
+          <div className={s.scaffoldContent}>
+            {activity.responseGuide && (
+              <div className={s.guidance}>
+                <strong>Response guidance</strong>
+                <p>{activity.responseGuide}</p>
+              </div>
+            )}
+            {activity.miniExample && (
+              <div className={s.miniExample}>
+                <strong>Mini-example</strong>
+                <p>{activity.miniExample}</p>
+              </div>
+            )}
+            {activity.answerFrame && !activity.rankingFrame && (
+              <div className={s.answerFrame}>
+                <strong>Suggested answer structure</strong>
+                <ul>
+                  {activity.answerFrame.map((item, i) => <li key={i}>{item}</li>)}
+                </ul>
+              </div>
+            )}
+            {activity.rankingFrame && (
+              <div className={`${s.answerFrame} ${s.rankingFrame}`}>
+                <strong>Ranking scaffold</strong>
+                <p>Use this to decide which reasons for market failure are strongest, rather than listing everything.</p>
+                <ul>
+                  {activity.rankingFrame.map((item, i) => <li key={i}>{item}</li>)}
+                </ul>
+              </div>
+            )}
+          </div>
+        </details>
       )}
 
-      {/* Your task box — detailed instructions for what to write */}
-      {activity.task && (
-        <div className={s.taskBox}>
-          <span className={s.boxLabel}>Your task</span>
-          <p className={s.boxText}>{activity.task}</p>
-        </div>
-      )}
-
-      {activity.stage && (
-        <span className={s.stageNote}>{activity.stage}</span>
-      )}
-
-      {activity.responseGuide && (
-        <div className={s.guidance}>
-          <strong>Response guidance</strong>
-          <p>{activity.responseGuide}</p>
-        </div>
-      )}
-
-      {activity.miniExample && (
-        <div className={s.miniExample}>
-          <strong>Mini-example</strong>
-          <p>{activity.miniExample}</p>
-        </div>
-      )}
-
-      {activity.answerFrame && !activity.rankingFrame && (
-        <div className={s.answerFrame}>
-          <strong>Suggested answer structure</strong>
-          <ul>
-            {activity.answerFrame.map((item, i) => <li key={i}>{item}</li>)}
-          </ul>
-        </div>
-      )}
-
-      {activity.rankingFrame && (
-        <div className={`${s.answerFrame} ${s.rankingFrame}`}>
-          <strong>Ranking scaffold</strong>
-          <p>Use this to decide which reasons for market failure are strongest, rather than listing everything.</p>
-          <ul>
-            {activity.rankingFrame.map((item, i) => <li key={i}>{item}</li>)}
-          </ul>
-        </div>
-      )}
+      <StarterChips starters={activity.sentenceStarters ?? []} onInsert={appendStarter} disabled={isCompleted} />
 
       <label style={{ display: 'block', fontWeight: 750, fontSize: '0.92rem', color: 'var(--econ-navy, #10162d)' }}>
         Your response
         <textarea
+          ref={textRef}
           className={s.textarea}
-          placeholder="Write your response here…"
           value={text}
           onChange={e => setText(e.target.value)}
         />

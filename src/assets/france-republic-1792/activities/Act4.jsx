@@ -1,5 +1,6 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import s from '../FranceRepublic.module.css'
+import StarterChips from '../../../lab-shell/StarterChips/StarterChips.jsx'
 
 const SaveStatus = ({ status }) => (
   <span className={`${s.saveStatus} ${status === 'saved' ? s.saved : status === 'unsaved' ? s.unsaved : ''}`}>
@@ -16,14 +17,23 @@ const OPPOSITION_TAGS = [
   'Counter-revolutionary press and pamphlets',
 ]
 
-export default function Act4({ initialAnswers, isCompleted, onSubmit, onSave }) {
+export default function Act4({ initialAnswers, isCompleted, onSubmit, onSave, sentenceStarters = [] }) {
   const [tags,       setTags]       = useState(initialAnswers?.tags     ?? [])
   const [response,   setResponse]   = useState(initialAnswers?.response ?? '')
   const [saveStatus, setSaveStatus] = useState(
     (initialAnswers?.response?.trim()) ? 'saved' : 'not-started'
   )
+  const textRef = useRef(null)
 
   const state = () => ({ tags, response })
+
+  const appendStarter = (starter) => {
+    const next = response ? `${response}\n\n${starter}` : starter
+    setResponse(next)
+    setSaveStatus('unsaved')
+    onSave({ ...state(), response: next })
+    setTimeout(() => textRef.current?.focus(), 50)
+  }
 
   const toggleTag = (t) => {
     const next = tags.includes(t) ? tags.filter(x => x !== t) : [...tags, t]
@@ -62,12 +72,13 @@ export default function Act4({ initialAnswers, isCompleted, onSubmit, onSave }) 
       </div>
       <div className={s.responseField}>
         <label className={s.responseFieldLabel}>Why counter-revolution failed</label>
+        <StarterChips starters={sentenceStarters} onInsert={appendStarter} disabled={isCompleted} />
         <textarea
+          ref={textRef}
           className={s.responseTextarea}
           value={response}
           onChange={e => { setResponse(e.target.value); setSaveStatus('unsaved') }}
           onBlur={handleBlur}
-          placeholder="For each group you selected, explain why they opposed the Revolution and why they failed to stop the move toward republic…"
           disabled={isCompleted}
         />
       </div>

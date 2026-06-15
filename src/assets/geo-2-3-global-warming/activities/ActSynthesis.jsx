@@ -1,18 +1,7 @@
 import { useState, useRef, useContext } from 'react'
 import { GWCtx } from '../GWContext.js'
 import s from '../GlobalWarming.module.css'
-
-const SENTENCE_STARTERS = [
-  'The temperature record since 1850 shows…',
-  'Natural factors — including solar variability, volcanic eruptions, and ENSO — can account for…',
-  'However, natural factors cannot explain…',
-  'The enhanced greenhouse effect, driven by…',
-  'The post-1950 divergence between solar irradiance and temperature shows…',
-  'The GHG fingerprint (tropospheric warming + stratospheric cooling) distinguishes…',
-  'The most significant factor is… because…',
-  'Natural variability remains… but the anthropogenic signal…',
-  'Uncertainty remains in… but the qualitative conclusion…',
-]
+import StarterChips from '../../../lab-shell/StarterChips/StarterChips.jsx'
 
 const PREV_RESPONSES = [
   { actId: 'act-1', key: 'response',  label: 'Activity 1 — Anomaly observation' },
@@ -35,7 +24,7 @@ function wordCount(text) {
   return text.trim().split(/\s+/).filter(Boolean).length
 }
 
-export default function ActSynthesis({ initialAnswers, isCompleted, onSubmit, onSave }) {
+export default function ActSynthesis({ initialAnswers, isCompleted, onSubmit, onSave, sentenceStarters = [] }) {
   const { responses } = useContext(GWCtx)
   const [response, setResponse] = useState(initialAnswers?.response ?? '')
   const [saveStatus, setSaveStatus] = useState(
@@ -104,23 +93,7 @@ export default function ActSynthesis({ initialAnswers, isCompleted, onSubmit, on
         })}
       </div>
 
-      {/* ── Sentence starters ── */}
-      <div className={s.starterSection}>
-        <div className={s.starterTitle}>Sentence starters — click to insert</div>
-        <div className={s.starterChips}>
-          {SENTENCE_STARTERS.map(st => (
-            <button
-              key={st}
-              type="button"
-              className={s.starterChip}
-              onClick={() => appendStarter(st)}
-              disabled={isCompleted}
-            >
-              {st}
-            </button>
-          ))}
-        </div>
-      </div>
+      <StarterChips starters={sentenceStarters} onInsert={appendStarter} disabled={isCompleted} />
 
       {/* ── Main writing area ── */}
       <label className={s.actLabel} htmlFor="act-synthesis-response">
@@ -133,7 +106,7 @@ export default function ActSynthesis({ initialAnswers, isCompleted, onSubmit, on
         value={response}
         onChange={handleChange}
         onBlur={handleBlur}
-        placeholder="The temperature record since 1850 shows a warming trend that accelerates sharply after approximately 1950. Natural factors — including solar variability, volcanic eruptions, and ENSO cycles — can account for…"
+        placeholder=""
         disabled={isCompleted}
         rows={10}
       />

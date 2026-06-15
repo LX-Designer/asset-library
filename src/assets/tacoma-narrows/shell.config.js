@@ -75,6 +75,10 @@ export default {
       purpose: 'Evaluate a specific quantitative claim using evidence from the data tables. The resonance explanation stands or falls on whether the frequencies match.',
       prompt: 'Use the data in §03 to evaluate whether the resonance explanation is consistent with what was recorded on the day of the collapse.',
       scaffold: 'Read §03 carefully before attempting. Pay attention to all three frequency values.',
+      sentenceStarters: [
+        'The resonance explanation predicts that… however, the data in §03 shows…',
+        'The recorded [wind / oscillation / natural] frequency [supports / contradicts] the resonance explanation because…',
+      ],
       conceptLinks: [
         { id: 'oscillation',     title: 'Oscillation and natural frequency' },
         { id: 'resonance',       title: 'Resonance' },
@@ -92,6 +96,10 @@ export default {
       purpose: 'Identify the two distinct phases of bridge behaviour and consider whether a single explanation can account for both.',
       prompt: 'The incident data reveals two distinct phases on the day of collapse. Identify what changed between them and consider what this means for how the failure mechanism is explained.',
       scaffold: 'Read the timeline in §03 before attempting.',
+      sentenceStarters: [
+        'In the first phase, the bridge was exhibiting… In the second phase, this changed to…',
+        'The shift between phases suggests that a single explanation [can / cannot] account for both because…',
+      ],
       conceptLinks: [
         { id: 'oscillation', title: 'Oscillation and natural frequency' },
         { id: 'torsion',     title: 'Torsional oscillation' },
@@ -109,6 +117,10 @@ export default {
       purpose: 'Trace how a specific engineering decision — the solid plate girder — created the aerodynamic conditions that led to collapse.',
       prompt: 'Explain the physical consequences of replacing the 7.6m open-lattice trusses with 2.4m solid plate girders.',
       scaffold: 'Read §02 and §04 before attempting.',
+      sentenceStarters: [
+        'Replacing the open-lattice trusses with solid plate girders increased aerodynamic drag because…',
+        'This design change affected the bridge\'s behaviour by… which made it vulnerable to…',
+      ],
       conceptLinks: [
         { id: 'torsion',  title: 'Torsional oscillation' },
         { id: 'flutter',  title: 'Aeroelastic flutter' },
@@ -126,6 +138,10 @@ export default {
       purpose: 'Weigh two competing expert accounts using the evidence in the case file. One is correct; the other relies on a claim the data directly contradicts.',
       prompt: 'Evaluate the statements of Dr. Brandt and Dr. Osei-Mensah. Which account is better supported by the evidence? Identify the specific claim that undermines the weaker argument.',
       scaffold: 'Read §05 alongside the data in §03 before attempting.',
+      sentenceStarters: [
+        'Dr. [X]\'s account is better supported by the evidence because…',
+        'The specific claim in Dr. [X]\'s statement that is directly contradicted by the data is…',
+      ],
       conceptLinks: [
         { id: 'resonance',       title: 'Resonance' },
         { id: 'vortex-shedding', title: 'Vortex shedding' },
@@ -145,6 +161,11 @@ export default {
       purpose: 'Bring together your analysis into a structured written finding for the inquiry tribunal. Aim for approximately 200 words.',
       prompt: 'Write your tribunal report. Address the actual failure mechanism, identify where the engineers\' model was incomplete, and recommend one design change that would have prevented a recurrence.',
       scaffold: 'Use the full case file. Draw on all previous activities.',
+      sentenceStarters: [
+        'The Tacoma Narrows Bridge failed due to… not… because the data shows…',
+        'The engineers\' model was incomplete in that it failed to account for…',
+        'To prevent a recurrence, the bridge should have been designed to… because…',
+      ],
       conceptLinks: [
         { id: 'oscillation',     title: 'Oscillation and natural frequency' },
         { id: 'resonance',       title: 'Resonance' },

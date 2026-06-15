@@ -1,5 +1,6 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import s from '../FranceRepublic.module.css'
+import StarterChips from '../../../lab-shell/StarterChips/StarterChips.jsx'
 
 const SaveStatus = ({ status }) => (
   <span className={`${s.saveStatus} ${status === 'saved' ? s.saved : status === 'unsaved' ? s.unsaved : ''}`}>
@@ -18,14 +19,23 @@ const WAR_FACTORS = [
   'September Massacres — breakdown of authority',
 ]
 
-export default function Act7({ initialAnswers, isCompleted, onSubmit, onSave }) {
+export default function Act7({ initialAnswers, isCompleted, onSubmit, onSave, sentenceStarters = [] }) {
   const [factors,    setFactors]    = useState(initialAnswers?.factors   ?? [])
   const [response,   setResponse]   = useState(initialAnswers?.response  ?? '')
   const [saveStatus, setSaveStatus] = useState(
     (initialAnswers?.response?.trim()) ? 'saved' : 'not-started'
   )
+  const textRef = useRef(null)
 
   const state = () => ({ factors, response })
+
+  const appendStarter = (starter) => {
+    const next = response ? `${response}\n\n${starter}` : starter
+    setResponse(next)
+    setSaveStatus('unsaved')
+    onSave({ ...state(), response: next })
+    setTimeout(() => textRef.current?.focus(), 50)
+  }
 
   const toggleFactor = (f) => {
     const next = factors.includes(f) ? factors.filter(x => x !== f) : [...factors, f]
@@ -64,12 +74,13 @@ export default function Act7({ initialAnswers, isCompleted, onSubmit, onSave }) 
       </div>
       <div className={s.responseField}>
         <label className={s.responseFieldLabel}>My explanation of war and radicalisation</label>
+        <StarterChips starters={sentenceStarters} onInsert={appendStarter} disabled={isCompleted} />
         <textarea
+          ref={textRef}
           className={s.responseTextarea}
           value={response}
           onChange={e => { setResponse(e.target.value); setSaveStatus('unsaved') }}
           onBlur={handleBlur}
-          placeholder="Explain how war connected with suspicion, popular pressure, counter-revolution, and the collapse of monarchy…"
           disabled={isCompleted}
         />
       </div>

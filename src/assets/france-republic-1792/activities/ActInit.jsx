@@ -1,5 +1,6 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import s from '../FranceRepublic.module.css'
+import StarterChips from '../../../lab-shell/StarterChips/StarterChips.jsx'
 
 const SaveStatus = ({ status }) => (
   <span className={`${s.saveStatus} ${status === 'saved' ? s.saved : status === 'unsaved' ? s.unsaved : ''}`}>
@@ -7,14 +8,23 @@ const SaveStatus = ({ status }) => (
   </span>
 )
 
-export default function ActInit({ initialAnswers, isCompleted, onSubmit, onSave }) {
+export default function ActInit({ initialAnswers, isCompleted, onSubmit, onSave, sentenceStarters = [] }) {
   const [text,       setText]       = useState(initialAnswers?.text       ?? '')
   const [confidence, setConfidence] = useState(initialAnswers?.confidence ?? null)
   const [saveStatus, setSaveStatus] = useState(
     (initialAnswers?.text?.trim() || initialAnswers?.confidence != null) ? 'saved' : 'not-started'
   )
+  const textRef = useRef(null)
 
   const state = () => ({ text, confidence })
+
+  const appendStarter = (starter) => {
+    const next = text ? `${text}\n\n${starter}` : starter
+    setText(next)
+    setSaveStatus('unsaved')
+    onSave({ confidence, text: next })
+    setTimeout(() => textRef.current?.focus(), 50)
+  }
 
   const handleTextBlur = () => {
     onSave({ ...state(), text })
@@ -37,12 +47,13 @@ export default function ActInit({ initialAnswers, isCompleted, onSubmit, onSave 
     <form onSubmit={handleSubmit}>
       <div className={s.responseField}>
         <label className={s.responseFieldLabel}>My starting judgement</label>
+        <StarterChips starters={sentenceStarters} onInsert={appendStarter} disabled={isCompleted} />
         <textarea
+          ref={textRef}
           className={s.responseTextarea}
           value={text}
           onChange={e => { setText(e.target.value); setSaveStatus('unsaved') }}
           onBlur={handleTextBlur}
-          placeholder="Before examining the evidence, what do you think was the main reason France became a republic by 1792?"
           aria-label="Starting judgement"
           disabled={isCompleted}
         />

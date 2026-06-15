@@ -1,6 +1,7 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import s from '../FranceRepublic.module.css'
 import { REFORMS } from '../data.js'
+import StarterChips from '../../../lab-shell/StarterChips/StarterChips.jsx'
 
 const SaveStatus = ({ status }) => (
   <span className={`${s.saveStatus} ${status === 'saved' ? s.saved : status === 'unsaved' ? s.unsaved : ''}`}>
@@ -10,14 +11,23 @@ const SaveStatus = ({ status }) => (
 
 const CAT_LABELS = { S: 'Stabilised', D: 'Destabilised', B: 'Both' }
 
-export default function Act5({ initialAnswers, isCompleted, onSubmit, onSave }) {
+export default function Act5({ initialAnswers, isCompleted, onSubmit, onSave, sentenceStarters = [] }) {
   const [categories, setCategories] = useState(initialAnswers?.categories ?? {})
   const [response,   setResponse]   = useState(initialAnswers?.response   ?? '')
   const [saveStatus, setSaveStatus] = useState(
     (initialAnswers?.response?.trim()) ? 'saved' : 'not-started'
   )
+  const textRef = useRef(null)
 
   const state = () => ({ categories, response })
+
+  const appendStarter = (starter) => {
+    const next = response ? `${response}\n\n${starter}` : starter
+    setResponse(next)
+    setSaveStatus('unsaved')
+    onSave({ ...state(), response: next })
+    setTimeout(() => textRef.current?.focus(), 50)
+  }
 
   const setCategory = (reformId, cat) => {
     const next = { ...categories, [reformId]: cat }
@@ -70,12 +80,13 @@ export default function Act5({ initialAnswers, isCompleted, onSubmit, onSave }) 
       </div>
       <div className={s.responseField}>
         <label className={s.responseFieldLabel}>My reform judgement</label>
+        <StarterChips starters={sentenceStarters} onInsert={appendStarter} disabled={isCompleted} />
         <textarea
+          ref={textRef}
           className={s.responseTextarea}
           value={response}
           onChange={e => { setResponse(e.target.value); setSaveStatus('unsaved') }}
           onBlur={handleBlur}
-          placeholder="Explain your categorisations. How did the reforms you chose affect the survival of constitutional monarchy?"
           disabled={isCompleted}
         />
       </div>

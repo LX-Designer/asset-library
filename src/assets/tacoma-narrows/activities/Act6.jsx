@@ -1,5 +1,6 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import styles from '../TacomaNarrows.module.css'
+import StarterChips from '../../../lab-shell/StarterChips/StarterChips.jsx'
 
 function wordCount(text) {
   return text.trim().split(/\s+/).filter(w => w.length > 0).length
@@ -12,11 +13,17 @@ function wordCountLabel(n) {
   return `${n} words ✓`
 }
 
-export default function Act6({ initialAnswers, isCompleted, onSubmit, onClose }) {
+export default function Act6({ initialAnswers, isCompleted, onSubmit, onClose, sentenceStarters = [] }) {
   const [report,    setReport]    = useState(initialAnswers?.report   ?? '')
   const [error,     setError]     = useState('')
-  // Track whether feedback has been requested this session or was previously saved
   const [submitted, setSubmitted] = useState(!!initialAnswers?.feedback)
+  const textRef = useRef(null)
+
+  const appendStarter = (starter) => {
+    setReport(prev => prev ? `${prev}\n\n${starter}` : starter)
+    setError('')
+    setTimeout(() => textRef.current?.focus(), 50)
+  }
 
   const wc = wordCount(report)
 
@@ -46,11 +53,12 @@ export default function Act6({ initialAnswers, isCompleted, onSubmit, onClose })
       <label className={styles.inputLabel} htmlFor="tribunal-text">
         Tribunal Report — Case 1940-TN-001
       </label>
+      <StarterChips starters={sentenceStarters} onInsert={appendStarter} disabled={isCompleted} />
       <textarea
         id="tribunal-text"
+        ref={textRef}
         className={`${styles.textarea} ${styles.textareaLg}`}
         rows={10}
-        placeholder={"To the inquiry tribunal,\n\nHaving reviewed the evidence in this case file, I find that…"}
         value={report}
         onChange={e => { setReport(e.target.value); setError('') }}
       />

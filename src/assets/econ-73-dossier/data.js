@@ -117,6 +117,11 @@ export const activities = [
     prompt: "The scooter companies argue that the market is efficient because consumers are choosing the service, prices are low, and firms are competing to lower costs. What evidence in the case file supports this argument?",
     task: "Identify evidence that could suggest productive efficiency, allocative efficiency, or dynamic efficiency. Use the data snapshot and evidence cards, then add one caution about why this evidence may not prove full market efficiency.",
     responseGuide: "Aim for 4–6 sentences. Organise your answer by efficiency type, then add one caution about why the evidence may not prove full social efficiency.",
+    sentenceStarters: [
+      'Evidence of productive efficiency includes… because the data shows that…',
+      'The market may be allocatively efficient because… however, this assumes…',
+      'A key limitation of this efficiency argument is that…',
+    ],
     answerFrame: ["Evidence I found: ...", "The type of efficiency this relates to, and why: ...", "One limitation of this argument: ..."],
     tools: ["productive", "allocative", "dynamic"],
     review: [
@@ -133,6 +138,11 @@ export const activities = [
     task: "Explain the difference using the case evidence. Use the condition for each type: productive efficiency means producing at the lowest possible average cost; allocative efficiency means P = MC in a private market, or MSB = MSC when wider social costs and benefits are included. Show why productive efficiency alone is not enough to prove the market is efficient overall.",
     responseGuide: "Aim for one developed paragraph of 5–7 sentences. Define both concepts, state both conditions, then use one cost-efficiency example and one social-cost example.",
     miniExample: "If a ride costs the user $4.20 but creates an extra $1.10 in social costs, the market price may be too low. High demand at that price does not prove allocative efficiency because the decision is based on private cost, not full social cost.",
+    sentenceStarters: [
+      'Productive efficiency means firms produce at the lowest average cost — in this market, this may be shown by…',
+      'However, a productively efficient market is not necessarily allocatively efficient because…',
+      'The ride price of $4.20 may not reflect allocative efficiency because the full social cost includes…',
+    ],
     answerFrame: ["Productive efficiency means ... The condition is ...", "In the scooter case, this may be shown by ...", "Allocative efficiency means ... The condition is ...", "However, the market may not be allocatively efficient because ..."],
     tools: ["productive", "allocative", "failure"],
     review: [
@@ -148,6 +158,11 @@ export const activities = [
     prompt: "Identify the strongest evidence that the scooter market may be failing. Which possible reasons for market failure are most relevant, and which are weaker or less central?",
     task: "First scan all listed reasons for market failure in the toolkit. Then choose the two or three strongest possible causes in this case and justify each one using evidence from the case file. Briefly explain why some other causes are less central.",
     responseGuide: "Aim for 2–3 short paragraphs. Do not list every possible cause. Rank the reasons and explain why the strongest ones matter most in this case.",
+    sentenceStarters: [
+      'The strongest evidence of market failure is… because this shows a gap between private cost and…',
+      'This constitutes [externality / information failure / monopoly power] because…',
+      'A weaker cause in this case is… because…',
+    ],
     rankingFrame: ["Most convincing possible reason: ... because the evidence shows ...", "Second strongest possible reason: ... because ...", "Possible but weaker reason: ...", "Reason I would not focus on: ... because ..."],
     tools: ["failure", "reasons", "allocative"],
     review: [
@@ -164,6 +179,11 @@ export const activities = [
     task: "Use Pareto optimality to analyse at least one policy option. Identify likely winners and losers. Remember: a policy can increase overall welfare without being a Pareto improvement if someone is made worse off.",
     responseGuide: "Aim for one clear paragraph. Name one policy option, identify who benefits, identify who may lose, then judge whether it is a Pareto improvement or simply a trade-off.",
     miniExample: "Parking zones may help pedestrians and residents by reducing clutter, but if they make scooters less convenient for some users, the policy is not a Pareto improvement — even if it improves overall welfare.",
+    sentenceStarters: [
+      'The policy I am analysing is… It could make… better off because…',
+      'However, it could make… worse off because…',
+      'This [is / is not] a Pareto improvement because…',
+    ],
     answerFrame: ["The policy I am testing is ...", "It could make ... better off because ...", "It could make ... worse off because ...", "Therefore, this is / is not a Pareto improvement because ..."],
     tools: ["pareto"],
     review: [
@@ -179,6 +199,11 @@ export const activities = [
     prompt: "Some economists argue that intervention could reduce innovation, while others argue that regulation could make the market safer and more sustainable. How does dynamic efficiency complicate the decision?",
     task: "Explain how short-run and long-run efficiency might differ. Consider whether intervention could weaken innovation or redirect it towards safer, cleaner, better-managed services.",
     responseGuide: "Aim for one developed paragraph. Compare a possible short-run cost of intervention with a possible long-run benefit for innovation, safety, or sustainability.",
+    sentenceStarters: [
+      'In the short run, intervention could… because…',
+      'In the long run, well-designed regulation could… which would improve dynamic efficiency by…',
+      'This matters for dynamic efficiency because…',
+    ],
     answerFrame: ["In the short run, intervention could ...", "In the long run, regulation could ...", "This matters for dynamic efficiency because ...", "Overall, dynamic efficiency makes the decision more complex because ..."],
     tools: ["dynamic", "pareto"],
     review: [
@@ -194,6 +219,12 @@ export const activities = [
     prompt: "The city government asks for your advice. Is the market working efficiently, partly failing, or seriously failing? Should the government intervene?",
     task: "After reviewing the Adviser briefing on the page, write a short recommendation using productive efficiency, allocative efficiency, Pareto optimality, dynamic efficiency, and market failure. Refer to evidence from the case file and explain whether intervention is justified.",
     responseGuide: "Aim for 2–4 concise paragraphs, like a short policy recommendation. Choose a clear judgement and a proportionate response: no intervention, light intervention, targeted regulation, or stronger intervention.",
+    sentenceStarters: [
+      'My judgement is that this market is [working efficiently / partly failing / seriously failing] because…',
+      'The strongest evidence for [efficiency / market failure] in this case is…',
+      'I recommend [no intervention / light intervention / targeted regulation] because…',
+      'The key trade-off in this recommendation is…',
+    ],
     answerFrame: ["My judgement: the market is [efficient / partly failing / seriously failing] because ...", "The strongest evidence for [efficiency / market failure] is ...", "I recommend [no intervention / light intervention / targeted regulation / stronger intervention] because ...", "The key trade-off in this decision is ..."],
     tools: ["productive", "allocative", "pareto", "dynamic", "failure", "reasons"],
     review: [
@@ -209,6 +240,11 @@ export const activities = [
     prompt: "How did your judgement develop as you moved through the dossier? Which concept helped you understand the case most clearly?",
     task: "Look back at your saved responses in the Adviser briefing. Where did your thinking become more precise as you moved through the stages? Reflect on what changed your view, what evidence complicated your reasoning, and which concept helped most.",
     responseGuide: "Aim for 4–6 sentences. Focus on how your reasoning changed or became more precise — not just on repeating your final recommendation.",
+    sentenceStarters: [
+      'When I started, I thought… but my view shifted when…',
+      'The concept that helped me understand this case most clearly was… because…',
+      'I am still uncertain about… because the evidence does not clearly show…',
+    ],
     answerFrame: ["When I started, I thought ...", "My view shifted when ...", "The concept that helped most was ... because ...", "I am still uncertain about ..."],
     tools: ["productive", "allocative", "pareto", "dynamic", "failure"],
     review: [

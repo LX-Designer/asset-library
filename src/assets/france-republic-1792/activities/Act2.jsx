@@ -1,5 +1,6 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import s from '../FranceRepublic.module.css'
+import StarterChips from '../../../lab-shell/StarterChips/StarterChips.jsx'
 
 const SaveStatus = ({ status }) => (
   <span className={`${s.saveStatus} ${status === 'saved' ? s.saved : status === 'unsaved' ? s.unsaved : ''}`}>
@@ -18,14 +19,23 @@ const PATHWAY_STEPS = [
   { id: 'ps8', text: 'Convention abolishes monarchy and declares the republic (21–22 September 1792)' },
 ]
 
-export default function Act2({ initialAnswers, isCompleted, onSubmit, onSave }) {
+export default function Act2({ initialAnswers, isCompleted, onSubmit, onSave, sentenceStarters = [] }) {
   const [pathway,    setPathway]    = useState(initialAnswers?.pathway   ?? [])
   const [response,   setResponse]   = useState(initialAnswers?.response  ?? '')
   const [saveStatus, setSaveStatus] = useState(
     (initialAnswers?.response?.trim()) ? 'saved' : 'not-started'
   )
+  const textRef = useRef(null)
 
   const state = () => ({ pathway, response })
+
+  const appendStarter = (starter) => {
+    const next = response ? `${response}\n\n${starter}` : starter
+    setResponse(next)
+    setSaveStatus('unsaved')
+    onSave({ ...state(), response: next })
+    setTimeout(() => textRef.current?.focus(), 50)
+  }
 
   const toggle = (id) => {
     const next = pathway.includes(id) ? pathway.filter(x => x !== id) : [...pathway, id]
@@ -63,12 +73,13 @@ export default function Act2({ initialAnswers, isCompleted, onSubmit, onSave }) 
       </div>
       <div className={s.responseField}>
         <label className={s.responseFieldLabel}>My explanation of how monarchy collapsed</label>
+        <StarterChips starters={sentenceStarters} onInsert={appendStarter} disabled={isCompleted} />
         <textarea
+          ref={textRef}
           className={s.responseTextarea}
           value={response}
           onChange={e => { setResponse(e.target.value); setSaveStatus('unsaved') }}
           onBlur={handleBlur}
-          placeholder="Explain the political pathway from constitutional monarchy to republic. Focus on institutions, events, and decisions…"
           disabled={isCompleted}
         />
       </div>

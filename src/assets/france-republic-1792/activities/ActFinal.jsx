@@ -1,23 +1,13 @@
 import { useState, useRef, useContext } from 'react'
 import s from '../FranceRepublic.module.css'
 import { FranceCtx } from '../FranceContext.js'
+import StarterChips from '../../../lab-shell/StarterChips/StarterChips.jsx'
 
 const SaveStatus = ({ status }) => (
   <span className={`${s.saveStatus} ${status === 'saved' ? s.saved : status === 'unsaved' ? s.unsaved : ''}`}>
     {status === 'saved' ? 'Saved' : status === 'unsaved' ? 'Unsaved changes' : 'Not started'}
   </span>
 )
-
-const SENTENCE_STARTERS = [
-  'In 1789, France did not immediately become a republic because…',
-  'The political pathway from constitutional monarchy to republic involved…',
-  'Constitutional monarchy became harder to sustain because…',
-  'One important factor was…',
-  'This interacted with…',
-  'A major turning point was…',
-  'However, this was / was not decisive by itself because…',
-  'Overall, France became a republic by 1792 because…',
-]
 
 const EVIDENCE_CHECK_ITEMS = [
   'Revolutionary groups', 'Counter-revolution', 'Reforms', 'Distrust of the King / Varennes',
@@ -34,7 +24,7 @@ const PREV_RESPONSES = [
   { label: 'Activity 9 — Ranked causes',            actId: 'act9', key: 'response' },
 ]
 
-export default function ActFinal({ initialAnswers, isCompleted, onSubmit, onSave }) {
+export default function ActFinal({ initialAnswers, isCompleted, onSubmit, onSave, sentenceStarters = [] }) {
   const { responses } = useContext(FranceCtx)
 
   const [response,   setResponse]   = useState(initialAnswers?.response   ?? '')
@@ -127,17 +117,7 @@ export default function ActFinal({ initialAnswers, isCompleted, onSubmit, onSave
         </div>
       </div>
 
-      {/* ── Sentence starters ── */}
-      <div className={s.synthSection}>
-        <div className={s.synthSectionTitle}>Sentence starters — click to add</div>
-        <div className={s.starterChips}>
-          {SENTENCE_STARTERS.map(st => (
-            <button key={st} type="button" className={s.starterChip} onClick={() => appendStarter(st)} disabled={isCompleted}>
-              {st}
-            </button>
-          ))}
-        </div>
-      </div>
+      <StarterChips starters={sentenceStarters} onInsert={appendStarter} disabled={isCompleted} />
 
       {/* ── Main response ── */}
       <div className={s.responseField}>

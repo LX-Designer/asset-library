@@ -8,27 +8,30 @@ import s from './ActivityModal.module.css'
  * fixed positioning — designed to be hosted inside a FloatingPanel or any
  * other scroll container that provides the outer chrome.
  *
+ * Layout: when the panel is wide enough (≥ 560px), the body splits into two
+ * columns: left (context — purpose, prompt, task, scaffold, chips) and right
+ * (the activity form). At narrow widths the columns stack vertically.
+ *
  * Props:
  *   activityNumber   number | null    — shown as "Activity N" when set
  *   activityLabel    string           — label shown when number is null
  *   thinkingMove     string           — cognitive move label
  *   title            string           — activity h2
  *   purpose          string           — optional "Why this matters" context block
- *                                       (omit or leave empty if the form is self-contained)
  *   prompt           string           — optional task question rendered above the form
- *                                       (omit if the question lives inside the form component)
+ *   task             string           — optional "Your task" instruction block
  *   scaffold         string | null    — optional italic hint shown below the prompt
  *   evidenceSections { id, label }[]          — scroll-to section links
- *   conceptLinks     { id, title }[]          — toolkit concept links (opens concept modal)
+ *   conceptLinks     { id, title }[]          — toolkit concept links
  *   prevItem         { id, label } | null
  *   nextItem         { id, label } | null
- *   onClose          () => void | null        — optional; shows × if provided
- *   onNavigate       (id) => void | null      — prev/next; falls back to onClose(id)
+ *   onClose          () => void | null
+ *   onNavigate       (id) => void | null
  *   onScrollTo       (sectionId) => void
- *   onOpenConcept    (conceptId) => void      — opens concept modal from activity panel
+ *   onOpenConcept    (conceptId) => void
  *   onClear          () => void
- *   noHeader         bool             — skip header div (when FloatingPanel title suffices)
- *   children         ReactNode        — the activity form
+ *   noHeader         bool
+ *   children         ReactNode        — the activity form (right column)
  */
 export default function ActivityModal({
   activityNumber,
@@ -37,6 +40,7 @@ export default function ActivityModal({
   title,
   purpose,
   prompt,
+  task,
   scaffold,
   evidenceSections = [],
   conceptLinks = [],
@@ -64,6 +68,8 @@ export default function ActivityModal({
     ? `Activity ${activityNumber} · ${thinkingMove}`
     : `${activityLabel} · ${thinkingMove}`
 
+  const hasLeftContent = !!(purpose || prompt || task || scaffold || evidenceSections.length || conceptLinks.length)
+
   return (
     <div className={s.panel}>
       {!noHeader && (
@@ -77,54 +83,73 @@ export default function ActivityModal({
       )}
 
       <div className={s.body}>
-        {purpose && (
-          <div className={s.purpose}>
-            <span className={s.purposeLabel}>Why this matters</span>
-            {purpose}
-          </div>
-        )}
+        {hasLeftContent ? (
+          <>
+            <div className={s.leftCol}>
+              {purpose && (
+                <div className={s.purpose}>
+                  <span className={s.purposeLabel}>Why this matters</span>
+                  {purpose}
+                </div>
+              )}
 
-        {prompt && <p className={s.prompt}>{prompt}</p>}
+              {prompt && <p className={s.prompt}>{prompt}</p>}
 
-        {scaffold && (
-          <div className={s.scaffold}>{scaffold}</div>
-        )}
+              {task && (
+                <div className={s.task}>
+                  <span className={s.taskLabel}>Your task</span>
+                  {task}
+                </div>
+              )}
 
-        {evidenceSections.length > 0 && (
-          <div className={s.evidenceLinks}>
-            <div className={s.evidenceLabel}>Go to evidence</div>
-            <div className={s.evidenceBtns}>
-              {evidenceSections.map(({ id, label }) => (
-                <button
-                  key={id}
-                  className={s.evidenceScrollBtn}
-                  onClick={() => onScrollTo?.(id)}
-                >
-                  {label}
-                </button>
-              ))}
+              {scaffold && (
+                <div className={s.scaffold}>{scaffold}</div>
+              )}
+
+              {evidenceSections.length > 0 && (
+                <div className={s.evidenceLinks}>
+                  <div className={s.evidenceLabel}>Go to evidence</div>
+                  <div className={s.evidenceBtns}>
+                    {evidenceSections.map(({ id, label }) => (
+                      <button
+                        key={id}
+                        className={s.evidenceScrollBtn}
+                        onClick={() => onScrollTo?.(id)}
+                      >
+                        {label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {conceptLinks.length > 0 && (
+                <div className={s.conceptLinks}>
+                  <div className={s.conceptLabel}>{conceptsLabel}</div>
+                  <div className={s.conceptBtns}>
+                    {conceptLinks.map(({ id, title }) => (
+                      <button
+                        key={id}
+                        className={s.conceptBtn}
+                        onClick={() => onOpenConcept?.(id)}
+                      >
+                        {title}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
-          </div>
-        )}
 
-        {conceptLinks.length > 0 && (
-          <div className={s.conceptLinks}>
-            <div className={s.conceptLabel}>{conceptsLabel}</div>
-            <div className={s.conceptBtns}>
-              {conceptLinks.map(({ id, title }) => (
-                <button
-                  key={id}
-                  className={s.conceptBtn}
-                  onClick={() => onOpenConcept?.(id)}
-                >
-                  {title}
-                </button>
-              ))}
+            <div className={s.rightCol}>
+              {children}
             </div>
+          </>
+        ) : (
+          <div className={s.rightCol}>
+            {children}
           </div>
         )}
-
-        {children}
       </div>
 
       <div className={s.footer}>

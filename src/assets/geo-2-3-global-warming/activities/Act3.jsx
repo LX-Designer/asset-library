@@ -1,5 +1,6 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import s from '../GlobalWarming.module.css'
+import StarterChips from '../../../lab-shell/StarterChips/StarterChips.jsx'
 
 const FACTORS = [
   {
@@ -19,7 +20,7 @@ const FACTORS = [
   },
 ]
 
-export default function Act3({ initialAnswers, isCompleted, onSubmit, onSave }) {
+export default function Act3({ initialAnswers, isCompleted, onSubmit, onSave, sentenceStarters = [] }) {
   const [fields, setFields] = useState({
     solar:    initialAnswers?.solar    ?? '',
     volcanic: initialAnswers?.volcanic ?? '',
@@ -29,8 +30,20 @@ export default function Act3({ initialAnswers, isCompleted, onSubmit, onSave }) 
   const [saveStatus, setSaveStatus] = useState(
     Object.values(initialAnswers ?? {}).some(v => typeof v === 'string' && v.trim()) ? 'saved' : 'not-started'
   )
+  const lastFocusedKey = useRef('overall')
 
   const state = () => fields
+
+  const appendStarter = (starter) => {
+    const key = lastFocusedKey.current
+    setFields(prev => {
+      const next = prev[key] ? `${prev[key]}\n\n${starter}` : starter
+      const updated = { ...prev, [key]: next }
+      onSave(updated)
+      return updated
+    })
+    setSaveStatus('unsaved')
+  }
 
   const handleChange = (key, value) => {
     setFields(prev => ({ ...prev, [key]: value }))
@@ -57,10 +70,7 @@ export default function Act3({ initialAnswers, isCompleted, onSubmit, onSave }) 
 
   return (
     <form onSubmit={handleSubmit}>
-      <div className={s.actInstruction}>
-        <div className={s.actInstructionLabel}>Your task</div>
-        Examine each of the three natural factors in the Natural Factors section. For each one: describe the mechanism (how it would affect temperature), assess whether its timing and magnitude match the post-1950 warming acceleration, and reach a verdict — can this factor account for what we observe? Then write an overall conclusion: can natural factors, taken together, fully explain the warming since approximately 1950?
-      </div>
+      <StarterChips starters={sentenceStarters} onInsert={appendStarter} disabled={isCompleted} />
 
       {FACTORS.map(factor => (
         <div key={factor.key} className={s.factorGroup}>
@@ -73,8 +83,8 @@ export default function Act3({ initialAnswers, isCompleted, onSubmit, onSave }) 
               className={s.actTextarea}
               value={fields[factor.key]}
               onChange={e => handleChange(factor.key, e.target.value)}
+              onFocus={() => { lastFocusedKey.current = factor.key }}
               onBlur={handleBlur}
-              placeholder={`Mechanism / timing / verdict for ${factor.title.toLowerCase()}…`}
               disabled={isCompleted}
               rows={4}
               aria-label={factor.title}
@@ -93,8 +103,8 @@ export default function Act3({ initialAnswers, isCompleted, onSubmit, onSave }) 
         className={`${s.actTextarea} ${s.actTextareaLarge}`}
         value={fields.overall}
         onChange={e => handleChange('overall', e.target.value)}
+        onFocus={() => { lastFocusedKey.current = 'overall' }}
         onBlur={handleBlur}
-        placeholder="Taken together, natural factors can account for… but cannot explain… because…"
         disabled={isCompleted}
         rows={5}
         aria-label="Overall verdict on natural factors"

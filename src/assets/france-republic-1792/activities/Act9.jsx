@@ -1,6 +1,7 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import s from '../FranceRepublic.module.css'
 import { CAUSE_FACTORS } from '../data.js'
+import StarterChips from '../../../lab-shell/StarterChips/StarterChips.jsx'
 
 const SaveStatus = ({ status }) => (
   <span className={`${s.saveStatus} ${status === 'saved' ? s.saved : status === 'unsaved' ? s.unsaved : ''}`}>
@@ -16,15 +17,24 @@ const MATRIX_COLS = [
   { key: 'republic', label: 'Made republic\nmore likely'  },
 ]
 
-export default function Act9({ initialAnswers, isCompleted, onSubmit, onSave }) {
+export default function Act9({ initialAnswers, isCompleted, onSubmit, onSave, sentenceStarters = [] }) {
   const [matrix,     setMatrix]     = useState(initialAnswers?.matrix   ?? {})
   const [ranked,     setRanked]     = useState(initialAnswers?.ranked   ?? ['', '', ''])
   const [response,   setResponse]   = useState(initialAnswers?.response ?? '')
   const [saveStatus, setSaveStatus] = useState(
     (initialAnswers?.response?.trim()) ? 'saved' : 'not-started'
   )
+  const textRef = useRef(null)
 
   const state = () => ({ matrix, ranked, response })
+
+  const appendStarter = (starter) => {
+    const next = response ? `${response}\n\n${starter}` : starter
+    setResponse(next)
+    setSaveStatus('unsaved')
+    onSave({ ...state(), response: next })
+    setTimeout(() => textRef.current?.focus(), 50)
+  }
 
   const setCell = (factorId, col, val) => {
     const next = { ...matrix, [factorId]: { ...(matrix[factorId] ?? {}), [col]: val } }
@@ -121,12 +131,13 @@ export default function Act9({ initialAnswers, isCompleted, onSubmit, onSave }) 
 
       <div className={s.responseField}>
         <label className={s.responseFieldLabel}>My ranked cause judgement</label>
+        <StarterChips starters={sentenceStarters} onInsert={appendStarter} disabled={isCompleted} />
         <textarea
+          ref={textRef}
           className={s.responseTextarea}
           value={response}
           onChange={e => { setResponse(e.target.value); setSaveStatus('unsaved') }}
           onBlur={handleBlur}
-          placeholder="Explain why you ranked these causes as most significant. How did they interact? Why are they more decisive than the others?"
           disabled={isCompleted}
         />
       </div>

@@ -161,6 +161,9 @@ export default {
       purpose:      'Surface your prior assumptions — especially the idea that the republic was inevitable.',
       prompt:       'Before you examine the dossier, what do you think was the main reason France became a republic by 1792? Make a starting judgement. You can change your view later.',
       scaffold:     'This is a starting hypothesis, not a final answer. There are no wrong answers here.',
+      sentenceStarters: [
+        'Before examining the evidence, I think France became a republic mainly because…',
+      ],
       evidenceSections: [{ id: 'intro', label: 'Inquiry' }],
       required:     false,
     },
@@ -171,6 +174,10 @@ export default {
       purpose:      'Establish the puzzle of why constitutional monarchy failed and disrupt the assumption that republic was inevitable.',
       prompt:       'France did not automatically become a republic in 1789. From the chronology and overview evidence, choose three to five developments that made the old monarchy harder to sustain. For each one, briefly explain what changed.',
       scaffold:     'Focus on changes that weakened the existing political settlement — not just dramatic events.',
+      sentenceStarters: [
+        'One development that made constitutional monarchy harder to sustain was… because…',
+        'This change mattered because it meant that…',
+      ],
       evidenceSections: [
         { id: 'intro',      label: 'Inquiry'    },
         { id: 'chronology', label: 'Chronology' },
@@ -185,6 +192,11 @@ export default {
       purpose:      'Make the "how" of the topic explicit so you explain the political pathway, not only causes.',
       prompt:       'Explain the political pathway by which France moved from constitutional monarchy to republic. Focus on institutions, events, and decisions: the Constitution of 1791, the Legislative Assembly, the fall of the Tuileries, the suspension of the king, the National Convention, and the abolition of monarchy.',
       scaffold:     'Think about sequence and mechanism, not just causes. How did one stage lead to the next?',
+      sentenceStarters: [
+        'The process began with… which meant that…',
+        'A crucial turning point came when… because…',
+        'This sequence of events led to the end of monarchy because…',
+      ],
       evidenceSections: [
         { id: 'chronology',         label: 'Chronology'  },
         { id: 'pathway',            label: 'Pathway'     },
@@ -199,6 +211,10 @@ export default {
       purpose:      'Clarify political divisions inside the Revolution — the Jacobins, Feuillants, and Girondins were not interchangeable.',
       prompt:       'Compare the Jacobins, Feuillants, and Girondins. What did each group want, and how did disagreement between revolutionary groups make a stable constitutional monarchy harder to maintain?',
       scaffold:     'Consider: aims, attitude to monarchy, social base, and why they failed to reach a lasting compromise.',
+      sentenceStarters: [
+        'The most significant difference between the Jacobins and the Girondins was…',
+        'Disagreement between revolutionary groups made constitutional monarchy harder to maintain because…',
+      ],
       evidenceSections: [
         { id: 'groups',    label: 'Groups'  },
         { id: 'glossary',  label: 'Glossary' },
@@ -212,6 +228,10 @@ export default {
       purpose:      'Give counter-revolution a clear causal role, while showing that opposition often strengthened republican arguments rather than halting them.',
       prompt:       'Counter-revolutionaries wanted to halt or reverse the Revolution, but they failed to prevent the republic. Identify who opposed the Revolution, why they opposed it, and why their actions did not save monarchy.',
       scaffold:     'Think about how each form of opposition actually affected revolutionary politics — did it weaken the Revolution, or intensify it?',
+      sentenceStarters: [
+        'Counter-revolutionary actions, such as…, ultimately [strengthened / failed to weaken] the Revolution because…',
+        'The main reason opposition failed to preserve the monarchy was…',
+      ],
       evidenceSections: [
         { id: 'counter-revolution', label: 'Opposition' },
         { id: 'war-radicalisation', label: 'War'        },
@@ -226,6 +246,10 @@ export default {
       purpose:      'Analyse reforms as double-edged: they rebuilt revolutionary France but also disrupted institutions and created resistance.',
       prompt:       'Revolutionary reforms aimed to rebuild France. But did they make France more stable, less stable, or both? Choose at least three reforms and explain how they affected the survival of constitutional monarchy.',
       scaffold:     'A reform can do both at once: strengthen state authority while also creating new enemies or conflicts.',
+      sentenceStarters: [
+        'The [reform] aimed to… but also destabilised France by…',
+        'Overall, revolutionary reforms [did / did not] help constitutional monarchy survive because…',
+      ],
       evidenceSections: [
         { id: 'reforms',            label: 'Reforms'    },
         { id: 'chronology',         label: 'Chronology' },
@@ -240,6 +264,10 @@ export default {
       purpose:      'Examine why legitimacy and trust were central to constitutional monarchy — and why losing them was so damaging.',
       prompt:       'Constitutional monarchy depended on the belief that Louis XVI could be trusted to work within the Revolution. After Varennes and Champ de Mars, was that trust recoverable? Explain your judgement using evidence.',
       scaffold:     'Consider: could Louis have rebuilt trust after Varennes? What would that have required? Why did it not happen?',
+      sentenceStarters: [
+        'After Varennes, trust in Louis XVI [was / was not] recoverable because…',
+        'Even if Louis had… this would not have been enough because…',
+      ],
       evidenceSections: [
         { id: 'king-trust',     label: 'Royal Trust'    },
         { id: 'chronology',     label: 'Chronology'     },
@@ -254,6 +282,11 @@ export default {
       purpose:      'Connect external war to internal fear, suspicion, popular pressure, and political change.',
       prompt:       'War did not just add another event to the sequence. It changed the political atmosphere. Explain how war connected with suspicion, popular pressure, counter-revolution, and the collapse of monarchy.',
       scaffold:     'Think about how each factor interacted with the others — what did war make worse, or make possible, that would not otherwise have happened?',
+      sentenceStarters: [
+        'War radicalised the Revolution by…',
+        'The connection between war and [suspicion / popular pressure / counter-revolution] was that…',
+        'Without the pressure of war, it is possible that… because…',
+      ],
       evidenceSections: [
         { id: 'war-radicalisation', label: 'War'        },
         { id: 'counter-revolution', label: 'Opposition' },
@@ -268,6 +301,11 @@ export default {
       purpose:      'Prevent over-reliance on one dramatic event — help you distinguish trigger, turning point, accelerator, and cumulative process.',
       prompt:       'Was there one decisive turning point, or did monarchy collapse through accumulated pressures? Compare at least four possible turning points and decide whether each was a trigger, accelerator, symptom, or decisive break.',
       scaffold:     'A "decisive break" should be an event without which the republic could not have come about. A "symptom" is something that reflects deeper processes rather than causing them.',
+      sentenceStarters: [
+        'The [event] was a [trigger / accelerator / symptom / decisive break] because…',
+        'Without [event], the republic would / would not have come about because…',
+        'The collapse of monarchy was ultimately [a single turning point / a cumulative process] because…',
+      ],
       evidenceSections: [
         { id: 'turning-points',     label: 'Turning Points' },
         { id: 'chronology',         label: 'Chronology'     },
@@ -283,6 +321,11 @@ export default {
       purpose:      'Prepare for your final judgement by weighing significance rather than just listing causes.',
       prompt:       'Use the cause-weighing matrix to decide which causes mattered most. Do not simply choose the most dramatic event. Think about whether each factor was a background pressure, immediate trigger, accelerator, decisive break, or necessary condition.',
       scaffold:     'Ask of each factor: would the republic have happened without it? If yes, it may be less decisive than it seems.',
+      sentenceStarters: [
+        'The most significant cause was… because without it…',
+        'This factor was more decisive than… because…',
+        'The interaction between [X] and [Y] mattered because…',
+      ],
       evidenceSections: [
         { id: 'cause-map',          label: 'Causes'     },
         { id: 'groups',             label: 'Groups'     },
@@ -304,6 +347,12 @@ export default {
       purpose:      'Synthesise your investigation into a supported historical explanation.',
       prompt:       'How and why did France become a republic by 1792?\n\nIn your answer, explain the political process by which monarchy collapsed, then judge which causes were most significant. Refer to at least three factors, such as revolutionary groups, counter-revolution, reforms, distrust of the King, war, popular pressure, and the National Convention.',
       scaffold:     'Address both parts: HOW (the political pathway) and WHY (the most significant causes). A strong answer weighs causes and avoids treating the republic as inevitable.',
+      sentenceStarters: [
+        'France became a republic through a process in which…',
+        'The most significant cause of this outcome was… because without it…',
+        'While [factor] played an important role, the more decisive cause was… because…',
+        'The collapse of monarchy was not inevitable — it was the result of…',
+      ],
       evidenceSections: [
         { id: 'pathway',        label: 'Pathway'        },
         { id: 'cause-map',      label: 'Causes'         },
@@ -322,6 +371,10 @@ export default {
       purpose:      'Develop your historical reasoning by comparing your starting and final judgements.',
       prompt:       'Compare your starting judgement with your final answer. What changed, what stayed the same, and which evidence most affected your thinking?',
       scaffold:     'Be honest: historical understanding often involves revising confident first assumptions.',
+      sentenceStarters: [
+        'My initial judgement was… but having examined the evidence, I now think…',
+        'The evidence that most changed my thinking was… because…',
+      ],
       evidenceSections: [],
       required:     false,
     },
