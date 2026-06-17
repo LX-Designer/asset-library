@@ -3,7 +3,7 @@ import './tokens.css'
 import LabNav from './LabNav/LabNav.jsx'
 import LabSidebar, { TAB_LABELS } from './LabSidebar/LabSidebar.jsx'
 import ActivityBody from './ActivityPanel/ActivityBody.jsx'
-import EvidenceDock from './EvidenceDock/EvidenceDock.jsx'
+import EvidenceViewer from './EvidenceViewer/EvidenceViewer.jsx'
 import ConceptsModal from './ConceptsModal/ConceptsModal.jsx'
 import { useIsDesktop } from './hooks/useIsDesktop.js'
 import s from './LabShell2.module.css'
@@ -66,11 +66,10 @@ export default function LabShell2({
   const [guideCloseTrigger, setGuideCloseTrigger] = useState(0)
   const [guideOpen, setGuideOpen] = useState(false)  // mobile drawer
 
-  // ── Evidence dock state (right — charts) ─────────────────────────────────────
-  const [activeEvidenceId, setActiveEvidenceId]     = useState(null)
-  const [evidenceDockTrigger, setEvidenceDockTrigger]   = useState(0)
-  const [evidenceCloseTrigger, setEvidenceCloseTrigger] = useState(0)
-  const [evidenceDockedWidth, setEvidenceDockedWidth]   = useState(0)
+  // ── Evidence viewer state ────────────────────────────────────────────────────
+  const [activeEvidenceId, setActiveEvidenceId] = useState(null)
+  const [evidenceViewerOpen, setEvidenceViewerOpen] = useState(false)
+  const [visitedEvidence, setVisitedEvidence] = useState(() => new Set())
 
   // ── Concepts modal state (optional) ──────────────────────────────────────────
   const [activeConceptId, setActiveConceptId]     = useState(null)
@@ -137,20 +136,20 @@ export default function LabShell2({
     window.scrollTo({ top: Math.max(0, top), behavior: prefersReduced ? 'instant' : 'smooth' })
   }, [])
 
-  // ── Evidence dock ────────────────────────────────────────────────────────────
+  // ── Evidence viewer ──────────────────────────────────────────────────────────
   const openEvidence = useCallback((id) => {
     setActiveEvidenceId(id)
-    if (isDesktop) {
-      setEvidenceDockTrigger(t => t + 1)   // open docked beside the activity
-    } else {
-      setGuideOpen(true)                    // mobile: surface reference in the drawer
-    }
-  }, [isDesktop])
+    setEvidenceViewerOpen(true)
+    setVisitedEvidence(prev => new Set([...prev, id]))
+  }, [])
 
-  const navigateEvidence = useCallback((id) => setActiveEvidenceId(id), [])
+  const navigateEvidence = useCallback((id) => {
+    setActiveEvidenceId(id)
+    setVisitedEvidence(prev => new Set([...prev, id]))
+  }, [])
 
-  const handleEvidenceDockedChange = useCallback((isDocked, width) => {
-    setEvidenceDockedWidth(isDocked ? width : 0)
+  const closeEvidence = useCallback(() => {
+    setEvidenceViewerOpen(false)
   }, [])
 
   // ── Guide sidebar handlers ───────────────────────────────────────────────────
@@ -249,10 +248,7 @@ export default function LabShell2({
       )}
 
       {/* ── Main content: the activity stack ── */}
-      <div
-        className={s.main}
-        style={isDesktop && evidenceDockedWidth ? { paddingRight: `${evidenceDockedWidth}px` } : undefined}
-      >
+      <div className={s.main}>
         <div className={s.content} style={{ maxWidth: config.content?.maxWidth ?? '880px' }}>
           {IntroComponent && (
             <section id="s-intro" className={s.introSection}>
@@ -309,20 +305,16 @@ export default function LabShell2({
         </button>
       )}
 
-      {/* ── Right evidence dock (charts) — desktop only ── */}
-      {isDesktop && config.evidenceComponent && (
-        <EvidenceDock
-          labId={labId}
+      {/* ── Evidence viewer overlay ── */}
+      {config.evidenceComponent && (
+        <EvidenceViewer
           documents={config.evidence?.documents ?? []}
           EvidenceComponent={config.evidenceComponent}
           activeId={activeEvidenceId}
           onNavigate={navigateEvidence}
-          onClose={() => setActiveEvidenceId(null)}
-          triggerDock={evidenceDockTrigger}
-          triggerClose={evidenceCloseTrigger}
-          onDockedChange={handleEvidenceDockedChange}
-          defaultDockedWidth={config.evidence?.panelWidth ?? 560}
-          themeVars={themeVars}
+          onClose={closeEvidence}
+          isOpen={evidenceViewerOpen}
+          visitedIds={visitedEvidence}
         />
       )}
 
