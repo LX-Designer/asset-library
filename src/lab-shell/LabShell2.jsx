@@ -14,7 +14,7 @@ import s from './LabShell2.module.css'
  * Inverts the content/activity relationship: the scrollable main column IS the
  * sequence of activities (each rendered full-width via ActivityBody stacked
  * mode), while evidence/reference lives in surfaces — a left sidebar (cards,
- * chronology, glossary, units) and a right dockable EvidenceDock (charts).
+ * chronology, glossary, units) and a right-side EvidenceViewer overlay (full dossier).
  *
  * The logic layer (response persistence, completion tracking, section nav) is
  * identical to LabShell; only the layout and the location of activities vs
