@@ -10,9 +10,9 @@ import EvidencePanel from './EvidencePanel/EvidencePanel.jsx'
 import ActivityBody from './ActivityPanel/ActivityBody.jsx'
 import SpeechInput from '../components/SpeechInput/SpeechInput.jsx'
 import { useIsDesktop } from './hooks/useIsDesktop.js'
-import s from './LabShell.module.css'
+import s from './LabShell1.module.css'
 
-export default function LabShell({
+export default function LabShell1({
   config,
   onResponse,
   onComplete,

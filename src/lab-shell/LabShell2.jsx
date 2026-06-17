@@ -6,7 +6,7 @@ import ActivityBody from './ActivityPanel/ActivityBody.jsx'
 import EvidenceDock from './EvidenceDock/EvidenceDock.jsx'
 import ConceptsModal from './ConceptsModal/ConceptsModal.jsx'
 import { useIsDesktop } from './hooks/useIsDesktop.js'
-import s from './LabShellInquiry.module.css'
+import s from './LabShell2.module.css'
 
 /**
  * LabShellInquiry — "activity-primary" variant of LabShell.
@@ -37,7 +37,7 @@ function CollapsibleBackground({ title = 'Background', children }) {
   )
 }
 
-export default function LabShellInquiry({
+export default function LabShell2({
   config,
   onResponse,
   onComplete,

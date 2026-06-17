@@ -1,11 +1,11 @@
-import { LabShell } from '../../lab-shell/index.js'
+import { LabShell1 } from '../../lab-shell/index.js'
 import CaseDocument from './CaseDocument.jsx'
 import config from './shell.config.js'
 import styles from './TacomaNarrows.module.css'
 
 export default function TacomaNarrows({ onResponse, onComplete, savedResponses, isCompleted, onReset, backHref }) {
   return (
-    <LabShell
+    <LabShell1
       config={config}
       onResponse={onResponse}
       onComplete={onComplete}
@@ -18,6 +18,6 @@ export default function TacomaNarrows({ onResponse, onComplete, savedResponses, 
       {({ openActivity, responses }) => (
         <CaseDocument openActivity={openActivity} responses={responses} />
       )}
-    </LabShell>
+    </LabShell1>
   )
 }

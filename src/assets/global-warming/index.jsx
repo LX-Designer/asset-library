@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import LabShell from '../../lab-shell/LabShell.jsx'
+import LabShell1 from '../../lab-shell/LabShell1.jsx'
 import config from './shell.config.js'
 import styles from './index.module.css'
 import TemperatureProxyChart from './TemperatureProxyChart.jsx'
@@ -286,7 +286,7 @@ export function WeightingCard({ item }) {
 
 export default function GlobalWarmingLab({ onResponse, onComplete, savedResponses, isCompleted, onReset, backHref }) {
   return (
-    <LabShell
+    <LabShell1
       config={config}
       onResponse={onResponse}
       onComplete={onComplete}
@@ -698,6 +698,6 @@ export default function GlobalWarmingLab({ onResponse, onComplete, savedResponse
           </section>
         </>
       )}
-    </LabShell>
+    </LabShell1>
   )
 }

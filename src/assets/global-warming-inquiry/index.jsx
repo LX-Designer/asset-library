@@ -1,5 +1,5 @@
 import React from 'react'
-import LabShellInquiry from '../../lab-shell/LabShellInquiry.jsx'
+import LabShell2 from '../../lab-shell/LabShell2.jsx'
 import config from './shell.config.js'
 // Reuse the standard lab's theme tokens (accent colour, surfaces) by applying
 // its root `.lab` class to the inquiry shell.
@@ -14,7 +14,7 @@ export default function GlobalWarmingInquiryLab({
   backHref,
 }) {
   return (
-    <LabShellInquiry
+    <LabShell2
       config={config}
       onResponse={onResponse}
       onComplete={onComplete}

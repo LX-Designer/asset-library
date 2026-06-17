@@ -1,4 +1,4 @@
-import LabShell from '../../lab-shell/LabShell.jsx'
+import LabShell1 from '../../lab-shell/LabShell1.jsx'
 import { LabGallery } from '../../lab-shell/index.js'
 import config from './shell.config.js'
 import styles from './index.module.css'
@@ -393,7 +393,7 @@ function LabContent({ openActivity, responses }) {
 // ── Lab root ──────────────────────────────────────────────────────────────────
 export default function FranceRepublic1792({ onResponse, onComplete, savedResponses, isCompleted, onReset, backHref }) {
   return (
-    <LabShell
+    <LabShell1
       config={config}
       onResponse={onResponse}
       onComplete={onComplete}
@@ -406,6 +406,6 @@ export default function FranceRepublic1792({ onResponse, onComplete, savedRespon
       {({ openActivity, responses }) => (
         <LabContent openActivity={openActivity} responses={responses} />
       )}
-    </LabShell>
+    </LabShell1>
   )
 }

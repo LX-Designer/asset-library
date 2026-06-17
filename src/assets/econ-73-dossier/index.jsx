@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import LabShell from '../../lab-shell/LabShell.jsx'
+import LabShell1 from '../../lab-shell/LabShell1.jsx'
 import config from './shell.config.js'
 import styles from './index.module.css'
 import { evidenceItems, tagOptions } from './data.js'
@@ -518,7 +518,7 @@ function DossierContent({ responses, onSave, openActivity }) {
 
 export default function EconDossier({ onResponse, onComplete, savedResponses, isCompleted, onReset, backHref }) {
   return (
-    <LabShell
+    <LabShell1
       config={config}
       onResponse={onResponse}
       onComplete={onComplete}
@@ -535,6 +535,6 @@ export default function EconDossier({ onResponse, onComplete, savedResponses, is
           openActivity={openActivity}
         />
       )}
-    </LabShell>
+    </LabShell1>
   )
 }

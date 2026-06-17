@@ -1,4 +1,5 @@
-export { default as LabShell }        from './LabShell.jsx'
+export { default as LabShell1 } from './LabShell1.jsx'
+export { default as LabShell2 } from './LabShell2.jsx'
 export { default as EvidencePanel }   from './EvidencePanel/EvidencePanel.jsx'
 
 // Hooks

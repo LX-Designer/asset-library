@@ -1,4 +1,4 @@
-import LabShell from '../../lab-shell/LabShell.jsx'
+import LabShell1 from '../../lab-shell/LabShell1.jsx'
 import { GWCtx } from './GWContext.js'
 import config from './shell.config.js'
 import styles from './index.module.css'
@@ -432,7 +432,7 @@ export default function GlobalWarmingLab({
   onResponse, onComplete, savedResponses, isCompleted, onReset, backHref,
 }) {
   return (
-    <LabShell
+    <LabShell1
       config={config}
       onResponse={onResponse}
       onComplete={onComplete}
@@ -445,6 +445,6 @@ export default function GlobalWarmingLab({
       {({ responses, openEvidenceCard }) => (
         <LabContent responses={responses} openEvidenceCard={openEvidenceCard} />
       )}
-    </LabShell>
+    </LabShell1>
   )
 }
