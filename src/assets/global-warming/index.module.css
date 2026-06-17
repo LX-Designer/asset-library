@@ -1,0 +1,431 @@
+/* index.module.css — Global Warming Lab theme overrides */
+
+/* Accent colour */
+:root,
+.lab {
+  --lab-accent:        #c0392b;
+  --lab-accent-light:  #e74c3c;
+  --lab-accent-dark:   #922b21;
+  --lab-accent-bg:     rgba(192, 57, 43, 0.06);
+}
+
+/* ── Layout ── */
+.lab {
+  font-family: inherit;
+}
+
+.section {
+  padding: 2.5rem 0 3.5rem;
+  border-bottom: 1px solid #e8e8e8;
+}
+
+.section:last-child {
+  border-bottom: none;
+}
+
+/* ── Hero / intro ── */
+.labHero {
+  text-align: center;
+  padding: 2rem 1rem 2.5rem;
+  border-bottom: 3px solid var(--lab-accent);
+  margin-bottom: 2rem;
+}
+
+.eyebrow {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #888;
+  margin: 0 0 0.5rem;
+}
+
+.labTitle {
+  font-size: 2.4rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0 0 0.25rem;
+}
+
+.labSubtitle {
+  font-size: 1.2rem;
+  font-weight: 400;
+  color: #444;
+  margin: 0 0 1.5rem;
+}
+
+.inquiryQuestion {
+  background: var(--lab-accent-bg);
+  border-left: 4px solid var(--lab-accent);
+  border-radius: 0 6px 6px 0;
+  padding: 1rem 1.25rem;
+  margin: 0 auto 1.25rem;
+  max-width: 680px;
+  text-align: left;
+}
+
+.iqLabel {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--lab-accent);
+  margin-bottom: 0.4rem;
+}
+
+.iqText {
+  font-size: 1.05rem;
+  font-style: italic;
+  color: #1a1a1a;
+  margin: 0;
+  line-height: 1.55;
+}
+
+.labIntro {
+  font-size: 1rem;
+  color: #444;
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+/* ── Section headings ── */
+.sectionTitle {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--lab-accent);
+  margin: 0 0 1.25rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 2px solid var(--lab-accent-bg);
+}
+
+.subheading {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin: 1.5rem 0 0.6rem;
+}
+
+/* ── Content blocks ── */
+.background {
+  background: #f9f9f9;
+  border-radius: 8px;
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.contentBlock {
+  margin-bottom: 2rem;
+}
+
+/* ── Activity 1 evidence cards ── */
+.evidenceCardGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 0.75rem;
+  margin-top: 1rem;
+  align-items: start;
+}
+
+.evidenceStarterCard {
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background: white;
+  overflow: hidden;
+}
+
+.cardHeader {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  padding: 0.65rem 0.9rem;
+  cursor: pointer;
+  user-select: none;
+  background: none;
+  border: none;
+  width: 100%;
+  text-align: left;
+}
+
+.cardHeader:hover {
+  background: var(--lab-accent-bg);
+}
+
+.cardHeaderText {
+  flex: 1;
+  min-width: 0;
+}
+
+.cardChevron {
+  flex-shrink: 0;
+  font-size: 0.7rem;
+  color: #999;
+  margin-top: 0.2rem;
+  transition: transform 0.2s ease;
+}
+
+.cardChevronOpen {
+  transform: rotate(180deg);
+}
+
+.cardBody {
+  padding: 0 0.9rem 0.75rem;
+  border-top: 1px solid #eee;
+}
+
+.cardField {
+  margin-top: 0.6rem;
+}
+
+.cardFieldLabel {
+  display: block;
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: #888;
+  margin-bottom: 0.2rem;
+}
+
+.cardField p {
+  font-size: 0.82rem;
+  color: #444;
+  line-height: 1.45;
+  margin: 0;
+}
+
+.cardType {
+  display: inline-block;
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--lab-accent);
+  background: var(--lab-accent-bg);
+  border-radius: 3px;
+  padding: 0.15rem 0.4rem;
+  margin-bottom: 0.4rem;
+}
+
+.cardTitle {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin: 0.3rem 0;
+}
+
+.cardDesc {
+  font-size: 0.82rem;
+  color: #444;
+  line-height: 1.45;
+  margin: 0;
+}
+
+.scaffoldNote {
+  font-size: 0.875rem;
+  color: #555;
+  font-style: italic;
+  margin-top: 0.75rem;
+}
+
+/* ── Indicator capsules (Act 3) ── */
+.indicatorCapsule {
+  border: 1px solid #ddd;
+  border-left: 4px solid var(--lab-accent);
+  border-radius: 0 6px 6px 0;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.25rem;
+  background: white;
+}
+
+.indicatorTitle {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin: 0 0 0.6rem;
+}
+
+/* ── Driver cards (Act 4) ── */
+.driverCard {
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.25rem;
+  background: #fafafa;
+}
+
+.driverTitle {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1F4E79;
+  margin: 0 0 0.6rem;
+}
+
+/* ── Evidence blocks (Act 6) ── */
+.evidenceBlock {
+  margin-bottom: 1.5rem;
+  padding: 1rem 1.25rem;
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+}
+
+.evidenceLabel {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0 0 0.6rem;
+}
+
+/* ── AGGI note (Act 5) ── */
+.aggiNote {
+  background: #f0f4f8;
+  border: 1px solid #c8d6e0;
+  border-radius: 6px;
+  padding: 0.75rem 1rem;
+  margin: 1rem 0;
+  font-size: 0.875rem;
+}
+
+.aggiNote h4 {
+  margin: 0 0 0.4rem;
+  font-size: 0.9rem;
+  color: #1F4E79;
+}
+
+/* ── Photo row ── */
+.photoRow {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1rem;
+  margin: 1.25rem 0;
+}
+
+/* ── Tables ── */
+.tableWrapper {
+  overflow-x: auto;
+  margin: 0.75rem 0;
+}
+
+.dataTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+.dataTable th {
+  background: #1F4E79;
+  color: white;
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+  font-weight: 600;
+}
+
+.dataTable td {
+  padding: 0.45rem 0.75rem;
+  border-bottom: 1px solid #eee;
+  vertical-align: top;
+}
+
+.dataTable tr:nth-child(even) td {
+  background: #f8f9fa;
+}
+
+/* ── Activity CTA ── */
+.activityCta {
+  font-style: italic;
+  color: #555;
+  font-size: 0.9rem;
+  margin-top: 1.5rem;
+}
+
+/* ── Evidence weighting cards ── */
+.weightingCard {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: white;
+  overflow: hidden;
+}
+
+.weightingHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  background: none;
+  border: none;
+  width: 100%;
+  text-align: left;
+}
+
+.weightingHeader:hover {
+  background: var(--lab-accent-bg);
+}
+
+.weightingBadge {
+  flex-shrink: 0;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  background: var(--lab-accent);
+  color: white;
+  font-size: 0.9rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.weightingHeaderText {
+  flex: 1;
+  min-width: 0;
+}
+
+.weightingTitle {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin: 0.2rem 0 0;
+  line-height: 1.35;
+}
+
+.weightingBody {
+  padding: 0.75rem 1rem 1rem;
+  border-top: 1px solid #eee;
+}
+
+.weightingSummary {
+  font-size: 0.85rem;
+  color: #444;
+  line-height: 1.5;
+  margin: 0 0 0.75rem;
+}
+
+.weightingStrength {
+  border-left: 3px solid #27ae60;
+  padding: 0.35rem 0.75rem;
+  margin-bottom: 0.5rem;
+  background: #f0faf4;
+  border-radius: 0 4px 4px 0;
+}
+
+.weightingWeakness {
+  border-left: 3px solid #e67e22;
+  padding: 0.35rem 0.75rem;
+  background: #fef9f0;
+  border-radius: 0 4px 4px 0;
+}
+
+.weightingStrength p,
+.weightingWeakness p {
+  font-size: 0.82rem;
+  color: #444;
+  margin: 0.15rem 0 0;
+  line-height: 1.4;
+}
+
+/* ── Chronology chart ── */
+.chronologyChart {
+  margin: 0.75rem 0;
+}

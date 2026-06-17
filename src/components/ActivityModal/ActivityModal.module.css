@@ -163,6 +163,32 @@
   }
 }
 
+/* ── Stacked / inline layout (activity-primary shell) ─────────────────────────
+   Used when the activity lives in the page flow rather than a fixed-height side
+   panel. The body grows with its content (the page scrolls, not the body) and
+   the form spans the full width so drag-boards and wide tables have room. */
+.bodyStacked {
+  background: var(--modal-panel-bg, transparent);
+}
+
+.stackedContext {
+  padding: 18px 24px 0;
+}
+
+.stackedForm {
+  padding: 4px 4px 8px;
+}
+
+/* Header/footer must not stick to the viewport when the activity is in page flow */
+.headerInline {
+  position: static;
+}
+
+.footerInline {
+  position: static;
+  justify-content: center;
+}
+
 /* Purpose / why it matters */
 .purpose {
   background: var(--modal-subtle, #f3f4f6);

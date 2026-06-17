@@ -1,0 +1,94 @@
+.tab {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.search {
+  padding: 10px 12px 8px;
+  border-bottom: 1px solid var(--fp-border, var(--lab-rule));
+  flex-shrink: 0;
+}
+
+.searchInput {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 6px 10px;
+  border: 1px solid var(--fp-border, var(--lab-rule));
+  border-radius: 5px;
+  font-size: 12px;
+  background: var(--lab-surface);
+  color: var(--lab-ink);
+  outline: none;
+  font-family: inherit;
+}
+
+.searchInput:focus {
+  border-color: var(--lab-accent);
+}
+
+.list {
+  flex: 1;
+  overflow-y: auto;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.item {
+  border-bottom: 1px solid var(--lab-rule-light);
+}
+
+.termButton {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 8px 12px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  gap: 8px;
+}
+
+.termButton:hover {
+  background: var(--lab-accent-subtle);
+}
+
+.termName {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--fp-ink, var(--lab-ink));
+  line-height: 1.35;
+}
+
+.chevron {
+  flex-shrink: 0;
+  font-size: 8px;
+  color: var(--fp-ink-light, var(--lab-ink-light));
+  transition: transform 0.15s ease;
+}
+
+.chevronOpen {
+  transform: rotate(180deg);
+}
+
+.definition {
+  font-size: 11.5px;
+  color: var(--fp-ink-mid, var(--lab-ink-mid));
+  line-height: 1.5;
+  padding: 0 12px 10px 12px;
+  margin: 0;
+  border-top: 1px solid var(--lab-rule-light);
+  background: var(--lab-surface-mid);
+}
+
+.empty {
+  font-size: 12px;
+  color: var(--fp-ink-light, var(--lab-ink-light));
+  padding: 24px 12px;
+  text-align: center;
+  font-style: italic;
+}

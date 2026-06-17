@@ -107,7 +107,7 @@
 .docHeader {
   background: var(--tn-accent);
   color: var(--tn-paper);
-  padding: 60px 60px 50px;
+  padding: 60px 40px 50px;
   position: relative;
   overflow: hidden;
 }
@@ -182,7 +182,7 @@
 /* ── CONTENT SECTIONS ────────────────────────────────────────────────────── */
 
 .contentWrap {
-  padding: 64px 60px;
+  padding: 64px 40px;
   color: var(--tn-ink);
 }
 

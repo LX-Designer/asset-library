@@ -25,9 +25,12 @@ export default function ActivityBody({
   onNavigate,
   onScrollTo,
   onOpenConcept,
+  onOpenEvidence = null,
   onClose,
   noHeader = false,
   darkHeader = false,
+  stacked = false,
+  hideNav = false,
 }) {
   const [clearKey, setClearKey] = useState(0)
 
@@ -99,6 +102,8 @@ export default function ActivityBody({
     <ActivityModal
       noHeader={noHeader}
       darkHeader={darkHeader}
+      stacked={stacked}
+      hideNav={hideNav}
       activityNumber={actIndex + 1}
       activityLabel={`Activity ${actIndex + 1}`}
       thinkingMove={activity.thinkingMove ?? ''}
@@ -115,6 +120,7 @@ export default function ActivityBody({
       onNavigate={onNavigate}
       onScrollTo={onScrollTo}
       onOpenConcept={onOpenConcept}
+      onOpenEvidence={onOpenEvidence}
       onClear={handleClear}
       onClose={onClose}
     >

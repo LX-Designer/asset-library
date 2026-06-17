@@ -6,6 +6,10 @@ export const TAB_LABELS = {
   concepts:   'Toolkit',
   notes:      'Notes',
   evidence:   'Evidence',
+  cards:      'Cards',
+  chronology: 'Timeline',
+  glossary:   'Glossary',
+  units:      'Units',
 }
 
 export default function LabSidebar({

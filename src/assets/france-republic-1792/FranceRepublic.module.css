@@ -40,7 +40,6 @@
   color: var(--fr-ink-mid);
   line-height: 1.7;
   margin-bottom: 28px;
-  max-width: 700px;
 }
 
 .sectionBody {
@@ -48,7 +47,6 @@
   font-size: 15px;
   line-height: 1.75;
   color: var(--fr-ink);
-  max-width: 700px;
 }
 
 .sectionBody p {
@@ -79,7 +77,6 @@
   color: var(--fr-ink);
   line-height: 1.2;
   margin-bottom: 8px;
-  max-width: 680px;
 }
 
 .heroQuestion {
@@ -88,7 +85,6 @@
   font-style: italic;
   color: var(--fr-ink-mid);
   margin-bottom: 24px;
-  max-width: 680px;
 }
 
 .heroScenario {
@@ -101,7 +97,6 @@
   line-height: 1.7;
   color: var(--fr-ink-mid);
   margin-bottom: 24px;
-  max-width: 680px;
 }
 
 .heroScenarioLabel {
@@ -122,7 +117,6 @@
   font-size: 13px;
   color: var(--fr-seal);
   line-height: 1.55;
-  max-width: 600px;
   margin-bottom: 24px;
 }
 
@@ -534,7 +528,6 @@
   border-radius: 0 4px 4px 0;
   padding: 14px 18px;
   margin: 20px 0;
-  max-width: 680px;
 }
 
 .tensionLabel {

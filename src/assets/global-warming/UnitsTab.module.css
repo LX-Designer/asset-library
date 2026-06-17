@@ -1,0 +1,47 @@
+.tab {
+  overflow-y: auto;
+  height: 100%;
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.item {
+  display: grid;
+  grid-template-columns: 58px 1fr;
+  gap: 0 8px;
+  padding: 9px 12px;
+  border-bottom: 1px solid var(--lab-rule-light);
+  align-items: start;
+}
+
+.symbol {
+  font-size: 11px;
+  font-weight: 700;
+  font-family: var(--lab-font-mono, monospace);
+  color: var(--lab-accent);
+  word-break: break-all;
+  padding-top: 1px;
+  line-height: 1.4;
+}
+
+.detail {
+  min-width: 0;
+}
+
+.fullName {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--fp-ink, var(--lab-ink));
+  line-height: 1.35;
+}
+
+.explanation {
+  font-size: 11px;
+  color: var(--fp-ink-mid, var(--lab-ink-mid));
+  line-height: 1.45;
+  margin: 2px 0 0;
+}

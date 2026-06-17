@@ -51,9 +51,18 @@ export default function ActivityModal({
   onNavigate,
   onScrollTo,
   onOpenConcept,
+  onOpenEvidence = null,
   onClear,
   noHeader = false,
   darkHeader = false,
+  // ── Inquiry (activity-primary) layout ──────────────────────────────────────
+  // stacked: single full-width column (context on top, form below) instead of
+  //          the two-column split. Used when the activity lives in the page flow
+  //          rather than a fixed-height side panel, so the form gets full width.
+  // hideNav: drop the prev/next footer buttons (meaningless when the page scrolls
+  //          through every activity).
+  stacked = false,
+  hideNav = false,
   children,
 }) {
   const [showClearConfirm, setShowClearConfirm] = useState(false)
@@ -64,16 +73,78 @@ export default function ActivityModal({
     else onClose?.(id)
   }
 
+  // Evidence links scroll to a content section in the default layout, or open
+  // the evidence dock in the inquiry layout (when onOpenEvidence is supplied).
+  const handleEvidenceClick = onOpenEvidence ?? onScrollTo
+
   const subtitle = activityNumber !== null && activityNumber !== undefined
     ? `Activity ${activityNumber} · ${thinkingMove}`
     : `${activityLabel} · ${thinkingMove}`
 
   const hasLeftContent = !!(purpose || prompt || task || scaffold || evidenceSections.length || conceptLinks.length)
 
+  const contextBlocks = (
+    <>
+      {purpose && (
+        <div className={s.purpose}>
+          <span className={s.purposeLabel}>Why this matters</span>
+          {purpose}
+        </div>
+      )}
+
+      {prompt && <p className={s.prompt}>{prompt}</p>}
+
+      {task && (
+        <div className={s.task}>
+          <span className={s.taskLabel}>Your task</span>
+          {task}
+        </div>
+      )}
+
+      {scaffold && (
+        <div className={s.scaffold}>{scaffold}</div>
+      )}
+
+      {evidenceSections.length > 0 && (
+        <div className={s.evidenceLinks}>
+          <div className={s.evidenceLabel}>{onOpenEvidence ? 'View evidence' : 'Go to evidence'}</div>
+          <div className={s.evidenceBtns}>
+            {evidenceSections.map(({ id, label }) => (
+              <button
+                key={id}
+                className={s.evidenceScrollBtn}
+                onClick={() => handleEvidenceClick?.(id)}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {conceptLinks.length > 0 && (
+        <div className={s.conceptLinks}>
+          <div className={s.conceptLabel}>{conceptsLabel}</div>
+          <div className={s.conceptBtns}>
+            {conceptLinks.map(({ id, title }) => (
+              <button
+                key={id}
+                className={s.conceptBtn}
+                onClick={() => onOpenConcept?.(id)}
+              >
+                {title}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+    </>
+  )
+
   return (
     <div className={s.panel}>
       {!noHeader && (
-        <div className={`${s.header}${darkHeader ? ` ${s.headerDark}` : ''}`}>
+        <div className={`${s.header}${darkHeader ? ` ${s.headerDark}` : ''}${stacked ? ` ${s.headerInline}` : ''}`}>
           <div className={s.subtitle}>{subtitle}</div>
           <h2 id="activity-modal-title" className={s.title}>{title}</h2>
           {onClose && (
@@ -82,85 +153,35 @@ export default function ActivityModal({
         </div>
       )}
 
-      <div className={s.body}>
-        {hasLeftContent ? (
-          <>
-            <div className={s.leftCol}>
-              {purpose && (
-                <div className={s.purpose}>
-                  <span className={s.purposeLabel}>Why this matters</span>
-                  {purpose}
-                </div>
-              )}
+      {stacked ? (
+        <div className={s.bodyStacked}>
+          {hasLeftContent && <div className={s.stackedContext}>{contextBlocks}</div>}
+          <div className={s.stackedForm}>{children}</div>
+        </div>
+      ) : (
+        <div className={s.body}>
+          {hasLeftContent ? (
+            <>
+              <div className={s.leftCol}>{contextBlocks}</div>
+              <div className={s.rightCol}>{children}</div>
+            </>
+          ) : (
+            <div className={s.rightCol}>{children}</div>
+          )}
+        </div>
+      )}
 
-              {prompt && <p className={s.prompt}>{prompt}</p>}
-
-              {task && (
-                <div className={s.task}>
-                  <span className={s.taskLabel}>Your task</span>
-                  {task}
-                </div>
-              )}
-
-              {scaffold && (
-                <div className={s.scaffold}>{scaffold}</div>
-              )}
-
-              {evidenceSections.length > 0 && (
-                <div className={s.evidenceLinks}>
-                  <div className={s.evidenceLabel}>Go to evidence</div>
-                  <div className={s.evidenceBtns}>
-                    {evidenceSections.map(({ id, label }) => (
-                      <button
-                        key={id}
-                        className={s.evidenceScrollBtn}
-                        onClick={() => onScrollTo?.(id)}
-                      >
-                        {label}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {conceptLinks.length > 0 && (
-                <div className={s.conceptLinks}>
-                  <div className={s.conceptLabel}>{conceptsLabel}</div>
-                  <div className={s.conceptBtns}>
-                    {conceptLinks.map(({ id, title }) => (
-                      <button
-                        key={id}
-                        className={s.conceptBtn}
-                        onClick={() => onOpenConcept?.(id)}
-                      >
-                        {title}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-
-            <div className={s.rightCol}>
-              {children}
-            </div>
-          </>
-        ) : (
-          <div className={s.rightCol}>
-            {children}
-          </div>
+      <div className={`${s.footer}${stacked ? ` ${s.footerInline}` : ''}`}>
+        {!hideNav && (
+          <button
+            className={s.navBtn}
+            disabled={!prevItem}
+            onClick={() => prevItem && navigate(prevItem.id)}
+            aria-label="Previous activity"
+          >
+            ← {prevItem ? prevItem.label : 'Previous'}
+          </button>
         )}
-      </div>
-
-      <div className={s.footer}>
-        <button
-          className={s.navBtn}
-          disabled={!prevItem}
-          onClick={() => prevItem && navigate(prevItem.id)}
-          aria-label="Previous activity"
-        >
-          ← {prevItem ? prevItem.label : 'Previous'}
-        </button>
 
         {showClearConfirm ? (
           <div className={s.clearConfirm}>
@@ -174,14 +195,16 @@ export default function ActivityModal({
           </button>
         )}
 
-        <button
-          className={s.navBtn}
-          disabled={!nextItem}
-          onClick={() => nextItem && navigate(nextItem.id)}
-          aria-label="Next activity"
-        >
-          {nextItem ? nextItem.label : 'Next'} →
-        </button>
+        {!hideNav && (
+          <button
+            className={s.navBtn}
+            disabled={!nextItem}
+            onClick={() => nextItem && navigate(nextItem.id)}
+            aria-label="Next activity"
+          >
+            {nextItem ? nextItem.label : 'Next'} →
+          </button>
+        )}
       </div>
     </div>
   )
