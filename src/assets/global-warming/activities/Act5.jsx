@@ -9,24 +9,22 @@ const PART_B = [
   { key: 'qB4', label: 'What is the AGGI, and what does its increase over time tell us about the composition of the atmosphere?' },
 ]
 
-const CHIPS = [
-  { label: 'Annotation structure',       fills: { ann_1_desc: 'Process [1]: ' } },
-  { label: 'Energy balance explanation', fills: { qB1: 'If the concentration of greenhouse gases doubled, ' } },
-  { label: 'CO₂e working structure',     fills: { qB3: '1 tonne SF₆ × 23,500 = ' } },
-]
-
 export default function Act5({ initialAnswers = {}, isCompleted, onSave, onSubmit, onClose }) {
-  const initDefaults = { qB3: '1 tonne SF₆ × 23,500 = ', ...initialAnswers }
+  const initDefaults = {
+    ann_1_desc: 'Process [1]: ',
+    ann_2_desc: 'Process [2]: ',
+    ann_3_desc: 'Process [3]: ',
+    ann_4_desc: 'Process [4]: ',
+    ann_5_desc: 'Process [5]: ',
+    ann_6_desc: 'Process [6]: ',
+    qB1: 'If the concentration of greenhouse gases doubled, ',
+    qB3: '1 tonne SF₆ × 23,500 = ',
+    ...initialAnswers,
+  }
   const [answers, setAnswers] = useState(initDefaults)
 
   function update(key, value) {
     const next = { ...answers, [key]: value }
-    setAnswers(next)
-    onSave?.(next)
-  }
-
-  function applyChip(fills) {
-    const next = { ...answers, ...fills }
     setAnswers(next)
     onSave?.(next)
   }
@@ -37,17 +35,6 @@ export default function Act5({ initialAnswers = {}, isCompleted, onSave, onSubmi
 
   return (
     <div style={{ padding: '1.5rem' }}>
-      {!isCompleted && (
-        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '1.25rem' }}>
-          {CHIPS.map(c => (
-            <button key={c.label} onClick={() => applyChip(c.fills)}
-              style={{ padding: '0.3rem 0.75rem', borderRadius: '20px', border: '1px solid #c0392b', background: 'rgba(192,57,43,0.06)', color: '#c0392b', cursor: 'pointer', fontSize: '0.82rem' }}>
-              {c.label}
-            </button>
-          ))}
-        </div>
-      )}
-
       <h4 style={{ margin: '0 0 0.75rem', color: '#1a1a1a' }}>Part A — Label the diagram (Figure 5.1)</h4>
       <p style={{ fontSize: '0.875rem', color: '#555', marginBottom: '0.75rem' }}>For each numbered box in Figure 5.1, write the name of the process and a brief description in your own words.</p>
       <div style={{ overflowX: 'auto', marginBottom: '1.5rem' }}>

@@ -10,23 +10,17 @@ const CAUSES = [
 
 const RANK_OPTIONS = ['', '1', '2', '3', '4', '5']
 
-const CHIPS = [
-  { label: 'Pattern analysis: GHG',       fills: { pa_ghg_pattern:   'If greenhouse gas emissions were the dominant cause, we would expect ' } },
-  { label: 'Mismatch language',            fills: { pa_solar_mismatch: 'A significant mismatch is that ' } },
-  { label: 'Ranking justification start',  fills: { pb_ghg_just:       'I ranked greenhouse gas emissions first because ' } },
-]
 
 export default function Act4({ initialAnswers = {}, isCompleted, onSave, onSubmit, onClose }) {
-  const [answers, setAnswers] = useState(initialAnswers)
+  const initDefaults = {
+    pa_ghg_pattern:    'If greenhouse gas emissions were the dominant cause, we would expect ',
+    pa_solar_mismatch: 'A significant mismatch is that ',
+    ...initialAnswers,
+  }
+  const [answers, setAnswers] = useState(initDefaults)
 
   function update(key, value) {
     const next = { ...answers, [key]: value }
-    setAnswers(next)
-    onSave?.(next)
-  }
-
-  function applyChip(fills) {
-    const next = { ...answers, ...fills }
     setAnswers(next)
     onSave?.(next)
   }
@@ -37,17 +31,6 @@ export default function Act4({ initialAnswers = {}, isCompleted, onSave, onSubmi
 
   return (
     <div style={{ padding: '1.5rem' }}>
-      {!isCompleted && (
-        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '1.25rem' }}>
-          {CHIPS.map(c => (
-            <button key={c.label} onClick={() => applyChip(c.fills)}
-              style={{ padding: '0.3rem 0.75rem', borderRadius: '20px', border: '1px solid #c0392b', background: 'rgba(192,57,43,0.06)', color: '#c0392b', cursor: 'pointer', fontSize: '0.82rem' }}>
-              {c.label}
-            </button>
-          ))}
-        </div>
-      )}
-
       <h4 style={{ margin: '0 0 0.75rem', color: '#1a1a1a' }}>Part A — Pattern match</h4>
       <div style={{ overflowX: 'auto', marginBottom: '1.5rem' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.85rem' }}>

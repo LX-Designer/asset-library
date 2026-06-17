@@ -1,11 +1,5 @@
 import React, { useState } from 'react'
 
-const CHIPS = [
-  { label: 'Complete: "When I look at the title…"',  fills: { notice1: 'When I look at the title of this lab, I immediately think about ' } },
-  { label: 'Complete: "One thing I already know…"',  fills: { notice2: 'One thing I already know (or think I know) about global warming is ' } },
-  { label: 'Use an analogy for weather vs climate',   fills: { reflect1: 'Weather and climate are different because ' } },
-]
-
 const PART_A = [
   { key: 'notice1', starter: 'When I look at the title of this lab, I immediately think about…' },
   { key: 'notice2', starter: 'One thing I already know (or think I know) about global warming is…' },
@@ -25,16 +19,15 @@ const PART_C = [
 ]
 
 export default function Act1({ initialAnswers = {}, isCompleted, onSave, onSubmit, onClose }) {
-  const [answers, setAnswers] = useState(initialAnswers)
+  const initDefaults = {
+    notice1: 'When I look at the title of this lab, I immediately think about ',
+    notice2: 'One thing I already know (or think I know) about global warming is ',
+    ...initialAnswers,
+  }
+  const [answers, setAnswers] = useState(initDefaults)
 
   function update(key, value) {
     const next = { ...answers, [key]: value }
-    setAnswers(next)
-    onSave?.(next)
-  }
-
-  function applyChip(fills) {
-    const next = { ...answers, ...fills }
     setAnswers(next)
     onSave?.(next)
   }
@@ -43,20 +36,6 @@ export default function Act1({ initialAnswers = {}, isCompleted, onSave, onSubmi
 
   return (
     <div style={{ padding: '1.5rem' }}>
-      {!isCompleted && (
-        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '1.25rem' }}>
-          {CHIPS.map(c => (
-            <button
-              key={c.label}
-              onClick={() => applyChip(c.fills)}
-              style={{ padding: '0.3rem 0.75rem', borderRadius: '20px', border: '1px solid #c0392b', background: 'rgba(192,57,43,0.06)', color: '#c0392b', cursor: 'pointer', fontSize: '0.82rem' }}
-            >
-              {c.label}
-            </button>
-          ))}
-        </div>
-      )}
-
       <h4 style={{ margin: '0 0 0.25rem', color: '#1a1a1a' }}>Part A — What I notice</h4>
       <p style={{ fontSize: '0.875rem', color: '#555', marginBottom: '1rem' }}>Complete each sentence starter. There are no right or wrong answers here.</p>
       {PART_A.map(f => (

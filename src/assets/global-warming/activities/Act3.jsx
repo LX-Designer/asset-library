@@ -17,11 +17,6 @@ const ZONES = [
 
 const CONFIDENCE_OPTIONS = ['', 'High', 'Medium', 'Low']
 
-const CHIPS = [
-  { label: 'Start: overall judgement',    fills: { summary: 'Taken together, the observational evidence ' } },
-  { label: 'Address limitations',          fills: { summary: 'While each individual indicator has limitations, ' } },
-  { label: 'Use triangulation language',   fills: { summary: 'The fact that multiple independent data sources ' } },
-]
 
 function EvidenceCard({ card, draggable, onDragStart }) {
   return (
@@ -41,16 +36,14 @@ export default function Act3({ initialAnswers = {}, isCompleted, onSave, onSubmi
   const initState = initialAnswers._zones || { unsorted: CARDS.map(c => c.id), supports: [], partial: [], weakens: [] }
   const [zones,    setZones]    = useState(initState)
   const [dragging, setDragging] = useState(null)
-  const [answers,  setAnswers]  = useState(initialAnswers)
+  const initDefaults = {
+    summary: 'Taken together, the observational evidence ',
+    ...initialAnswers,
+  }
+  const [answers,  setAnswers]  = useState(initDefaults)
 
   function update(key, value) {
     const next = { ...answers, [key]: value }
-    setAnswers(next)
-    onSave?.({ ...next, _zones: zones })
-  }
-
-  function applyChip(fills) {
-    const next = { ...answers, ...fills }
     setAnswers(next)
     onSave?.({ ...next, _zones: zones })
   }
@@ -76,17 +69,6 @@ export default function Act3({ initialAnswers = {}, isCompleted, onSave, onSubmi
 
   return (
     <div style={{ padding: '1.5rem' }}>
-      {!isCompleted && (
-        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '1.25rem' }}>
-          {CHIPS.map(c => (
-            <button key={c.label} onClick={() => applyChip(c.fills)}
-              style={{ padding: '0.3rem 0.75rem', borderRadius: '20px', border: '1px solid #c0392b', background: 'rgba(192,57,43,0.06)', color: '#c0392b', cursor: 'pointer', fontSize: '0.82rem' }}>
-              {c.label}
-            </button>
-          ))}
-        </div>
-      )}
-
       {/* Unsorted pool */}
       {zones.unsorted.length > 0 && (
         <div style={{ marginBottom: '1.25rem' }}>

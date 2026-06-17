@@ -18,11 +18,6 @@ const ZONES = [
 
 const STRENGTH_OPTIONS = ['', 'Very strong', 'Strong', 'Moderate', 'Weak', 'Very weak']
 
-const CHIPS = [
-  { label: 'Start comparative judgement',    fills: { judgement: 'Of the seven pieces of evidence, I find ' } },
-  { label: 'Acknowledge contested evidence', fills: { judgement: 'Although evidence ' } },
-  { label: 'Evaluation relevance template',  fills: { eval_A_relevance: 'Evidence A is relevant because ' } },
-]
 
 function EvidenceTile({ item, draggable, onDragStart }) {
   return (
@@ -39,16 +34,21 @@ export default function Act6({ initialAnswers = {}, isCompleted, onSave, onSubmi
   const initZones = initialAnswers._zones || { unsorted: EVIDENCE.map(e => e.id), strong: [], supporting: [], weak: [] }
   const [zones,    setZones]    = useState(initZones)
   const [dragging, setDragging] = useState(null)
-  const [answers,  setAnswers]  = useState(initialAnswers)
+  const initDefaults = {
+    judgement:        'Of the seven pieces of evidence, I find ',
+    eval_A_relevance: 'Evidence A is relevant because ',
+    eval_B_relevance: 'Evidence B is relevant because ',
+    eval_C_relevance: 'Evidence C is relevant because ',
+    eval_D_relevance: 'Evidence D is relevant because ',
+    eval_E_relevance: 'Evidence E is relevant because ',
+    eval_F_relevance: 'Evidence F is relevant because ',
+    eval_G_relevance: 'Evidence G is relevant because ',
+    ...initialAnswers,
+  }
+  const [answers,  setAnswers]  = useState(initDefaults)
 
   function update(key, value) {
     const next = { ...answers, [key]: value }
-    setAnswers(next)
-    onSave?.({ ...next, _zones: zones })
-  }
-
-  function applyChip(fills) {
-    const next = { ...answers, ...fills }
     setAnswers(next)
     onSave?.({ ...next, _zones: zones })
   }
@@ -73,17 +73,6 @@ export default function Act6({ initialAnswers = {}, isCompleted, onSave, onSubmi
 
   return (
     <div style={{ padding: '1.5rem' }}>
-      {!isCompleted && (
-        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '1.25rem' }}>
-          {CHIPS.map(c => (
-            <button key={c.label} onClick={() => applyChip(c.fills)}
-              style={{ padding: '0.3rem 0.75rem', borderRadius: '20px', border: '1px solid #c0392b', background: 'rgba(192,57,43,0.06)', color: '#c0392b', cursor: 'pointer', fontSize: '0.82rem' }}>
-              {c.label}
-            </button>
-          ))}
-        </div>
-      )}
-
       {/* Weighing board */}
       {zones.unsorted.length > 0 && (
         <div style={{ marginBottom: '1rem' }}>

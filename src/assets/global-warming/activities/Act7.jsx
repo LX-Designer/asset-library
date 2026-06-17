@@ -21,27 +21,22 @@ const CHECKLIST = [
   { key: 'chk_length',    label: 'My response is between 350 and 500 words.' },
 ]
 
-const CHIPS = [
-  { label: 'Claim sentence starter',          fills: { wf_claim:   'The evidence indicates that global warming ' } },
-  { label: 'Evidence sentence starter',       fills: { wf_evidence: 'Evidence ' } },
-  { label: 'Counterargument acknowledgement', fills: { wf_counter:  'A significant limitation of this argument is that ' } },
-]
 
 function countWords(str) {
   return (str || '').trim().split(/\s+/).filter(Boolean).length
 }
 
 export default function Act7({ initialAnswers = {}, isCompleted, onSave, onSubmit, onClose }) {
-  const [answers, setAnswers] = useState(initialAnswers)
+  const initDefaults = {
+    wf_claim:    'The evidence indicates that global warming ',
+    wf_evidence: 'Evidence ',
+    wf_counter:  'A significant limitation of this argument is that ',
+    ...initialAnswers,
+  }
+  const [answers, setAnswers] = useState(initDefaults)
 
   function update(key, value) {
     const next = { ...answers, [key]: value }
-    setAnswers(next)
-    onSave?.(next)
-  }
-
-  function applyChip(fills) {
-    const next = { ...answers, ...fills }
     setAnswers(next)
     onSave?.(next)
   }
@@ -56,17 +51,6 @@ export default function Act7({ initialAnswers = {}, isCompleted, onSave, onSubmi
 
   return (
     <div style={{ padding: '1.5rem' }}>
-      {!isCompleted && (
-        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '1.25rem' }}>
-          {CHIPS.map(c => (
-            <button key={c.label} onClick={() => applyChip(c.fills)}
-              style={{ padding: '0.3rem 0.75rem', borderRadius: '20px', border: '1px solid #c0392b', background: 'rgba(192,57,43,0.06)', color: '#c0392b', cursor: 'pointer', fontSize: '0.82rem' }}>
-              {c.label}
-            </button>
-          ))}
-        </div>
-      )}
-
       {/* Part A — Evidence summary */}
       <h4 style={{ margin: '0 0 0.5rem', color: '#1a1a1a' }}>Part A — Evidence summary</h4>
       <p style={{ fontSize: '0.875rem', color: '#555', marginBottom: '0.75rem' }}>Before writing, note up to four pieces of evidence you plan to use. Complete at least row 1.</p>

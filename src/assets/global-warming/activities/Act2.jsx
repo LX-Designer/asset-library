@@ -1,11 +1,5 @@
 import React, { useState } from 'react'
 
-const CHIPS = [
-  { label: 'Structure: limitation + reason', fills: { iceLimitation: 'One limitation of ice core evidence is that ', iceReason: 'This matters because ' } },
-  { label: 'Structure: source evaluation intro', fills: { srcOrigin: 'This evidence comes from ' } },
-  { label: 'Why combine proxies — structural start', fills: { reflectC1: 'Scientists combine multiple proxy types rather than relying on one because ' } },
-]
-
 const PROXY_TYPES = ['Ice core', 'Tree rings', 'Lake sediment varves']
 
 const PART_A = [
@@ -29,16 +23,21 @@ const PART_C = [
 ]
 
 export default function Act2({ initialAnswers = {}, isCompleted, onSave, onSubmit, onClose }) {
-  const [answers, setAnswers] = useState(initialAnswers)
+  const initDefaults = {
+    iceLimitation:  'One limitation of ice core evidence is that ',
+    iceReason:      'This matters because ',
+    treeLimitation: 'One limitation of tree ring evidence is that ',
+    treeReason:     'This matters because ',
+    sedLimitation:  'One limitation of lake sediment evidence is that ',
+    sedReason:      'This matters because ',
+    srcOrigin:      'This evidence comes from ',
+    reflectC1:      'Scientists combine multiple proxy types rather than relying on one because ',
+    ...initialAnswers,
+  }
+  const [answers, setAnswers] = useState(initDefaults)
 
   function update(key, value) {
     const next = { ...answers, [key]: value }
-    setAnswers(next)
-    onSave?.(next)
-  }
-
-  function applyChip(fills) {
-    const next = { ...answers, ...fills }
     setAnswers(next)
     onSave?.(next)
   }
@@ -48,17 +47,6 @@ export default function Act2({ initialAnswers = {}, isCompleted, onSave, onSubmi
 
   return (
     <div style={{ padding: '1.5rem' }}>
-      {!isCompleted && (
-        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '1.25rem' }}>
-          {CHIPS.map(c => (
-            <button key={c.label} onClick={() => applyChip(c.fills)}
-              style={{ padding: '0.3rem 0.75rem', borderRadius: '20px', border: '1px solid #c0392b', background: 'rgba(192,57,43,0.06)', color: '#c0392b', cursor: 'pointer', fontSize: '0.82rem' }}>
-              {c.label}
-            </button>
-          ))}
-        </div>
-      )}
-
       <h4 style={{ margin: '0 0 0.75rem', color: '#1a1a1a' }}>Part A — Limitations</h4>
       {PART_A.map(r => (
         <div key={r.limKey} style={{ border: '1px solid #ddd', borderRadius: '6px', padding: '0.75rem 1rem', marginBottom: '1rem' }}>
