@@ -1,5 +1,6 @@
 import React from 'react'
 import { EVIDENCE_WEIGHTING, WeightingCard } from '../global-warming/index.jsx'
+import Term from './Term.jsx'
 
 const note = {
   background: '#f0f4f8',
@@ -31,7 +32,7 @@ export function Act1Background() {
       <P>
         The record shows warming of approximately +1.1–1.2 °C above the pre-industrial
         (1850–1900) average by the 2011–2020 decade, and the rate of warming has
-        increased. It is not a smooth line: year-to-year variability from El Niño events
+        increased. It is not a smooth line: year-to-year variability from <Term term="ENSO">El Niño events</Term>{' '}
         and volcanic eruptions sits on top of the underlying upward trend.
       </P>
       <P>
@@ -48,7 +49,7 @@ export function Act2Background() {
       <P>
         Instrumental records only extend back to about 1850, with global coverage
         improving after 1950. To judge whether recent warming is unusual over the longer
-        term, scientists use <strong>proxy records</strong> — natural archives that preserve
+        term, scientists use <Term term="Proxy record"><strong>proxy records</strong></Term> — natural archives that preserve
         indirect signals of past climate.
       </P>
       <div style={tableWrap}>
@@ -88,7 +89,7 @@ export function Act3Background() {
         the expected direction.
       </P>
       <P>
-        Triangulation asks: if the hypothesis is correct, what should we observe across
+        <Term term="Evidence triangulation">Triangulation</Term> asks: if the hypothesis is correct, what should we observe across
         different systems? When the expected signatures appear independently in Arctic sea
         ice, glacier mass balance, sea level, ocean heat content, CO₂ concentration, and
         global temperature, the convergence substantially increases confidence. The six
@@ -139,12 +140,12 @@ export function Act5Background() {
         The Earth maintains a balance between incoming solar radiation and outgoing infrared
         (longwave) radiation. Greenhouse gases disrupt this balance by absorbing outgoing
         infrared and re-emitting it — including back towards the surface — an effect known
-        as radiative forcing.
+        as <Term term="Radiative forcing">radiative forcing</Term>.
       </P>
       <P>
         Open the <strong>Energy budget</strong> diagram to study the six marked processes
         you will label, the <strong>GHG comparison</strong> table to compare gases by
-        concentration, GWP-100 and lifetime, and the <strong>CO₂e calculator</strong> to
+        concentration, <Term term="Global warming potential (GWP-100)">GWP-100</Term> and lifetime, and the <strong>CO₂e calculator</strong> to
         explore carbon-dioxide equivalence (including SF₆, used in the task).
       </P>
     </div>
@@ -164,7 +165,7 @@ export function Act6Background() {
         The IPCC expresses confidence with a calibrated combination of evidence quality
         (robust/medium/limited) and agreement across lines of evidence (high/medium/low).
         Open the <strong>Global temperature</strong> and <strong>Temp vs CO₂ &amp; forcings</strong> charts
-        and use the overlays for volcanic events, ENSO phases, and solar output.
+        and use the overlays for volcanic events, <Term term="ENSO">ENSO phases</Term>, and solar output.
       </P>
       <P><strong>The eight evidence tiles (A–H) you will weigh:</strong></P>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '8px' }}>

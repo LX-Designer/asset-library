@@ -1,0 +1,48 @@
+.trigger {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  cursor: help;
+  font: inherit;
+  color: inherit;
+  text-decoration-line: underline;
+  text-decoration-style: dotted;
+  text-decoration-color: var(--lab-ink-light, #9ca3af);
+  text-underline-offset: 3px;
+}
+.trigger:hover {
+  text-decoration-color: var(--lab-accent, #c0392b);
+}
+
+.popover {
+  z-index: 80;
+  width: 276px;
+  background: var(--lab-surface, #fff);
+  border: 1px solid var(--lab-rule, #e5e7eb);
+  border-radius: 9px;
+  padding: 10px 13px 12px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.14);
+  animation: fadeUp 0.14s ease both;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.label {
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--lab-accent, #c0392b);
+  margin-bottom: 5px;
+}
+
+.body {
+  margin: 0;
+  font-size: 12.5px;
+  color: var(--lab-ink, #111827);
+  line-height: 1.55;
+}
