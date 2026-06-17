@@ -110,9 +110,11 @@ export default function Act1({ initialAnswers = {}, isCompleted, onSave, onSubmi
           >
             Submit
           </button>
-          <button onClick={onClose} style={{ padding: '0.55rem 1.25rem', borderRadius: '4px', background: 'transparent', border: '1px solid #aaa', cursor: 'pointer', color: '#555' }}>
-            Close
-          </button>
+          {onClose && (
+            <button onClick={onClose} style={{ padding: '0.55rem 1.25rem', borderRadius: '4px', background: 'transparent', border: '1px solid #aaa', cursor: 'pointer', color: '#555' }}>
+              Close
+            </button>
+          )}
         </div>
       )}
       {isCompleted && (
