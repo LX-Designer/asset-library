@@ -1,75 +1,70 @@
 .rail {
   position: fixed;
   left: 0;
-  top: var(--lab-nav-height, 44px);
-  bottom: 0;
-  width: 44px;
-  z-index: 20;
-  background: var(--lab-surface, #fff);
-  border-right: 1px solid var(--lab-rule, #e5e7eb);
+  top: calc(var(--lab-nav-height, 44px) + 10px);
+  z-index: 30;
   display: flex;
   flex-direction: column;
-  align-items: stretch;
-  padding: 6px 0;
-  overflow: hidden;
+  gap: 4px;
 }
 
 .btn {
-  position: relative;
   display: flex;
   align-items: center;
-  justify-content: center;
-  width: 44px;
-  min-height: 64px;
-  padding: 8px 0;
-  background: none;
-  border: none;
+  gap: 5px;
+  padding: 6px 12px 6px 10px;
+  background: var(--lab-surface, #fff);
+  border: 1px solid var(--lab-rule, #e5e7eb);
+  border-left: none;
+  border-radius: 0 999px 999px 0;
   cursor: pointer;
-  color: var(--lab-ink-light, #9ca3af);
-  transition: background var(--lab-transition, 160ms ease),
-              color var(--lab-transition, 160ms ease);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.055em;
+  text-transform: uppercase;
+  color: var(--lab-ink-mid, #6b7280);
+  white-space: nowrap;
+  line-height: 1;
+  box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.07);
+  transition: color 0.12s ease, background 0.12s ease,
+              border-color 0.12s ease, box-shadow 0.12s ease;
+  user-select: none;
 }
 
 .btn:hover {
-  background: var(--lab-surface-mid, #f3f4f6);
-  color: var(--lab-ink-mid, #4b5563);
+  color: var(--lab-accent, #2563eb);
+  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .btn:focus-visible {
   outline: 2px solid var(--lab-accent, #2563eb);
-  outline-offset: -2px;
+  outline-offset: 2px;
 }
 
 .btnActive {
   background: var(--lab-accent, #2563eb);
+  border-color: var(--lab-accent, #2563eb);
   color: #fff;
+  box-shadow: 1px 2px 6px rgba(37, 99, 235, 0.25);
 }
 
 .btnActive:hover {
   background: var(--lab-accent-hover, #1d4ed8);
+  border-color: var(--lab-accent-hover, #1d4ed8);
   color: #fff;
+  box-shadow: 2px 3px 10px rgba(37, 99, 235, 0.3);
 }
 
-/* rotated label — reads bottom to top */
+/* horizontal label — no rotation */
 .label {
-  font-size: 9.5px;
-  font-weight: 700;
-  letter-spacing: 0.07em;
-  text-transform: uppercase;
-  writing-mode: vertical-rl;
-  transform: rotate(180deg);
-  white-space: nowrap;
-  line-height: 1;
   user-select: none;
 }
 
-/* visited dot — top-right corner of button */
+/* visited dot — shown when section has been opened but is not currently active */
 .dot {
-  position: absolute;
-  top: 6px;
-  right: 6px;
   width: 5px;
   height: 5px;
   border-radius: 50%;
   background: var(--lab-accent, #2563eb);
+  flex-shrink: 0;
 }

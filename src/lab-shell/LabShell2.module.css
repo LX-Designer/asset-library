@@ -15,10 +15,8 @@
   overflow-x: auto;
 }
 
-/* Offset main content so it doesn't sit under the fixed 44px rail */
-.mainWithRail {
-  padding-left: 44px;
-}
+/* Pills float over content — no layout offset needed */
+.mainWithRail {}
 
 .content {
   width: 100%;
