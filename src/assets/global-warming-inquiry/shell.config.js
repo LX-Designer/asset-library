@@ -1,10 +1,13 @@
 import base from '../global-warming/shell.config.js'
+import { EVIDENCE_STARTER_CARDS } from '../global-warming/index.jsx'
 
 import GlossaryTab from '../global-warming/GlossaryTab.jsx'
 import UnitsTab    from '../global-warming/UnitsTab.jsx'
 import CardsTab      from './CardsTab.jsx'
 import ChronologyTab from './ChronologyTab.jsx'
+import EvidenceTab   from './EvidenceTab.jsx'
 import EvidenceDocs  from './EvidenceDocs.jsx'
+import CardStage     from './CardStage.jsx'
 import IntroSection  from './IntroSection.jsx'
 import activityBackgrounds from './Backgrounds.jsx'
 
@@ -66,7 +69,7 @@ export default {
     defaultDockedWidth: 300,
     maxDockedWidth:     400,
     defaultTab:         'cards',
-    tabs:               ['cards', 'chronology', 'glossary', 'units'],
+    tabs:               ['cards', 'evidence', 'chronology', 'glossary', 'units'],
     header: {
       fpTitle:  'Reference',
       eyebrow:  'Reference',
@@ -77,6 +80,7 @@ export default {
 
   customTabs: {
     cards:      CardsTab,
+    evidence:   EvidenceTab,
     chronology: ChronologyTab,
     glossary:   GlossaryTab,
     units:      UnitsTab,
@@ -92,6 +96,11 @@ export default {
     documents:  EVIDENCE_DOCUMENTS,
   },
   evidenceComponent: EvidenceDocs,
+
+  cards: {
+    documents: EVIDENCE_STARTER_CARDS.map(c => ({ id: c.id, label: c.type, title: c.title })),
+  },
+  cardComponent: CardStage,
 
   activities,
   activityForms:     base.activityForms,

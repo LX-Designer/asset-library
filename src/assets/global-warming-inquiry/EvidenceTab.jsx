@@ -1,18 +1,16 @@
-import { EVIDENCE_STARTER_CARDS } from '../global-warming/index.jsx'
-
-export default function CardsTab({ onOpenCard, visitedCards }) {
+export default function EvidenceTab({ documents = [], onOpenEvidence, visitedIds }) {
   return (
     <div style={{ padding: '10px 12px', overflowY: 'auto', height: '100%' }}>
       <p style={{ fontSize: '11px', color: 'var(--lab-ink-light)', margin: '0 0 10px', lineHeight: 1.4 }}>
-        Thirteen evidence types. Click any card to open it in the viewer.
+        Six charts and diagrams. Click any item to open the evidence viewer.
       </p>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-        {EVIDENCE_STARTER_CARDS.map((card, i) => {
-          const visited = visitedCards?.has(card.id)
+        {documents.map((doc, i) => {
+          const visited = visitedIds?.has(doc.id)
           return (
             <button
-              key={card.id}
-              onClick={() => onOpenCard?.(card.id)}
+              key={doc.id}
+              onClick={() => onOpenEvidence?.(doc.id)}
               style={{
                 display: 'flex', alignItems: 'center', gap: '8px',
                 width: '100%', textAlign: 'left', padding: '8px 10px',
@@ -32,11 +30,11 @@ export default function CardsTab({ onOpenCard, visitedCards }) {
                 {i + 1}
               </span>
               <div>
-                <div style={{ fontSize: '11px', fontWeight: 700, color: 'var(--lab-accent)', marginBottom: '1px' }}>
-                  {card.type}
+                <div style={{ fontSize: '11px', fontWeight: 700, color: 'var(--lab-ink)', marginBottom: '1px' }}>
+                  {doc.label}
                 </div>
-                <div style={{ fontSize: '10.5px', color: 'var(--lab-ink)', lineHeight: 1.3 }}>
-                  {card.title}
+                <div style={{ fontSize: '10.5px', color: 'var(--lab-ink-light)', lineHeight: 1.3 }}>
+                  {doc.title}
                 </div>
               </div>
             </button>

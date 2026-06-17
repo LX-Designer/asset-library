@@ -71,6 +71,11 @@ export default function LabShell2({
   const [evidenceViewerOpen, setEvidenceViewerOpen] = useState(false)
   const [visitedEvidence, setVisitedEvidence] = useState(() => new Set())
 
+  // ── Card viewer state ─────────────────────────────────────────────────────────
+  const [activeCardId, setActiveCardId] = useState(null)
+  const [cardViewerOpen, setCardViewerOpen] = useState(false)
+  const [visitedCards, setVisitedCards] = useState(() => new Set())
+
   // ── Concepts modal state (optional) ──────────────────────────────────────────
   const [activeConceptId, setActiveConceptId]     = useState(null)
   const [conceptTrigger, setConceptTrigger]       = useState(0)
@@ -138,6 +143,7 @@ export default function LabShell2({
 
   // ── Evidence viewer ──────────────────────────────────────────────────────────
   const openEvidence = useCallback((id) => {
+    setCardViewerOpen(false)
     setActiveEvidenceId(id)
     setEvidenceViewerOpen(true)
     setVisitedEvidence(prev => new Set([...prev, id]))
@@ -148,9 +154,22 @@ export default function LabShell2({
     setVisitedEvidence(prev => new Set([...prev, id]))
   }, [])
 
-  const closeEvidence = useCallback(() => {
+  const closeEvidence = useCallback(() => setEvidenceViewerOpen(false), [])
+
+  // ── Card viewer ───────────────────────────────────────────────────────────────
+  const openCard = useCallback((id) => {
     setEvidenceViewerOpen(false)
+    setActiveCardId(id)
+    setCardViewerOpen(true)
+    setVisitedCards(prev => new Set([...prev, id]))
   }, [])
+
+  const navigateCard = useCallback((id) => {
+    setActiveCardId(id)
+    setVisitedCards(prev => new Set([...prev, id]))
+  }, [])
+
+  const closeCard = useCallback(() => setCardViewerOpen(false), [])
 
   // ── Guide sidebar handlers ───────────────────────────────────────────────────
   const handleGuideDockedChange = useCallback((docked) => {
@@ -176,7 +195,16 @@ export default function LabShell2({
   function renderTabContent() {
     const TabComponent = config.customTabs?.[guideActiveTab]
     if (!TabComponent) return null
-    return <TabComponent onOpenEvidence={openEvidence} onOpenConcept={openConcept} />
+    return (
+      <TabComponent
+        onOpenEvidence={openEvidence}
+        onOpenCard={openCard}
+        onOpenConcept={openConcept}
+        visitedEvidence={visitedEvidence}
+        visitedCards={visitedCards}
+        evidenceDocuments={config.evidence?.documents ?? []}
+      />
+    )
   }
 
   const sectionIdFor = (activity) => `s-${activity.id}`
@@ -315,6 +343,20 @@ export default function LabShell2({
           onClose={closeEvidence}
           isOpen={evidenceViewerOpen}
           visitedIds={visitedEvidence}
+        />
+      )}
+
+      {/* ── Card viewer overlay ── */}
+      {config.cardComponent && (
+        <EvidenceViewer
+          documents={config.cards?.documents ?? []}
+          EvidenceComponent={config.cardComponent}
+          activeId={activeCardId}
+          onNavigate={navigateCard}
+          onClose={closeCard}
+          isOpen={cardViewerOpen}
+          visitedIds={visitedCards}
+          dossierLabel="Evidence cards"
         />
       )}
 

@@ -9,6 +9,7 @@ export default function EvidenceViewer({
   onClose,
   isOpen,
   visitedIds,
+  dossierLabel = 'Evidence dossier',
 }) {
   const closeRef = useRef(null)
 
@@ -56,7 +57,7 @@ export default function EvidenceViewer({
         {/* ── Header ── */}
         <div className={s.header}>
           <div>
-            <span className={s.eyebrow}>Evidence dossier · {activeIndex + 1} of {documents.length}</span>
+            <span className={s.eyebrow}>{dossierLabel} · {activeIndex + 1} of {documents.length}</span>
             <h2 className={s.title}>{activeDoc?.title}</h2>
           </div>
           <button ref={closeRef} className={s.closeBtn} onClick={onClose} aria-label="Close evidence viewer">
