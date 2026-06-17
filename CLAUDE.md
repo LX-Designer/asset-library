@@ -74,17 +74,22 @@ Routes under `/dashboard` and `/dashboard/classes/:classId` are protected by `Pr
 
 ---
 
-## LabShell — building new labs
+## Lab shells — building new labs
 
-Most new labs should use LabShell (`src/lab-shell/`). It provides all navigation, panels, response persistence, and completion tracking. The lab author only writes content and config.
+Two shell variants live in `src/lab-shell/`. Both handle navigation, response persistence, and completion tracking — they differ in how content and activities are laid out.
 
-### File structure for a LabShell lab
+| Shell | File | Use when… |
+|---|---|---|
+| `LabShell1` | `LabShell1.jsx` | Scrollable document is the main column; activities pop out in a right panel; reference in left sidebar. **Default for most labs.** |
+| `LabShell2` | `LabShell2.jsx` | Activities ARE the main scrollable column (stacked full-width); evidence/reference in left sidebar tabs and right `EvidenceDock`. Use for inquiry labs where students work through activities in order. |
+
+### File structure for a LabShell1 lab
 
 ```
 src/assets/[lab-id]/
   meta.js               ← card metadata (title, level, discipline, labType, etc.)
   shell.config.js       ← all lab configuration (copy from shell.config.template.js)
-  index.jsx             ← exports the lab component; wires LabShell + content
+  index.jsx             ← exports the lab component; wires LabShell1 + content
   index.module.css      ← lab-specific CSS tokens and theme overrides
   activities/
     Act1.jsx            ← one file per activity form component
@@ -96,12 +101,12 @@ src/assets/[lab-id]/
 
 Images and SVGs go in `public/[lab-id]/` and are referenced as `/[lab-id]/filename`.
 
-### index.jsx pattern
+### index.jsx pattern (LabShell1)
 
 ```jsx
-import LabShell from '../../lab-shell/LabShell.jsx'
-import config   from './shell.config.js'
-import styles   from './index.module.css'
+import LabShell1 from '../../lab-shell/LabShell1.jsx'
+import config    from './shell.config.js'
+import styles    from './index.module.css'
 
 function LabContent({ responses, onSave, openActivity, openEvidence, openConcept }) {
   // All your JSX here — sections, diagrams, evidence cards, etc.
@@ -110,15 +115,15 @@ function LabContent({ responses, onSave, openActivity, openEvidence, openConcept
 
 export default function MyLab({ onResponse, onComplete, savedResponses, isCompleted, onReset, backHref }) {
   return (
-    <LabShell config={config} onResponse={onResponse} onComplete={onComplete}
-              savedResponses={savedResponses} isCompleted={isCompleted}
-              onReset={onReset} backHref={backHref} className={styles.labShell}>
+    <LabShell1 config={config} onResponse={onResponse} onComplete={onComplete}
+               savedResponses={savedResponses} isCompleted={isCompleted}
+               onReset={onReset} backHref={backHref} className={styles.labShell}>
       {({ openActivity, openEvidence, openConcept, responses, onSave, scrollToSection }) => (
         <LabContent responses={responses} onSave={onSave}
                     openActivity={openActivity} openEvidence={openEvidence}
                     openConcept={openConcept} />
       )}
-    </LabShell>
+    </LabShell1>
   )
 }
 ```
@@ -176,8 +181,9 @@ All `--lab-*` defaults are in `src/lab-shell/tokens.css`. Override only what dif
 
 | Export | Purpose |
 |---|---|
-| `LabShell` | The main shell component |
-| `EvidencePanel` | Floating evidence document panel (if used outside LabShell) |
+| `LabShell1` | Content-primary shell (scrollable doc + activity panel) |
+| `LabShell2` | Activity-primary shell (stacked activities + evidence dock) |
+| `EvidencePanel` | Floating evidence document panel (if used outside a shell) |
 | `DEFAULT_THEME_VARS` | Standard CSS var list for `themeVars` in shell.config.js |
 | `defaultGetActivityStatus` | Standard completion check for text-response activities |
 | `useActivityResponse` | Hook: draft state + save-on-blur for activity forms |
