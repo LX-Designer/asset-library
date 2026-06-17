@@ -1,28 +1,25 @@
 import base from '../global-warming/shell.config.js'
 import { EVIDENCE_STARTER_CARDS } from '../global-warming/index.jsx'
 
-import GlossaryTab from '../global-warming/GlossaryTab.jsx'
-import UnitsTab    from '../global-warming/UnitsTab.jsx'
-import CardsTab      from './CardsTab.jsx'
-import ChronologyTab from './ChronologyTab.jsx'
-import EvidenceTab   from './EvidenceTab.jsx'
-import EvidenceDocs  from './EvidenceDocs.jsx'
-import CardStage     from './CardStage.jsx'
-import IntroSection  from './IntroSection.jsx'
+import EvidenceDocs     from './EvidenceDocs.jsx'
+import CardStage        from './CardStage.jsx'
+import IntroSection     from './IntroSection.jsx'
 import activityBackgrounds from './Backgrounds.jsx'
+import ChronologyOverlay from './ChronologyOverlay.jsx'
+import GlossaryOverlay  from './GlossaryOverlay.jsx'
+import UnitsOverlay     from './UnitsOverlay.jsx'
 
-// Evidence documents shown in the right-hand evidence dock.
+// Evidence documents shown in the right-hand evidence viewer.
 const EVIDENCE_DOCUMENTS = [
   { id: 'proxy',    label: 'Proxy record',  title: 'Temperature: proxy reconstruction vs instrumental' },
   { id: 'gmst',     label: 'Global temp',   title: 'Global temperature record (1880–2025)' },
   { id: 'co2-temp', label: 'Temp vs CO₂',   title: 'Temperature vs CO₂ and natural forcings' },
-  { id: 'budget',   label: 'Energy budget', title: 'Earth’s energy budget' },
+  { id: 'budget',   label: 'Energy budget', title: "Earth's energy budget" },
   { id: 'ghg',      label: 'GHG table',     title: 'Greenhouse gas comparison' },
   { id: 'co2e',     label: 'CO₂e calc',     title: 'CO₂-equivalent calculator' },
 ]
 
-// Per-activity "View evidence" links — repurposed to open evidence documents
-// in the dock (the standard lab points these at content sections instead).
+// Per-activity "View evidence" links — open evidence documents in the viewer.
 const EVIDENCE_LINKS = {
   'act-1': [{ id: 'proxy',    label: 'Proxy vs instrumental record' }],
   'act-2': [{ id: 'proxy',    label: 'Proxy reconstruction' }],
@@ -65,25 +62,7 @@ export default {
   },
 
   sidebar: {
-    side:               'left',
-    defaultDockedWidth: 300,
-    maxDockedWidth:     400,
-    defaultTab:         'cards',
-    tabs:               ['cards', 'evidence', 'chronology', 'glossary', 'units'],
-    header: {
-      fpTitle:  'Reference',
-      eyebrow:  'Reference',
-      title:    'Global Warming',
-      subtitle: 'Evidence & reference',
-    },
-  },
-
-  customTabs: {
-    cards:      CardsTab,
-    evidence:   EvidenceTab,
-    chronology: ChronologyTab,
-    glossary:   GlossaryTab,
-    units:      UnitsTab,
+    tabs: ['cards', 'evidence', 'chronology', 'glossary', 'units'],
   },
 
   // ── Activity-primary layout extras ──────────────────────────────────────────
@@ -91,9 +70,7 @@ export default {
   activityBackgrounds,
 
   evidence: {
-    dockSide:   'right',
-    panelWidth: 600,
-    documents:  EVIDENCE_DOCUMENTS,
+    documents: EVIDENCE_DOCUMENTS,
   },
   evidenceComponent: EvidenceDocs,
 
@@ -101,6 +78,11 @@ export default {
     documents: EVIDENCE_STARTER_CARDS.map(c => ({ id: c.id, label: c.type, title: c.title })),
   },
   cardComponent: CardStage,
+
+  // Overlay components — loaded by LabShell2 from config
+  chronologyComponent: ChronologyOverlay,
+  glossaryComponent:   GlossaryOverlay,
+  unitsComponent:      UnitsOverlay,
 
   activities,
   activityForms:     base.activityForms,

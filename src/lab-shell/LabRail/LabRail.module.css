@@ -1,0 +1,75 @@
+.rail {
+  position: fixed;
+  left: 0;
+  top: var(--lab-nav-height, 44px);
+  bottom: 0;
+  width: 44px;
+  z-index: 20;
+  background: var(--lab-surface, #fff);
+  border-right: 1px solid var(--lab-rule, #e5e7eb);
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  padding: 6px 0;
+  overflow: hidden;
+}
+
+.btn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  min-height: 64px;
+  padding: 8px 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--lab-ink-light, #9ca3af);
+  transition: background var(--lab-transition, 160ms ease),
+              color var(--lab-transition, 160ms ease);
+}
+
+.btn:hover {
+  background: var(--lab-surface-mid, #f3f4f6);
+  color: var(--lab-ink-mid, #4b5563);
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--lab-accent, #2563eb);
+  outline-offset: -2px;
+}
+
+.btnActive {
+  background: var(--lab-accent, #2563eb);
+  color: #fff;
+}
+
+.btnActive:hover {
+  background: var(--lab-accent-hover, #1d4ed8);
+  color: #fff;
+}
+
+/* rotated label — reads bottom to top */
+.label {
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  white-space: nowrap;
+  line-height: 1;
+  user-select: none;
+}
+
+/* visited dot — top-right corner of button */
+.dot {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--lab-accent, #2563eb);
+}

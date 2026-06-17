@@ -1,34 +1,26 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import './tokens.css'
 import LabNav from './LabNav/LabNav.jsx'
-import LabSidebar, { TAB_LABELS } from './LabSidebar/LabSidebar.jsx'
+import LabRail from './LabRail/LabRail.jsx'
 import ActivityBody from './ActivityPanel/ActivityBody.jsx'
 import EvidenceViewer from './EvidenceViewer/EvidenceViewer.jsx'
 import ConceptsModal from './ConceptsModal/ConceptsModal.jsx'
 import { useIsDesktop } from './hooks/useIsDesktop.js'
 import s from './LabShell2.module.css'
 
-/**
- * LabShellInquiry — "activity-primary" variant of LabShell.
- *
- * Inverts the content/activity relationship: the scrollable main column IS the
- * sequence of activities (each rendered full-width via ActivityBody stacked
- * mode), while evidence/reference lives in surfaces — a left sidebar (cards,
- * chronology, glossary, units) and a right-side EvidenceViewer overlay (full dossier).
- *
- * The logic layer (response persistence, completion tracking, section nav) is
- * identical to LabShell; only the layout and the location of activities vs
- * evidence differ. LabShell itself is untouched.
- */
+const RAIL_LABELS = {
+  cards:      'Cards',
+  evidence:   'Evidence',
+  chronology: 'Timeline',
+  glossary:   'Glossary',
+  units:      'Units',
+}
+
 function CollapsibleBackground({ title = 'Background', children }) {
   const [open, setOpen] = useState(false)
   return (
     <div className={s.bg}>
-      <button
-        className={s.bgToggle}
-        onClick={() => setOpen(v => !v)}
-        aria-expanded={open}
-      >
+      <button className={s.bgToggle} onClick={() => setOpen(v => !v)} aria-expanded={open}>
         <span className={`${s.bgChevron}${open ? ` ${s.bgChevronOpen}` : ''}`}>▶</span>
         {title}
       </button>
@@ -50,23 +42,10 @@ export default function LabShell2({
 }) {
   const labId = config.labId
 
-  // ── Response state ──────────────────────────────────────────────────────────
+  // ── Response state ────────────────────────────────────────────────────────────
   const [responses, setResponses] = useState(savedResponses ?? {})
 
-  // ── Guide sidebar state (left — evidence/reference tabs) ─────────────────────
-  const [guideActiveTab, setGuideActiveTab] = useState(config.sidebar.defaultTab ?? 'cards')
-  const [guideDesktopOpen, setGuideDesktopOpen] = useState(() => {
-    try {
-      const stored = JSON.parse(localStorage.getItem(`fp_${labId}-guide`) ?? 'null')
-      return stored?.state === 'docked'
-    } catch { return false }
-  })
-  const [guideIsFloating, setGuideIsFloating] = useState(false)
-  const [guideDockTrigger, setGuideDockTrigger]   = useState(0)
-  const [guideCloseTrigger, setGuideCloseTrigger] = useState(0)
-  const [guideOpen, setGuideOpen] = useState(false)  // mobile drawer
-
-  // ── Evidence viewer state ────────────────────────────────────────────────────
+  // ── Evidence viewer state ─────────────────────────────────────────────────────
   const [activeEvidenceId, setActiveEvidenceId] = useState(null)
   const [evidenceViewerOpen, setEvidenceViewerOpen] = useState(false)
   const [visitedEvidence, setVisitedEvidence] = useState(() => new Set())
@@ -76,18 +55,23 @@ export default function LabShell2({
   const [cardViewerOpen, setCardViewerOpen] = useState(false)
   const [visitedCards, setVisitedCards] = useState(() => new Set())
 
-  // ── Concepts modal state (optional) ──────────────────────────────────────────
-  const [activeConceptId, setActiveConceptId]     = useState(null)
-  const [conceptTrigger, setConceptTrigger]       = useState(0)
+  // ── Single-section overlays ───────────────────────────────────────────────────
+  const [chronologyOpen, setChronologyOpen] = useState(false)
+  const [glossaryOpen, setGlossaryOpen] = useState(false)
+  const [unitsOpen, setUnitsOpen] = useState(false)
+
+  // ── Concepts modal (optional) ─────────────────────────────────────────────────
+  const [activeConceptId, setActiveConceptId]         = useState(null)
+  const [conceptTrigger, setConceptTrigger]           = useState(0)
   const [conceptCloseTrigger, setConceptCloseTrigger] = useState(0)
 
-  // ── Section nav tracking ─────────────────────────────────────────────────────
+  // ── Section nav tracking ──────────────────────────────────────────────────────
   const [activeSection, setActiveSection] = useState(config.nav?.sections?.[0]?.id ?? null)
 
   const isDesktop        = useIsDesktop()
   const prevCompletedRef = useRef(false)
 
-  // ── Completion tracking (identical to LabShell) ──────────────────────────────
+  // ── Completion tracking ───────────────────────────────────────────────────────
   useEffect(() => {
     if (isCompleted || prevCompletedRef.current) return
     const required = config.activities.filter(a => a.required !== false)
@@ -98,12 +82,11 @@ export default function LabShell2({
     }
   }, [responses, isCompleted, onComplete, config, labId])
 
-  // ── Concepts open animation ──────────────────────────────────────────────────
   useEffect(() => {
     if (activeConceptId) setConceptTrigger(t => t + 1)
   }, [activeConceptId])
 
-  // ── IntersectionObserver: highlight active section in nav ───────────────────
+  // ── Section intersection observer ────────────────────────────────────────────
   useEffect(() => {
     const sections = config.nav?.sections
     if (!sections?.length) return
@@ -121,7 +104,7 @@ export default function LabShell2({
     return () => observers.forEach(obs => obs.disconnect())
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
-  // ── handleSave (identical to LabShell) ───────────────────────────────────────
+  // ── handleSave ────────────────────────────────────────────────────────────────
   const handleSave = useCallback(async (key, value) => {
     if (value === null) {
       setResponses(prev => { const next = { ...prev }; delete next[key]; return next })
@@ -141,13 +124,22 @@ export default function LabShell2({
     window.scrollTo({ top: Math.max(0, top), behavior: prefersReduced ? 'instant' : 'smooth' })
   }, [])
 
-  // ── Evidence viewer ──────────────────────────────────────────────────────────
-  const openEvidence = useCallback((id) => {
+  // ── Close all overlays ────────────────────────────────────────────────────────
+  const closeAllOverlays = useCallback(() => {
+    setEvidenceViewerOpen(false)
     setCardViewerOpen(false)
+    setChronologyOpen(false)
+    setGlossaryOpen(false)
+    setUnitsOpen(false)
+  }, [])
+
+  // ── Evidence viewer ───────────────────────────────────────────────────────────
+  const openEvidence = useCallback((id) => {
+    closeAllOverlays()
     setActiveEvidenceId(id)
     setEvidenceViewerOpen(true)
     setVisitedEvidence(prev => new Set([...prev, id]))
-  }, [])
+  }, [closeAllOverlays])
 
   const navigateEvidence = useCallback((id) => {
     setActiveEvidenceId(id)
@@ -158,11 +150,11 @@ export default function LabShell2({
 
   // ── Card viewer ───────────────────────────────────────────────────────────────
   const openCard = useCallback((id) => {
-    setEvidenceViewerOpen(false)
+    closeAllOverlays()
     setActiveCardId(id)
     setCardViewerOpen(true)
     setVisitedCards(prev => new Set([...prev, id]))
-  }, [])
+  }, [closeAllOverlays])
 
   const navigateCard = useCallback((id) => {
     setActiveCardId(id)
@@ -171,41 +163,68 @@ export default function LabShell2({
 
   const closeCard = useCallback(() => setCardViewerOpen(false), [])
 
-  // ── Guide sidebar handlers ───────────────────────────────────────────────────
-  const handleGuideDockedChange = useCallback((docked) => {
-    setGuideDesktopOpen(docked)
-    if (docked) setGuideIsFloating(false)
-  }, [])
-
-  // ── Concepts ─────────────────────────────────────────────────────────────────
+  // ── Concepts ──────────────────────────────────────────────────────────────────
   const openConcept   = useCallback((id) => setActiveConceptId(id), [])
   const navigateConcept = useCallback((id) => setActiveConceptId(id), [])
 
-  // ── Derived values ───────────────────────────────────────────────────────────
+  // ── Rail sections ─────────────────────────────────────────────────────────────
+  const tabs = config.sidebar?.tabs ?? []
+  const firstEvidenceId = config.evidence?.documents?.[0]?.id
+  const firstCardId     = config.cards?.documents?.[0]?.id
+
+  const railSections = tabs
+    .filter(id => RAIL_LABELS[id])
+    .map(id => ({
+      id,
+      label:        RAIL_LABELS[id],
+      isOpen:
+        (id === 'cards'      && cardViewerOpen) ||
+        (id === 'evidence'   && evidenceViewerOpen) ||
+        (id === 'chronology' && chronologyOpen) ||
+        (id === 'glossary'   && glossaryOpen) ||
+        (id === 'units'      && unitsOpen),
+      visitedCount:
+        id === 'cards'    ? visitedCards.size :
+        id === 'evidence' ? visitedEvidence.size : 0,
+    }))
+
+  const handleRailSelect = useCallback((id) => {
+    const isCurrentlyOpen =
+      (id === 'cards'      && cardViewerOpen)      ||
+      (id === 'evidence'   && evidenceViewerOpen)  ||
+      (id === 'chronology' && chronologyOpen)      ||
+      (id === 'glossary'   && glossaryOpen)        ||
+      (id === 'units'      && unitsOpen)
+
+    closeAllOverlays()
+
+    if (!isCurrentlyOpen) {
+      if      (id === 'cards')      openCard(activeCardId ?? firstCardId)
+      else if (id === 'evidence')   openEvidence(activeEvidenceId ?? firstEvidenceId)
+      else if (id === 'chronology') setChronologyOpen(true)
+      else if (id === 'glossary')   setGlossaryOpen(true)
+      else if (id === 'units')      setUnitsOpen(true)
+    }
+  }, [
+    cardViewerOpen, evidenceViewerOpen, chronologyOpen, glossaryOpen, unitsOpen,
+    activeCardId, activeEvidenceId, firstCardId, firstEvidenceId,
+    closeAllOverlays, openCard, openEvidence,
+  ])
+
+  // ── Mobile bottom bar section selection ───────────────────────────────────────
+  const handleMobileSelect = handleRailSelect
+
+  // ── Derived values ────────────────────────────────────────────────────────────
   const requiredActs   = config.activities.filter(a => a.required !== false)
   const completedCount = requiredActs.filter(a => config.getActivityStatus(a.id, responses) === 'complete').length
   const totalCount     = requiredActs.length
-
-  const tabs      = config.sidebar.tabs ?? ['cards']
-  const themeVars = config.themeVars ?? []
-
+  const themeVars      = config.themeVars ?? []
   const IntroComponent = config.introComponent ?? null
 
-  // ── Custom sidebar tab content ───────────────────────────────────────────────
-  function renderTabContent() {
-    const TabComponent = config.customTabs?.[guideActiveTab]
-    if (!TabComponent) return null
-    return (
-      <TabComponent
-        onOpenEvidence={openEvidence}
-        onOpenCard={openCard}
-        onOpenConcept={openConcept}
-        visitedEvidence={visitedEvidence}
-        visitedCards={visitedCards}
-        evidenceDocuments={config.evidence?.documents ?? []}
-      />
-    )
-  }
+  // Lazy-load per-section overlay components from config
+  const ChronologyOverlay = config.chronologyComponent ?? null
+  const GlossaryOverlay   = config.glossaryComponent   ?? null
+  const UnitsOverlay      = config.unitsComponent      ?? null
 
   const sectionIdFor = (activity) => `s-${activity.id}`
 
@@ -222,61 +241,13 @@ export default function LabShell2({
         onSectionClick={scrollToSection}
       />
 
-      {/* ── Left guide sidebar (evidence/reference tabs) ── */}
-      {isDesktop && (
-        <LabSidebar
-          config={config}
-          labId={labId}
-          triggerDock={guideDockTrigger}
-          triggerClose={guideCloseTrigger}
-          activeTab={guideActiveTab}
-          onTabChange={setGuideActiveTab}
-          onDockedChange={handleGuideDockedChange}
-          onFloat={() => setGuideIsFloating(true)}
-          onClose={() => setGuideIsFloating(false)}
-          themeVars={themeVars}
-        >
-          {renderTabContent()}
-        </LabSidebar>
-      )}
-
-      {/* ── Mobile guide drawer ── */}
-      {!isDesktop && (
-        <>
-          <LabSidebar
-            config={config}
-            labId={labId}
-            isMobile
-            guideOpen={guideOpen}
-            onMobileClose={() => setGuideOpen(false)}
-            activeTab={guideActiveTab}
-            onTabChange={setGuideActiveTab}
-          >
-            {renderTabContent()}
-          </LabSidebar>
-          {guideOpen && (
-            <div className={s.mobileBackdrop} onClick={() => setGuideOpen(false)} aria-hidden="true" />
-          )}
-        </>
-      )}
-
-      {/* ── Desktop side tabs (shown when guide is closed) ── */}
-      {isDesktop && !guideDesktopOpen && (
-        <div className={`${s.sideTabs} ${guideIsFloating ? s.sideTabsTucked : ''}`} aria-label="Open reference">
-          {tabs.map(tab => (
-            <button
-              key={tab}
-              className={s.sideTab}
-              onClick={() => { setGuideActiveTab(tab); setGuideDockTrigger(t => t + 1) }}
-            >
-              {TAB_LABELS[tab] ?? tab.charAt(0).toUpperCase() + tab.slice(1)}
-            </button>
-          ))}
-        </div>
+      {/* ── Permanent vertical nav rail (desktop) ── */}
+      {isDesktop && tabs.length > 0 && (
+        <LabRail sections={railSections} onSelect={handleRailSelect} />
       )}
 
       {/* ── Main content: the activity stack ── */}
-      <div className={s.main}>
+      <div className={`${s.main} ${isDesktop && tabs.length > 0 ? s.mainWithRail : ''}`}>
         <div className={s.content} style={{ maxWidth: config.content?.maxWidth ?? '880px' }}>
           {IntroComponent && (
             <section id="s-intro" className={s.introSection}>
@@ -321,16 +292,20 @@ export default function LabShell2({
         </div>
       </div>
 
-      {/* ── Mobile reference trigger ── */}
-      {!isDesktop && (
-        <button
-          className={s.mobileTrigger}
-          onClick={() => setGuideOpen(p => !p)}
-          aria-label={`${guideOpen ? 'Close' : 'Open'} reference`}
-          aria-expanded={guideOpen}
-        >
-          Reference
-        </button>
+      {/* ── Mobile bottom tab bar ── */}
+      {!isDesktop && tabs.length > 0 && (
+        <div className={s.mobileBar} role="navigation" aria-label="Reference sections">
+          {railSections.map(sec => (
+            <button
+              key={sec.id}
+              className={`${s.mobileBarBtn} ${sec.isOpen ? s.mobileBarBtnActive : ''}`}
+              onClick={() => handleMobileSelect(sec.id)}
+              aria-pressed={sec.isOpen}
+            >
+              {sec.label}
+            </button>
+          ))}
+        </div>
       )}
 
       {/* ── Evidence viewer overlay ── */}
@@ -358,6 +333,17 @@ export default function LabShell2({
           visitedIds={visitedCards}
           dossierLabel="Evidence cards"
         />
+      )}
+
+      {/* ── Single-document overlays ── */}
+      {ChronologyOverlay && (
+        <ChronologyOverlay isOpen={chronologyOpen} onClose={() => setChronologyOpen(false)} />
+      )}
+      {GlossaryOverlay && (
+        <GlossaryOverlay isOpen={glossaryOpen} onClose={() => setGlossaryOpen(false)} />
+      )}
+      {UnitsOverlay && (
+        <UnitsOverlay isOpen={unitsOpen} onClose={() => setUnitsOpen(false)} />
       )}
 
       {/* ── Concepts modal (optional) ── */}
