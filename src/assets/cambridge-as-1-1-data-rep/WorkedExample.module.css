@@ -1,0 +1,92 @@
+.we {
+  background: rgba(217, 119, 6, 0.1);
+  border: 1px solid rgba(217, 119, 6, 0.25);
+  border-left: 3px solid #d97706;
+  border-radius: 6px;
+  padding: 1rem 1.25rem;
+  margin: 1.25rem 0;
+}
+
+.title {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #fbbf24;
+  margin-bottom: 0.7rem;
+  font-family: 'IBM Plex Sans', -apple-system, sans-serif;
+}
+
+/* CSS Grid: [operator col] [bits col] [label col] */
+.grid {
+  display: grid;
+  grid-template-columns: 1.5rem max-content 1fr;
+  align-items: baseline;
+  row-gap: 1px;
+  column-gap: 0.9rem;
+}
+
+.divider {
+  grid-column: 1 / -1;
+  border: none;
+  border-top: 1.5px solid rgba(252, 211, 77, 0.35);
+  margin: 3px 0;
+}
+
+.op {
+  font-family: 'IBM Plex Mono', 'Fira Code', 'Courier New', monospace;
+  font-size: 0.95rem;
+  color: #fde68a;
+  text-align: right;
+  line-height: 1.9;
+}
+
+.bits {
+  font-family: 'IBM Plex Mono', 'Fira Code', 'Courier New', monospace;
+  font-size: 0.95rem;
+  color: #fde68a;
+  white-space: pre;
+  letter-spacing: 0.03em;
+  line-height: 1.9;
+}
+
+.label {
+  font-size: 0.8rem;
+  color: #d97706;
+  white-space: nowrap;
+  line-height: 1.9;
+}
+
+/* Carry row — dimmed */
+.carryBits {
+  color: #b45309;
+  font-size: 0.85rem;
+  opacity: 0.6;
+}
+
+.dimmed {
+  color: #b45309;
+  opacity: 0.6;
+}
+
+/* Result row — bold */
+.resultBits {
+  font-weight: 700;
+  color: #fef3c7;
+  border-top: 1.5px solid rgba(252, 211, 77, 0.35);
+}
+
+.resultLabel {
+  color: #fef3c7;
+  font-weight: 600;
+}
+
+/* Note below the steps */
+.note {
+  margin-top: 0.8rem;
+  padding-top: 0.7rem;
+  border-top: 1px solid rgba(217, 119, 6, 0.25);
+  font-size: 0.8rem;
+  color: #d97706;
+  line-height: 1.55;
+}

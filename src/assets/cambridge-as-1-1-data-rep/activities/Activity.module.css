@@ -1,0 +1,169 @@
+/* Shared styles for all cambridge-as-1-1-data-rep activity forms */
+
+/* ── Part section ─────────────────────────────────────────────────────────── */
+.part {
+  margin-bottom: 1.1rem;
+}
+
+.partLabel {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #1d4ed8;
+  margin-bottom: 0.2rem;
+  letter-spacing: 0.02em;
+}
+
+.partHint {
+  font-size: 0.76rem;
+  color: #64748b;
+  font-style: italic;
+  margin-bottom: 0.4rem;
+  line-height: 1.45;
+}
+
+/* ── Textareas ────────────────────────────────────────────────────────────── */
+
+/* Monospace — binary working, conversions, arithmetic */
+.monoArea {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  font-family: 'Fira Code', 'Courier New', monospace;
+  font-size: 0.83rem;
+  line-height: 1.65;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 5px;
+  background: #f8fafc;
+  color: #1e293b;
+  resize: vertical;
+  transition: border-color 0.15s;
+}
+
+.monoArea:focus {
+  outline: none;
+  border-color: #93c5fd;
+  background: #fff;
+  box-shadow: 0 0 0 2px rgba(147, 197, 253, 0.25);
+}
+
+.monoArea:disabled {
+  background: #f1f5f9;
+  color: #64748b;
+  cursor: default;
+}
+
+/* Prose — explanatory text answers */
+.proseArea {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  font-family: Inter, system-ui, sans-serif;
+  font-size: 0.875rem;
+  line-height: 1.65;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 5px;
+  background: #f8fafc;
+  color: #1e293b;
+  resize: vertical;
+  transition: border-color 0.15s;
+}
+
+.proseArea:focus {
+  outline: none;
+  border-color: #93c5fd;
+  background: #fff;
+  box-shadow: 0 0 0 2px rgba(147, 197, 253, 0.25);
+}
+
+.proseArea:disabled {
+  background: #f1f5f9;
+  color: #64748b;
+  cursor: default;
+}
+
+/* Short single-line answer (e.g. Act6 decoded word) */
+.shortInput {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  font-family: 'Fira Code', 'Courier New', monospace;
+  font-size: 1rem;
+  padding: 0.45rem 0.7rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 5px;
+  background: #f8fafc;
+  color: #1e293b;
+  transition: border-color 0.15s;
+}
+
+.shortInput:focus {
+  outline: none;
+  border-color: #93c5fd;
+  background: #fff;
+  box-shadow: 0 0 0 2px rgba(147, 197, 253, 0.25);
+}
+
+.shortInput:disabled {
+  background: #f1f5f9;
+  color: #64748b;
+  cursor: default;
+}
+
+/* ── Form footer ──────────────────────────────────────────────────────────── */
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-top: 1rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid #f1f5f9;
+}
+
+.saveStatus {
+  font-size: 0.73rem;
+  color: #94a3b8;
+  min-width: 4rem;
+}
+
+.saveStatus.saving { color: #94a3b8; }
+.saveStatus.saved  { color: #86efac; }
+
+.submitBtn {
+  padding: 0.45rem 1.1rem;
+  background: var(--lab-accent, #1d4ed8);
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, opacity 0.15s;
+  white-space: nowrap;
+}
+
+.submitBtn:hover:not(:disabled) {
+  background: var(--lab-accent-hover, #1e40af);
+}
+
+.submitBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ── Completed banner ─────────────────────────────────────────────────────── */
+.completedBanner {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.55rem 0.8rem;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 5px;
+  font-size: 0.78rem;
+  color: #166534;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}

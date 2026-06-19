@@ -1,0 +1,203 @@
+.chain {
+  background: rgba(56, 189, 248, 0.06);
+  border: 1px solid rgba(56, 189, 248, 0.15);
+  border-left: 3px solid #38bdf8;
+  border-radius: 6px;
+  padding: 1.1rem 1.25rem;
+  margin: 1.25rem 0;
+}
+
+.title {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #38bdf8;
+  margin-bottom: 1rem;
+}
+
+.stepHeading {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #e2e8f0;
+  margin: 1.1rem 0 0.6rem;
+}
+
+.stepHeading:first-of-type {
+  margin-top: 0;
+}
+
+/* Division table */
+.divTable {
+  border-collapse: collapse;
+  font-family: 'IBM Plex Mono', 'Fira Code', 'Courier New', monospace;
+  font-size: 0.875rem;
+}
+
+.divTable th {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #64748b;
+  padding: 0 1rem 0.4rem 0;
+  text-align: left;
+}
+
+.divTable td {
+  padding: 1px 1rem 1px 0;
+  color: #cbd5e1;
+}
+
+.num {
+  text-align: right;
+  min-width: 2.5rem;
+}
+
+.sym {
+  color: #64748b;
+}
+
+.rem0 { color: #4b5f78; }
+.rem1 { color: #38bdf8; font-weight: 700; }
+
+.arrow {
+  font-size: 0.7rem;
+  color: #64748b;
+  padding-left: 0.5rem;
+  font-family: system-ui, sans-serif;
+  font-style: italic;
+}
+
+.lastRow td {
+  border-top: 1px dashed rgba(255, 255, 255, 0.1);
+  padding-top: 4px;
+}
+
+.readNote {
+  font-size: 0.78rem;
+  color: #64748b;
+  font-style: italic;
+  margin: 0.4rem 0 0.7rem;
+}
+
+/* Result summary row */
+.result {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  margin: 0.5rem 0 0.9rem;
+  padding: 0.4rem 0.75rem;
+  background: rgba(56, 189, 248, 0.08);
+  border-radius: 4px;
+}
+
+.resultLabel {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #38bdf8;
+  min-width: 3rem;
+}
+
+.resultBits {
+  font-family: 'IBM Plex Mono', 'Fira Code', 'Courier New', monospace;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #e2e8f0;
+  letter-spacing: 0.05em;
+}
+
+.resultDenary {
+  font-size: 0.78rem;
+  color: #64748b;
+}
+
+/* Nibble groups for hex */
+.nibbleRow {
+  display: flex;
+  gap: 1.5rem;
+  margin: 0.4rem 0;
+}
+
+.nibbleGroup {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+}
+
+.nibbleBits {
+  font-family: 'IBM Plex Mono', 'Fira Code', 'Courier New', monospace;
+  font-size: 0.9rem;
+  color: #7dd3fc;
+  background: rgba(56, 189, 248, 0.14);
+  padding: 0.15rem 0.5rem;
+  border-radius: 3px;
+}
+
+.nibbleArrow {
+  font-size: 0.85rem;
+  color: #64748b;
+  line-height: 1.2;
+}
+
+.nibbleHex {
+  font-family: 'IBM Plex Mono', 'Fira Code', 'Courier New', monospace;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #38bdf8;
+}
+
+.nibbleSub {
+  font-size: 0.72rem;
+  color: #64748b;
+}
+
+/* BCD groups */
+.bcdRow {
+  display: flex;
+  gap: 1rem;
+  margin: 0.4rem 0;
+}
+
+.bcdGroup {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+}
+
+.bcdDigit {
+  font-family: 'IBM Plex Mono', 'Fira Code', 'Courier New', monospace;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #e2e8f0;
+  background: rgba(255, 255, 255, 0.07);
+  padding: 0.1rem 0.5rem;
+  border-radius: 3px;
+}
+
+.bcdArrow {
+  font-size: 0.85rem;
+  color: #64748b;
+  line-height: 1.2;
+}
+
+.bcdBits {
+  font-family: 'IBM Plex Mono', 'Fira Code', 'Courier New', monospace;
+  font-size: 0.9rem;
+  color: #7dd3fc;
+  background: rgba(56, 189, 248, 0.14);
+  padding: 0.15rem 0.4rem;
+  border-radius: 3px;
+}
+
+.bcdNote {
+  font-size: 0.78rem;
+  color: #64748b;
+  font-style: italic;
+  margin-top: 0.3rem;
+  line-height: 1.5;
+}

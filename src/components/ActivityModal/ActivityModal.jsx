@@ -45,6 +45,7 @@ export default function ActivityModal({
   evidenceSections = [],
   conceptLinks = [],
   conceptsLabel = 'Concepts',
+  evidenceSectionsLabel = 'Go to evidence',
   prevItem,
   nextItem,
   onClose,
@@ -52,6 +53,8 @@ export default function ActivityModal({
   onScrollTo,
   onOpenConcept,
   onOpenEvidence = null,
+  onFinish,
+  finishEnabled = false,
   onClear,
   noHeader = false,
   darkHeader = false,
@@ -85,13 +88,6 @@ export default function ActivityModal({
 
   const contextBlocks = (
     <>
-      {purpose && (
-        <div className={s.purpose}>
-          <span className={s.purposeLabel}>Why this matters</span>
-          {purpose}
-        </div>
-      )}
-
       {prompt && <p className={s.prompt}>{prompt}</p>}
 
       {task && (
@@ -102,12 +98,15 @@ export default function ActivityModal({
       )}
 
       {scaffold && (
-        <div className={s.scaffold}>{scaffold}</div>
+        <div className={s.scaffold}>
+          <span className={s.scaffoldLabel}>Hint</span>
+          {scaffold}
+        </div>
       )}
 
       {evidenceSections.length > 0 && (
         <div className={s.evidenceLinks}>
-          <div className={s.evidenceLabel}>{onOpenEvidence ? 'View evidence' : 'Go to evidence'}</div>
+          <div className={s.evidenceLabel}>{onOpenEvidence ? 'View evidence' : evidenceSectionsLabel}</div>
           <div className={s.evidenceBtns}>
             {evidenceSections.map(({ id, label }) => (
               <button
@@ -196,14 +195,24 @@ export default function ActivityModal({
         )}
 
         {!hideNav && (
-          <button
-            className={s.navBtn}
-            disabled={!nextItem}
-            onClick={() => nextItem && navigate(nextItem.id)}
-            aria-label="Next activity"
-          >
-            {nextItem ? nextItem.label : 'Next'} →
-          </button>
+          nextItem ? (
+            <button
+              className={s.navBtn}
+              onClick={() => navigate(nextItem.id)}
+              aria-label="Next activity"
+            >
+              {nextItem.label} →
+            </button>
+          ) : (
+            <button
+              className={`${s.navBtn} ${finishEnabled ? s.finishBtn : ''}`}
+              disabled={!finishEnabled}
+              onClick={() => onFinish?.()}
+              aria-label="Finish lab"
+            >
+              Finish ✓
+            </button>
+          )
         )}
       </div>
     </div>

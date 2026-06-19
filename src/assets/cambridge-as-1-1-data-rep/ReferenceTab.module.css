@@ -1,0 +1,124 @@
+.tab {
+  padding: 12px 14px 24px;
+  font-size: 0.8rem;
+  color: #cbd5e1;
+}
+
+/* ── Section ────────────────────────────────────────────────────────────── */
+.section {
+  margin-bottom: 20px;
+}
+
+.section + .section {
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+  padding-top: 16px;
+}
+
+.sectionTitle {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--lab-accent, #38bdf8);
+  margin-bottom: 8px;
+}
+
+/* ── Tables ─────────────────────────────────────────────────────────────── */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.775rem;
+  margin-bottom: 0;
+}
+
+.table th {
+  text-align: left;
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #64748b;
+  padding: 3px 6px 5px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.table td {
+  padding: 3px 6px;
+  vertical-align: middle;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  white-space: nowrap;
+}
+
+.table tr:last-child td {
+  border-bottom: none;
+}
+
+/* Hex table side-by-side layout */
+.hexGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 10px;
+}
+
+.hexGrid .table th,
+.hexGrid .table td {
+  padding: 2px 5px;
+}
+
+/* ── Typography helpers ──────────────────────────────────────────────────── */
+.mono {
+  font-family: 'IBM Plex Mono', 'Fira Code', 'Consolas', monospace;
+  font-size: 0.78rem;
+  color: #94a3b8;
+}
+
+.accent {
+  color: var(--lab-accent, #38bdf8);
+  font-weight: 600;
+}
+
+.dim {
+  color: #4b5f78;
+  font-size: 0.72rem;
+}
+
+/* ── Note line ───────────────────────────────────────────────────────────── */
+.note {
+  margin-top: 6px;
+  padding: 5px 8px;
+  background: rgba(255, 255, 255, 0.04);
+  border-left: 3px solid var(--lab-accent, #38bdf8);
+  border-radius: 2px;
+  font-size: 0.72rem;
+  color: #64748b;
+  line-height: 1.4;
+}
+
+/* ── Conversion methods ──────────────────────────────────────────────────── */
+.methodList {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.method {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.methodLabel {
+  font-size: 0.73rem;
+  font-weight: 600;
+  color: #e2e8f0;
+  font-family: 'IBM Plex Mono', 'Fira Code', 'Consolas', monospace;
+}
+
+.methodText {
+  font-size: 0.72rem;
+  color: #64748b;
+  margin: 0;
+  line-height: 1.45;
+}

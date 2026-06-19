@@ -38,6 +38,10 @@ export default function ActivityBody({
   const prevActivity    = actIndex > 0 ? config.activities[actIndex - 1] : null
   const nextActivity    = actIndex < totalActivities - 1 ? config.activities[actIndex + 1] : null
 
+  const allActivitiesComplete = config.activities
+    .filter(a => a.required !== false)
+    .every(a => config.getActivityStatus(a.id, responses) === 'complete')
+
   // ── AI feedback ──────────────────────────────────────────────────────────────
   const feedbackConfig = activity.feedback ?? null
   const {
@@ -115,12 +119,15 @@ export default function ActivityBody({
       evidenceSections={activity.evidenceSections ?? []}
       conceptLinks={activity.conceptLinks ?? []}
       conceptsLabel={config.conceptsLabel ?? 'Concepts'}
+      evidenceSectionsLabel={config.evidenceSectionsLabel ?? 'Go to evidence'}
       prevItem={prevActivity ? { id: prevActivity.id, label: `Activity ${actIndex}` } : null}
       nextItem={nextActivity ? { id: nextActivity.id, label: `Activity ${actIndex + 2}` } : null}
       onNavigate={onNavigate}
       onScrollTo={onScrollTo}
       onOpenConcept={onOpenConcept}
       onOpenEvidence={onOpenEvidence}
+      onFinish={allActivitiesComplete ? onClose : undefined}
+      finishEnabled={allActivitiesComplete}
       onClear={handleClear}
       onClose={onClose}
     >

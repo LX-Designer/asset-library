@@ -115,14 +115,14 @@ export default function LabNav({
             onClick={onExplore}
             aria-pressed={isExploreActive}
           >
-            Explore
+            {config.nav.exploreLabel ?? 'Explore'}
           </button>
           <button
             className={`${s.btn} ${isWorkActive ? s.btnActive : ''}`}
             onClick={onWork}
             aria-pressed={isWorkActive}
           >
-            Work
+            {config.nav.workLabel ?? 'Work'}
           </button>
         </div>
       )}

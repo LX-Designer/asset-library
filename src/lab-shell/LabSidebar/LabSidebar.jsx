@@ -5,6 +5,7 @@ export const TAB_LABELS = {
   activities: 'Activities',
   concepts:   'Toolkit',
   notes:      'Notes',
+  reference:  'Reference',
   evidence:   'Evidence',
   cards:      'Cards',
   chronology: 'Timeline',
