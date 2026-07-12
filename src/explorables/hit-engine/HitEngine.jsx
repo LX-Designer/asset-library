@@ -202,8 +202,8 @@ export default function HitEngine() {
         .mono{font-family:'JetBrains Mono',ui-monospace,monospace;font-variant-numeric:tabular-nums;}
         .he-kick{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);font-weight:600;}
         .he-title{font-size:33px;font-weight:700;letter-spacing:-.025em;line-height:1.05;margin:9px 0 12px;}
-        .he-lede{font-size:16px;line-height:1.6;color:#3C424C;max-width:62ch;} .he-lede b{color:var(--ink);font-weight:600;}
-        .he-tryit{background:#F7F7FE;border:1px solid #E3E1FB;border-radius:14px;padding:20px 22px;margin-top:20px;max-width:62ch;}
+        .he-lede{font-size:16px;line-height:1.6;color:#3C424C;} .he-lede b{color:var(--ink);font-weight:600;}
+        .he-tryit{background:#F7F7FE;border:1px solid #E3E1FB;border-radius:14px;padding:20px 22px;margin-top:20px;}
         .he-tryit-h{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:16px;}
         .he-tryit-steps{display:flex;flex-direction:column;gap:14px;}
         .he-tryit-step{display:flex;gap:12px;align-items:flex-start;}
@@ -212,11 +212,11 @@ export default function HitEngine() {
         .he-tryit-step b{color:var(--ink);}
         .he-tryit-note{margin-top:16px;padding-top:14px;border-top:1px solid #E3E1FB;font-size:13.5px;line-height:1.55;color:#4A4768;}
         .he-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;margin-top:18px;box-shadow:0 1px 2px rgba(20,22,28,.04);}
-        .he-presets{display:flex;gap:10px;flex-wrap:wrap;}
-        .he-pbtn{flex:1;min-width:150px;text-align:left;background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:12px 14px;cursor:pointer;transition:border-color .15s,background .15s;}
-        .he-pbtn:hover{border-color:var(--accent);}
-        .he-pbtn.on{border-color:var(--accent);background:#F0F1FE;}
-        .he-pbtn .lab{font-size:13.5px;font-weight:600;color:var(--ink);} .he-pbtn .sub{font-size:11px;color:var(--muted);margin-top:2px;font-family:'JetBrains Mono',monospace;}
+        .he-presets{display:flex;gap:8px;flex-wrap:wrap;}
+        .he-pbtn{background:var(--card);border:1px solid var(--border);border-radius:999px;padding:7px 15px;cursor:pointer;font-size:13px;font-weight:600;color:var(--muted);transition:border-color .15s,background .15s,color .15s;}
+        .he-pbtn:hover{border-color:var(--accent);color:var(--ink);}
+        .he-pbtn:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+        .he-pbtn.on{border-color:var(--accent);background:var(--accent);color:#fff;}
         .he-explain{margin-top:16px;background:#F0F1FE;border:1px solid #DFE0FB;border-radius:10px;padding:14px 15px;font-size:14px;line-height:1.6;color:#2E2C55;}
         .he-explain b{color:var(--ink);}
         .he-stage{background:var(--stage);border-radius:12px;padding:16px 16px 12px;margin-top:16px;}
@@ -270,11 +270,11 @@ export default function HitEngine() {
         .he-quizreveal b{color:var(--ink);}
         .he-quizreveal ul{margin:8px 0;padding-left:20px;} .he-quizreveal li{margin-bottom:6px;}
         .he-footer{margin-top:24px;padding:15px 2px 6px;border-top:1px solid var(--border);font-size:12px;color:var(--muted);line-height:1.6;} .he-footer b{color:var(--ink);}
-        @media(max-width:620px){.he-presets{flex-direction:column;} .he-sid{width:76px;flex:0 0 76px;}}
+        @media(max-width:620px){.he-sid{width:76px;flex:0 0 76px;}}
         @media(prefers-reduced-motion:reduce){*{transition:none!important;}}
       `}</style>
 
-      <div className="he-kick">Interactive · based on a real 2006 experiment</div>
+      <div className="he-kick">Explorable · based on a real 2006 experiment</div>
       <div className="he-title">The making of a hit</div>
 
       <p className="he-lede">
@@ -309,11 +309,15 @@ export default function HitEngine() {
       </div>
 
       <div className="he-card">
-        <div className="he-presets">
+        <div className="he-presets" role="group" aria-label="Choose a world">
           {WORLDS.map((w) => (
-            <button key={w.key} className={`he-pbtn ${active?.key === w.key ? "on" : ""}`} onClick={() => choose(w)}>
-              <div className="lab">{w.label}</div>
-              <div className="sub">{w.tag}</div>
+            <button
+              key={w.key}
+              className={`he-pbtn ${active?.key === w.key ? "on" : ""}`}
+              aria-pressed={active?.key === w.key}
+              onClick={() => choose(w)}
+            >
+              {w.label}
             </button>
           ))}
         </div>
@@ -417,8 +421,7 @@ export default function HitEngine() {
         )}
         {active && phase === "building" && (
           <div className="he-hint" style={{ marginTop: 8 }}>
-            Click Next Selection for one decision at a time, press and hold to fast-forward, or use Auto-Play to
-            run through automatically.
+            Press and hold the button to fast forward or use Auto-Play to run the simulation automatically.
           </div>
         )}
 
