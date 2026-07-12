@@ -1,3 +1,5 @@
+import cambridgeAS11Meta       from './assets/cambridge-as-1-1-data-rep/meta.js'
+import architectureLabMeta    from './assets/architecture-lab/meta.js'
 import tacomaNarrowsMeta      from './assets/tacoma-narrows/meta.js'
 import econ73Meta             from './assets/econ-73-efficiency/meta.js'
 import econDossierMeta        from './assets/econ-73-dossier/meta.js'
@@ -12,6 +14,8 @@ import metacognitionSDLMeta   from './assets/metacognition-sdl/meta.js'
  * Add a new meta.js import here to surface an asset on the homepage.
  */
 export const assetRegistry = [
+  cambridgeAS11Meta,
+  architectureLabMeta,
   tacomaNarrowsMeta,
   econ73Meta,
   econDossierMeta,
