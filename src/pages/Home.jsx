@@ -1,8 +1,14 @@
+import { useState } from 'react'
 import { assetRegistry } from '../registry.js'
+import { explorableRegistry } from '../explorables/registry.js'
 import AssetCard from '../components/AssetCard/AssetCard.jsx'
+import ExplorableCard from '../components/ExplorableCard/ExplorableCard.jsx'
+import ExplorableModal from '../components/ExplorableModal/ExplorableModal.jsx'
 import styles from './Home.module.css'
 
 export default function Home() {
+  const [openExplorable, setOpenExplorable] = useState(null)
+
   return (
     <div className={styles.page}>
       <section className={styles.hero}>
@@ -33,6 +39,34 @@ export default function Home() {
           </div>
         )}
       </section>
+
+      {explorableRegistry.length > 0 && (
+        <section className={styles.catalogue}>
+          <div className={styles.catalogueHeader}>
+            <h2 className={styles.catalogueTitle}>Explorables</h2>
+            <span className={styles.catalogueCount}>
+              {explorableRegistry.length} {explorableRegistry.length === 1 ? 'explorable' : 'explorables'}
+            </span>
+          </div>
+
+          <div className={styles.grid}>
+            {explorableRegistry.map(explorable => (
+              <ExplorableCard
+                key={explorable.id}
+                explorable={explorable}
+                onOpen={setOpenExplorable}
+              />
+            ))}
+          </div>
+        </section>
+      )}
+
+      {openExplorable && (
+        <ExplorableModal
+          explorable={openExplorable}
+          onClose={() => setOpenExplorable(null)}
+        />
+      )}
     </div>
   )
 }
