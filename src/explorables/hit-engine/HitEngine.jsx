@@ -64,7 +64,7 @@ export default function HitEngine() {
   const worldRef = useRef(null);
   const pulseTimer = useRef(null);
   // shared by both press-and-hold and auto-play — same ramp, different trigger/stop
-  const player = useRef({ active: false, arr: null, idx: 0, start: 0, lastTick: 0, raf: null, lastChosen: null, ffShown: false, mode: null });
+  const player = useRef({ active: false, arr: null, idx: 0, start: 0, lastTick: 0, raf: null, holdTimer: null, lastChosen: null, ffShown: false, mode: null });
 
   const revealPulse = (chosenId) => {
     setPulse(chosenId);
@@ -116,6 +116,11 @@ export default function HitEngine() {
   // never from batching — every single decision still gets its own visible pulse.
   // 'hold' mode is driven by pointer down/up; 'auto' mode is a plain toggle. ──
   const TICK_START_MS = 150, TICK_FLOOR_MS = 30, RAMP_MS = 3000;
+  // an ordinary click's down-to-up duration varies (mouse, trackpad, touch) and can easily exceed
+  // TICK_START_MS, so the ramp itself is not what gates a second decision — instead, 'hold' mode only
+  // arms the ramp once the press has genuinely outlasted a normal click, via this dedicated, cancelable
+  // timer. A quick tap always releases before this fires, so it can never produce a second decision.
+  const HOLD_CONFIRM_MS = 260;
 
   const playerTick = (now) => {
     const p = player.current;
@@ -154,12 +159,22 @@ export default function HitEngine() {
     const chosen = decide(p.arr, w.coin[p.idx], w.pick[p.idx], active.c);
     p.lastChosen = chosen;
     p.idx += 1;
+    p.lastTick = performance.now();
     setPlays(p.arr.slice());
     setStepIndex(p.idx);
     revealPulse(chosen);
 
     if (p.idx >= P) { p.active = false; setAutoPlaying(false); recordCompletion(p.arr, active); setPhase("done"); return; }
-    p.raf = requestAnimationFrame(playerTick);
+
+    if (mode === "auto") {
+      // Auto-Play is a deliberate toggle, not a press — ramp immediately.
+      p.raf = requestAnimationFrame(playerTick);
+    } else {
+      // 'hold' mode: don't arm the ramp until the press has outlasted an ordinary click.
+      p.holdTimer = setTimeout(() => {
+        if (p.active) p.raf = requestAnimationFrame(playerTick);
+      }, HOLD_CONFIRM_MS);
+    }
   };
 
   const stopPlayer = () => {
@@ -167,7 +182,9 @@ export default function HitEngine() {
     if (!p.active) return;
     p.active = false;
     if (p.raf) cancelAnimationFrame(p.raf);
+    if (p.holdTimer) clearTimeout(p.holdTimer);
     p.raf = null;
+    p.holdTimer = null;
     setFfActive(false);
     setAutoPlaying(false);
     if (p.lastChosen != null) revealPulse(p.lastChosen);
@@ -179,6 +196,7 @@ export default function HitEngine() {
 
   useEffect(() => () => {
     if (player.current.raf) cancelAnimationFrame(player.current.raf);
+    if (player.current.holdTimer) clearTimeout(player.current.holdTimer);
     clearTimeout(pulseTimer.current);
   }, []);
 
