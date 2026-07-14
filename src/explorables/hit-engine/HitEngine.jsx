@@ -85,7 +85,6 @@ export default function HitEngine() {
   }, [plays]);
   const leader = ranks.indexOf(0);
   const leaderShare = plays[leader] / total;
-  const bottomShare = [...plays.keys()].filter((i) => ranks[i] >= 8).reduce((s, i) => s + plays[i], 0) / total;
 
   const logit = (p) => Math.log(p / (1 - p));
   const LOGIT_LO = logit(1 / N), LOGIT_HI = logit(0.995);
@@ -258,7 +257,7 @@ export default function HitEngine() {
         .he-insight p{margin:0 0 12px;} .he-insight p:last-child{margin-bottom:0;}
         .he-insight b{color:var(--ink);}
         .he-eyebrow{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:9px;}
-        .he-pullquote{margin:0 0 16px;padding:15px 18px 15px 20px;background:#F0F1FE;border-left:3px solid var(--accent);border-radius:0 10px 10px 0;font-size:18px;line-height:1.45;font-weight:600;letter-spacing:-.01em;color:var(--ink);}
+        .he-pullquote{margin:0 0 16px;padding:15px 18px 15px 20px;background:#F0F1FE;border-left:3px solid var(--accent);border-radius:0 10px 10px 0;font-size:14px;line-height:1.65;font-weight:600;letter-spacing:-.01em;color:var(--ink);}
         .he-concept{display:flex;gap:13px;align-items:flex-start;margin:16px 0;padding:15px 17px;background:#FFF8EC;border:1px solid #F3D9A8;border-radius:12px;}
         .he-concept-icon{flex:0 0 34px;width:34px;height:34px;border-radius:9px;background:var(--hot);color:#fff;display:flex;align-items:center;justify-content:center;}
         .he-concept-body{font-size:14px;line-height:1.6;color:#5C4A28;}
@@ -282,7 +281,7 @@ export default function HitEngine() {
 
       <div className="he-card he-first">
         <div className="he-eyebrow">Explorable</div>
-        <div className="he-quizhd">Making of a hit</div>
+        <div className="he-quizhd">The making of a hit</div>
 
         <p className="he-lede">
           In 2006, researchers Salganik, Dodds, and Watts ran an experiment to understand why some songs become
@@ -345,9 +344,7 @@ export default function HitEngine() {
             </span>
             {stepIndex > 0 && (
               <div className="he-readout">
-                <span>top track <b>{SONGS[leader]}</b></span>
-                <span>its share <b className="mono">{pc(leaderShare)}%</b></span>
-                <span>bottom 8 combined <b className="mono">{pc(bottomShare)}%</b></span>
+                <span>Top track <b>{SONGS[leader]}</b></span>
               </div>
             )}
           </div>
