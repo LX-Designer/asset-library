@@ -200,9 +200,8 @@ export default function HitEngine() {
           background:var(--bg);color:var(--ink);font-family:'Inter',system-ui,sans-serif;padding:28px 22px 14px;min-height:100%;box-sizing:border-box;-webkit-font-smoothing:antialiased;}
         .he-root *{box-sizing:border-box;}
         .mono{font-family:'JetBrains Mono',ui-monospace,monospace;font-variant-numeric:tabular-nums;}
-        .he-kick{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);font-weight:600;}
-        .he-title{font-size:33px;font-weight:700;letter-spacing:-.025em;line-height:1.05;margin:9px 0 12px;}
-        .he-lede{font-size:16px;line-height:1.6;color:#3C424C;} .he-lede b{color:var(--ink);font-weight:600;}
+        .he-card.he-first{margin-top:0;}
+        .he-lede{font-size:16px;line-height:1.6;color:#3C424C;} .he-lede b{color:var(--ink);font-weight:600;} .he-lede i{color:var(--ink);}
         .he-tryit{background:#F7F7FE;border:1px solid #E3E1FB;border-radius:14px;padding:20px 22px;margin-top:20px;}
         .he-tryit-h{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:16px;}
         .he-tryit-steps{display:flex;flex-direction:column;gap:14px;}
@@ -259,7 +258,6 @@ export default function HitEngine() {
         .he-insight p{margin:0 0 12px;} .he-insight p:last-child{margin-bottom:0;}
         .he-insight b{color:var(--ink);}
         .he-eyebrow{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:9px;}
-        .he-mark{background:#EDECFD;color:var(--accent);font-weight:600;padding:1px 5px;border-radius:5px;-webkit-box-decoration-break:clone;box-decoration-break:clone;}
         .he-pullquote{margin:0 0 16px;padding:15px 18px 15px 20px;background:#F0F1FE;border-left:3px solid var(--accent);border-radius:0 10px 10px 0;font-size:18px;line-height:1.45;font-weight:600;letter-spacing:-.01em;color:var(--ink);}
         .he-concept{display:flex;gap:13px;align-items:flex-start;margin:16px 0;padding:15px 17px;background:#FFF8EC;border:1px solid #F3D9A8;border-radius:12px;}
         .he-concept-icon{flex:0 0 34px;width:34px;height:34px;border-radius:9px;background:var(--hot);color:#fff;display:flex;align-items:center;justify-content:center;}
@@ -282,37 +280,39 @@ export default function HitEngine() {
         @media(prefers-reduced-motion:reduce){*{transition:none!important;}}
       `}</style>
 
-      <div className="he-kick">Explorable · based on a real 2006 experiment</div>
-      <div className="he-title">The making of a hit</div>
+      <div className="he-card he-first">
+        <div className="he-eyebrow">Explorable</div>
+        <div className="he-quizhd">Making of a hit</div>
 
-      <p className="he-lede">
-        In 2006, researchers Salganik, Dodds, and Watts ran an experiment to understand why some songs become
-        massive hits while others fail. They wanted to test if "hit" songs are truly the best, or if something
-        else is at play. To test this, they created an online market named <span className="he-mark">Music Lab</span>, where participants
-        downloaded songs by unknown bands. One group made choices independently, based purely on personal taste,
-        while others were shown dynamic charts detailing the download popularity of each song before making their
-        selections. This explorable simulates the outcome of that experiment, and demonstrates how an initial
-        advantage — a lead in the charts — can produce a snowball effect, causing a moderately good song to
-        monopolise the market simply because it gained an accidental head start.
-      </p>
+        <p className="he-lede">
+          In 2006, researchers Salganik, Dodds, and Watts ran an experiment to understand why some songs become
+          massive hits while others fail. They wanted to test if "hit" songs are truly the best, or if something
+          else is at play. To test this, they created an online market named <i>Music Lab</i>, where participants
+          downloaded songs by unknown bands. One group made choices independently, based purely on personal taste,
+          while others were shown dynamic charts detailing the download popularity of each song before making their
+          selections. This explorable simulates the outcome of that experiment, and demonstrates how an initial
+          advantage — a lead in the charts — can produce a snowball effect, causing a moderately good song to
+          monopolise the market simply because it gained an accidental head start.
+        </p>
 
-      <div className="he-tryit">
-        <div className="he-tryit-h">Try it yourself</div>
-        <div className="he-tryit-steps">
-          <div className="he-tryit-step">
-            <span className="he-tryit-num">1</span>
-            <div><b>Select a world.</b> Choose either the Independent world (no charts) or one of the Social worlds (with charts).</div>
+        <div className="he-tryit">
+          <div className="he-tryit-h">Try it yourself</div>
+          <div className="he-tryit-steps">
+            <div className="he-tryit-step">
+              <span className="he-tryit-num">1</span>
+              <div><b>Select a world.</b> Choose either the Independent world (no charts) or one of the Social worlds (with charts).</div>
+            </div>
+            <div className="he-tryit-step">
+              <span className="he-tryit-num">2</span>
+              <div><b>Simulate decisions.</b> Click Next Selection to step through individual choices, hold the
+                button down to fast-forward, or hit Auto-Play to run through the full set of participant decisions
+                automatically.</div>
+            </div>
           </div>
-          <div className="he-tryit-step">
-            <span className="he-tryit-num">2</span>
-            <div><b>Simulate decisions.</b> Click Next Selection to step through individual choices, hold the
-              button down to fast-forward, or hit Auto-Play to run through the full set of participant decisions
-              automatically.</div>
+          <div className="he-tryit-note">
+            As each selection is made, watch how early random choices start to shape the chart, trapping future
+            participants in a feedback loop where choices rapidly accumulate toward a single runaway hit.
           </div>
-        </div>
-        <div className="he-tryit-note">
-          As each selection is made, watch how early random choices start to shape the chart, trapping future
-          participants in a feedback loop where choices rapidly accumulate toward a single runaway hit.
         </div>
       </div>
 
@@ -547,7 +547,7 @@ export default function HitEngine() {
         <div>
           <b>The making of a hit</b> — an interactive on cumulative advantage, based on Salganik, Dodds &amp; Watts,
           "Experimental Study of Inequality and Unpredictability in an Artificial Cultural Market" (<i>Science</i>,
-          2006). Track quality is held equal here on purpose, to isolate what visibility alone can do.
+          2006).
         </div>
       </div>
     </div>
