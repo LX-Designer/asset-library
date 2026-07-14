@@ -258,6 +258,13 @@ export default function HitEngine() {
         .he-insight{margin-top:0;font-size:14px;line-height:1.65;color:#3C424C;}
         .he-insight p{margin:0 0 12px;} .he-insight p:last-child{margin-bottom:0;}
         .he-insight b{color:var(--ink);}
+        .he-eyebrow{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:9px;}
+        .he-mark{background:#EDECFD;color:var(--accent);font-weight:600;padding:1px 5px;border-radius:5px;-webkit-box-decoration-break:clone;box-decoration-break:clone;}
+        .he-pullquote{margin:0 0 16px;padding:15px 18px 15px 20px;background:#F0F1FE;border-left:3px solid var(--accent);border-radius:0 10px 10px 0;font-size:18px;line-height:1.45;font-weight:600;letter-spacing:-.01em;color:var(--ink);}
+        .he-concept{display:flex;gap:13px;align-items:flex-start;margin:16px 0;padding:15px 17px;background:#FFF8EC;border:1px solid #F3D9A8;border-radius:12px;}
+        .he-concept-icon{flex:0 0 34px;width:34px;height:34px;border-radius:9px;background:var(--hot);color:#fff;display:flex;align-items:center;justify-content:center;}
+        .he-concept-body{font-size:14px;line-height:1.6;color:#5C4A28;}
+        .he-concept-term{font-weight:700;color:#B45309;}
         .he-quizhd{font-size:19px;font-weight:700;letter-spacing:-.01em;margin:0 0 8px;}
         .he-quizprompt{font-size:14px;color:#3C424C;margin:0 0 16px;line-height:1.5;}
         .he-quizitem{margin-bottom:10px;}
@@ -269,7 +276,8 @@ export default function HitEngine() {
         .he-quizreveal{background:#FBFAF7;border:1.5px solid var(--accent);border-top:none;border-radius:0 0 10px 10px;padding:14px 15px;font-size:13.5px;line-height:1.6;color:#3C424C;margin-top:-1px;}
         .he-quizreveal b{color:var(--ink);}
         .he-quizreveal ul{margin:8px 0;padding-left:20px;} .he-quizreveal li{margin-bottom:6px;}
-        .he-footer{margin-top:24px;padding:15px 2px 6px;border-top:1px solid var(--border);font-size:12px;color:var(--muted);line-height:1.6;} .he-footer b{color:var(--ink);}
+        .he-footer{margin-top:24px;padding:15px 2px 6px;border-top:1px solid var(--border);font-size:12px;color:var(--muted);line-height:1.6;display:flex;gap:10px;align-items:flex-start;} .he-footer b{color:var(--ink);}
+        .he-footer-icon{flex:0 0 auto;margin-top:2px;color:var(--muted);}
         @media(max-width:620px){.he-sid{width:76px;flex:0 0 76px;}}
         @media(prefers-reduced-motion:reduce){*{transition:none!important;}}
       `}</style>
@@ -280,7 +288,7 @@ export default function HitEngine() {
       <p className="he-lede">
         In 2006, researchers Salganik, Dodds, and Watts ran an experiment to understand why some songs become
         massive hits while others fail. They wanted to test if "hit" songs are truly the best, or if something
-        else is at play. To test this, they created an online market named <b>Music Lab</b>, where participants
+        else is at play. To test this, they created an online market named <span className="he-mark">Music Lab</span>, where participants
         downloaded songs by unknown bands. One group made choices independently, based purely on personal taste,
         while others were shown dynamic charts detailing the download popularity of each song before making their
         selections. This explorable simulates the outcome of that experiment, and demonstrates how an initial
@@ -447,22 +455,33 @@ export default function HitEngine() {
       {completed.length > 0 && (
         <div className="he-card">
           <div className="he-insight">
+            <div className="he-eyebrow">The takeaway</div>
+            <blockquote className="he-pullquote">
+              The same song can become a runaway #1 hit in one world and completely flop in another — and nothing
+              about the song changed. Its success depended entirely on who got lucky first.
+            </blockquote>
             <p>
-              If you ran the simulation in different <b>Social worlds</b>, you likely noticed something strange:
-              the exact same song could become a massive #1 hit in one world, but completely flop in another. Why?
-              Because the success of the song didn't depend on how good it was. It depended entirely on who got
-              lucky first.
+              If you ran the simulation across several <b>Social worlds</b>, you likely saw exactly that: a
+              different winner each time, decided not by quality but by which track happened to catch an early lead.
             </p>
-            <p>
-              This is the power of <b>Cumulative Advantage</b> (often called the <b>Matthew Effect</b>). It is a
-              simple rule: the rich get richer, and the popular get more popular.
-            </p>
+            <div className="he-concept">
+              <span className="he-concept-icon" aria-hidden="true">
+                <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                  <path d="M2 12L7 7L10 10L16 4M16 4H11.5M16 4V8.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </span>
+              <div className="he-concept-body">
+                <span className="he-concept-term">Cumulative Advantage</span> — often called the{" "}
+                <span className="he-concept-term">Matthew Effect</span> — is a simple rule: the rich get richer,
+                and the popular get more popular.
+              </div>
+            </div>
             <p>
               In the Independent world, a song's success matches its quality, because people only rely on their
               own taste. But the moment you introduce a chart, you introduce social influence. An accidental,
-              tiny head start in the charts makes a song more visible. Future participants see that popularity,
-              assume the song must be good, and download it too. This small advantage accumulates, compounding
-              over and over, until a completely average song snowballs into an unstoppable market monopoly.
+              tiny head start makes a song more visible; future participants see that popularity, assume the song
+              must be good, and download it too. That small advantage compounds over and over, until a completely
+              average song snowballs into an unstoppable market monopoly.
             </p>
           </div>
         </div>
@@ -470,6 +489,7 @@ export default function HitEngine() {
 
       {completed.length > 0 && (
         <div className="he-card">
+          <div className="he-eyebrow">Beyond the lab</div>
           <div className="he-quizhd">Cumulative advantage in the real world</div>
           <p className="he-quizprompt">Which of these real-world scenarios do you think is driven by cumulative advantage? Click one to reveal the hidden mechanics.</p>
 
@@ -520,9 +540,15 @@ export default function HitEngine() {
       )}
 
       <div className="he-footer">
-        <b>The making of a hit</b> — an interactive on cumulative advantage, based on Salganik, Dodds &amp; Watts,
-        "Experimental Study of Inequality and Unpredictability in an Artificial Cultural Market" (<i>Science</i>,
-        2006). Track quality is held equal here on purpose, to isolate what visibility alone can do.
+        <svg className="he-footer-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <path d="M8 3.6C8 3.6 6.6 2.6 3.7 2.6C2.9 2.6 2.3 3.2 2.3 4V11.8C2.3 11.8 3.7 11.4 5.6 11.4C7 11.4 8 12.4 8 12.4M8 3.6V12.4M8 3.6C8 3.6 9.4 2.6 12.3 2.6C13.1 2.6 13.7 3.2 13.7 4V11.8C13.7 11.8 12.3 11.4 10.4 11.4C9 11.4 8 12.4 8 12.4"
+            stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+        <div>
+          <b>The making of a hit</b> — an interactive on cumulative advantage, based on Salganik, Dodds &amp; Watts,
+          "Experimental Study of Inequality and Unpredictability in an Artificial Cultural Market" (<i>Science</i>,
+          2006). Track quality is held equal here on purpose, to isolate what visibility alone can do.
+        </div>
       </div>
     </div>
   );
