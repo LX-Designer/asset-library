@@ -4,6 +4,7 @@ import SpeechInput from '../SpeechInput/SpeechInput.jsx'
 import { useAuth } from '../../contexts/AuthContext.jsx'
 import { supabase } from '../../lib/supabase.js'
 import { getAssetMeta } from '../../registry.js'
+import { explorableRegistry } from '../../explorables/registry.js'
 
 export default function Layout() {
   const { user } = useAuth()
@@ -32,6 +33,9 @@ export default function Layout() {
             </Link>
             <nav className={styles.nav} aria-label="Main">
               <Link to="/" className={styles.navLink}>Labs</Link>
+              {explorableRegistry.length > 0 && (
+                <a href="/#explorables" className={styles.navLink}>Explorables</a>
+              )}
               {user ? (
                 <>
                   <Link to="/dashboard" className={styles.navLink}>Dashboard</Link>

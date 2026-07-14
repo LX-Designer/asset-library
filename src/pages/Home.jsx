@@ -21,7 +21,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className={styles.catalogue}>
+      <section id="labs" className={styles.catalogue}>
         <div className={styles.catalogueHeader}>
           <h2 className={styles.catalogueTitle}>Available labs</h2>
           <span className={styles.catalogueCount}>
@@ -41,7 +41,7 @@ export default function Home() {
       </section>
 
       {explorableRegistry.length > 0 && (
-        <section className={styles.catalogue}>
+        <section id="explorables" className={styles.catalogue}>
           <div className={styles.catalogueHeader}>
             <h2 className={styles.catalogueTitle}>Explorables</h2>
             <span className={styles.catalogueCount}>
