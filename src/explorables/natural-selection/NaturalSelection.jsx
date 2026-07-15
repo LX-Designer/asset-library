@@ -9,7 +9,9 @@ import { useState, useRef, useEffect, useMemo } from "react";
 // learner's own eye — selection is entirely emergent.
 const N = 20;              // population size held constant each generation
 const HUNT_MS = 7000;      // seconds of a single hunt
-const MUT = 0.09;          // mutation spread on inheritance
+const MUT = 0.045;         // mutation spread on inheritance — tight enough that a few
+                            // generations of selection converge close to invisible, not
+                            // just "close enough to squint at"
 const SURVIVOR_FLOOR = 4;  // a hunt ends early once this few remain (no extinction)
 
 const clamp01 = (x) => (x < 0 ? 0 : x > 1 ? 1 : x);
@@ -62,14 +64,16 @@ function BlotchPattern({ id, shade, size, blobs = 7 }) {
     const rand = mulberry32(hashStr(id));
     const s = Array.from({ length: blobs }, () => ({
       cx: rand() * size, cy: rand() * size, r: size * (0.12 + rand() * 0.16),
-      dark: rand() < 0.5, op: 0.16 + rand() * 0.2,
+      dark: rand() < 0.5, op: 0.07 + rand() * 0.1,
     }));
     return { spots: s, rot: (rand() - 0.5) * 12 };
   }, [id, size, blobs]);
 
+  // Softer local tonal swing than the base/bark tonal range as a whole — enough
+  // grain to read as bark, not so much that it out-shouts a genuine shade match.
   const base = tone(shade);
-  const light = tone(clamp01(shade - 0.1));
-  const dark = tone(clamp01(shade + 0.1));
+  const light = tone(clamp01(shade - 0.05));
+  const dark = tone(clamp01(shade + 0.05));
 
   return (
     <pattern id={`p-${id}`} width={size} height={size} patternUnits="userSpaceOnUse" patternTransform={`rotate(${rot.toFixed(1)})`}>
@@ -333,7 +337,7 @@ export default function NaturalSelection() {
             radial-gradient(55% 45% at 26% 18%, rgba(255,255,255,.24), transparent 62%),
             radial-gradient(48% 40% at 82% 86%, rgba(0,0,0,.22), transparent 65%);}
         .ns-moth{position:absolute;transform:translate(-50%,-50%) rotate(var(--r,0deg));appearance:none;border:none;background:none;padding:6px;margin:0;line-height:0;
-          filter:blur(.28px);transition:transform .2s ease;}
+          filter:blur(.55px);transition:transform .2s ease;}
         .ns-field.hunting .ns-moth{cursor:crosshair;}
         .ns-moth:not(:disabled){cursor:pointer;}
         .ns-moth:disabled{cursor:default;}
@@ -490,7 +494,7 @@ export default function NaturalSelection() {
           <svg className="ns-bark-svg" width="100%" height="100%" viewBox="0 0 600 344" preserveAspectRatio="none" aria-hidden="true">
             <defs>
               <BlotchPattern id="bark" shade={env.shade} size={46} blobs={9} />
-              {pop.map((m) => <BlotchPattern key={m.id} id={`m${m.id}`} shade={m.shade} size={13} blobs={5} />)}
+              {pop.map((m) => <BlotchPattern key={m.id} id={`m${m.id}`} shade={m.shade} size={9} blobs={6} />)}
             </defs>
             <rect width="600" height="344" fill="url(#p-bark)" />
           </svg>
