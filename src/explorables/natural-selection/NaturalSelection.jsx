@@ -1,603 +1,606 @@
-/**
- * NaturalSelection explorable
- *
- * Three-act interactive teaching natural selection via the acquired-vs-inherited
- * misconception (Bishop & Anderson 1990; Gregory 2009).
- *
- *   Act 1 — abstract twin-track model: two bird populations, same start, same
- *           drought-pressure control, different inheritance rule. Predict,
- *           run generations, reveal.
- *   Act 2 — one-sentence bridge: your model's result plotted, then a hand-off
- *           to real data.
- *   Act 3 — Daphne Major, 1977 (Boag & Grant 1981; heritability figures from
- *           Boag 1983 / Grant 1986, as summarised in university teaching case
- *           studies). Same predict-then-reveal grammar, real numbers.
- *
- * Explorables are exploratory only — this renders inside a modal with no props,
- * and keeps no saved progress or completion state (see src/explorables/registry.js).
- * Styling is in NaturalSelection.module.css, with the widget's --ns-* tokens
- * mapped onto the global design tokens from src/index.css.
- *
- * Act 3's headline numbers (9.31 mm, 9.84 mm, 9.72 mm, h² = 0.78) are real,
- * sourced figures; the Act-1 histogram bar heights are a stylised simulation,
- * not a digitisation of the real 1977 published histogram — see Boag & Grant
- * (1981, Science 214:82–85) / HHMI BioInteractive's finch resource.
- */
+import { useState, useRef, useEffect, useMemo } from "react";
 
-import { useState, useEffect } from 'react';
-import styles from './NaturalSelection.module.css';
+// ── Model ───────────────────────────────────────────────────────
+// A population of moths, each with a heritable colour trait `shade` in [0,1]
+// (0 = pale, 1 = dark). The learner is the predator: they catch the moths they
+// can spot in a timed window, so conspicuous moths (shade far from the bark)
+// die and camouflaged ones survive. Survivors breed; offspring inherit the
+// parent's shade plus a small mutation. Nothing decides who dies except the
+// learner's own eye — selection is entirely emergent.
+const N = 20;              // population size held constant each generation
+const HUNT_MS = 6000;      // seconds of a single hunt
+const MUT = 0.09;          // mutation spread on inheritance
+const SURVIVOR_FLOOR = 4;  // a hunt ends early once this few remain (no extinction)
 
-// ---------------------------------------------------------------------------
-// Constants
-// ---------------------------------------------------------------------------
+const clamp01 = (x) => (x < 0 ? 0 : x > 1 ? 1 : x);
+const lerp = (a, b, t) => a + (b - a) * t;
+const meanShade = (arr) => arr.reduce((s, m) => s + m.shade, 0) / arr.length;
 
-const N = 30;
-const THRESHOLD = 55;
-const MUTATION_SD = 3;
-const USE_INCREMENT = 4;
-const INIT_MEAN = 40;
-const INIT_SD = 12;
-const REVEAL_GENERATION = 5;
-
-const CORRECT_CHOICE_1 = 'acquired';
-const CORRECT_CHOICE_3 = 'between-closer-parents';
-
-const AXIS_MIN = 8.8;
-const AXIS_MAX = 10.2;
-const V_1976 = 9.31;
-const V_1977 = 9.84;
-const ACTUAL_1978 = 9.72;
-
-const ACT1_OPTIONS = [
-  { value: 'acquired', label: 'Only "acquired traits" world' },
-  { value: 'selection', label: 'Only "selection only" world' },
-  { value: 'both', label: 'Both, equally' },
-  { value: 'neither', label: 'Neither' },
-];
-
-const ACT3_OPTIONS = [
-  { value: 'match-original', label: 'Same as the 1976 population' },
-  { value: 'match-parents', label: 'Same as the 1977 survivors' },
-  { value: 'between-closer-parents', label: 'Between the two, closer to the survivors' },
-  { value: 'between-closer-original', label: 'Between the two, closer to the 1976 population' },
-];
-
-// ---------------------------------------------------------------------------
-// Pure helpers
-// ---------------------------------------------------------------------------
-
-function gaussian(sd) {
-  const u = 1 - Math.random();
-  const v = Math.random();
-  return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v) * sd;
+// A single warm-bark scale shared by both the moths and the bark, so that a
+// moth's visibility is literally |shade − bark|, not a faked opacity.
+function colourFor(s) {
+  const L = { r: 208, g: 199, b: 181 };  // palest bark
+  const D = { r: 44, g: 39, b: 32 };     // darkest bark
+  const r = Math.round(lerp(L.r, D.r, s));
+  const g = Math.round(lerp(L.g, D.g, s));
+  const b = Math.round(lerp(L.b, D.b, s));
+  return `rgb(${r},${g},${b})`;
 }
 
-function clip(v) {
-  return Math.max(0, Math.min(100, v));
-}
-
-function initPopulation(n, mean, sd) {
-  const arr = [];
-  for (let i = 0; i < n; i++) arr.push(clip(mean + gaussian(sd)));
-  return arr;
-}
-
-function meanOf(pop) {
-  return pop.reduce((a, b) => a + b, 0) / pop.length;
-}
-
-function histogramBins(pop, binCount = 10, max = 100) {
-  const bins = new Array(binCount).fill(0);
-  pop.forEach((v) => {
-    let idx = Math.floor((v / max) * binCount);
-    if (idx >= binCount) idx = binCount - 1;
-    if (idx < 0) idx = 0;
-    bins[idx]++;
-  });
-  return bins;
-}
-
-function stepPop(pop, pressureOn, applyUse) {
-  const used = applyUse ? pop.map((v) => clip(v + USE_INCREMENT)) : pop.slice();
-  const survivors = pressureOn ? used.filter((v) => v >= THRESHOLD) : used;
-  const pool = survivors.length ? survivors : used;
-  const next = [];
-  for (let i = 0; i < N; i++) {
-    const parent = pool[Math.floor(Math.random() * pool.length)];
-    next.push(clip(parent + gaussian(MUTATION_SD)));
-  }
-  return next;
-}
-
-function createInitialAct1State() {
-  const initial = initPopulation(N, INIT_MEAN, INIT_SD);
-  const baseMean = Math.round(meanOf(initial));
+function barkStyle(shade) {
+  const base = colourFor(shade);
+  const light = colourFor(clamp01(shade - 0.11));
+  const dark = colourFor(clamp01(shade + 0.13));
   return {
-    selectionPop: initial,
-    acquiredPop: [...initial],
-    generation: 0,
-    pressureOn: false,
-    pressureEverOn: false,
-    revealed: false,
-    choice: null,
-    finalMean: null,
-    baseMean,
-    history: [{ gen: 0, selection: baseMean, acquired: baseMean }],
+    background: `
+      radial-gradient(38% 55% at 18% 30%, ${light} 0%, transparent 60%),
+      radial-gradient(30% 44% at 72% 24%, ${dark} 0%, transparent 55%),
+      radial-gradient(42% 60% at 62% 78%, ${light} 0%, transparent 58%),
+      radial-gradient(34% 48% at 30% 82%, ${dark} 0%, transparent 55%),
+      linear-gradient(115deg, ${colourFor(clamp01(shade - 0.04))}, ${colourFor(clamp01(shade + 0.05))})
+    `,
   };
 }
 
-function getAct1StatusMessage(act1) {
-  if (act1.revealed) {
-    return act1.choice === CORRECT_CHOICE_1
-      ? { tone: 'correct', text: 'Correct — only the acquired-traits world moved without any drought pressure.' }
-      : { tone: 'incorrect', text: 'Not quite — the acquired-traits world moved on its own. Selection alone needs pressure to shift.' };
-  }
-  if (act1.choice === null) return null;
-  if (act1.pressureEverOn) {
-    return { tone: 'info', text: "Drought pressure was switched on, so this prediction can't be checked. Start over to try again." };
-  }
-  if (act1.generation < REVEAL_GENERATION) {
-    return { tone: 'info', text: `Run a few more generations to check your prediction (generation ${act1.generation} of ${REVEAL_GENERATION}).` };
-  }
-  return null;
-}
-
-function getWorldStatusMessage(act1) {
-  if (act1.generation === 0) {
-    return 'Both worlds start identical. Make your prediction, then run some generations.';
-  }
-  const selMean = Math.round(meanOf(act1.selectionPop));
-  const acqMean = Math.round(meanOf(act1.acquiredPop));
-  if (!act1.pressureOn) {
-    return `No drought pressure. Selection-only mean has moved ${selMean - act1.baseMean}; acquired-traits mean has moved ${acqMean - act1.baseMean}.`;
-  }
-  const gap = acqMean - selMean;
-  return `Drought pressure on. Both means are rising, but the gap between them (${gap}) is the extra boost from acquired-trait inheritance — a boost never actually observed in real experiments.`;
-}
-
-function getAct3StatusMessage(act3) {
-  if (act3.revealed) {
-    return act3.choice === CORRECT_CHOICE_3
-      ? { tone: 'correct', text: 'Correct — the offspring landed between the two, closer to the surviving parents.' }
-      : { tone: 'incorrect', text: 'Not quite — the real 1978 average landed between the two, closer to the surviving parents.' };
-  }
-  if (act3.choice) return { tone: 'info', text: 'Locked in. Reveal when ready.' };
-  return null;
-}
-
-// ---------------------------------------------------------------------------
-// Icons (minimal inline SVG — the app ships no icon library)
-// ---------------------------------------------------------------------------
-
-const iconProps = {
-  width: 16,
-  height: 16,
-  viewBox: '0 0 24 24',
-  fill: 'none',
-  stroke: 'currentColor',
-  strokeWidth: 2,
-  strokeLinecap: 'round',
-  strokeLinejoin: 'round',
+const ENVS = {
+  lichen: {
+    key: "lichen", label: "Lichen-pale bark", shade: 0.17,
+    blurb: "Clean, lichen-covered bark. Pale moths melt into it; dark moths stand out like ink blots.",
+  },
+  soot: {
+    key: "soot", label: "Soot-darkened bark", shade: 0.83,
+    blurb: "Bark blackened by industrial soot. Now it is the dark moths that vanish, and the pale ones that give themselves away.",
+  },
 };
 
-const IconPlay = () => (
-  <svg {...iconProps}><polygon points="6 3 20 12 6 21 6 3" /></svg>
-);
-const IconRefresh = () => (
-  <svg {...iconProps}>
-    <polyline points="23 4 23 10 17 10" />
-    <polyline points="1 20 1 14 7 14" />
-    <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
-  </svg>
-);
-const IconEye = () => (
-  <svg {...iconProps}>
-    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-    <circle cx="12" cy="12" r="3" />
-  </svg>
-);
-const IconArrowRight = () => (
-  <svg {...iconProps}><line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" /></svg>
-);
-const IconLock = () => (
-  <svg {...iconProps}><rect x="3" y="11" width="18" height="11" rx="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg>
-);
-const IconCheck = () => (
-  <svg {...iconProps}><polyline points="20 6 9 17 4 12" /></svg>
-);
-const IconX = () => (
-  <svg {...iconProps}><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
-);
+let _uid = 0;
+const nextId = () => ++_uid;
+const randPos = () => ({ x: 7 + Math.random() * 86, y: 11 + Math.random() * 78 });
+const randRot = () => -26 + Math.random() * 52;
 
-// ---------------------------------------------------------------------------
-// Small presentational components
-// ---------------------------------------------------------------------------
-
-function Button({ children, icon, className = '', ...rest }) {
-  return (
-    <button type="button" className={`${styles.btn} ${className}`} {...rest}>
-      {icon}
-      {children}
-    </button>
-  );
+function makePop() {
+  // A founding population with wide, undirected variation to select on.
+  return Array.from({ length: N }, () => ({
+    id: nextId(), shade: Math.random(), alive: true, ...randPos(), rot: randRot(),
+  }));
 }
 
-function PredictButtons({ options, selected, correctChoice, revealed, disabled, onSelect }) {
-  const isDisabled = disabled != null ? disabled : revealed;
-  return (
-    <div className={styles.predictGroup}>
-      {options.map((opt) => {
-        let variant = '';
-        if (revealed) {
-          if (opt.value === correctChoice) variant = styles.correct;
-          else if (opt.value === selected) variant = styles.incorrect;
-        } else if (opt.value === selected) {
-          variant = styles.selected;
-        }
-        return (
-          <button
-            key={opt.value}
-            type="button"
-            disabled={isDisabled}
-            className={`${styles.predictBtn} ${variant}`}
-            onClick={() => onSelect(opt.value)}
-          >
-            {opt.label}
-          </button>
-        );
-      })}
-    </div>
+const QUIZ = [
+  { key: "antibiotic", label: "Antibiotic Resistance", desc: "An infection stops responding to the drug that used to clear it." },
+  { key: "pesticide", label: "Pesticide-Proof Insects", desc: "A spray that wiped out crop pests barely dents them a few years later." },
+  { key: "finch", label: "The Drought-Year Finches", desc: "After a dry year, an island's finches are measurably bigger-beaked." },
+  { key: "all", label: "All of the Above", desc: "Every one of these is the same three-step engine you just ran." },
+];
+
+// ── Moth glyph ──────────────────────────────────────────────────
+function Moth({ colour }) {
+  const wing = (
+    <>
+      <path d="M20 12 C10 1 1 4 2 12 C2.6 17.5 12 16 20 14 Z" />
+      <path d="M20 16 C12 15 4 18 6 24.5 C8 29 16 24 20 20 Z" />
+    </>
   );
-}
-
-function StatusLine({ status }) {
-  if (!status) return <p className={styles.status} aria-live="polite">&nbsp;</p>;
-  const toneClass = status.tone === 'correct' ? styles.correct
-    : status.tone === 'incorrect' ? styles.incorrect
-    : '';
   return (
-    <p className={`${styles.status} ${toneClass}`} aria-live="polite" aria-atomic="true">
-      {status.tone === 'correct' && <IconCheck />}
-      {status.tone === 'incorrect' && <IconX />}
-      {' '}
-      {status.text}
-    </p>
-  );
-}
-
-function Histogram({ population, color, showThreshold }) {
-  const bins = histogramBins(population, 10, 100);
-  return (
-    <div style={{ position: 'relative', height: 100 }}>
-      <div style={{ display: 'flex', gap: 3, height: '100%', alignItems: 'flex-end' }}>
-        {bins.map((count, i) => (
-          <div
-            key={i}
-            className={styles.histogramBar}
-            style={{
-              flex: 1,
-              height: `${Math.round((count / population.length) * 100)}%`,
-              minHeight: 2,
-              borderRadius: '3px 3px 0 0',
-              background: color,
-            }}
-          />
-        ))}
-      </div>
-      {showThreshold && (
-        <div
-          style={{
-            position: 'absolute',
-            top: 0,
-            bottom: 0,
-            left: `${THRESHOLD}%`,
-            width: 0,
-            borderLeft: '2px dashed var(--ns-text-muted)',
-          }}
-        />
-      )}
-    </div>
-  );
-}
-
-function MeanTrendChart({ history }) {
-  const width = 600;
-  const height = 200;
-  const padding = { top: 10, right: 10, bottom: 24, left: 32 };
-  const plotW = width - padding.left - padding.right;
-  const plotH = height - padding.top - padding.bottom;
-  const maxGen = Math.max(1, history.length - 1);
-  const xFor = (i) => padding.left + (i / maxGen) * plotW;
-  const yFor = (v) => padding.top + (1 - v / 100) * plotH;
-
-  const selectionPoints = history.map((h, i) => `${xFor(i)},${yFor(h.selection)}`).join(' ');
-  const acquiredPoints = history.map((h, i) => `${xFor(i)},${yFor(h.acquired)}`).join(' ');
-
-  return (
-    <svg
-      viewBox={`0 0 ${width} ${height}`}
-      style={{ width: '100%', height: 'auto', display: 'block' }}
-      role="img"
-      aria-label="Mean beak depth by generation for both worlds"
-    >
-      {[0, 50, 100].map((v) => (
-        <g key={v}>
-          <line x1={padding.left} x2={width - padding.right} y1={yFor(v)} y2={yFor(v)} stroke="var(--ns-border)" strokeWidth="1" />
-          <text x={padding.left - 6} y={yFor(v) + 4} textAnchor="end" fontSize="10" fill="var(--ns-text-muted)">{v}</text>
-        </g>
-      ))}
-      <polyline points={selectionPoints} fill="none" stroke="var(--ns-series-a)" strokeWidth="2" />
-      <polyline points={acquiredPoints} fill="none" stroke="var(--ns-series-b)" strokeWidth="2" />
-      <text x={width - padding.right} y={height - 4} textAnchor="end" fontSize="10" fill="var(--ns-text-muted)">generation</text>
+    <svg viewBox="0 0 40 34" width="34" height="29" aria-hidden="true">
+      <g fill={colour} stroke="rgba(0,0,0,.22)" strokeWidth="0.6">
+        <g>{wing}</g>
+        <g transform="translate(40,0) scale(-1,1)">{wing}</g>
+        <ellipse cx="20" cy="17" rx="2.4" ry="8.6" fill={colour} stroke="rgba(0,0,0,.28)" strokeWidth="0.6" />
+      </g>
     </svg>
   );
 }
 
-function NumberLineMarker({ value, min, max, label, variant, labelOffset = -24, labelClassName }) {
-  const pct = ((value - min) / (max - min)) * 100;
-  const variantClass = variant === 'known' ? styles.markerKnown
-    : variant === 'echo' ? styles.markerEcho
-    : styles.markerActual;
-  // labelClassName lets a caller control vertical placement entirely in CSS
-  // (so it can differ per breakpoint) instead of via this inline style.
-  return (
-    <div className={`${styles.marker} ${variantClass}`} style={{ left: `${pct}%` }}>
-      <span
-        className={`${styles.markerLabel} ${labelClassName || ''}`}
-        style={labelClassName ? undefined : { top: labelOffset }}
-      >
-        {label}
-      </span>
-    </div>
-  );
-}
-
-function MetricCard({ label, value }) {
-  return (
-    <div className={styles.metricCard}>
-      <p className={styles.metricLabel}>{label}</p>
-      <p className={styles.metricValue}>{value}</p>
-    </div>
-  );
-}
-
-// ---------------------------------------------------------------------------
-// Main component
-// ---------------------------------------------------------------------------
-
 export default function NaturalSelection() {
-  const [act1, setAct1] = useState(createInitialAct1State);
-  const [act2Continued, setAct2Continued] = useState(false);
-  const [act3, setAct3] = useState({ choice: null, revealed: false });
+  const [envKey, setEnvKey] = useState("lichen");
+  const [pop, setPop] = useState(makePop);
+  const [generation, setGeneration] = useState(1);
+  const [phase, setPhase] = useState("ready");        // ready · hunting · tallied
+  const [timeLeft, setTimeLeft] = useState(HUNT_MS);
+  const [history, setHistory] = useState(() => [
+    { gen: 1, mean: meanShade(pop), env: "lichen" },
+  ]);
+  const [revealedQuiz, setRevealedQuiz] = useState(new Set());
 
-  // Reveal Act 1's prediction once the clean (no-pressure) test has run long enough.
+  const env = ENVS[envKey];
+  const rafRef = useRef(null);
+  const huntStart = useRef(0);
+
+  const aliveCount = pop.reduce((n, m) => n + (m.alive ? 1 : 0), 0);
+  const caughtCount = N - aliveCount;
+  const popMean = meanShade(pop);
+  const camouflage = Math.round((1 - Math.abs(popMean - env.shade)) * 100);
+
+  // ── the hunt clock ──
   useEffect(() => {
-    if (!act1.revealed && act1.choice && !act1.pressureEverOn && act1.generation >= REVEAL_GENERATION) {
-      setAct1((prev) => ({
-        ...prev,
-        revealed: true,
-        finalMean: Math.round(meanOf(prev.selectionPop)),
-      }));
-    }
-  }, [act1.choice, act1.generation, act1.pressureEverOn, act1.revealed]);
+    if (phase !== "hunting") return;
+    let active = true;
+    const tick = () => {
+      if (!active) return;
+      const left = Math.max(0, HUNT_MS - (performance.now() - huntStart.current));
+      setTimeLeft(left);
+      if (left <= 0) { setPhase("tallied"); return; }
+      rafRef.current = requestAnimationFrame(tick);
+    };
+    rafRef.current = requestAnimationFrame(tick);
+    return () => { active = false; if (rafRef.current) cancelAnimationFrame(rafRef.current); };
+  }, [phase]);
 
-  const handleNextGeneration = () => {
-    setAct1((prev) => {
-      const nextSelection = stepPop(prev.selectionPop, prev.pressureOn, false);
-      const nextAcquired = stepPop(prev.acquiredPop, prev.pressureOn, true);
-      const generation = prev.generation + 1;
-      return {
-        ...prev,
-        selectionPop: nextSelection,
-        acquiredPop: nextAcquired,
-        generation,
-        history: [
-          ...prev.history,
-          { gen: generation, selection: Math.round(meanOf(nextSelection)), acquired: Math.round(meanOf(nextAcquired)) },
-        ],
-      };
+  // end a hunt early once the survivors thin out, so the population can't crash
+  useEffect(() => {
+    if (phase === "hunting" && aliveCount <= SURVIVOR_FLOOR) setPhase("tallied");
+  }, [phase, aliveCount]);
+
+  useEffect(() => () => { if (rafRef.current) cancelAnimationFrame(rafRef.current); }, []);
+
+  const startHunt = () => {
+    if (phase !== "ready") return;
+    huntStart.current = performance.now();
+    setTimeLeft(HUNT_MS);
+    setPhase("hunting");
+  };
+
+  const catchMoth = (id) => {
+    if (phase !== "hunting") return;
+    setPop((prev) => prev.map((m) => (m.id === id ? { ...m, alive: false } : m)));
+  };
+
+  const breed = () => {
+    const survivors = pop.filter((m) => m.alive);
+    if (survivors.length === 0) return;
+    const next = Array.from({ length: N }, () => {
+      const parent = survivors[Math.floor(Math.random() * survivors.length)];
+      const shade = clamp01(parent.shade + (Math.random() - 0.5) * 2 * MUT);
+      return { id: nextId(), shade, alive: true, ...randPos(), rot: randRot() };
     });
+    const g = generation + 1;
+    setPop(next);
+    setGeneration(g);
+    setHistory((h) => [...h, { gen: g, mean: meanShade(next), env: envKey }]);
+    setPhase("ready");
   };
 
-  const handleTogglePressure = () => {
-    setAct1((prev) => ({
-      ...prev,
-      pressureOn: !prev.pressureOn,
-      pressureEverOn: prev.pressureEverOn || !prev.pressureOn,
-    }));
+  const setHabitat = (key) => {
+    if (phase === "hunting" || key === envKey) return;
+    setEnvKey(key);
+    // the current, un-hunted generation will now face the new habitat
+    setHistory((h) => h.map((e, i) => (i === h.length - 1 ? { ...e, env: key } : e)));
   };
 
-  const handleStartOver = () => {
-    setAct1(createInitialAct1State());
-    setAct2Continued(false);
-    setAct3({ choice: null, revealed: false });
+  const restart = () => {
+    if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    const fresh = makePop();
+    setEnvKey("lichen");
+    setPop(fresh);
+    setGeneration(1);
+    setPhase("ready");
+    setTimeLeft(HUNT_MS);
+    setHistory([{ gen: 1, mean: meanShade(fresh), env: "lichen" }]);
   };
 
-  const handleSelectChoice1 = (value) => {
-    if (act1.revealed) return;
-    setAct1((prev) => ({ ...prev, choice: value }));
-  };
+  const toggleQuiz = (key) => setRevealedQuiz((prev) => {
+    const next = new Set(prev);
+    next.has(key) ? next.delete(key) : next.add(key);
+    return next;
+  });
 
-  const handleContinueToAct3 = () => {
-    if (act1.revealed) setAct2Continued(true);
-  };
+  // tally copy after a hunt
+  const survivorMean = aliveCount > 0 ? meanShade(pop.filter((m) => m.alive)) : popMean;
+  const survivorHidden = 1 - Math.abs(survivorMean - env.shade);
+  const wholeHidden = 1 - Math.abs(popMean - env.shade);
+  const gotHidden = survivorHidden > wholeHidden + 0.01;
 
-  const handleSelectChoice3 = (value) => {
-    if (!act2Continued || act3.revealed) return;
-    setAct3((prev) => ({ ...prev, choice: value }));
-  };
+  const rounds = generation - 1;
+  const showTakeaway = generation >= 3;
+  const showQuiz = generation >= 4;
+  // nudge toward the reversal once the moths hide well on pale bark
+  const suggestSoot = envKey === "lichen" && generation >= 3 && phase !== "hunting" && popMean < 0.34;
 
-  const handleRevealAct3 = () => {
-    if (!act3.choice || act3.revealed) return;
-    setAct3((prev) => ({ ...prev, revealed: true }));
-  };
-
-  const act1Status = getAct1StatusMessage(act1);
-  const worldStatus = getWorldStatusMessage(act1);
-  const act3Status = getAct3StatusMessage(act3);
-  const act3Unlocked = act2Continued;
+  // ── generations chart geometry ──
+  const chart = useMemo(() => {
+    const W = 100, padX = 7, padTop = 12, padBot = 12;
+    const n = history.length;
+    const xAt = (i) => (n <= 1 ? padX : padX + (i / (n - 1)) * (W - 2 * padX));
+    const yAt = (s) => padTop + s * (100 - padTop - padBot);
+    const mean = history.map((e, i) => `${xAt(i)},${yAt(e.mean)}`).join(" ");
+    const target = history.map((e, i) => `${xAt(i)},${yAt(ENVS[e.env].shade)}`).join(" ");
+    const dots = history.map((e, i) => ({ x: xAt(i), y: yAt(e.mean), c: colourFor(e.mean) }));
+    return { mean, target, dots };
+  }, [history]);
 
   return (
-    <div className={styles.widget}>
-      <h2 className={styles.srOnly}>
-        A three-act interactive on natural selection. Act one compares two rules for inheritance in a
-        simulated bird population under adjustable drought pressure. Act two bridges to real data. Act
-        three applies the same prediction task to the real 1977 Daphne Major finch drought.
-      </h2>
+    <div className="ns-root">
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=JetBrains+Mono:wght@400;500;700&display=swap');
+        .ns-root{
+          --paper:#F4F0E7;--card:#FCFAF4;--border:#E4DDCE;--line:#EFE9DC;
+          --ink:#23281F;--muted:#6E6B5E;--soft:#8A8677;
+          --accent:#3B7A54;--accent-deep:#2E6242;--accent-wash:#EDF3EC;--accent-line:#CFE1D2;
+          --amber:#9A6A1E;--amber-wash:#F7EFDD;--amber-line:#E7D3A6;
+          --stagenight:#1B1A16;
+          background:var(--paper);color:var(--ink);font-family:'Inter',system-ui,sans-serif;
+          padding:28px 22px 14px;min-height:100%;box-sizing:border-box;-webkit-font-smoothing:antialiased;}
+        .ns-root *{box-sizing:border-box;}
+        .mono{font-family:'JetBrains Mono',ui-monospace,monospace;font-variant-numeric:tabular-nums;}
+        .ns-card{background:var(--card);border:1px solid var(--border);border-radius:15px;padding:22px;margin-top:18px;
+          box-shadow:0 1px 2px rgba(40,45,30,.05);}
+        .ns-card.first{margin-top:0;}
+        .ns-eyebrow{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:10px;}
+        .ns-title{font-family:'Fraunces',Georgia,serif;font-size:29px;font-weight:600;letter-spacing:-.01em;line-height:1.05;margin:0 0 12px;color:var(--ink);}
+        .ns-lede{font-size:16px;line-height:1.62;color:#40453A;} .ns-lede i{color:var(--ink);font-style:italic;} .ns-lede b{color:var(--ink);font-weight:600;}
+        .ns-tryit{background:var(--accent-wash);border:1px solid var(--accent-line);border-radius:14px;padding:19px 21px;margin-top:20px;}
+        .ns-tryit-h{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent-deep);font-weight:700;margin-bottom:15px;}
+        .ns-steps{display:flex;flex-direction:column;gap:13px;}
+        .ns-step{display:flex;gap:12px;align-items:flex-start;}
+        .ns-num{flex:0 0 24px;width:24px;height:24px;border-radius:50%;background:var(--accent);color:#fff;font-size:12px;font-weight:700;
+          display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;}
+        .ns-step div{font-size:14.5px;line-height:1.55;color:#37432F;padding-top:2px;} .ns-step b{color:var(--ink);}
+        .ns-note{margin-top:15px;padding-top:13px;border-top:1px solid var(--accent-line);font-size:13.5px;line-height:1.55;color:#3C4A34;}
 
-      {/* Resets all three acts — kept as a single top-level control, separate
-          from Act 1's own drought/generation controls, since its scope is the
-          whole explorable rather than just Act 1. */}
-      <div className={styles.topBar}>
-        <Button icon={<IconRefresh />} onClick={handleStartOver}>Start over</Button>
-      </div>
+        .ns-habitat-h{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:9px;}
+        .ns-seg{display:inline-flex;background:var(--paper);border:1px solid var(--border);border-radius:999px;padding:4px;gap:4px;}
+        .ns-seg button{appearance:none;border:none;background:transparent;border-radius:999px;padding:8px 15px;font-family:inherit;font-size:13px;font-weight:600;color:var(--muted);cursor:pointer;transition:background .15s,color .15s;}
+        .ns-seg button:hover{color:var(--ink);}
+        .ns-seg button.on{background:var(--accent);color:#fff;box-shadow:0 1px 2px rgba(46,98,66,.35);}
+        .ns-seg button:disabled{opacity:.5;cursor:not-allowed;}
+        .ns-seg button:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+        .ns-habitat-blurb{margin-top:11px;font-size:13.5px;line-height:1.55;color:#4A4A3E;}
+        .ns-habitat-blurb b{color:var(--ink);}
 
-      {/* ---------------- ACT 1 ---------------- */}
-      <section className={styles.act}>
-        <p className={styles.actEyebrow}>Act 1 of 3</p>
-        <h3 className={styles.actHeader}>Two rules for inheritance</h3>
-        <p className={styles.actPurpose}>
-          Same starting population. You control whether drought hits — only the rule for what gets
-          passed on differs between the two worlds below.
+        .ns-hud{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:16px;flex-wrap:wrap;}
+        .ns-gen{font-size:13px;color:var(--muted);font-weight:600;} .ns-gen b{color:var(--ink);}
+        .ns-stats{display:flex;gap:16px;font-size:12px;color:var(--soft);flex-wrap:wrap;}
+        .ns-stats b{color:var(--accent-deep);font-weight:700;}
+        .ns-stats .warn{color:var(--amber);}
+
+        .ns-field{position:relative;margin-top:12px;border-radius:12px;height:344px;overflow:hidden;
+          box-shadow:inset 0 0 0 1px rgba(0,0,0,.10), inset 0 12px 34px rgba(0,0,0,.16);}
+        .ns-field.hunting{cursor:crosshair;}
+        .ns-moth{position:absolute;transform:translate(-50%,-50%);appearance:none;border:none;background:none;padding:6px;margin:0;line-height:0;
+          filter:drop-shadow(0 1px 1.5px rgba(0,0,0,.45));transition:opacity .35s ease,transform .35s ease;}
+        .ns-field.hunting .ns-moth{cursor:crosshair;}
+        .ns-moth:not(:disabled){cursor:pointer;}
+        .ns-moth:disabled{cursor:default;}
+        .ns-moth:focus-visible{outline:2px solid #fff;outline-offset:1px;border-radius:6px;}
+        .ns-moth.caught{opacity:0;pointer-events:none;}
+        .ns-moth.survivor{outline:2px solid rgba(123,214,160,.9);outline-offset:1px;border-radius:8px;}
+        .ns-empty{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.82);
+          font-size:14px;font-weight:600;text-shadow:0 1px 3px rgba(0,0,0,.6);pointer-events:none;text-align:center;padding:0 24px;}
+
+        .ns-clock{position:absolute;left:12px;right:12px;bottom:12px;height:8px;border-radius:5px;background:rgba(0,0,0,.35);overflow:hidden;pointer-events:none;}
+        .ns-clock span{display:block;height:100%;background:linear-gradient(90deg,#7BD6A0,#4FB37A);border-radius:5px;}
+        .ns-clocktag{position:absolute;left:12px;top:12px;background:rgba(0,0,0,.5);color:#fff;font-size:11px;font-weight:700;
+          padding:4px 10px;border-radius:20px;pointer-events:none;letter-spacing:.02em;}
+
+        .ns-controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:15px;}
+        .ns-btn{appearance:none;border-radius:9px;padding:11px 18px;font-family:inherit;font-weight:600;font-size:13.5px;cursor:pointer;
+          border:1px solid var(--border);background:var(--card);color:var(--ink);transition:border-color .15s,transform .08s,background .15s;}
+        .ns-btn:hover{border-color:var(--ink);} .ns-btn:active{transform:translateY(1px);}
+        .ns-btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+        .ns-btn.solid{background:var(--accent);border-color:var(--accent);color:#fff;} .ns-btn.solid:hover{background:var(--accent-deep);border-color:var(--accent-deep);}
+        .ns-btn:disabled{opacity:.45;cursor:not-allowed;}
+        .ns-btn.ghost{background:transparent;color:var(--muted);border-color:transparent;}
+        .ns-btn.ghost:hover{color:var(--ink);border-color:var(--border);}
+        .ns-hint{font-size:12.5px;color:var(--muted);margin-top:9px;line-height:1.5;}
+
+        .ns-tally{margin-top:15px;background:var(--accent-wash);border:1px solid var(--accent-line);border-radius:12px;padding:15px 17px;
+          font-size:14px;line-height:1.6;color:#374433;}
+        .ns-tally b{color:var(--ink);} .ns-tally .k{color:var(--accent-deep);font-weight:700;}
+        .ns-suggest{margin-top:12px;background:var(--amber-wash);border:1px solid var(--amber-line);border-radius:12px;padding:13px 16px;
+          font-size:13.5px;line-height:1.55;color:#5C451B;}
+        .ns-suggest b{color:#3d2f12;}
+
+        .ns-chart-wrap{margin-top:20px;padding-top:16px;border-top:1px dashed var(--border);}
+        .ns-chart-h{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:10px;}
+        .ns-chart-h .t{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600;}
+        .ns-legend{display:flex;gap:14px;font-size:11.5px;color:var(--soft);flex-wrap:wrap;}
+        .ns-legend span{display:inline-flex;align-items:center;gap:6px;}
+        .ns-swatch{width:16px;height:0;border-top:3px solid var(--accent);border-radius:2px;}
+        .ns-swatch.dash{border-top:2px dashed var(--soft);}
+        .ns-chart{position:relative;display:flex;gap:8px;}
+        .ns-yax{display:flex;flex-direction:column;justify-content:space-between;font-size:10px;color:var(--soft);padding:2px 0 14px;text-align:right;width:46px;flex:0 0 46px;}
+        .ns-plot{flex:1;height:150px;background:var(--paper);border:1px solid var(--border);border-radius:8px;overflow:hidden;}
+        .ns-plot svg{display:block;width:100%;height:100%;}
+        .ns-xax{margin-left:54px;font-size:10.5px;color:var(--soft);margin-top:6px;}
+
+        .ns-takeaway{font-size:14.5px;line-height:1.68;color:#3B4234;}
+        .ns-takeaway p{margin:0 0 13px;} .ns-takeaway p:last-child{margin-bottom:0;} .ns-takeaway b{color:var(--ink);}
+        .ns-pull{margin:0 0 16px;padding:15px 18px 15px 20px;background:var(--accent-wash);border-left:3px solid var(--accent);
+          border-radius:0 10px 10px 0;font-family:'Fraunces',Georgia,serif;font-size:16px;line-height:1.55;font-weight:500;color:var(--ink);}
+        .ns-concept{margin:16px 0;padding:16px 18px;background:var(--amber-wash);border:1px solid var(--amber-line);border-radius:12px;}
+        .ns-concept-term{font-weight:700;color:var(--amber);font-family:'Fraunces',Georgia,serif;font-size:15px;}
+        .ns-ingredients{list-style:none;margin:12px 0 0;padding:0;display:flex;flex-direction:column;gap:9px;}
+        .ns-ingredients li{display:flex;gap:10px;align-items:flex-start;font-size:13.5px;line-height:1.5;color:#5A4A28;}
+        .ns-ing-b{flex:0 0 auto;width:22px;height:22px;border-radius:6px;background:var(--amber);color:#fff;font-size:11px;font-weight:700;
+          display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;margin-top:1px;}
+        .ns-ing-b + span b{color:#3d2f12;}
+
+        .ns-quizhd{font-family:'Fraunces',Georgia,serif;font-size:20px;font-weight:600;margin:0 0 8px;color:var(--ink);}
+        .ns-quizprompt{font-size:14px;color:#40453A;margin:0 0 16px;line-height:1.5;}
+        .ns-quizitem{margin-bottom:10px;}
+        .ns-quizopt{display:block;width:100%;text-align:left;background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:13px 15px;cursor:pointer;transition:border-color .15s,background .15s;}
+        .ns-quizopt:hover{border-color:var(--accent);}
+        .ns-quizopt.open{border-color:var(--accent);background:var(--accent-wash);border-bottom-left-radius:0;border-bottom-right-radius:0;}
+        .ns-quizopt:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+        .ns-quizlab{font-size:14px;font-weight:600;color:var(--ink);display:block;}
+        .ns-quizdesc{font-size:13px;color:var(--muted);margin-top:3px;display:block;}
+        .ns-quizreveal{background:var(--paper);border:1.5px solid var(--accent);border-top:none;border-radius:0 0 10px 10px;padding:14px 15px;font-size:13.5px;line-height:1.6;color:#3B4234;margin-top:-1px;}
+        .ns-quizreveal b{color:var(--ink);} .ns-quizreveal ul{margin:8px 0;padding-left:20px;} .ns-quizreveal li{margin-bottom:6px;}
+
+        .ns-footer{margin-top:24px;padding:15px 2px 6px;border-top:1px solid var(--border);font-size:12px;color:var(--muted);line-height:1.6;display:flex;gap:10px;align-items:flex-start;}
+        .ns-footer b{color:var(--ink);} .ns-footer-icon{flex:0 0 auto;margin-top:2px;color:var(--muted);}
+
+        @media(max-width:600px){
+          .ns-title{font-size:24px;} .ns-field{height:300px;}
+          .ns-yax{width:40px;flex:0 0 40px;} .ns-xax{margin-left:48px;}
+        }
+        @media(prefers-reduced-motion:reduce){.ns-moth{transition:none;}}
+      `}</style>
+
+      {/* ── Intro ── */}
+      <div className="ns-card first">
+        <div className="ns-eyebrow">Explorable</div>
+        <h1 className="ns-title">You are the predator</h1>
+        <p className="ns-lede">
+          Two hundred years ago, almost every peppered moth in England was pale and speckled — perfect camouflage
+          against lichen-covered bark. Then the factories came, soot blackened the trees, and within decades nearly
+          every moth in the industrial towns was <i>black</i>. No moth ever repainted itself. So what actually changed?
+          In this explorable <b>you</b> become the hungry bird. You will hunt a population of moths, breed whoever
+          survives, and watch — generation by generation — a perfectly hidden population assemble itself out of nothing
+          but which ones you happened to catch.
         </p>
 
-        <div className={styles.panel}>
-          <p className={styles.panelTitle}>Predict: with no drought pressure, which world's average beak depth increases?</p>
-          <PredictButtons
-            options={ACT1_OPTIONS}
-            selected={act1.choice}
-            correctChoice={CORRECT_CHOICE_1}
-            revealed={act1.revealed}
-            onSelect={handleSelectChoice1}
-          />
-          <StatusLine status={act1Status} />
-        </div>
-
-        <div className={styles.controls}>
-          <Button onClick={handleTogglePressure}>
-            Drought pressure: {act1.pressureOn ? 'on' : 'off'}
-          </Button>
-          <Button icon={<IconPlay />} onClick={handleNextGeneration}>Next generation</Button>
-          <span className={styles.genCount}>Generation {act1.generation}</span>
-        </div>
-
-        <div className={styles.world}>
-          <div className={styles.worldHead}>
-            <span className={styles.worldLabel}>
-              Selection only <span className={styles.worldDesc}>— trait fixed at birth, only survivors reproduce</span>
-            </span>
-            <span className={styles.worldMean}>mean {Math.round(meanOf(act1.selectionPop))}</span>
-          </div>
-          <Histogram population={act1.selectionPop} color="var(--ns-series-a)" showThreshold={act1.pressureOn} />
-        </div>
-
-        <div className={styles.world}>
-          <div className={styles.worldHead}>
-            <span className={styles.worldLabel}>
-              Acquired traits inherited <span className={styles.worldDesc}>— every individual stretches each generation; offspring inherit the stretch</span>
-            </span>
-            <span className={styles.worldMean}>mean {Math.round(meanOf(act1.acquiredPop))}</span>
-          </div>
-          <Histogram population={act1.acquiredPop} color="var(--ns-series-b)" showThreshold={act1.pressureOn} />
-        </div>
-
-        <p className={styles.status} aria-live="polite" aria-atomic="true">{worldStatus}</p>
-
-        <p className={styles.chartCaption}>Mean beak depth, generation by generation</p>
-        <div className={styles.legend}>
-          <span className={styles.legendItem}><span className={styles.legendDot} style={{ background: 'var(--ns-series-a)' }} />Selection only</span>
-          <span className={styles.legendItem}><span className={styles.legendDot} style={{ background: 'var(--ns-series-b)' }} />Acquired traits inherited</span>
-        </div>
-        <MeanTrendChart history={act1.history} />
-      </section>
-
-      {/* ---------------- ACT 2 ---------------- */}
-      <section className={`${styles.act} ${act1.revealed ? '' : styles.locked}`}>
-        <p className={styles.actEyebrow}>Act 2 of 3</p>
-        <h3 className={styles.actHeader}>Not hypothetical</h3>
-        {!act1.revealed && (
-          <p className={styles.lockHint}><IconLock /> Unlocks once Act 1's prediction is checked</p>
-        )}
-        <div className={act1.revealed ? '' : styles.lockedContent}>
-          <p className={styles.actPurpose}>
-            In your selection-only world, beak depth shifted with no pressure needed to acquire it — only
-            pressure to survive it. Biologists watched a real population do exactly this, measured to the
-            millimetre.
-          </p>
-
-          <div className={styles.numberline} style={{ height: 40 }}>
-            <div className={styles.numberlineTrack} style={{ top: 20 }} />
-            {act1.revealed && (
-              <NumberLineMarker
-                value={act1.finalMean}
-                min={0}
-                max={100}
-                variant="echo"
-                label={`your model, gen ${act1.generation} · ${act1.finalMean}`}
-                labelOffset={-24}
-              />
-            )}
-          </div>
-
-          <Button icon={<IconArrowRight />} disabled={!act1.revealed} onClick={handleContinueToAct3}>
-            See the real data
-          </Button>
-        </div>
-      </section>
-
-      {/* ---------------- ACT 3 ---------------- */}
-      <section className={`${styles.act} ${act3Unlocked ? '' : styles.locked}`}>
-        <p className={styles.actEyebrow}>Act 3 of 3</p>
-        <h3 className={styles.actHeader}>Darwin's finches, 1977</h3>
-        {!act3Unlocked && (
-          <p className={styles.lockHint}><IconLock /> Unlocks once Act 2 is complete</p>
-        )}
-        <div className={act3Unlocked ? '' : styles.lockedContent}>
-          <p className={styles.actPurpose}>
-            A real drought, a real population, measured in millimetres. Same question as Act 1: does the
-            next generation follow the survivors, or start over?
-          </p>
-
-          <div className={styles.numberline} style={{ height: 70 }}>
-            <div className={styles.numberlineTrack} style={{ top: 34 }} />
-            <span className={styles.axisEnd} style={{ left: 0, top: 40 }}>8.8 mm</span>
-            <span className={styles.axisEnd} style={{ right: 0, top: 40 }}>10.2 mm</span>
-            <NumberLineMarker value={V_1976} min={AXIS_MIN} max={AXIS_MAX} variant="known" label="1976 · 9.31 mm" labelClassName={styles.act3Label1976} />
-            <NumberLineMarker value={V_1977} min={AXIS_MIN} max={AXIS_MAX} variant="known" label="1977 survivors · 9.84 mm" labelClassName={styles.act3Label1977} />
-            {act3.revealed && (
-              <NumberLineMarker value={ACTUAL_1978} min={AXIS_MIN} max={AXIS_MAX} variant="actual" label="1978 actual · 9.72 mm" labelClassName={styles.act3Label1978} />
-            )}
-          </div>
-
-          <div className={styles.panel}>
-            <p className={styles.panelTitle}>Predict: where will the 1978 offspring generation's average beak depth land?</p>
-            <PredictButtons
-              options={ACT3_OPTIONS}
-              selected={act3.choice}
-              correctChoice={CORRECT_CHOICE_3}
-              revealed={act3.revealed}
-              disabled={!act3Unlocked || act3.revealed}
-              onSelect={handleSelectChoice3}
-            />
-            <StatusLine status={act3Status} />
-          </div>
-
-          <Button icon={<IconEye />} disabled={!act3.choice || act3.revealed} onClick={handleRevealAct3}>
-            Reveal what was measured in 1978
-          </Button>
-
-          {act3.revealed && (
-            <div>
-              <p className={styles.bonusLabel} style={{ marginTop: 20 }}>For the curious — the exact prediction</p>
-              <div className={styles.metrics}>
-                <MetricCard label="Selection differential" value="0.53 mm" />
-                <MetricCard label="Heritability (h²)" value="0.78" />
-                <MetricCard label="Predicted mean" value="9.72 mm" />
-              </div>
+        <div className="ns-tryit">
+          <div className="ns-tryit-h">Try it yourself</div>
+          <div className="ns-steps">
+            <div className="ns-step">
+              <span className="ns-num">1</span>
+              <div><b>Hunt.</b> Press <b>Release the bird</b>, then click every moth you can spot before the clock runs
+                out. The ones that blend into the bark are hard to see — that is the whole point.</div>
             </div>
+            <div className="ns-step">
+              <span className="ns-num">2</span>
+              <div><b>Breed the survivors.</b> The moths you missed live on and reproduce. Their offspring inherit their
+                colouring, give or take a little variation.</div>
+            </div>
+            <div className="ns-step">
+              <span className="ns-num">3</span>
+              <div><b>Repeat, then flip the habitat.</b> Run a few generations and watch the chart. Once the moths hide
+                well, switch the bark from pale to soot-darkened and see selection reverse.</div>
+            </div>
+          </div>
+          <div className="ns-note">
+            You never choose which colour "should" win. You just catch what your eye can find — and that alone is enough
+            to reshape the whole population.
+          </div>
+        </div>
+      </div>
+
+      {/* ── The interactive ── */}
+      <div className="ns-card">
+        <div className="ns-habitat-h">Habitat</div>
+        <div className="ns-seg" role="group" aria-label="Choose the bark habitat">
+          {Object.values(ENVS).map((e) => (
+            <button
+              key={e.key}
+              className={envKey === e.key ? "on" : ""}
+              aria-pressed={envKey === e.key}
+              disabled={phase === "hunting"}
+              onClick={() => setHabitat(e.key)}
+            >
+              {e.label}
+            </button>
+          ))}
+        </div>
+        <div className="ns-habitat-blurb">{env.blurb}</div>
+
+        <div className="ns-hud">
+          <span className="ns-gen">Generation <b>{generation}</b></span>
+          <div className="ns-stats">
+            <span>Alive <b>{aliveCount}</b>/{N}</span>
+            <span>Caught <b>{caughtCount}</b></span>
+            <span className={camouflage < 55 ? "warn" : undefined}>Population hidden <b>{camouflage}%</b></span>
+          </div>
+        </div>
+
+        <div
+          className={`ns-field ${phase === "hunting" ? "hunting" : ""}`}
+          style={barkStyle(env.shade)}
+        >
+          {pop.map((m) => {
+            const isSurvivor = phase === "tallied" && m.alive;
+            return (
+              <button
+                key={m.id}
+                className={`ns-moth ${!m.alive ? "caught" : ""} ${isSurvivor ? "survivor" : ""}`}
+                style={{ left: `${m.x}%`, top: `${m.y}%`, transform: `translate(-50%,-50%) rotate(${m.rot}deg) ${m.alive ? "" : "scale(.4)"}` }}
+                disabled={phase !== "hunting" || !m.alive}
+                aria-label={phase === "hunting" ? "Catch moth" : "Moth"}
+                onClick={() => catchMoth(m.id)}
+              >
+                <Moth colour={colourFor(m.shade)} />
+              </button>
+            );
+          })}
+
+          {phase === "hunting" && (
+            <>
+              <div className="ns-clocktag mono">{(timeLeft / 1000).toFixed(1)}s</div>
+              <div className="ns-clock"><span style={{ width: `${(timeLeft / HUNT_MS) * 100}%` }} /></div>
+            </>
+          )}
+          {phase === "tallied" && aliveCount <= SURVIVOR_FLOOR && (
+            <div className="ns-empty">The rest escaped into the canopy.</div>
           )}
         </div>
-      </section>
+
+        <div className="ns-controls">
+          {phase === "ready" && (
+            <button className="ns-btn solid" onClick={startHunt}>Release the bird →</button>
+          )}
+          {phase === "hunting" && (
+            <button className="ns-btn" onClick={() => setPhase("tallied")}>End hunt early</button>
+          )}
+          {phase === "tallied" && (
+            <button className="ns-btn solid" onClick={breed}>Breed the survivors →</button>
+          )}
+          {generation > 1 || phase !== "ready" ? (
+            <button className="ns-btn ghost" onClick={restart}>Start over</button>
+          ) : null}
+        </div>
+
+        {phase === "ready" && generation === 1 && (
+          <div className="ns-hint">Click the moths you can spot. Well-camouflaged moths are genuinely hard to see — hunt fast.</div>
+        )}
+
+        {phase === "tallied" && (
+          <div className="ns-tally">
+            You caught <b>{caughtCount}</b> {caughtCount === 1 ? "moth" : "moths"}. The <b>{aliveCount}</b> survivors
+            were, on average,{" "}
+            {gotHidden
+              ? <>a <span className="k">better match</span> for the bark than the population you started the hunt with — the conspicuous ones paid for standing out.</>
+              : <>about as hidden as the rest — this time your eye didn't favour any particular colour much.</>}{" "}
+            Breed them and their colouring carries into the next generation.
+          </div>
+        )}
+
+        {suggestSoot && (
+          <div className="ns-suggest">
+            <b>Your moths now vanish against the pale bark.</b> This is exactly the pre-industrial peppered moth. Now
+            switch the habitat above to <b>soot-darkened bark</b> — and watch the population you so carefully hid become
+            the easiest prey on the tree.
+          </div>
+        )}
+
+        {/* generations chart */}
+        {history.length > 1 && (
+          <div className="ns-chart-wrap">
+            <div className="ns-chart-h">
+              <span className="t">Population colour, generation by generation</span>
+              <div className="ns-legend">
+                <span><span className="ns-swatch" /> population average</span>
+                <span><span className="ns-swatch dash" /> the bark</span>
+              </div>
+            </div>
+            <div className="ns-chart">
+              <div className="ns-yax"><span>paler</span><span>darker</span></div>
+              <div className="ns-plot">
+                <svg viewBox="0 0 100 100" preserveAspectRatio="none">
+                  <polyline points={chart.target} fill="none" stroke="var(--soft)" strokeWidth="0.9"
+                    strokeDasharray="2.4 2.4" vectorEffect="non-scaling-stroke" />
+                  <polyline points={chart.mean} fill="none" stroke="var(--accent)" strokeWidth="2.4"
+                    vectorEffect="non-scaling-stroke" strokeLinejoin="round" strokeLinecap="round" />
+                  {chart.dots.map((d, i) => (
+                    <circle key={i} cx={d.x} cy={d.y} r="2.4" fill={d.c} stroke="var(--accent)" strokeWidth="1"
+                      vectorEffect="non-scaling-stroke" />
+                  ))}
+                </svg>
+              </div>
+            </div>
+            <div className="ns-xax">Generation 1 → {generation}. The average moth is chasing the colour of the bark.</div>
+          </div>
+        )}
+      </div>
+
+      {/* ── Takeaway ── */}
+      {showTakeaway && (
+        <div className="ns-card">
+          <div className="ns-eyebrow">The takeaway</div>
+          <blockquote className="ns-pull">
+            Not one moth ever changed its colour. Every moth was born its shade and died its shade. What changed —
+            across {rounds} {rounds === 1 ? "round" : "rounds"} of hunting — was the <i>population</i>.
+          </blockquote>
+          <div className="ns-takeaway">
+            <p>
+              You never picked a "winning" colour. You just caught what your eye could find, and the bark decided what
+              your eye could find. The moths that happened to match survived a little more often, bred, and passed their
+              colouring on. Do that a few times over and an average, mixed-up population becomes a population of near-perfect
+              hiders — with no designer, no goal, and no moth ever trying to adapt.
+            </p>
+            <div className="ns-concept">
+              <span className="ns-concept-term">Natural selection</span> runs whenever three plain facts are all true at
+              once:
+              <ul className="ns-ingredients">
+                <li><span className="ns-ing-b">1</span><span><b>Variation</b> — individuals differ (your moths came in every shade).</span></li>
+                <li><span className="ns-ing-b">2</span><span><b>Heredity</b> — offspring resemble their parents (survivors' colouring was inherited).</span></li>
+                <li><span className="ns-ing-b">3</span><span><b>Differential survival</b> — some variants leave more offspring than others (the hidden ones lived to breed).</span></li>
+              </ul>
+            </div>
+            <p>
+              That's the entire engine. When you flipped the bark to soot, nothing about the mechanism changed — only the
+              environment did, and so the population reversed course and marched toward black. The "best" colour was never
+              fixed; it was whatever the surroundings happened to reward. <b>Evolution is not individuals improving. It is
+              populations shifting, one lucky survivor at a time.</b>
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* ── Beyond the field ── */}
+      {showQuiz && (
+        <div className="ns-card">
+          <div className="ns-eyebrow">Beyond the field</div>
+          <div className="ns-quizhd">The same engine, everywhere alive</div>
+          <p className="ns-quizprompt">Which of these is driven by the exact three-step process you just ran? Click one to reveal the mechanism.</p>
+
+          {QUIZ.map((q) => (
+            <div key={q.key} className="ns-quizitem">
+              <button className={`ns-quizopt ${revealedQuiz.has(q.key) ? "open" : ""}`} onClick={() => toggleQuiz(q.key)}>
+                <span className="ns-quizlab">{q.label}</span>
+                <span className="ns-quizdesc">{q.desc}</span>
+              </button>
+              {revealedQuiz.has(q.key) && (
+                <div className="ns-quizreveal">
+                  {q.key === "antibiotic" && (
+                    <p><b>Yes — and it's life-or-death.</b> A few bacteria in the colony already carry a mutation that
+                    happens to blunt the drug. The antibiotic is the predator: it kills the susceptible billions and
+                    leaves the resistant few. Those few breed, and within days the infection is descended almost entirely
+                    from survivors. The drug didn't <i>create</i> resistance — it selected for it, exactly like your bird
+                    selecting for camouflage.</p>
+                  )}
+                  {q.key === "pesticide" && (
+                    <p><b>Correct.</b> Spray a field and you kill every insect except the handful whose biochemistry
+                    already shrugs it off. They inherit the farm — and their resistant offspring inherit the resistance.
+                    Reach for the same spray a few generations later and you're dosing a population bred from the only
+                    bugs it never worked on.</p>
+                  )}
+                  {q.key === "finch" && (
+                    <p><b>Correct — and it was measured in the wild.</b> On Daphne Major, a drought left only big, tough
+                    seeds. Finches with slightly deeper beaks could crack them; small-beaked birds starved. In a single
+                    generation the average beak got measurably bigger — not because any bird's beak grew, but because the
+                    big-beaked birds were the ones that lived to breed. Peter and Rosemary Grant watched it happen.</p>
+                  )}
+                  {q.key === "all" && (
+                    <>
+                      <p><b>Exactly.</b> Variation, heredity, and differential survival aren't a moth thing — they're a
+                      <i> living-thing</i> thing. Wherever those three are true, selection is already running:</p>
+                      <ul>
+                        <li><b>Medicine:</b> antibiotic- and antiviral-resistant microbes, and cancer cells that outlast chemotherapy.</li>
+                        <li><b>Agriculture:</b> pesticide-proof insects and herbicide-proof weeds.</li>
+                        <li><b>The wild:</b> beak size, coat colour, running speed — retuned every generation by whatever the environment rewards.</li>
+                      </ul>
+                      <p>Once you can see the engine, you spot it everywhere — and you understand why "just use more of the
+                      same drug" so often breeds the very thing it was meant to kill.</p>
+                    </>
+                  )}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+
+      <div className="ns-footer">
+        <svg className="ns-footer-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <path d="M8 3.6C8 3.6 6.6 2.6 3.7 2.6C2.9 2.6 2.3 3.2 2.3 4V11.8C2.3 11.8 3.7 11.4 5.6 11.4C7 11.4 8 12.4 8 12.4M8 3.6V12.4M8 3.6C8 3.6 9.4 2.6 12.3 2.6C13.1 2.6 13.7 3.2 13.7 4V11.8C13.7 11.8 12.3 11.4 10.4 11.4C9 11.4 8 12.4 8 12.4"
+            stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+        <div>
+          <b>You are the predator</b> — an interactive on natural selection. The reversing moth is the real story of
+          industrial melanism in the peppered moth (<i>Biston betularia</i>), studied by H. B. D. Kettlewell in the 1950s;
+          the underlying engine is Darwin &amp; Wallace's, 1858–59.
+        </div>
+      </div>
     </div>
   );
 }

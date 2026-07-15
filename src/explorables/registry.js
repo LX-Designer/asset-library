@@ -4,11 +4,11 @@ import naturalSelectionMeta from './natural-selection/meta.js'
 
 /**
  * Central registry of explorables — self-contained interactive learning assets
- * that open in a modal overlay. Unlike labs, explorables have no response
+ * that render at /explorable/:id. Unlike labs, explorables have no response
  * tracking or completion reporting; they are exploratory only.
  *
  * Each entry is a meta object plus a lazily-loaded React component (so an
- * explorable's code is only fetched when the user opens it).
+ * explorable's code is only fetched when its page is visited).
  */
 export const explorableRegistry = [
   {
