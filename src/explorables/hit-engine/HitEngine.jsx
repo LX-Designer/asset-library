@@ -405,12 +405,9 @@ export default function HitEngine() {
                   <div className="he-resultcaption">Close to the even split you'd expect across sixteen tracks.</div>
                 </>
               ) : (
-                <>
-                  <div className="he-resultpills">
-                    <span className="he-pill he-pill-stage he-pill-hit">{SONGS[leader]} <span className="pct">{pc(leaderShare)}%</span></span>
-                  </div>
-                  <div className="he-resultcaption">Nothing about the track caused that — every track was matched for quality.</div>
-                </>
+                <div className="he-resultpills">
+                  <span className="he-pill he-pill-stage he-pill-hit">{SONGS[leader]} <span className="pct">{pc(leaderShare)}%</span></span>
+                </div>
               )
             )}
           </div>
