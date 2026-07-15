@@ -17,7 +17,7 @@
   transform: translateY(-2px);
 }
 
-/* The whole card is the click target that opens the modal. */
+/* The whole card is the click target that opens the explorable's page. */
 .hit {
   display: flex;
   flex-direction: column;

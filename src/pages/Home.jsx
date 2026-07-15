@@ -1,14 +1,10 @@
-import { useState } from 'react'
 import { assetRegistry } from '../registry.js'
 import { explorableRegistry } from '../explorables/registry.js'
 import AssetCard from '../components/AssetCard/AssetCard.jsx'
 import ExplorableCard from '../components/ExplorableCard/ExplorableCard.jsx'
-import ExplorableModal from '../components/ExplorableModal/ExplorableModal.jsx'
 import styles from './Home.module.css'
 
 export default function Home() {
-  const [openExplorable, setOpenExplorable] = useState(null)
-
   return (
     <div className={styles.page}>
       <section className={styles.hero}>
@@ -51,21 +47,10 @@ export default function Home() {
 
           <div className={styles.grid}>
             {explorableRegistry.map(explorable => (
-              <ExplorableCard
-                key={explorable.id}
-                explorable={explorable}
-                onOpen={setOpenExplorable}
-              />
+              <ExplorableCard key={explorable.id} explorable={explorable} />
             ))}
           </div>
         </section>
-      )}
-
-      {openExplorable && (
-        <ExplorableModal
-          explorable={openExplorable}
-          onClose={() => setOpenExplorable(null)}
-        />
       )}
     </div>
   )

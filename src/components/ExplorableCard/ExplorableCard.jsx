@@ -1,9 +1,15 @@
+import { Link } from 'react-router-dom'
 import styles from './ExplorableCard.module.css'
 
-export default function ExplorableCard({ explorable, onOpen }) {
+export default function ExplorableCard({ explorable }) {
   return (
     <article className={styles.card}>
-      <button className={styles.hit} onClick={() => onOpen(explorable)}>
+      <Link
+        className={styles.hit}
+        to={`/explorable/${explorable.id}`}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
         <div className={styles.body}>
           <div className={styles.topRow}>
             <span className={styles.kind}>Explorable</span>
@@ -33,7 +39,7 @@ export default function ExplorableCard({ explorable, onOpen }) {
             </svg>
           </span>
         </span>
-      </button>
+      </Link>
     </article>
   )
 }

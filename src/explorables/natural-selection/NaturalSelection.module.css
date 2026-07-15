@@ -25,13 +25,11 @@
   font-family: var(--font-family);
   color: var(--ns-text-primary);
 
-  /* Top padding is taller than the rest to clear the modal's floating close
-     button (34px tall, 12px from the panel top) — see ExplorableModal.module.css */
-  padding: var(--space-12) var(--space-8) var(--space-8);
+  padding: var(--space-8);
 }
 
 @media (max-width: 600px) {
-  .widget { padding: var(--space-12) var(--space-5) var(--space-6); }
+  .widget { padding: var(--space-6) var(--space-5); }
 }
 
 .srOnly {
