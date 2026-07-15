@@ -195,6 +195,12 @@ export default function HitEngine() {
   };
 
   const startHold = () => startPlayer("hold");
+  // stopPlayer stops whatever session is active in the shared player ref, regardless of
+  // who started it. The hold button's pointerleave/pointercancel fire on any cursor movement
+  // that crosses its bounds — not just while it's actually pressed — so without this guard,
+  // moving the mouse away after clicking Auto-Play (which sits right next to this button and
+  // becomes disabled) can stop an Auto-Play run this button never touched.
+  const stopHold = () => { if (player.current.mode === "hold") stopPlayer(); };
   const startAutoPlay = () => startPlayer("auto");
 
   useEffect(() => () => {
@@ -422,14 +428,14 @@ export default function HitEngine() {
               className="he-btn solid"
               disabled={autoPlaying}
               onPointerDown={startHold}
-              onPointerUp={stopPlayer}
-              onPointerLeave={stopPlayer}
-              onPointerCancel={stopPlayer}
+              onPointerUp={stopHold}
+              onPointerLeave={stopHold}
+              onPointerCancel={stopHold}
               onKeyDown={(e) => {
                 if (e.key === " ") e.preventDefault();
                 if ((e.key === "Enter" || e.key === " ") && !e.repeat) startHold();
               }}
-              onKeyUp={(e) => { if (e.key === "Enter" || e.key === " ") stopPlayer(); }}
+              onKeyUp={(e) => { if (e.key === "Enter" || e.key === " ") stopHold(); }}
             >
               {ffActive ? `Fast-forwarding — listener ${stepIndex} of ${P}` : `Next Selection → (listener ${stepIndex + 1} of ${P})`}
             </button>
