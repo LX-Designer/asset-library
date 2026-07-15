@@ -276,6 +276,10 @@ export default function HitEngine() {
         .he-btn:disabled{opacity:.45;cursor:not-allowed;}
         .he-peek{margin-top:14px;background:#FBFAF7;border:1px solid var(--border);border-radius:10px;padding:14px 15px;font-size:13.5px;line-height:1.6;}
         .he-peek b{color:var(--ink);}
+        .he-runresult{margin-top:14px;background:#FBFAF7;border:1px solid var(--border);border-radius:10px;padding:14px 15px;}
+        .he-runresult .he-eyebrow{margin-bottom:6px;}
+        .he-runresult p{font-size:13.5px;line-height:1.6;color:#3C424C;}
+        .he-runresult b{color:var(--ink);}
         .he-tracker{margin-top:18px;}
         .he-tracker-h{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:8px;}
         .he-tracker-row{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:13px;padding:7px 0;border-top:1px solid var(--border);color:#3C424C;}
@@ -421,6 +425,26 @@ export default function HitEngine() {
             )}
           </div>
         </div>
+
+        {phase === "done" && active && (
+          <div className="he-runresult">
+            <div className="he-eyebrow">What happened</div>
+            {active.c === 0 ? (
+              <p>
+                <b>{SONGS[leader]}</b> narrowly finished on top with {pc(leaderShare)}% of plays — but since nobody
+                could see anyone else's choices, no early lead had a chance to snowball. Any of the sixteen tracks
+                was just as likely to end up here.
+              </p>
+            ) : (
+              <p>
+                <b>{SONGS[leader]}</b> won with {pc(leaderShare)}% of all plays. It didn't start out as the best
+                song — it just picked up a few extra plays early on. As its count grew, later listeners saw it near
+                the top of the chart, assumed it must be good, and picked it too, widening its lead until it
+                snowballed into a runaway hit.
+              </p>
+            )}
+          </div>
+        )}
 
         {active && phase === "building" && (
           <div className="he-btns">
