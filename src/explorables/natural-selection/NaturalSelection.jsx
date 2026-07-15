@@ -8,7 +8,7 @@ import { useState, useRef, useEffect, useMemo } from "react";
 // parent's shade plus a small mutation. Nothing decides who dies except the
 // learner's own eye — selection is entirely emergent.
 const N = 20;              // population size held constant each generation
-const HUNT_MS = 6000;      // seconds of a single hunt
+const HUNT_MS = 7000;      // seconds of a single hunt
 const MUT = 0.09;          // mutation spread on inheritance
 const SURVIVOR_FLOOR = 4;  // a hunt ends early once this few remain (no extinction)
 
@@ -18,28 +18,77 @@ const meanShade = (arr) => arr.reduce((s, m) => s + m.shade, 0) / arr.length;
 
 // A single warm-bark scale shared by both the moths and the bark, so that a
 // moth's visibility is literally |shade − bark|, not a faked opacity.
+function tone(s) {
+  const L = { r: 214, g: 205, b: 187 };  // palest bark
+  const D = { r: 41, g: 36, b: 29 };     // darkest bark
+  return {
+    r: Math.round(lerp(L.r, D.r, s)),
+    g: Math.round(lerp(L.g, D.g, s)),
+    b: Math.round(lerp(L.b, D.b, s)),
+  };
+}
 function colourFor(s) {
-  const L = { r: 208, g: 199, b: 181 };  // palest bark
-  const D = { r: 44, g: 39, b: 32 };     // darkest bark
-  const r = Math.round(lerp(L.r, D.r, s));
-  const g = Math.round(lerp(L.g, D.g, s));
-  const b = Math.round(lerp(L.b, D.b, s));
+  const { r, g, b } = tone(s);
   return `rgb(${r},${g},${b})`;
 }
 
-function barkStyle(shade) {
-  const base = colourFor(shade);
-  const light = colourFor(clamp01(shade - 0.11));
-  const dark = colourFor(clamp01(shade + 0.13));
-  return {
-    background: `
-      radial-gradient(38% 55% at 18% 30%, ${light} 0%, transparent 60%),
-      radial-gradient(30% 44% at 72% 24%, ${dark} 0%, transparent 55%),
-      radial-gradient(42% 60% at 62% 78%, ${light} 0%, transparent 58%),
-      radial-gradient(34% 48% at 30% 82%, ${dark} 0%, transparent 55%),
-      linear-gradient(115deg, ${colourFor(clamp01(shade - 0.04))}, ${colourFor(clamp01(shade + 0.05))})
-    `,
+// ── deterministic per-id noise, so a given moth/bark's texture is stable
+// across re-renders instead of flickering every time React repaints ──
+function hashStr(str) {
+  let h = 0;
+  for (let i = 0; i < str.length; i++) h = (Math.imul(h, 31) + str.charCodeAt(i)) | 0;
+  return h >>> 0;
+}
+function mulberry32(seed) {
+  let a = seed;
+  return function () {
+    a |= 0; a = (a + 0x6D2B79F5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
   };
+}
+
+// A tileable mottled-bark pattern: a handful of soft light/dark blotches around
+// a base tone, generated once per (id, shade) pair. The SAME technique renders
+// both the bark background and every moth's wings — a moth's shade close to the
+// bark's shade produces near-identical grain, so it genuinely blends rather than
+// sitting on top as a flat, differently-toned shape.
+function BlotchPattern({ id, shade, size, blobs = 7 }) {
+  // Blob layout is a pure function of `id` alone (memoized once), never of
+  // `shade` — so flipping habitat recolours a moth's texture in place rather
+  // than reshuffling it, and re-renders don't advance a shared RNG's state.
+  const { spots, rot } = useMemo(() => {
+    const rand = mulberry32(hashStr(id));
+    const s = Array.from({ length: blobs }, () => ({
+      cx: rand() * size, cy: rand() * size, r: size * (0.12 + rand() * 0.16),
+      dark: rand() < 0.5, op: 0.16 + rand() * 0.2,
+    }));
+    return { spots: s, rot: (rand() - 0.5) * 12 };
+  }, [id, size, blobs]);
+
+  const base = tone(shade);
+  const light = tone(clamp01(shade - 0.1));
+  const dark = tone(clamp01(shade + 0.1));
+
+  return (
+    <pattern id={`p-${id}`} width={size} height={size} patternUnits="userSpaceOnUse" patternTransform={`rotate(${rot.toFixed(1)})`}>
+      <rect width={size} height={size} fill={`rgb(${base.r},${base.g},${base.b})`} />
+      {spots.map((s, i) => {
+        const c = s.dark ? dark : light;
+        const fill = `rgb(${c.r},${c.g},${c.b})`;
+        return (
+          <g key={i}>
+            <circle cx={s.cx} cy={s.cy} r={s.r} fill={fill} opacity={s.op} />
+            <circle cx={s.cx - size} cy={s.cy} r={s.r} fill={fill} opacity={s.op} />
+            <circle cx={s.cx + size} cy={s.cy} r={s.r} fill={fill} opacity={s.op} />
+            <circle cx={s.cx} cy={s.cy - size} r={s.r} fill={fill} opacity={s.op} />
+            <circle cx={s.cx} cy={s.cy + size} r={s.r} fill={fill} opacity={s.op} />
+          </g>
+        );
+      })}
+    </pattern>
+  );
 }
 
 const ENVS = {
@@ -55,13 +104,32 @@ const ENVS = {
 
 let _uid = 0;
 const nextId = () => ++_uid;
-const randPos = () => ({ x: 7 + Math.random() * 86, y: 11 + Math.random() * 78 });
-const randRot = () => -26 + Math.random() * 52;
+
+// A jittered grid rather than pure randomness — full coverage of the field
+// with no dense clumps or empty gaps, so the scene reads as a considered
+// branch of moths rather than a scatter of dots.
+function gridPositions(n) {
+  const cols = 5;
+  const rows = Math.ceil(n / cols);
+  const cellW = 100 / cols, cellH = 100 / rows;
+  const rand = mulberry32((Date.now() ^ (Math.random() * 1e9)) >>> 0);
+  const out = [];
+  for (let i = 0; i < n; i++) {
+    const col = i % cols, row = Math.floor(i / cols);
+    out.push({
+      x: col * cellW + cellW * 0.5 + (rand() - 0.5) * cellW * 0.62,
+      y: row * cellH + cellH * 0.5 + (rand() - 0.5) * cellH * 0.62,
+      rot: (rand() - 0.5) * 22,
+    });
+  }
+  return out;
+}
 
 function makePop() {
   // A founding population with wide, undirected variation to select on.
-  return Array.from({ length: N }, () => ({
-    id: nextId(), shade: Math.random(), alive: true, ...randPos(), rot: randRot(),
+  const spots = gridPositions(N);
+  return Array.from({ length: N }, (_, i) => ({
+    id: nextId(), shade: Math.random(), alive: true, x: spots[i].x, y: spots[i].y, rot: spots[i].rot,
   }));
 }
 
@@ -72,20 +140,22 @@ const QUIZ = [
   { key: "all", label: "All of the Above", desc: "Every one of these is the same three-step engine you just ran." },
 ];
 
-// ── Moth glyph ──────────────────────────────────────────────────
-function Moth({ colour }) {
+// ── Moth glyph — filled with its own blotch pattern, no stroke, no shadow
+// while hunting: a real colour/texture match is the only thing that hides it. ──
+function Moth({ patternId }) {
   const wing = (
     <>
       <path d="M20 12 C10 1 1 4 2 12 C2.6 17.5 12 16 20 14 Z" />
       <path d="M20 16 C12 15 4 18 6 24.5 C8 29 16 24 20 20 Z" />
     </>
   );
+  const fill = `url(#p-${patternId})`;
   return (
     <svg viewBox="0 0 40 34" width="34" height="29" aria-hidden="true">
-      <g fill={colour} stroke="rgba(0,0,0,.22)" strokeWidth="0.6">
+      <g fill={fill}>
         <g>{wing}</g>
         <g transform="translate(40,0) scale(-1,1)">{wing}</g>
-        <ellipse cx="20" cy="17" rx="2.4" ry="8.6" fill={colour} stroke="rgba(0,0,0,.28)" strokeWidth="0.6" />
+        <ellipse cx="20" cy="17" rx="2.4" ry="8.6" fill={fill} />
       </g>
     </svg>
   );
@@ -148,10 +218,11 @@ export default function NaturalSelection() {
   const breed = () => {
     const survivors = pop.filter((m) => m.alive);
     if (survivors.length === 0) return;
-    const next = Array.from({ length: N }, () => {
+    const spots = gridPositions(N);
+    const next = Array.from({ length: N }, (_, i) => {
       const parent = survivors[Math.floor(Math.random() * survivors.length)];
       const shade = clamp01(parent.shade + (Math.random() - 0.5) * 2 * MUT);
-      return { id: nextId(), shade, alive: true, ...randPos(), rot: randRot() };
+      return { id: nextId(), shade, alive: true, x: spots[i].x, y: spots[i].y, rot: spots[i].rot };
     });
     const g = generation + 1;
     setPop(next);
@@ -256,14 +327,26 @@ export default function NaturalSelection() {
         .ns-field{position:relative;margin-top:12px;border-radius:12px;height:344px;overflow:hidden;
           box-shadow:inset 0 0 0 1px rgba(0,0,0,.10), inset 0 12px 34px rgba(0,0,0,.16);}
         .ns-field.hunting{cursor:crosshair;}
-        .ns-moth{position:absolute;transform:translate(-50%,-50%);appearance:none;border:none;background:none;padding:6px;margin:0;line-height:0;
-          filter:drop-shadow(0 1px 1.5px rgba(0,0,0,.45));transition:opacity .35s ease,transform .35s ease;}
+        .ns-bark-svg{position:absolute;inset:0;display:block;}
+        .ns-field-light{position:absolute;inset:0;pointer-events:none;mix-blend-mode:soft-light;
+          background:
+            radial-gradient(55% 45% at 26% 18%, rgba(255,255,255,.24), transparent 62%),
+            radial-gradient(48% 40% at 82% 86%, rgba(0,0,0,.22), transparent 65%);}
+        .ns-moth{position:absolute;transform:translate(-50%,-50%) rotate(var(--r,0deg));appearance:none;border:none;background:none;padding:6px;margin:0;line-height:0;
+          filter:blur(.28px);transition:transform .2s ease;}
         .ns-field.hunting .ns-moth{cursor:crosshair;}
         .ns-moth:not(:disabled){cursor:pointer;}
         .ns-moth:disabled{cursor:default;}
+        .ns-moth:hover:not(:disabled){transform:translate(-50%,-50%) rotate(var(--r,0deg)) scale(1.12);}
         .ns-moth:focus-visible{outline:2px solid #fff;outline-offset:1px;border-radius:6px;}
-        .ns-moth.caught{opacity:0;pointer-events:none;}
-        .ns-moth.survivor{outline:2px solid rgba(123,214,160,.9);outline-offset:1px;border-radius:8px;}
+        .ns-moth.caught{animation:ns-flee .46s cubic-bezier(.3,.6,.4,1) forwards;pointer-events:none;}
+        .ns-moth.survivor{filter:drop-shadow(0 1px 3px rgba(0,0,0,.35));}
+        .ns-moth.survivor svg{outline:2px solid rgba(123,214,160,.95);outline-offset:2px;border-radius:8px;}
+        @keyframes ns-flee{
+          0%{transform:translate(-50%,-50%) rotate(var(--r,0deg)) scale(1);opacity:1;}
+          35%{transform:translate(-50%,-72%) rotate(calc(var(--r,0deg) + 14deg)) scale(1.08);opacity:1;}
+          100%{transform:translate(-50%,-160%) rotate(calc(var(--r,0deg) - 22deg)) scale(.4);opacity:0;}
+        }
         .ns-empty{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.82);
           font-size:14px;font-weight:600;text-shadow:0 1px 3px rgba(0,0,0,.6);pointer-events:none;text-align:center;padding:0 24px;}
 
@@ -334,7 +417,7 @@ export default function NaturalSelection() {
           .ns-title{font-size:24px;} .ns-field{height:300px;}
           .ns-yax{width:40px;flex:0 0 40px;} .ns-xax{margin-left:48px;}
         }
-        @media(prefers-reduced-motion:reduce){.ns-moth{transition:none;}}
+        @media(prefers-reduced-motion:reduce){.ns-moth{transition:none;} .ns-moth.caught{animation-duration:.01s;}}
       `}</style>
 
       {/* ── Intro ── */}
@@ -403,22 +486,28 @@ export default function NaturalSelection() {
           </div>
         </div>
 
-        <div
-          className={`ns-field ${phase === "hunting" ? "hunting" : ""}`}
-          style={barkStyle(env.shade)}
-        >
+        <div className={`ns-field ${phase === "hunting" ? "hunting" : ""}`}>
+          <svg className="ns-bark-svg" width="100%" height="100%" viewBox="0 0 600 344" preserveAspectRatio="none" aria-hidden="true">
+            <defs>
+              <BlotchPattern id="bark" shade={env.shade} size={46} blobs={9} />
+              {pop.map((m) => <BlotchPattern key={m.id} id={`m${m.id}`} shade={m.shade} size={13} blobs={5} />)}
+            </defs>
+            <rect width="600" height="344" fill="url(#p-bark)" />
+          </svg>
+          <div className="ns-field-light" />
+
           {pop.map((m) => {
             const isSurvivor = phase === "tallied" && m.alive;
             return (
               <button
                 key={m.id}
                 className={`ns-moth ${!m.alive ? "caught" : ""} ${isSurvivor ? "survivor" : ""}`}
-                style={{ left: `${m.x}%`, top: `${m.y}%`, transform: `translate(-50%,-50%) rotate(${m.rot}deg) ${m.alive ? "" : "scale(.4)"}` }}
+                style={{ left: `${m.x}%`, top: `${m.y}%`, "--r": `${m.rot}deg` }}
                 disabled={phase !== "hunting" || !m.alive}
                 aria-label={phase === "hunting" ? "Catch moth" : "Moth"}
                 onClick={() => catchMoth(m.id)}
               >
-                <Moth colour={colourFor(m.shade)} />
+                <Moth patternId={`m${m.id}`} />
               </button>
             );
           })}
