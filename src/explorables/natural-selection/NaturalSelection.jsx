@@ -1,5 +1,5 @@
 /**
- * NaturalSelectionExplorable
+ * NaturalSelection explorable
  *
  * Three-act interactive teaching natural selection via the acquired-vs-inherited
  * misconception (Bishop & Anderson 1990; Gregory 2009).
@@ -13,14 +13,10 @@
  *           Boag 1983 / Grant 1986, as summarised in university teaching case
  *           studies). Same predict-then-reveal grammar, real numbers.
  *
- * Platform integration:
- * - Styling lives in index.module.css. The widget's own --ns-* tokens are mapped
- *   onto the global design tokens from src/index.css there.
- * - Predictions persist via onResponse; finishing Act 3 reports a score via
- *   onComplete. Saved responses rehydrate the prediction/reveal state on return.
- * - The platform's AssetPage supplies the title header and back link, and
- *   AssetWrapper supplies the "Start again" control and completion banner, so
- *   this component renders content only.
+ * Explorables are exploratory only — this renders inside a modal with no props,
+ * and keeps no saved progress or completion state (see src/explorables/registry.js).
+ * Styling is in NaturalSelection.module.css, with the widget's --ns-* tokens
+ * mapped onto the global design tokens from src/index.css.
  *
  * Act 3's headline numbers (9.31 mm, 9.84 mm, 9.72 mm, h² = 0.78) are real,
  * sourced figures; the Act-1 histogram bar heights are a stylised simulation,
@@ -28,8 +24,8 @@
  * (1981, Science 214:82–85) / HHMI BioInteractive's finch resource.
  */
 
-import { useState, useEffect, useRef } from 'react';
-import styles from './index.module.css';
+import { useState, useEffect } from 'react';
+import styles from './NaturalSelection.module.css';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -374,35 +370,10 @@ function ProgressPills({ act1Done, act2Done, act3Done, act2Active, act3Active })
 // Main component
 // ---------------------------------------------------------------------------
 
-export default function NaturalSelectionExplorable({
-  onResponse,
-  onComplete,
-  savedResponses = {},
-}) {
-  const savedAct1 = savedResponses['act1-prediction'];
-  const savedAct2 = savedResponses['act2-continued'];
-  const savedAct3 = savedResponses['act3-prediction'];
-
-  const [act1, setAct1] = useState(() => {
-    const base = createInitialAct1State();
-    if (!savedAct1) return base;
-    return {
-      ...base,
-      choice: savedAct1.choice,
-      revealed: true,
-      finalMean: savedAct1.finalMean ?? base.baseMean,
-      generation: savedAct1.generation ?? base.generation,
-    };
-  });
-  const [act2Continued, setAct2Continued] = useState(() => !!savedAct2 || !!savedAct3);
-  const [act3, setAct3] = useState(() =>
-    savedAct3
-      ? { choice: savedAct3.choice, revealed: true }
-      : { choice: null, revealed: false }
-  );
-
-  // Persist Act 1 exactly once when its prediction is first revealed.
-  const act1Saved = useRef(!!savedAct1);
+export default function NaturalSelection() {
+  const [act1, setAct1] = useState(createInitialAct1State);
+  const [act2Continued, setAct2Continued] = useState(false);
+  const [act3, setAct3] = useState({ choice: null, revealed: false });
 
   // Reveal Act 1's prediction once the clean (no-pressure) test has run long enough.
   useEffect(() => {
@@ -414,19 +385,6 @@ export default function NaturalSelectionExplorable({
       }));
     }
   }, [act1.choice, act1.generation, act1.pressureEverOn, act1.revealed]);
-
-  // Save Act 1's outcome the first time it becomes revealed.
-  useEffect(() => {
-    if (act1.revealed && act1.choice && !act1Saved.current) {
-      act1Saved.current = true;
-      onResponse?.('act1-prediction', {
-        choice: act1.choice,
-        correct: act1.choice === CORRECT_CHOICE_1,
-        finalMean: act1.finalMean,
-        generation: act1.generation,
-      });
-    }
-  }, [act1.revealed, act1.choice, act1.finalMean, act1.generation, onResponse]);
 
   const handleNextGeneration = () => {
     setAct1((prev) => {
@@ -455,7 +413,6 @@ export default function NaturalSelectionExplorable({
   };
 
   const handleResetAct1 = () => {
-    act1Saved.current = false;
     setAct1(createInitialAct1State());
     setAct2Continued(false);
     setAct3({ choice: null, revealed: false });
@@ -467,9 +424,7 @@ export default function NaturalSelectionExplorable({
   };
 
   const handleContinueToAct3 = () => {
-    if (!act1.revealed) return;
-    setAct2Continued(true);
-    onResponse?.('act2-continued', { continued: true });
+    if (act1.revealed) setAct2Continued(true);
   };
 
   const handleSelectChoice3 = (value) => {
@@ -479,17 +434,7 @@ export default function NaturalSelectionExplorable({
 
   const handleRevealAct3 = () => {
     if (!act3.choice || act3.revealed) return;
-    const correct3 = act3.choice === CORRECT_CHOICE_3;
-    const correct1 = act1.choice === CORRECT_CHOICE_1;
     setAct3((prev) => ({ ...prev, revealed: true }));
-    onResponse?.('act3-prediction', { choice: act3.choice, correct: correct3 });
-    const score = Math.round((((correct1 ? 1 : 0) + (correct3 ? 1 : 0)) / 2) * 100);
-    onComplete?.(score, {
-      act1Choice: act1.choice,
-      act1Correct: correct1,
-      act3Choice: act3.choice,
-      act3Correct: correct3,
-    });
   };
 
   const act1Status = getAct1StatusMessage(act1);
