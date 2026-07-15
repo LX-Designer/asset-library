@@ -1,5 +1,6 @@
 import { lazy } from 'react'
 import hitEngineMeta from './hit-engine/meta.js'
+import naturalSelectionMeta from './natural-selection/meta.js'
 
 /**
  * Central registry of explorables — self-contained interactive learning assets
@@ -13,6 +14,10 @@ export const explorableRegistry = [
   {
     ...hitEngineMeta,
     Component: lazy(() => import('./hit-engine/HitEngine.jsx')),
+  },
+  {
+    ...naturalSelectionMeta,
+    Component: lazy(() => import('./natural-selection/NaturalSelection.jsx')),
   },
 ]
 

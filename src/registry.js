@@ -8,7 +8,6 @@ import globalWarmingMeta      from './assets/geo-2-3-global-warming/meta.js'
 import globalWarmingGuidedMeta from './assets/global-warming/meta.js'
 import globalWarmingInquiryMeta from './assets/global-warming-inquiry/meta.js'
 import metacognitionSDLMeta   from './assets/metacognition-sdl/meta.js'
-import naturalSelectionMeta   from './assets/natural-selection/meta.js'
 
 /**
  * Central registry of all learning assets.
@@ -25,7 +24,6 @@ export const assetRegistry = [
   globalWarmingGuidedMeta,
   globalWarmingInquiryMeta,
   metacognitionSDLMeta,
-  naturalSelectionMeta,
 ]
 
 export function getAssetMeta(id) {
