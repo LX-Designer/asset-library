@@ -251,12 +251,12 @@ function PredictButtons({ options, selected, correctChoice, revealed, disabled, 
 }
 
 function StatusLine({ status }) {
-  if (!status) return <p className={styles.status}>&nbsp;</p>;
+  if (!status) return <p className={styles.status} aria-live="polite">&nbsp;</p>;
   const toneClass = status.tone === 'correct' ? styles.correct
     : status.tone === 'incorrect' ? styles.incorrect
     : '';
   return (
-    <p className={`${styles.status} ${toneClass}`}>
+    <p className={`${styles.status} ${toneClass}`} aria-live="polite" aria-atomic="true">
       {status.tone === 'correct' && <IconCheck />}
       {status.tone === 'incorrect' && <IconX />}
       {' '}
@@ -508,7 +508,7 @@ export default function NaturalSelection() {
           <Histogram population={act1.acquiredPop} color="var(--ns-series-b)" showThreshold={act1.pressureOn} />
         </div>
 
-        <p className={styles.status}>{worldStatus}</p>
+        <p className={styles.status} aria-live="polite" aria-atomic="true">{worldStatus}</p>
 
         <p className={styles.chartCaption}>Mean beak depth, generation by generation</p>
         <div className={styles.legend}>
@@ -525,29 +525,31 @@ export default function NaturalSelection() {
         {!act1.revealed && (
           <p className={styles.lockHint}><IconLock /> Unlocks once Act 1's prediction is checked</p>
         )}
-        <p className={styles.actPurpose}>
-          In your selection-only world, beak depth shifted with no pressure needed to acquire it — only
-          pressure to survive it. Biologists watched a real population do exactly this, measured to the
-          millimetre.
-        </p>
+        <div className={act1.revealed ? '' : styles.lockedContent}>
+          <p className={styles.actPurpose}>
+            In your selection-only world, beak depth shifted with no pressure needed to acquire it — only
+            pressure to survive it. Biologists watched a real population do exactly this, measured to the
+            millimetre.
+          </p>
 
-        <div className={styles.numberline} style={{ height: 40 }}>
-          <div className={styles.numberlineTrack} style={{ top: 20 }} />
-          {act1.revealed && (
-            <NumberLineMarker
-              value={act1.finalMean}
-              min={0}
-              max={100}
-              variant="echo"
-              label={`your model, gen ${act1.generation} · ${act1.finalMean}`}
-              labelOffset={-24}
-            />
-          )}
+          <div className={styles.numberline} style={{ height: 40 }}>
+            <div className={styles.numberlineTrack} style={{ top: 20 }} />
+            {act1.revealed && (
+              <NumberLineMarker
+                value={act1.finalMean}
+                min={0}
+                max={100}
+                variant="echo"
+                label={`your model, gen ${act1.generation} · ${act1.finalMean}`}
+                labelOffset={-24}
+              />
+            )}
+          </div>
+
+          <Button icon={<IconArrowRight />} disabled={!act1.revealed} onClick={handleContinueToAct3}>
+            See the real data
+          </Button>
         </div>
-
-        <Button icon={<IconArrowRight />} disabled={!act1.revealed} onClick={handleContinueToAct3}>
-          See the real data
-        </Button>
       </section>
 
       {/* ---------------- ACT 3 ---------------- */}
@@ -557,49 +559,51 @@ export default function NaturalSelection() {
         {!act3Unlocked && (
           <p className={styles.lockHint}><IconLock /> Unlocks once Act 2 is complete</p>
         )}
-        <p className={styles.actPurpose}>
-          A real drought, a real population, measured in millimetres. Same question as Act 1: does the
-          next generation follow the survivors, or start over?
-        </p>
+        <div className={act3Unlocked ? '' : styles.lockedContent}>
+          <p className={styles.actPurpose}>
+            A real drought, a real population, measured in millimetres. Same question as Act 1: does the
+            next generation follow the survivors, or start over?
+          </p>
 
-        <div className={styles.numberline} style={{ height: 70 }}>
-          <div className={styles.numberlineTrack} style={{ top: 34 }} />
-          <span className={styles.axisEnd} style={{ left: 0, top: 40 }}>8.8 mm</span>
-          <span className={styles.axisEnd} style={{ right: 0, top: 40 }}>10.2 mm</span>
-          <NumberLineMarker value={V_1976} min={AXIS_MIN} max={AXIS_MAX} variant="known" label="1976 population · 9.31 mm" labelOffset={-24} />
-          <NumberLineMarker value={V_1977} min={AXIS_MIN} max={AXIS_MAX} variant="known" label="1977 survivors · 9.84 mm" labelOffset={-40} />
+          <div className={styles.numberline} style={{ height: 70 }}>
+            <div className={styles.numberlineTrack} style={{ top: 34 }} />
+            <span className={styles.axisEnd} style={{ left: 0, top: 40 }}>8.8 mm</span>
+            <span className={styles.axisEnd} style={{ right: 0, top: 40 }}>10.2 mm</span>
+            <NumberLineMarker value={V_1976} min={AXIS_MIN} max={AXIS_MAX} variant="known" label="1976 population · 9.31 mm" labelOffset={-24} />
+            <NumberLineMarker value={V_1977} min={AXIS_MIN} max={AXIS_MAX} variant="known" label="1977 survivors · 9.84 mm" labelOffset={-40} />
+            {act3.revealed && (
+              <NumberLineMarker value={ACTUAL_1978} min={AXIS_MIN} max={AXIS_MAX} variant="actual" label="1978 actual · 9.72 mm" labelOffset={-56} />
+            )}
+          </div>
+
+          <div className={styles.panel}>
+            <p className={styles.panelTitle}>Predict: where will the 1978 offspring generation's average beak depth land?</p>
+            <PredictButtons
+              options={ACT3_OPTIONS}
+              selected={act3.choice}
+              correctChoice={CORRECT_CHOICE_3}
+              revealed={act3.revealed}
+              disabled={!act3Unlocked || act3.revealed}
+              onSelect={handleSelectChoice3}
+            />
+            <StatusLine status={act3Status} />
+          </div>
+
+          <Button icon={<IconEye />} disabled={!act3.choice || act3.revealed} onClick={handleRevealAct3}>
+            Reveal what was measured in 1978
+          </Button>
+
           {act3.revealed && (
-            <NumberLineMarker value={ACTUAL_1978} min={AXIS_MIN} max={AXIS_MAX} variant="actual" label="1978 actual · 9.72 mm" labelOffset={-56} />
+            <div>
+              <p className={styles.bonusLabel} style={{ marginTop: 20 }}>For the curious — the exact prediction</p>
+              <div className={styles.metrics}>
+                <MetricCard label="Selection differential" value="0.53 mm" />
+                <MetricCard label="Heritability (h²)" value="0.78" />
+                <MetricCard label="Predicted mean" value="9.72 mm" />
+              </div>
+            </div>
           )}
         </div>
-
-        <div className={styles.panel}>
-          <p className={styles.panelTitle}>Predict: where will the 1978 offspring generation's average beak depth land?</p>
-          <PredictButtons
-            options={ACT3_OPTIONS}
-            selected={act3.choice}
-            correctChoice={CORRECT_CHOICE_3}
-            revealed={act3.revealed}
-            disabled={!act3Unlocked || act3.revealed}
-            onSelect={handleSelectChoice3}
-          />
-          <StatusLine status={act3Status} />
-        </div>
-
-        <Button icon={<IconEye />} disabled={!act3.choice || act3.revealed} onClick={handleRevealAct3}>
-          Reveal what was measured in 1978
-        </Button>
-
-        {act3.revealed && (
-          <div>
-            <p className={styles.bonusLabel} style={{ marginTop: 20 }}>For the curious — the exact prediction</p>
-            <div className={styles.metrics}>
-              <MetricCard label="Selection differential" value="0.53 mm" />
-              <MetricCard label="Heritability (h²)" value="0.78" />
-              <MetricCard label="Predicted mean" value="9.72 mm" />
-            </div>
-          </div>
-        )}
       </section>
     </div>
   );
