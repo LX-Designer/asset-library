@@ -31,17 +31,20 @@ const SONGS = [
   "Solar Flare", "Quiet Storm", "Faded Polaroid", "Golden Hour",
 ];
 
+const INDEPENDENT_BLURB = <>Listeners <b>can't</b> see the charts. They select a song without knowing what anyone else has selected.</>;
+const SOCIAL_BLURB = <>Listeners <b>can</b> see the charts. They are able to see which songs are most popular before making their selection.</>;
+
 const WORLDS = [
   { key: "independent", label: "Independent world", c: 0, tag: "no charts",
-    blurb: "Listeners choose without seeing what anyone else has picked." },
+    blurb: INDEPENDENT_BLURB },
   { key: "social-1", label: "Social world 1", c: 1, tag: "with charts",
-    blurb: "Listeners can see how many times each track has already been picked, and tend to choose accordingly." },
+    blurb: SOCIAL_BLURB },
   { key: "social-2", label: "Social world 2", c: 1, tag: "with charts",
-    blurb: "The same songs, the same rule as the other social worlds — a fresh, independent audience." },
+    blurb: SOCIAL_BLURB },
   { key: "social-3", label: "Social world 3", c: 1, tag: "with charts",
-    blurb: "The same songs, the same rule again — another fresh, independent audience." },
+    blurb: SOCIAL_BLURB },
   { key: "social-4", label: "Social world 4", c: 1, tag: "with charts",
-    blurb: "The same songs, the same rule again — another fresh, independent audience." },
+    blurb: SOCIAL_BLURB },
 ];
 
 const QUIZ = [
