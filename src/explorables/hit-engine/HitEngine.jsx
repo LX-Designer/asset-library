@@ -506,7 +506,7 @@ export default function HitEngine() {
               about the song changed. Its success depended entirely on who got lucky first.
             </blockquote>
             <p>
-              If you ran the simulation across several <b>Social worlds</b>, you likely saw exactly that: a
+              If you ran the simulation across several <b>social worlds</b>, you likely saw exactly that: a
               different winner each time, decided not by quality but by which track happened to catch an early lead.
             </p>
             <div className="he-concept">
