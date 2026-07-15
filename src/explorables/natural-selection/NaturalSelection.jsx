@@ -134,7 +134,7 @@ function getAct1StatusMessage(act1) {
   }
   if (act1.choice === null) return null;
   if (act1.pressureEverOn) {
-    return { tone: 'info', text: "Drought pressure was switched on, so this prediction can't be checked. Reset to try again." };
+    return { tone: 'info', text: "Drought pressure was switched on, so this prediction can't be checked. Start over to try again." };
   }
   if (act1.generation < REVEAL_GENERATION) {
     return { tone: 'info', text: `Run a few more generations to check your prediction (generation ${act1.generation} of ${REVEAL_GENERATION}).` };
@@ -273,13 +273,13 @@ function Histogram({ population, color, showThreshold }) {
         {bins.map((count, i) => (
           <div
             key={i}
+            className={styles.histogramBar}
             style={{
               flex: 1,
               height: `${Math.round((count / population.length) * 100)}%`,
               minHeight: 2,
               borderRadius: '3px 3px 0 0',
               background: color,
-              transition: 'height 0.5s ease',
             }}
           />
         ))}
@@ -333,14 +333,21 @@ function MeanTrendChart({ history }) {
   );
 }
 
-function NumberLineMarker({ value, min, max, label, variant, labelOffset = -24 }) {
+function NumberLineMarker({ value, min, max, label, variant, labelOffset = -24, labelClassName }) {
   const pct = ((value - min) / (max - min)) * 100;
   const variantClass = variant === 'known' ? styles.markerKnown
     : variant === 'echo' ? styles.markerEcho
     : styles.markerActual;
+  // labelClassName lets a caller control vertical placement entirely in CSS
+  // (so it can differ per breakpoint) instead of via this inline style.
   return (
     <div className={`${styles.marker} ${variantClass}`} style={{ left: `${pct}%` }}>
-      <span className={styles.markerLabel} style={{ top: labelOffset }}>{label}</span>
+      <span
+        className={`${styles.markerLabel} ${labelClassName || ''}`}
+        style={labelClassName ? undefined : { top: labelOffset }}
+      >
+        {label}
+      </span>
     </div>
   );
 }
@@ -350,18 +357,6 @@ function MetricCard({ label, value }) {
     <div className={styles.metricCard}>
       <p className={styles.metricLabel}>{label}</p>
       <p className={styles.metricValue}>{value}</p>
-    </div>
-  );
-}
-
-function ProgressPills({ act1Done, act2Done, act3Done, act2Active, act3Active }) {
-  const classFor = (done, active) =>
-    `${styles.progressPill} ${done ? styles.done : active ? styles.active : ''}`;
-  return (
-    <div className={styles.progress}>
-      <span className={classFor(act1Done, true)}>Act 1</span>
-      <span className={classFor(act2Done, act2Active)}>Act 2</span>
-      <span className={classFor(act3Done, act3Active)}>Act 3</span>
     </div>
   );
 }
@@ -412,7 +407,7 @@ export default function NaturalSelection() {
     }));
   };
 
-  const handleResetAct1 = () => {
+  const handleStartOver = () => {
     setAct1(createInitialAct1State());
     setAct2Continued(false);
     setAct3({ choice: null, revealed: false });
@@ -450,13 +445,12 @@ export default function NaturalSelection() {
         three applies the same prediction task to the real 1977 Daphne Major finch drought.
       </h2>
 
-      <ProgressPills
-        act1Done={act1.revealed}
-        act2Done={act2Continued}
-        act3Done={act3.revealed}
-        act2Active={act1.revealed && !act2Continued}
-        act3Active={act3Unlocked && !act3.revealed}
-      />
+      {/* Resets all three acts — kept as a single top-level control, separate
+          from Act 1's own drought/generation controls, since its scope is the
+          whole explorable rather than just Act 1. */}
+      <div className={styles.topBar}>
+        <Button icon={<IconRefresh />} onClick={handleStartOver}>Start over</Button>
+      </div>
 
       {/* ---------------- ACT 1 ---------------- */}
       <section className={styles.act}>
@@ -484,7 +478,6 @@ export default function NaturalSelection() {
             Drought pressure: {act1.pressureOn ? 'on' : 'off'}
           </Button>
           <Button icon={<IconPlay />} onClick={handleNextGeneration}>Next generation</Button>
-          <Button icon={<IconRefresh />} onClick={handleResetAct1}>Reset</Button>
           <span className={styles.genCount}>Generation {act1.generation}</span>
         </div>
 
@@ -569,10 +562,10 @@ export default function NaturalSelection() {
             <div className={styles.numberlineTrack} style={{ top: 34 }} />
             <span className={styles.axisEnd} style={{ left: 0, top: 40 }}>8.8 mm</span>
             <span className={styles.axisEnd} style={{ right: 0, top: 40 }}>10.2 mm</span>
-            <NumberLineMarker value={V_1976} min={AXIS_MIN} max={AXIS_MAX} variant="known" label="1976 population · 9.31 mm" labelOffset={-24} />
-            <NumberLineMarker value={V_1977} min={AXIS_MIN} max={AXIS_MAX} variant="known" label="1977 survivors · 9.84 mm" labelOffset={-40} />
+            <NumberLineMarker value={V_1976} min={AXIS_MIN} max={AXIS_MAX} variant="known" label="1976 · 9.31 mm" labelClassName={styles.act3Label1976} />
+            <NumberLineMarker value={V_1977} min={AXIS_MIN} max={AXIS_MAX} variant="known" label="1977 survivors · 9.84 mm" labelClassName={styles.act3Label1977} />
             {act3.revealed && (
-              <NumberLineMarker value={ACTUAL_1978} min={AXIS_MIN} max={AXIS_MAX} variant="actual" label="1978 actual · 9.72 mm" labelOffset={-56} />
+              <NumberLineMarker value={ACTUAL_1978} min={AXIS_MIN} max={AXIS_MAX} variant="actual" label="1978 actual · 9.72 mm" labelClassName={styles.act3Label1978} />
             )}
           </div>
 

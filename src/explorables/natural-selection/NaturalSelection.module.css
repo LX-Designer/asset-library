@@ -39,14 +39,9 @@
   clip: rect(0, 0, 0, 0); white-space: nowrap;
 }
 
-/* Progress pills */
-.progress { display: flex; gap: 8px; margin-bottom: 28px; }
-.progressPill {
-  font-size: var(--font-size-xs); padding: 4px 10px; border-radius: var(--ns-radius);
-  background: var(--ns-surface-1); color: var(--ns-text-muted);
-}
-.progressPill.active { background: var(--ns-accent-bg); color: var(--ns-accent); }
-.progressPill.done   { background: var(--ns-success-bg); color: var(--ns-success); }
+/* Top bar — currently just the "Start over" control. Kept separate from
+   Act 1's own controls since it resets all three acts, not just Act 1. */
+.topBar { display: flex; justify-content: flex-end; margin-bottom: 28px; }
 
 /* Acts */
 .act { margin-bottom: 40px; }
@@ -132,6 +127,19 @@
   font-size: var(--font-size-xs); font-weight: 500; white-space: nowrap; color: var(--ns-text-secondary);
 }
 
+/* Act 3's three number-line labels stack above the same track — spacing is
+   set per-label in CSS (rather than the shared labelOffset inline style) so
+   mobile can widen the gaps without the two colliding. */
+.act3Label1976 { top: -24px; }
+.act3Label1977 { top: -40px; }
+.act3Label1978 { top: -56px; }
+
+@media (max-width: 600px) {
+  .act3Label1976 { top: -24px; }
+  .act3Label1977 { top: -50px; }
+  .act3Label1978 { top: -76px; }
+}
+
 /* Metric cards */
 .metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 12px; margin-top: 20px; }
 .metricCard { background: var(--ns-surface-1); border-radius: var(--ns-radius); padding: 12px 16px; }
@@ -145,4 +153,10 @@
   .predictGroup { flex-direction: column; }
   .predictBtn { width: 100%; text-align: left; }
   .btn, .predictBtn { padding: 12px 16px; }
+}
+
+.histogramBar { transition: height 0.5s ease; }
+
+@media (prefers-reduced-motion: reduce) {
+  .histogramBar { transition: none; }
 }
