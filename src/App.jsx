@@ -3,6 +3,7 @@ import Layout from './components/Layout/Layout.jsx'
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute.jsx'
 import Home from './pages/Home.jsx'
 import AssetPage from './pages/AssetPage.jsx'
+import ExplorablePage from './pages/ExplorablePage.jsx'
 import Login from './pages/Login.jsx'
 import Signup from './pages/Signup.jsx'
 import Dashboard from './pages/Dashboard.jsx'
@@ -14,6 +15,7 @@ export default function App() {
       <Route element={<Layout />}>
         <Route path="/" element={<Home />} />
         <Route path="/asset/:assetId" element={<AssetPage />} />
+        <Route path="/explorable/:explorableId" element={<ExplorablePage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route element={<ProtectedRoute />}>
