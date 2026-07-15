@@ -9,9 +9,9 @@ import { useState, useRef, useEffect, useMemo } from "react";
 // learner's own eye — selection is entirely emergent.
 const N = 20;              // population size held constant each generation
 const HUNT_MS = 7000;      // seconds of a single hunt
-const MUT = 0.045;         // mutation spread on inheritance — tight enough that a few
-                            // generations of selection converge close to invisible, not
-                            // just "close enough to squint at"
+const MUT = 0.025;         // mutation spread on inheritance — small enough that no single
+                            // generation's overshoot (see even-share breeding below) can
+                            // carry the population far past the bark's shade and back
 const SURVIVOR_FLOOR = 4;  // a hunt ends early once this few remain (no extinction)
 
 const clamp01 = (x) => (x < 0 ? 0 : x > 1 ? 1 : x);
@@ -223,8 +223,18 @@ export default function NaturalSelection() {
     const survivors = pop.filter((m) => m.alive);
     if (survivors.length === 0) return;
     const spots = gridPositions(N);
+    // Every survivor gets a roughly equal share of the next generation, rather
+    // than each of the N offspring independently re-rolling "who's my parent?"
+    // — pure random-with-replacement lets a handful of survivors dominate by
+    // chance alone, which (combined with whichever colour extreme happened to
+    // be easiest to spot that round) can overshoot the population's average
+    // past the bark's shade and back, generation after generation, instead of
+    // settling. Survival still decides who breeds at all; this only removes
+    // the extra luck in how much each survivor breeds.
+    const pool = [];
+    while (pool.length < N) pool.push(...[...survivors].sort(() => Math.random() - 0.5));
     const next = Array.from({ length: N }, (_, i) => {
-      const parent = survivors[Math.floor(Math.random() * survivors.length)];
+      const parent = pool[i];
       const shade = clamp01(parent.shade + (Math.random() - 0.5) * 2 * MUT);
       return { id: nextId(), shade, alive: true, x: spots[i].x, y: spots[i].y, rot: spots[i].rot };
     });
