@@ -2,6 +2,7 @@ import { lazy } from 'react'
 import hitEngineMeta from './hit-engine/meta.js'
 import naturalSelectionMeta from './natural-selection/meta.js'
 import profitVsCashMeta from './where-did-the-profit-go/meta.js'
+import milltownMeta from './milltown/meta.js'
 
 /**
  * Central registry of explorables — self-contained interactive learning assets
@@ -23,6 +24,10 @@ export const explorableRegistry = [
   {
     ...profitVsCashMeta,
     Component: lazy(() => import('./where-did-the-profit-go/ProfitVsCash.jsx')),
+  },
+  {
+    ...milltownMeta,
+    Component: lazy(() => import('./milltown/Milltown.jsx')),
   },
 ]
 
