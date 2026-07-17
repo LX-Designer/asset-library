@@ -16,6 +16,9 @@ export default function Layout() {
   const assetMeta  = assetMatch ? getAssetMeta(assetMatch[1]) : null
   const hideShell  = assetMeta?.layout === 'full'
 
+  const hasExplorables = explorableRegistry.some(e => e.type !== 'simulation')
+  const hasSimulations  = explorableRegistry.some(e => e.type === 'simulation')
+
   function handleSignOut() {
     supabase.auth.signOut()
   }
@@ -33,8 +36,11 @@ export default function Layout() {
             </Link>
             <nav className={styles.nav} aria-label="Main">
               <Link to="/" className={styles.navLink}>Labs</Link>
-              {explorableRegistry.length > 0 && (
+              {hasExplorables && (
                 <a href="/#explorables" className={styles.navLink}>Explorables</a>
+              )}
+              {hasSimulations && (
+                <a href="/#simulations" className={styles.navLink}>Simulations</a>
               )}
               {user ? (
                 <>

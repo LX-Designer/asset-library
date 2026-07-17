@@ -5,6 +5,9 @@ import ExplorableCard from '../components/ExplorableCard/ExplorableCard.jsx'
 import styles from './Home.module.css'
 
 export default function Home() {
+  const explorables = explorableRegistry.filter(e => e.type === 'explorable')
+  const simulations = explorableRegistry.filter(e => e.type === 'simulation')
+
   return (
     <div className={styles.page}>
       <section className={styles.hero}>
@@ -36,18 +39,35 @@ export default function Home() {
         )}
       </section>
 
-      {explorableRegistry.length > 0 && (
+      {explorables.length > 0 && (
         <section id="explorables" className={styles.catalogue}>
           <div className={styles.catalogueHeader}>
             <h2 className={styles.catalogueTitle}>Explorables</h2>
             <span className={styles.catalogueCount}>
-              {explorableRegistry.length} {explorableRegistry.length === 1 ? 'explorable' : 'explorables'}
+              {explorables.length} {explorables.length === 1 ? 'explorable' : 'explorables'}
             </span>
           </div>
 
           <div className={styles.grid}>
-            {explorableRegistry.map(explorable => (
+            {explorables.map(explorable => (
               <ExplorableCard key={explorable.id} explorable={explorable} />
+            ))}
+          </div>
+        </section>
+      )}
+
+      {simulations.length > 0 && (
+        <section id="simulations" className={styles.catalogue}>
+          <div className={styles.catalogueHeader}>
+            <h2 className={styles.catalogueTitle}>Simulations</h2>
+            <span className={styles.catalogueCount}>
+              {simulations.length} {simulations.length === 1 ? 'simulation' : 'simulations'}
+            </span>
+          </div>
+
+          <div className={styles.grid}>
+            {simulations.map(simulation => (
+              <ExplorableCard key={simulation.id} explorable={simulation} />
             ))}
           </div>
         </section>

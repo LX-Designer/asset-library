@@ -18,19 +18,23 @@ export default function ExplorablePage() {
   }
 
   const { Component } = explorable
+  const isSimulation = explorable.type === 'simulation'
+  const backHref = isSimulation ? '/#simulations' : '/#explorables'
+  const backLabel = isSimulation ? 'Back to simulations' : 'Back to explorables'
+  const loadingLabel = isSimulation ? 'Loading simulation…' : 'Loading explorable…'
 
   return (
     <div className={styles.page}>
       <div className={styles.content}>
-        <Link to="/#explorables" className={styles.back}>
+        <Link to={backHref} className={styles.back}>
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
             <path d="M11.5 7H2.5M6.5 3L2.5 7L6.5 11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
-          Back to explorables
+          {backLabel}
         </Link>
 
         <div className={styles.panel}>
-          <Suspense fallback={<div className={styles.loading}>Loading explorable…</div>}>
+          <Suspense fallback={<div className={styles.loading}>{loadingLabel}</div>}>
             <Component />
           </Suspense>
         </div>
